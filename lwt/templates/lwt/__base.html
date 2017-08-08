@@ -1,0 +1,60 @@
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load appversion %}{# custom tag which allows to display Django and my app version #}
+{% load djangoversion %}
+{% load pythonversion %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        {% block meta_tags %}{% endblock meta_tags%}
+        <title>
+            {% block title %}{% trans "LingL" %}{% endblock title %}
+        </title>
+        {% block stylesheets %}  
+          	<link rel="stylesheet" type="text/css" href="{% static "lwt/css/jquery-ui.css" %}">
+			<link rel="stylesheet" type="text/css" href="{% static "lwt/css/jquery.tagit.css" %}">
+			<link rel="stylesheet" type="text/css" href="{% static "lwt/css/styles.css" %}">
+        {% endblock stylesheets %}
+        {% block javascript %}
+        	<script type="text/javascript" src="{% static "lwt/js/jquery.js" %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/jquery.scrollTo.min.js" %} charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/jquery-ui.min.js" %}"  charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/jquery.jeditable.mini.js" %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/sorttable/sorttable.js" %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/countuptimer.js" %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/overlib/overlib_mini.js" %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/pgm.js" %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static "lwt/js/jq_pgm.js" %}" charset="utf-8"></script>
+        {% endblock javascript %}
+        {% block extra_head %}{% endblock extra_head %}
+    </head>
+    <body>   	
+     	<div id="overDiv" style="position:absolute; visibility:hidden; z-index:1000;"></div>
+		<h4><span><img class="lwtlogo" src="{% static 'lwt/img/lwt_icon.png' %}"  title="LingL" alt="LingL" />
+		"LingL"
+		</span></h4><h3>{% block pagetitle %}{% endblock pagetitle %}</h3>
+		<p>&nbsp;</p>
+
+		<script type="text/javascript">
+		if (! areCookiesEnabled()) document.write('<p class="red">*** Cookies are not enabled! Please enable! ***</p>');
+		</script>
+
+                {% block content %}
+                {% endblock content %}
+		<p class="smallgray graydotted">&nbsp;</p>
+		<table><tr>
+			<td class="width50px"><a target="_blank" href="http://unlicense.org/"><img alt="Public Domain" title="Public Domain" src="{% static 'lwt/img/public_domain.png' %}" /></a></td>
+			<td><p class="small"><a href="http://lwt.sourceforge.net/" target="_blank">"LingL" (LWT)</a> is free and opensource software released<br />
+				under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public Licence </a>.<br />
+				{% trans "This is LingL Version" %} {% version_date %}<br />
+				<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}</a> {% trans "Size" %}: {% trans "MB" %}<br />
+				{% trans "Proudly built with" %} <a href="https://www.djangoproject.com/" target="_blank">{% trans "Django" %}</a> {% trans "version" %} {% version_django %}, {% trans "based on "%}<a href="https://www.python.org/" target="_blank">Python</a> {% version_python %}<br />
+				</p>
+			</td>
+		</tr></table>
+
+
+    </body>
+</html>

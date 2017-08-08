@@ -1,0 +1,13 @@
+{% load i18n %} {# used for internationalization #}
+
+<ul>{# the drop-down menu for the language selection #}{# setLang is in pgm.js: TODO #}
+
+<li>{% trans "Language" %}: <select id="filterlang" onchange="{setLang(document.getElementById('filterlang'),'index.php');}">
+			<optgroup label="[{% trans "Select" %}...]">
+			{% for lang in language_selectoption %}
+			
+				<option value="{{ lang.lgid }}" {% if lang.lgname == currentlang_name %}selected="selected"{% endif %}>{{ lang.lgname }}</option>
+			{% endfor %}
+			</optgroup>
+			</select></li>
+</ul>

@@ -1,0 +1,79 @@
+{% extends "lwt/__quickmenutop.html" %}
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load debug_tags %}
+
+{% block title %}{% trans "My Texts in" %}{{ currentlang_name }}{% endblock title %}
+{% block pagetitle %}{% trans "My Texts in" %}{{ currentlang_name }} | {{ block.super }}{% endblock pagetitle %}
+
+{% block content %}
+
+	<h4>{% trans "New Text " %}<a target="_blank" href="{% url 'info'%}#howtotext"><img src="{% static 'lwt/img/icn/question-frame.png' %}" title="{% trans "Help" %}" alt="Help" /></a> </h4>
+	<script type="text/javascript" src="{% static 'lwt/js/unloadformcheck.js' %}" charset="utf-8"></script>	
+	<form class="validate" action="{% url 'text_list' %}" method="post">
+	<table class="tab3" cellspacing="0" cellpadding="5">
+	<tr>
+	<td class="td1 right">{% trans "Language:" %}</td>
+	<td class="td1">
+	<select name="TxLgID" class="notempty setfocus">
+	{% include "lwt/_language_dropdown_menu" %}
+
+	</select> <img src="{% url 'img/icn/status-busy.png' %}" title="{% trans "Field must not be empty" %}" alt="Field must not be empty" />
+	</td>
+	</tr>
+	<tr>
+	<td class="td1 right">{% trans "Title:" %}</td>
+	<td class="td1"><input type="text" class="notempty" name="TxTitle" value="" maxlength="200" size="60" /> <img src="{% static 'img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" /></td>
+	</tr>
+	<tr>
+	<td class="td1 right">{% trans "Text: <br /><br />(max.<br />65,000<br />bytes)" %}</td>
+	<td class="td1">
+	<textarea name="TxText" class="notempty checkbytes" data_maxlength="65000" data_info="Text" cols="60" rows="20"></textarea> <img src="{% url 'img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" />
+	</td>
+	</tr>
+	<tr>
+	<td class="td1 right">{% trans "Source URI:" %}</td>
+	<td class="td1"><input type="text" class="checkurl" data_info="Source URI" name="TxSourceURI" value="" maxlength="1000" size="60" /></td>
+	</tr>
+	<tr>
+	<td class="td1 right">{% trans "Tags:" %}</td>
+	<td class="td1">
+		<ul id="texttags"></ul>	
+	<?php echo getTextTags(0); ?>
+function getTextTags($tid) {
+	global $tbpref;
+	$r = '<ul id="texttags">';
+	if ($tid > 0) {
+		$sql = 'select T2Text from ' . $tbpref . 'texttags, ' . $tbpref . 'tags2 where T2ID = TtT2ID and TtTxID = ' . $tid . ' order by T2Text';
+		$res = do_mysqli_query($sql);		
+		while ($record = mysqli_fetch_assoc($res)) {
+			$r .= '<li>' . tohtml($record["T2Text"]) . '</li>';
+		}
+		mysqli_free_result($res);
+	}
+	$r .= '</ul>';
+	return $r;
+}
+	</td>
+	</tr>
+	<tr>
+	<td class="td1 right">{% trans "Audio-URI:" %}</td>
+	<td class="td1"><input type="text" name="TxAudioURI" value="" maxlength="200" size="60" />		
+	<span id="mediaselect"><?php echo selectmediapath('TxAudioURI'); ?></span>		
+	</td>
+	</tr>
+	<tr>
+	<td class="td1 right" colspan="2">
+	<input type="button" value="Cancel" onclick="{resetDirty(); location.href='{% url 'text_list %}';}" /> 
+	<input type="submit" name="op" value="{% trans "Check" %}" />
+	<input type="submit" name="op" value="{% trans "Save" %}" />
+	<input type="submit" name="op" value="{% trans "Save and Open" %}" />
+	</td>
+	</tr>
+	</table>
+	</form>
+	
+	<p class="smallgray">{% trans "Import of a <b>long text</b>, without audio, with splitting it up into smaller texts:" %}</p><p><input type="button" value="{% trans "Long Text Import" %}" onclick="location.href='long_text_import.php';" /> </p>
+
+
+{% endblock content %}   

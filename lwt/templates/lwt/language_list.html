@@ -1,0 +1,86 @@
+{% extends "lwt/__quickmenutop.html" %}
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load debug_tags %}
+
+{% block title %}{% trans "My Language" %}{% endblock title %}
+{% block pagetitle %}{% trans "My Language" %} | {{ block.super }}{% endblock pagetitle %}
+
+{% block content %}
+
+
+<p><a href="{% url 'language_detail' 'new' 1 %}"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="New" alt="New" /> {% trans "New Language" %} ...</a></p>
+
+{% if not all_languages.all %}
+	<p>No languages found.</p>
+{% else %}
+
+	<table class="sortable tab1" cellspacing="0" cellpadding="5">
+	<tr>{% blocktrans %}
+	<th class="th1 sorttable_nosort">Curr.<br />Lang.</th>
+	<th class="th1 sorttable_nosort">Test<br />↓↓↓</th>
+	<th class="th1 sorttable_nosort">Actions</th>
+	<th class="th1 clickable">Language</th>
+	<th class="th1 sorttable_numeric clickable">Texts,<br />Reparse</th>
+	<th class="th1 sorttable_numeric clickable">Arch.<br />Texts</th>
+	<th class="th1 sorttable_numeric clickable">Terms</th>
+	<th class="th1 sorttable_nosort">Export<br />Template?</th>
+	</tr>{% endblocktrans %}
+
+	{% for lang in all_languages %}
+
+		{% if lang.lgid == currentlang_id %} {# The language is the current language #}
+		<tr>
+		<th class="th1"><img src="{% static 'lwt/img/icn/exclamation-red.png' %}" title="Current Language" alt="Current Language" /></th>
+		<th class="th1 center"><a href="{% url 'do_test' lang.lgid %}"><img src="{% static 'lwt/img/icn/question-balloon.png' %}" title="{% trans "Test" %}" alt="Test" /></a></th>
+		<th class="th1 center" nowrap="nowrap">&nbsp;<a href="{% url 'language_detail' 'edit' lang.lgid %}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit" %}" alt="Edit" /></a>
+		{% if lang.textcount == 0 and lang.archtextcount == 0 and lang.wordcount == 0 %} 
+			&nbsp; <span class="click" onclick="if (confirm (\'Are you sure?\')) location.href="{% url 'language_detail' 'delete' lang.lgid %}"><img src="{% static 'lwt/img/icn/minus-button.png' %}" title="{% trans "Delete" %}" alt="Delete" /></span>
+		{% else %}
+			&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="{% trans "Delete not possible" %}" alt="Delete not possible" />
+		{% endif %}
+		&nbsp;</th>
+		<th class="th1 center"> {{ lang.lgname }} </th>
+		{% if lang.textcount > 0 %} 
+			<th class="th1 center"><a href="{% url 'text_list lang.lgid' %}"> {{ lang.textcount }} </a> &nbsp;&nbsp; <a href="{% url 'language_list' 'refresh' lang.lgid %}"><img src="{% static 'lwt/img/icn/lightning.png' %}" title="{% trans "Reparse Texts" %}" alt="Reparse Texts" /></a>
+		{% else %}
+			<th class="th1 center">0 &nbsp;&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="No texts to reparse" alt="No texts to reparse" />
+		{% endif %}
+		</th>
+		<th class="th1 center">{% if  lang.archtextcount > 0 %}<a href="{% url 'archivedtext_list' lang.lgid %}"> {{ lang.archtextcount }} </a>{% else %}0{% endif %}</th>
+		<th class="th1 center">{% if lang.wordcount > 0 %}<a href="{% url 'term_list' lang.lgid %}"> {{ lang.wordcount }} </a>{% else %}0{% endif %}</th>
+		<th class="th1 center">{% if lang.lgexporttemplate != None %}<img src="{% static 'lwt/img/icn/status.png' %}" title="{% trans "Yes" %}" alt="Yes" />{% else %}<img src="{% static 'lwt/img/icn/status-busy.png' %}" title="{% trans "No" %}" alt="No" />{% endif %}</th>
+		</tr>
+			
+		{% else %} {# The language is not the current language #}
+		<tr>
+		<td class="td1 center"><a href="{% url 'language_list' 'setcurrent' lang.lgid %}"><img src="{% static 'lwt/img/icn/tick-button.png' %}" title="{% trans "Set as Current Language" %}" alt="Set as Current Language" /></a></td>
+		<td class="td1 center"><a href="{% url 'do_test' lang.lgid %}"><img src="{% static 'lwt/img/icn/question-balloon.png' %}" title="{% trans "Test" %}" alt="Test" /></a></td>
+		<td class="td1 center" nowrap="nowrap">&nbsp;<a href="{% url 'language_detail' 'edit' lang.lgid %}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit" %}" alt="Edit" /></a>
+		{% if lang.textcount == 0 and lang.archtextcount == 0 and lang.wordcount == 0 %} 
+			&nbsp; <span class="click" onclick="if (confirm (\'Are you sure?\')) location.href="{% url 'language_detail' 'delete' lang.lgid %}"><img src="{% static 'lwt/img/icn/minus-button.png' %}" title="{% trans "Delete" %}" alt="Delete" /></span>
+		{% else %}
+			&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="{% trans "Delete not possible" %}" alt="Delete not possible" />
+		{% endif %}
+		&nbsp;</td>
+		<td class="td1 center"> {{ lang.lgname }} </td>
+		{% if lang.textcount > 0 %} 
+			<td class="td1 center"><a href="{% url 'text_list lang.lgid' %}"> {{ lang.textcount }} </a> &nbsp;&nbsp; <a href="{% url 'language_list' 'refresh' lang.lgid %}"><img src="{% static 'lwt/img/icn/lightning.png' %}" title="{% trans "Reparse Texts" %}" alt="Reparse Texts" /></a>
+		{% else %}
+			<td class="td1 center">0 &nbsp;&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="No texts to reparse" alt="No texts to reparse" />
+		{% endif %}
+		</td>
+		<td class="td1 center">{% if  lang.archtextcount > 0 %}<a href="{% url 'archivedtext_list' lang.lgid %}"> {{ lang.archtextcount }} </a>{% else %}0{% endif %}</td>
+		<td class="td1 center">{% if lang.wordcount > 0 %}<a href="{% url 'term_list' lang.lgid %}"> {{ lang.wordcount }} </a>{% else %}0{% endif %}</td>
+		<td class="td1 center">{% if lang.lgexporttemplate != None %}<img src="{% static 'lwt/img/icn/status.png' %}" title="{% trans "Yes" %}" alt="Yes" />{% else %}<img src="{% static 'lwt/img/icn/status-busy.png' %}" title="{% trans "No" %}" alt="No" />{% endif %}</td>
+		</tr>
+			
+			
+			
+		{% endif %}
+	{% endfor %}
+
+	</table>
+{% endif %}
+
+{% endblock content %}
