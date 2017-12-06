@@ -11,6 +11,8 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from django.shortcuts import _get_queryset
+from django.contrib.messages import constants as messages
 
 # For using PyMSQL:
 # try:
@@ -44,11 +46,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # needed by django-allauth
+    'django.contrib.sites',
     # local
     'lwt',
     # third party
-    'template_debug', # to debug template
     'tags_input', # a tagging app used in "text_detail"
+    'mathfilters', # allow to do math in template
+    'allauth', # django usesr registration
+    'allauth.account', # django usesr registration
+    'allauth.socialaccount', # django usesr registration
+    'crispy_forms', # linker between django and bootstrap form
+    'jchart', # graphical tool to display statistics
 ]
 
 MIDDLEWARE = [
@@ -66,7 +75,7 @@ ROOT_URLCONF = 'LingL.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates'), os.path.join(BASE_DIR, 'templates', 'allauth')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -74,7 +83,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                # `allauth` needs this from django
+                'django.template.context_processors.request',
             ],
+            'debug': True,
         },
     },
 ]
@@ -88,7 +100,7 @@ WSGI_APPLICATION = 'LingL.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, 'LingL_database.sqlite3'),
     }
 }
 
@@ -142,8 +154,70 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-# use with the installed app 'django-template-debug' to debug the tremplate
-TEMPLATE_DEBUG = True
+
 
 # to use cookie-based sessions:
-SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+# SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_SAVE_EVERY_REQUEST = True
+
+# Used by the 3rd party app Django-tags-input (creating the tags for Words and Texts)
+# (especially in 'text_detail')
+def text_get_queryset(*args, **kwargs):
+    from lwt.models import Texts
+    return Texts.objects.all()
+  
+def word_get_queryset(*args, **kwargs):
+    from lwt.models import Words
+    return Words.objects.all()
+ 
+def language_get_queryset(*args, **kwargs):
+    from lwt.models import Languages
+    return Languages.objects.all()
+
+TAGS_INPUT_MAPPINGS = { 
+                        'lwt.Wordtags':        {'field': 'wotagtext', 'create_missing': True},
+                        'lwt.Words':           {'field': 'wotext'   , 'queryset'      : word_get_queryset},
+
+                        'lwt.Texttags':        {'field': 'txtagtext', 'create_missing': True},
+                        'lwt.Texts':           {'field': 'txtitle'  , 'queryset'      : text_get_queryset},
+
+                        'lwt.Extra_field_key': {'field': 'title'    , 'create_missing': True},
+                        'lwt.Languages':       {'field': 'title'    , 'queryset'      : language_get_queryset},
+                        }
+# -- End --#
+
+AUTHENTICATION_BACKENDS = (
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
+SITE_ID = 1 # used by django_-allauth
+
+LOGIN_REDIRECT_URL = "/" # used by django_-allauth (redirect after successful login)
+
+CRISPY_TEMPLATE_PACK = 'bootstrap3'
+CRISPY_FAIL_SILENTLY = DEBUG
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# overriding templates for form for Django-allauth
+ACCOUNT_FORMS = { 'signup': 'lwt.forms.MySignUpForm', 'login': 'lwt.forms.MyLogInForm'}
+
+# overriding the default User:
+AUTH_USER_MODEL = 'lwt.MyUser'
+# to add custom field which is saved django-allauth
+ACCOUNT_ADAPTER = 'lwt.models.UserAccountAdapter'
+
+# used for messages:
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-info',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
+

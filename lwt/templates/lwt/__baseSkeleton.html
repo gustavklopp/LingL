@@ -1,0 +1,94 @@
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load appversion %}{# custom tag which allows to display Django and my app version #}
+{% load djangoversion %}
+{% load pythonversion %}
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+		{% block meta_tags %}
+			<!-- Required meta tags for bootstrap -->
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        {% endblock meta_tags%}
+        <title>
+            {% block title %}{% trans "LingL" %}{% endblock title %}
+        </title>
+        	<link rel="icon" href="{% static 'lwt/img/site_icon_16x16.png' %}" type="image/png" />
+        	<!--  bootstrap css -->
+			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/bootstrap.min.css' %}">  
+        	<!--  jquery-ui. used by tagsinputs -->
+			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/jquery-ui.1.12.1.min.css' %}">
+			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/jquery.tagsinput-revisited.css' %}">
+			<!--  font-awesome css -->
+			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+			<!--  local css -->
+			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/styles.css' %}">
+        {% block stylesheets %}  
+        {% endblock stylesheets %}
+
+        	<!-- internationalization in javascript -->
+			<script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/__jquery.js' %}"></script>
+        	<!--  jquery-ui. used by tagsinputs -->
+			<script type="text/javascript" src="{% static 'lwt/js/__jquery-ui.min.js' %}"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/_jquery.tagsinput-revisited.js' %}"></script>
+			<!--  other 3rd party js -->
+			<script type="text/javascript" src="{% static 'lwt/js/_jquery.jeditable.mini.js' %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/overlib/overlib_mini.js' %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/_jquery.validate.min.js' %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/_jquery.validate2.min.js' %}" charset="utf-8"></script>
+			<!--  local js -->
+			<script type="text/javascript" src="{% static 'lwt/js/pgm.js' %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/jq_pgm.js' %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/ajax_text_read.js' %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/tooltip_link.js' %}" charset="utf-8"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/ajax_termform.js' %}" charset="utf-8"></script>
+        {% block javascript %}
+        {% endblock javascript %}
+		{% block extrajavascript %}
+        {% endblock extrajavascript %}
+
+        {% block extra_head %}{% endblock extra_head %}
+    </head>
+    <body>   	
+    {% block banner %}
+    {% endblock banner %}
+
+<div class="container-fluid">
+	{% block messages %}
+		{% for message in messages %}
+		<div class="alert {{ message.tags }} alert-dismissible" role="alert">
+			<button type="button" class="close" data-dismiss="alert" aria-label="Close">
+				<span aria-hidden="true">&times;</span>
+			</button>
+			{{ message }}
+		</div>
+		{% endfor %}
+	{% endblock messages %}
+
+	{% block content %}
+	{% endblock content %}
+</div>
+
+	{% block footlicence %}
+	{% endblock footlicence %}
+
+{# script for Bootstrap #}
+	<script type="text/javascript" src="{% static 'lwt/js/__popper.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'lwt/js/__bootstrap-3.3.7.min.js' %}"></script>
+			<!--  enable tooltip Bootstrap -->
+<script>
+			$(document).ready(function () {
+				  $("body").tooltip({   
+				    selector: "[data-toggle='tooltip']",
+				    container: "body",
+				    delay: {'show': 1000},
+				  });
+				});
+			</script>
+{% block footjavascript %}
+{% endblock footjavascript %}
+    </body>
+</html>

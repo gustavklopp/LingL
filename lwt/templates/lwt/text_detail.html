@@ -1,79 +1,134 @@
-{% extends "lwt/__quickmenutop.html" %}
+{% extends "lwt/__baseSkeleton.html" %}
 {% load staticfiles %}
 {% load i18n %} {# used for internationalization #}
-{% load debug_tags %}
+{% load crispy_forms_tags %}
 
-{% block title %}{% trans "My Texts in" %}{{ currentlang_name }}{% endblock title %}
-{% block pagetitle %}{% trans "My Texts in" %}{{ currentlang_name }} | {{ block.super }}{% endblock pagetitle %}
+
+{% block title %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %}{% endblock title %}
+
+{% block stylesheets %}{{ block.super }}
+	<!--  Plugin for tooltip: tooltipster -->
+    <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/tooltipster_css/tooltipster.bundle.min.css' %}" />
+{% endblock stylesheets %}
+
+{% block javascript %}{{ block.super }} 
+	<script type="text/javascript" src="{% static 'lwt/js/ajax_text_detail.js' %}" charset="utf-8"> </script>
+	<!--  Plugin for tooltip: tooltipster -->
+	<script type="text/javascript" src="{% static 'lwt/js/tooltipster_js/tooltipster.bundle.min.js' %}"></script>
+ {% endblock javascript %}
+
+{% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
+
+{% endblock pagetitle %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
 
 {% block content %}
 
-	<h4>{% trans "New Text " %}<a target="_blank" href="{% url 'info'%}#howtotext"><img src="{% static 'lwt/img/icn/question-frame.png' %}" title="{% trans "Help" %}" alt="Help" /></a> </h4>
-	<script type="text/javascript" src="{% static 'lwt/js/unloadformcheck.js' %}" charset="utf-8"></script>	
-	<form class="validate" action="{% url 'text_list' %}" method="post">
-	<table class="tab3" cellspacing="0" cellpadding="5">
-	<tr>
-	<td class="td1 right">{% trans "Language:" %}</td>
-	<td class="td1">
-	<select name="TxLgID" class="notempty setfocus">
-	{% include "lwt/_language_dropdown_menu" %}
+{% if op == 'new' %}
+	<h4>{% trans "New Text : Upload your text file or Fill the form " %} </h4>
 
-	</select> <img src="{% url 'img/icn/status-busy.png' %}" title="{% trans "Field must not be empty" %}" alt="Field must not be empty" />
-	</td>
-	</tr>
-	<tr>
-	<td class="td1 right">{% trans "Title:" %}</td>
-	<td class="td1"><input type="text" class="notempty" name="TxTitle" value="" maxlength="200" size="60" /> <img src="{% static 'img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" /></td>
-	</tr>
-	<tr>
-	<td class="td1 right">{% trans "Text: <br /><br />(max.<br />65,000<br />bytes)" %}</td>
-	<td class="td1">
-	<textarea name="TxText" class="notempty checkbytes" data_maxlength="65000" data_info="Text" cols="60" rows="20"></textarea> <img src="{% url 'img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" />
-	</td>
-	</tr>
-	<tr>
-	<td class="td1 right">{% trans "Source URI:" %}</td>
-	<td class="td1"><input type="text" class="checkurl" data_info="Source URI" name="TxSourceURI" value="" maxlength="1000" size="60" /></td>
-	</tr>
-	<tr>
-	<td class="td1 right">{% trans "Tags:" %}</td>
-	<td class="td1">
-		<ul id="texttags"></ul>	
-	<?php echo getTextTags(0); ?>
-function getTextTags($tid) {
-	global $tbpref;
-	$r = '<ul id="texttags">';
-	if ($tid > 0) {
-		$sql = 'select T2Text from ' . $tbpref . 'texttags, ' . $tbpref . 'tags2 where T2ID = TtT2ID and TtTxID = ' . $tid . ' order by T2Text';
-		$res = do_mysqli_query($sql);		
-		while ($record = mysqli_fetch_assoc($res)) {
-			$r .= '<li>' . tohtml($record["T2Text"]) . '</li>';
+	{% crispy form_uploaded_text %}
+	{% crispy form %}
+
+{% elif op == 'edit' %}
+	<h4>{% trans "Edit Text : Modify the text " %} </h4>
+
+<form class="form-horizontal text_detail" method="post" novalidate="novalidate">
+
+	{% crispy form  form.helper_edit1 %}
+<div id="div_id_text" class="form-group"> 
+	<label for="id_text" class="control-label col-md-3"> text </label> 
+	<div class="controls col-md-9"> 
+{#   EDITING THE TEXT      #}
+{# the 'if wo.order == 0... is to add a space after a delimiter: aering the text! #}
+{% for wo in word_inthistext %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span title="click to insert word(s)"'>{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}<span 
+class="mytooltip" data-tooltip-content="#tooltip_content" woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
+woromanization="{{ wo.romanization }}" iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
+{% if wo.isCompoundword %}
+cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" coworomanization="{{ wo.compoundword.romanization }}" 
+{% else %}
+cowostatus="" cowotranslation="" coworomanization="" 
+{% endif %}
+{% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}
+>{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
+{# END -- DISPLAYING THE TEXT #}
+ 	</div>
+</div>
+
+	{% crispy form  form.helper_edit2 %}
+</form>
+{% endif %}
+
+	<script>
+	// override jquery validate plugin defaults
+	$.validator.setDefaults({
+	    highlight: function(element) {
+	        $(element).closest('.form-group').addClass('has-error');
+	    },
+	    unhighlight: function(element) {
+	        $(element).closest('.form-group').removeClass('has-error');
+	    },
+	    errorElement: 'span',
+	    errorClass: 'help-block',
+	    errorPlacement: function(error, element) {
+	        if(element.parent('.input-group').length) {
+	            error.insertAfter(element.parent());
+	        } else {
+	            error.insertAfter(element);
+	        }
+	    }
+	});
+	// pattern for text (using jquery.validate plugin and jquery.validate+additional methods)
+	$("form.text_detail").validate({
+		rules: {
+			text: {pattern: /^.*[^\W\d_].*$/m }
+		},
+		messages: {
+			text: {pattern: gettext('Text should contain characters, not only symbols')}
 		}
-		mysqli_free_result($res);
-	}
-	$r .= '</ul>';
-	return $r;
-}
-	</td>
-	</tr>
-	<tr>
-	<td class="td1 right">{% trans "Audio-URI:" %}</td>
-	<td class="td1"><input type="text" name="TxAudioURI" value="" maxlength="200" size="60" />		
-	<span id="mediaselect"><?php echo selectmediapath('TxAudioURI'); ?></span>		
-	</td>
-	</tr>
-	<tr>
-	<td class="td1 right" colspan="2">
-	<input type="button" value="Cancel" onclick="{resetDirty(); location.href='{% url 'text_list %}';}" /> 
-	<input type="submit" name="op" value="{% trans "Check" %}" />
-	<input type="submit" name="op" value="{% trans "Save" %}" />
-	<input type="submit" name="op" value="{% trans "Save and Open" %}" />
-	</td>
-	</tr>
-	</table>
-	</form>
-	
-	<p class="smallgray">{% trans "Import of a <b>long text</b>, without audio, with splitting it up into smaller texts:" %}</p><p><input type="button" value="{% trans "Long Text Import" %}" onclick="location.href='long_text_import.php';" /> </p>
+	})
+	</script>
+	<!--  Plugin for tooltip: tooltipster -->
+	    <script>
+        $(document).ready(function() {
+        	var mytooltip = $('.mytooltip');
+            mytooltip.tooltipster({
+				 theme: ['tooltipster-noir', 'tooltipster-noir-customized'],
+            	contentCloning: true,
+            	trigger: 'hover'
+            });
+            mytooltip.tooltipster({
+				 theme: ['tooltipster-noir', 'tooltipster-noir-customized'],
+            	contentCloning: true,
+            	trigger: 'click',
+				contentAsHTML: true,
+				interactive:true,
+            	multiple: true
+            });
+            
+            mytooltip.each(function(idx, val){
+				var instances = $.tooltipster.instances(val);
+				// use the instances to make any method calls on the tooltips
+				instances[0].content('click to edit/delete word');
+				var clicktooltip_in = '<a href="">Delete word</a><br><form action="">';
+				clicktooltip_in += 'Edit word: <input type="text" name="edited_word" value=""><br>';
+				clicktooltip_in += '<input type="submit" value="Submit"></form>',
+				instances[1].content(clicktooltip_in);
+            });
 
+
+			 // WARNING: calling  methods in the usual way only affects the first tooltip that was created on the element
+			 //$('.mytooltip').tooltipster('content', 'New content for my first tooltip') 
+        });
+    </script>
+	
 
 {% endblock content %}   
+
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}

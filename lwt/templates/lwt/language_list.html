@@ -1,86 +1,128 @@
-{% extends "lwt/__quickmenutop.html" %}
+{% extends "lwt/__baseSkeleton.html" %}
 {% load staticfiles %}
 {% load i18n %} {# used for internationalization #}
-{% load debug_tags %}
 
 {% block title %}{% trans "My Language" %}{% endblock title %}
-{% block pagetitle %}{% trans "My Language" %} | {{ block.super }}{% endblock pagetitle %}
+
+{% block pagetitle %}{% trans "My Language" %} | {{ block.super }}
+{% endblock pagetitle %}
+
+{% block stylesheets %}{{ block.super }}
+	<!--  Plugin for Bootstrap-table -->
+    <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/bootstrap-table.min.css' %}" />
+{% endblock stylesheets %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
 
 {% block content %}
 
+		{#  ADDING THE TOOLBAR #}
+	<div id="langtable_toolbar" class="btn-group">
+		<button id="delete" type="button" class="btn btn-default">
+			<i class="fa fa-trash" aria-hidden="true"></i>
+		</button>
+		<a class="btn btn-default" role="button" href="{% url 'language_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Language " %}...</a> 
+	</div>
 
-<p><a href="{% url 'language_detail' 'new' 1 %}"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="New" alt="New" /> {% trans "New Language" %} ...</a></p>
-
-{% if not all_languages.all %}
-	<p>No languages found.</p>
-{% else %}
-
-	<table class="sortable tab1" cellspacing="0" cellpadding="5">
+	<table id="lang_table" data-toggle="table" data-sort-name="language" data-sort-order="asc"
+								data-search="true"
+								data-pagination="true" 
+								data-page-size=10
+								data-toolbar="#langtable_toolbar"
+								data-row-style="rowStyle">
+		{# DISPLAYING THE HEADERS #}
+	<thead>
 	<tr>{% blocktrans %}
-	<th class="th1 sorttable_nosort">Curr.<br />Lang.</th>
-	<th class="th1 sorttable_nosort">Test<br />↓↓↓</th>
-	<th class="th1 sorttable_nosort">Actions</th>
-	<th class="th1 clickable">Language</th>
-	<th class="th1 sorttable_numeric clickable">Texts,<br />Reparse</th>
-	<th class="th1 sorttable_numeric clickable">Arch.<br />Texts</th>
-	<th class="th1 sorttable_numeric clickable">Terms</th>
-	<th class="th1 sorttable_nosort">Export<br />Template?</th>
+	<th data-field="state" data-checkbox="true">
+	<th data-field="currentlang">Curr.<br />Lang.</th>
+	<th data-field="action">Actions</th>
+	<th data-field="language" data-sortable="true">Language</th>
+	<th data-field="texts" data-sortable="true">Texts</th>
+	<th data-field="terms" data-sortable="true" data-sorter="numberSorter">Terms</th>
+	<th data-field="export">Export<br />Template?</th>
 	</tr>{% endblocktrans %}
+	</thead>
+	<tbody>
+		{# DISPLAYING THE TEXTS THEMSELVES #}
+	{% for a_l in all_languages_dict %}
 
-	{% for lang in all_languages %}
-
-		{% if lang.lgid == currentlang_id %} {# The language is the current language #}
-		<tr>
-		<th class="th1"><img src="{% static 'lwt/img/icn/exclamation-red.png' %}" title="Current Language" alt="Current Language" /></th>
-		<th class="th1 center"><a href="{% url 'do_test' lang.lgid %}"><img src="{% static 'lwt/img/icn/question-balloon.png' %}" title="{% trans "Test" %}" alt="Test" /></a></th>
-		<th class="th1 center" nowrap="nowrap">&nbsp;<a href="{% url 'language_detail' 'edit' lang.lgid %}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit" %}" alt="Edit" /></a>
-		{% if lang.textcount == 0 and lang.archtextcount == 0 and lang.wordcount == 0 %} 
-			&nbsp; <span class="click" onclick="if (confirm (\'Are you sure?\')) location.href="{% url 'language_detail' 'delete' lang.lgid %}"><img src="{% static 'lwt/img/icn/minus-button.png' %}" title="{% trans "Delete" %}" alt="Delete" /></span>
-		{% else %}
-			&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="{% trans "Delete not possible" %}" alt="Delete not possible" />
-		{% endif %}
-		&nbsp;</th>
-		<th class="th1 center"> {{ lang.lgname }} </th>
-		{% if lang.textcount > 0 %} 
-			<th class="th1 center"><a href="{% url 'text_list lang.lgid' %}"> {{ lang.textcount }} </a> &nbsp;&nbsp; <a href="{% url 'language_list' 'refresh' lang.lgid %}"><img src="{% static 'lwt/img/icn/lightning.png' %}" title="{% trans "Reparse Texts" %}" alt="Reparse Texts" /></a>
-		{% else %}
-			<th class="th1 center">0 &nbsp;&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="No texts to reparse" alt="No texts to reparse" />
-		{% endif %}
-		</th>
-		<th class="th1 center">{% if  lang.archtextcount > 0 %}<a href="{% url 'archivedtext_list' lang.lgid %}"> {{ lang.archtextcount }} </a>{% else %}0{% endif %}</th>
-		<th class="th1 center">{% if lang.wordcount > 0 %}<a href="{% url 'term_list' lang.lgid %}"> {{ lang.wordcount }} </a>{% else %}0{% endif %}</th>
-		<th class="th1 center">{% if lang.lgexporttemplate != None %}<img src="{% static 'lwt/img/icn/status.png' %}" title="{% trans "Yes" %}" alt="Yes" />{% else %}<img src="{% static 'lwt/img/icn/status-busy.png' %}" title="{% trans "No" %}" alt="No" />{% endif %}</th>
-		</tr>
-			
-		{% else %} {# The language is not the current language #}
-		<tr>
-		<td class="td1 center"><a href="{% url 'language_list' 'setcurrent' lang.lgid %}"><img src="{% static 'lwt/img/icn/tick-button.png' %}" title="{% trans "Set as Current Language" %}" alt="Set as Current Language" /></a></td>
-		<td class="td1 center"><a href="{% url 'do_test' lang.lgid %}"><img src="{% static 'lwt/img/icn/question-balloon.png' %}" title="{% trans "Test" %}" alt="Test" /></a></td>
-		<td class="td1 center" nowrap="nowrap">&nbsp;<a href="{% url 'language_detail' 'edit' lang.lgid %}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit" %}" alt="Edit" /></a>
-		{% if lang.textcount == 0 and lang.archtextcount == 0 and lang.wordcount == 0 %} 
-			&nbsp; <span class="click" onclick="if (confirm (\'Are you sure?\')) location.href="{% url 'language_detail' 'delete' lang.lgid %}"><img src="{% static 'lwt/img/icn/minus-button.png' %}" title="{% trans "Delete" %}" alt="Delete" /></span>
+		<tr data-val="{{ a_l.lang.id }}">
+		<td></td>	
+		<td >{% if a_l.lang.id == currentlang_id %}<img src="{% static 'lwt/img/bullet-green_16x16.png' %}" title="Current Language" alt="Current Language" />{% else %}<a href="{% url 'language_list' %}?setcurrentlang={{ lang.id }}"><img src="{% static 'lwt/img/bullet-grey_16x16.png' %}" title="{% trans "Set as Current Language" %}" alt="Set as Current Language" /></a>{% endif %}</td>
+		<td >&nbsp;<a href="{% url 'language_detail' %}?edit={{ a_l.lang.id }}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit" %}" alt="Edit" /></a>
+		{% if a_l.lang.texthavingthislanguage.count == 0 and a_l.lang.wordhavingthislanguage.count == 0 %} 
+			&nbsp; <span class="click" onclick="if (confirm (\'Are you sure?\')) location.href="{% url 'language_detail' %}?delete={{ a_l.lang.id }}"><img src="{% static 'lwt/img/icn/minus-button.png' %}" title="{% trans "Delete" %}" alt="Delete" /></span>
 		{% else %}
 			&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="{% trans "Delete not possible" %}" alt="Delete not possible" />
 		{% endif %}
 		&nbsp;</td>
-		<td class="td1 center"> {{ lang.lgname }} </td>
-		{% if lang.textcount > 0 %} 
-			<td class="td1 center"><a href="{% url 'text_list lang.lgid' %}"> {{ lang.textcount }} </a> &nbsp;&nbsp; <a href="{% url 'language_list' 'refresh' lang.lgid %}"><img src="{% static 'lwt/img/icn/lightning.png' %}" title="{% trans "Reparse Texts" %}" alt="Reparse Texts" /></a>
-		{% else %}
-			<td class="td1 center">0 &nbsp;&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="No texts to reparse" alt="No texts to reparse" />
-		{% endif %}
+		<td data-val="{{ a_l.lang.name }}">{{ a_l.lang.name }}</td>
+		<td >{% if a_l.lang.texthavingthislanguage.count == 0 %}0{ a_l.lang.texthavingthislanguage.count }}{% else %}
+			<a href="{% url 'text_list' %}?lang={{ a_l.lang.id }}">{{ a_l.lang.texthavingthislanguage.count }}</a>{% endif %}
 		</td>
-		<td class="td1 center">{% if  lang.archtextcount > 0 %}<a href="{% url 'archivedtext_list' lang.lgid %}"> {{ lang.archtextcount }} </a>{% else %}0{% endif %}</td>
-		<td class="td1 center">{% if lang.wordcount > 0 %}<a href="{% url 'term_list' lang.lgid %}"> {{ lang.wordcount }} </a>{% else %}0{% endif %}</td>
-		<td class="td1 center">{% if lang.lgexporttemplate != None %}<img src="{% static 'lwt/img/icn/status.png' %}" title="{% trans "Yes" %}" alt="Yes" />{% else %}<img src="{% static 'lwt/img/icn/status-busy.png' %}" title="{% trans "No" %}" alt="No" />{% endif %}</td>
+		<td >{% if a_l.word_count > 0 %}<a href="{% url 'term_list' %}?lang={{ a_l.lang.id }}">{{ a_l.word_count }}</a>{% else %}0{% endif %}</td>
+		<td >{{ a_l.lang.exporttemplate }}</td>
 		</tr>
-			
-			
-			
-		{% endif %}
 	{% endfor %}
-
+	</tbody>
 	</table>
-{% endif %}
 
 {% endblock content %}
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}
+
+
+{% block footjavascript %}
+	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lwt/js/bootstrap-table.js' %}"></script>
+		<script type="text/javascript">
+ 	/* functions to order the numbers inside the bootstrap-table */
+	var lang_table = $('#lang_table');
+
+	function getOrder() {
+	    return text_table.bootstrapTable('getOptions').sortOrder 
+	        === 'asc' ? -1 : 1;
+	}
+	function numberSorter(a, b) {
+		console.log(a);
+		var a_search = parseInt(a.match(/">(\d+)/)[1]);
+		var b_search = b.match(/\>(\d+)/)[1];
+		//console.log(a_search);
+	    if (!a_search) return -1 * getOrder();
+	    if (!b_search) return 1 * getOrder();
+	    if (a_search < b_search) return -1;
+	    if (a_search > b_search) return 1;
+	    return 0;
+	}
+
+	$("button#delete").click(function(){
+		 /* function to delete the text(s) inside the bootstrap-table */
+		var check = $("input:checked");
+		ids_to_delete = [];
+		$.each(check, function(){
+			var text_id =$(this).parents("tr:first").data("val");
+			ids_to_delete.push(text_id);
+		});
+		if (ids_to_delete.length > 0){
+			document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete);
+		}
+	});
+	
+	function rowStyle(row, index){
+		/* function to highlight the row where it's the currentlang */
+		row_name = $.trim(row.language); 
+		var td = $('td[data-val="'+row_name+'"]'); // get the td whose we know the name
+		var td_parent = td.parents('tr:first'); // get the row parent
+		tr_dataval = td_parent.data('val'); // and get the data-val for the row
+		if ('{{ currentlang_id }}' == tr_dataval){
+		return {classes:'success'};
+		} else { 
+			return {};
+		}
+	}
+	</script>
+{% endblock footjavascript %}

@@ -1,0 +1,18 @@
+{% load mathfilters %}
+<h4><span class="bigger">{{ head_message }}: {{ message_wordtext }}</span></h4>	<br/>
+	OK: {{ content_message }}<br/>
+	{% if samewordtext and samewordtextlength > 1 %}
+	
+{% if head_message == 'New Term' or head_message == 'Edit Term' %}
+	<p>{{ samewordtextlength }} words written similarly has been found and<br/> are now linked to the word given:</p>
+{% elif head_message == 'Deleting Term' %}
+	<p>{{ samewordtextlength }} words which are considered "similar" have been deleted:</p>
+{% endif %}
+
+<ul>
+	{% for simwo in samewordtext %}
+	<li>"{{ simwo.wordtext }}" in sentence: "{{ simwo.sentence.sentencetext }}" (text: "{{ simwo.text.title }}")</li>
+	{% endfor %}
+</ul>
+
+	{% endif %}

@@ -1,0 +1,228 @@
+{% extends "lwt/__baseSkeleton.html" %}
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+
+{% block title %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %}{% endblock title %}
+
+{% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
+
+{% endblock pagetitle %}
+
+{% block stylesheets %}{{ block.super }}
+	<!--  Plugin for Bootstrap-table -->
+    <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/bootstrap-table.min.css' %}" />
+{% endblock stylesheets %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
+
+
+{# DISPLAYING THE MESSAGE (WHEN DELETING, CHANGING etc..) #}
+{% block content %} 
+
+<div class="row">
+
+{# FILTERING THE TEXTS #}
+<div class="col-md-2 filtering_text">
+
+{# filter on language #}
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
+<ul id="ul_language" class="collapse in">
+	<form id="filterlangform" method="POST" action="{% url 'text_list' %}">
+	{% csrf_token %}
+	{% for lang in languages %}
+	 	{% if lang.id in lang_filter %}
+		<input type="checkbox"  checked onclick="textlist_filter();" value="{{ lang.id }}" class="unstyled">
+		{% else %}
+		<input type="checkbox"  onclick="textlist_filter();" value="{{ lang.id }}" class="unstyled">
+		{% endif %}
+			 {{ lang.name }}
+		 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
+		  src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img 
+		  onclick="location.href='{% url 'term_list' %}?currentlang_id={{ lang.id }}';" 
+		  title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}
+		  <br>
+	{% endfor %}
+
+	</form>
+</ul>
+<br>
+
+{# filter on texttag #}
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_texttag">{% trans 'Text tags' %} :</a>
+<ul id="ul_texttag" class="collapse in">
+	<form id="filtertagform" method="POST" action="{% url 'text_list' %}">
+	{% csrf_token %}
+	{% if texttags_list_empty %}{% trans 'Nothing to display'%}{% endif %}
+	{% for tt_ls in texttags_list %} {# loop on a zipped(tag, languages contained in this tag) #}
+		<span texttag="{{ tt_ls.tag.id }}" language="{{ tt_ls.lang }}"
+		{% if tt_ls.hidden %}class="hidden"{% endif %}>	
+		<input type="checkbox" 
+		{% if texttag_filter|length == 0 %}checked{% endif %} 
+		onclick="textlist_filter();" value="{{ tt_ls.tag.id }}" class="unstyled">
+		{{ tt_ls.tag.txtagtext }}
+		<br></span>
+	{% endfor %}
+	</form>
+</ul>
+
+<br>
+{# filter on time #}
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_time">{% trans 'Last time open' %} :</a>
+<ul id="ul_time" class="collapse in">
+	<form id="timeform" method="POST" action="{% url 'text_list' %}">
+	{% csrf_token %}
+	{% if time_list_empty %}{% trans 'Nothing to display'%}{% endif %}
+	{% for ti_ls in time_list %}
+		<span possible_time="{{ ti_ls.pt.week }}" text_ids="{{ ti_ls.text_ids }}" 
+		{% if ti_ls.hidden %}class="hidden"{% endif %}>	
+		<input type="checkbox" 
+		{% if time_filter|length == 0 %}checked{% endif %} 
+		onclick="textlist_filter();" value="{{ ti_ls.pt.week }}" class="unstyled">
+		{{ ti_ls.pt.string }}
+		<br></span>
+	{% endfor %}
+	</form>
+</ul>
+
+<br>
+{# filter on archived #}
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_archived">{% trans 'Display Archived texts' %} :</a>
+<ul id="ul_archived" class="collapse in">
+	<form id="archivedform" method="POST" action="{% url 'text_list' %}">
+	{% csrf_token %}
+	{% if archived_list_empty %}{% trans 'Nothing to display'%}{% else %}
+		<span non_archived="{{ archived_list.0.text_ids }}" 
+		{% if archived_list.hidden %}class="hidden"{% endif %}>	
+		<input type="checkbox" 
+		{% if archived_filter|length == 0 %}checked{% endif %} 
+		onclick="textlist_filter();" value="False" class="unstyled">
+		{% trans 'non-archived' %}
+		<br></span>
+		<span archived="{{ archived_list.1.text_ids }}" 
+		{% if archived_list.hidden %}class="hidden"{% endif %}>	
+		<input type="checkbox" 
+		{% if archived_filter|length == 0 %}checked{% endif %} 
+		onclick="textlist_filter();" value="True" class="unstyled">
+		{% trans 'archived' %}
+		<br></span>{% endif %}
+	</form>
+</ul>
+
+</div>
+
+{# DISPLAYING THE TEXTS #}
+<div class="col-md-10 displaying_text">
+		{#  ADDING THE TOOLBAR #}
+	<div id="texttable_toolbar" class="btn-group">
+		<button id="delete" type="button" class="btn btn-default">
+			<i class="fa fa-trash" aria-hidden="true"></i>
+		</button>
+		<button id="archive" type="button" class="btn btn-default">
+			<img src="{% static 'lwt/img/convert_compress_16x16.png' %}"/>
+		</button>
+		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Text " %}...</a> 
+	</div>
+	
+	<table id="text_table" data-toggle="table" data-sort-name="title" data-sort-order="asc"
+								data-search="true"
+								data-pagination="true" data-side-pagination="server" 
+								data-url="{% url 'load_texttable' %}"
+								data-page-size=10
+								data-toolbar="#texttable_toolbar">
+		{# DISPLAYING THE HEADERS #}
+	<thead>
+	<tr>
+	<th data-field="id" class="hidden"></th>
+	<th data-field="state" data-checkbox="true"></th>
+	{% blocktrans %}
+	<th data-field="read">Read</th>
+	<th data-field="edit">Edit</th>
+	{% endblocktrans %}
+	{% if count_of_is_strong != 1 %}
+	{% if lang_filter|length != 1 %}
+	<th data-field="language" data-sortable="true">{% trans 'Lang.' %}</th>
+	{% endif %}
+	{% endif %}
+	<th data-field="title_tag" data-sortable="true">{% trans 'Title [Tags] / Audio:' %}&nbsp;<img src="{% static 'lwt/img/icn/speaker-volume.png' %}" title="{% trans "With Audio" %}" alt="With Audio" />{% trans ', Src.Link:' %}&nbsp;<img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Source Link available" %}" alt="Source Link available" /></th>
+	{% blocktrans %}
+	<th data-field="total_words" data-sortable="true" data-sorter="numberSorter">Tot.<br />Wo.</th>
+	<th data-field="saved_words" data-sortable="true" data-sorter="numberSorter">Saved<br />Wo (incl.Ex)</th>
+	<th data-field="unknown_words" data-sortable="true" data-sorter="numberSorter">Unkn.<br />Words</th>
+	<th data-field="unknown_words_pc" data-sortable="true" data-sorter="numberSorter">Unkn.<br />(%)</th>
+	<th data-field="lastopentime" data-sortable="true" data-sorter="dateSorter">Last<br />open</th>
+	<th data-field="archived" data-sortable="true" data-sorter="numberSorter">Arch.</th>
+	{% endblocktrans %}
+	</tr>
+	</thead>
+	</table>
+
+</div>
+</div>
+
+{% endblock content %}
+
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}
+
+
+{% block footjavascript %}
+	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lwt/js/bootstrap-table.js' %}"></script>
+		<script type="text/javascript">
+ 	/* functions to order the numbers inside the bootstrap-table */
+	var text_table = $('#text_table');
+
+	function getOrder() {
+	    return text_table.bootstrapTable('getOptions').sortOrder 
+	        === 'asc' ? -1 : 1;
+	}
+	function numberSorter(a, b) {
+		var a_search = parseInt(a.match(/>(\d+)/)[1]);
+		var b_search = parseInt(b.match(/>(\d+)/)[1]);
+	    if (!a_search) return -1 * getOrder();
+	    if (!b_search) return 1 * getOrder();
+	    if (a_search < b_search) return -1;
+	    if (a_search > b_search) return 1;
+	    return 0;
+	}
+
+	function dateSorter(a, b) {
+		var a_search = a.match(/\"hidden\">(\d+)/)? parseInt(a.match(/\"hidden\">(\d+)/)[1]): 0;
+		var b_search = b.match(/\"hidden\">(\d+)/)? parseInt(b.match(/\"hidden\">(\d+)/)[1]): 0
+	    if (a_search < b_search) return -1;
+	    if (a_search > b_search) return 1;
+	    return 0;
+	}
+
+	$("button#delete").click(function(){
+		 /* ajax function to delete the text(s) inside the bootstrap-table */
+		var check = $("input:checked");
+		ids_to_delete = [];
+		$.each(check, function(){
+			var text_id =$(this).parents("tr:first").data("val");
+			ids_to_delete.push(text_id);
+		});
+		if (ids_to_delete.length > 0){
+			document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete);
+		}
+	});
+
+	$("button#archive").click(function(){
+		 /* ajax function to archive the text(s) inside the bootstrap-table */
+		var check = $('tbody').find("input:checked");
+		ids_to_archive = [];
+		$.each(check, function(){
+			var text_id =$(this).parent().prev().text();
+			ids_to_archive.push(text_id);
+		});
+		if (ids_to_archive.length > 0){
+			document.location = '{% url 'text_list' %}?archive='+JSON.stringify(ids_to_archive);
+		}
+	});
+	</script>
+	<script type="text/javascript" src="{% static 'lwt/js/ajax_text_list.js' %}"></script>
+{% endblock footjavascript %}

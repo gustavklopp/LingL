@@ -1,31 +1,50 @@
-{% extends "lwt/__quickmenutop.html" %}
+{% extends "lwt/__baseSkeleton.html" %}
 {% load staticfiles %}
 {% load i18n %} {# used for internationalization #}
+{% load crispy_forms_tags %}
 
-{% block title %}Edit Language{% endblock title %}
-{% block pagetitle %}Edit Language | {{ block.super }}{% endblock pagetitle %}
 
-{% if lang == None %}{# new language: special css for the Language Settings Wizard #}
-	{% block stylesheets %}{{ block.super }}
-	<link rel="stylesheet" type="text/css" href="{% static "lwt/css/language_detail.css" %}">{% endblock stylesheets %}
-{% endif %}
+	{% block title %}{% if op == 'new' %}New Language{% elif op == 'edit' %}Edit Language{% endif %}{% endblock title %}
+	{% block pagetitle %}{% if op == 'new' %}New Language{% elif op == 'edit' %}Edit Language{% endif %} | {{ block.super }}
+	{% endblock pagetitle %}
 
-	{% block stylesheet %}{{ block.super }}
-	<link rel="stylesheet" type="text/css" href="{% static "lwt/css/language_detail.css" %}">{% endblock stylesheet %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
+
+{% block javascript %}
+
+<script type="text/javascript" src="{% static 'lwt/js/ajax_language_detail.js' %}" charset="utf-8"></script>
+<script type="text/javascript">
+$(document).ready( function() { 
+	/* used for the editable dropdown menu in the form */
+	  $("#list__name_lang.dropdown-menu a").bind('click', function(event) {
+		$("input#id_name").val($(this).text());
+		ajax_fill_language_detail($(this).attr("data-value"), '{{ origin_lang.code_639_1 }}');
+	  });
+});
+</script>
+{% endblock javascript %}
+
+{% block stylesheet %}{% endblock stylesheet %}
+
 {% block content %}
+
+
 {% if all_languages.all %}{# check whether the chosen language has not already been created with same name #}
 	<script type="text/javascript">
 	var LANGUAGES = { 
-			{% for lang in all_languages %}{{ lang.lgname}}:{{ lang.lgid }}{% if not forloop.last %},{% endif %}{% endfor %}
+			{% for lang in all_languages %}{{ lang.name}}:{{ lang.id }}{% if not forloop.last %},{% endif %}{% endfor %}
 			} 
 
 	function check_dupl_lang(curr) {
 		// Check if langname exists and its lang# != curr
-		var l = $('#lgname').val();
+		var l = $('#name').val();
 		if(l in LANGUAGES) {
 			if (curr != LANGUAGES[l]) {
 				alert ('Language "' + l + '" exists already. Please change the language name!');
-				$('#lgname').focus();
+				$('#name').focus();
 				return false;
 			}
 		}
@@ -34,109 +53,35 @@
 	</script>
 {% endif %}
 
-<h4>{% if lang == None %}{% trans "New Language" %} {% else %}{% trans "Edit Language" %} {% endif %}<a target="_blank" href="{% url 'help' %}#howtolang"><img src="{% static 'lwt/img/icn/question-frame.png' %}" title="Help" alt="Help" /></a> </h4>
+<h4>{% if op == 'new' %}{% trans "New Language" %} {% else %}{% trans "Edit Language" %} {% endif %}</h4>
 
-<script type="text/javascript" src="{% static 'lwt/js/unloadformcheck.js' %}" charset="utf-8"></script>	
-<form class="validate" action="{% url 'language_list' %}" method="post" onsubmit="return check_dupl_lang(0);">
-{% csrf_token %}
+{% crispy form %}
 
-{% if lang == None %}{# Language settings wizard when a new lang is asked #}
-	<table class="tab1" cellspacing="0" cellpadding="5">
-	<tr>
-	<td class="td1 center new_language" colspan="2"><img src="{% static 'lwt/img/icn/wizard.png' %}" title="Language Settings Wizard" alt="Language Settings Wizard" class="click" onclick="window.open('select_lang_pair.php', 'wizard', 'width=400, height=400, scrollbars=yes, menubar=no, resizable=yes, status=no');" /><br />
-		<span class="click" onclick="window.open('select_lang_pair.php', 'wizard', 'width=400, height=400, scrollbars=yes, menubar=no, resizable=yes, status=no');"><img src="{% static 'lwt/img/icn/arrow-000-medium.png' %}" title="-&gt;" alt="-&gt;" /> <b>{% trans "Language Settings Wizard" %}</b> <img src="{% static 'lwt/img/icn/arrow-180-medium.png' %}" title="&lt;-" alt="&lt;-" /></span><br />
-		<span class="smallgray">{% trans "Select your native (L1) and study (L2) languages, and let the wizard set all language settings marked in yellow!" %}<br />(You can adjust the settings afterwards.)</span>
-	</td>
-	</tr>
-	</table>
-{% endif %}
-	
-<table class="tab1" cellspacing="0" cellpadding="5">
-<tr>
-<td class="td1 right new_language">{% trans 'Study Language "L2":' %}</td>
-<td class="td1"><input type="text" class="notempty setfocus" name="lgname" id="lgname" value="{{ lang.lgname|default:'' }}" maxlength="40" size="40" /> <img src="{% static 'lwt/img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" /></td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "Dictionary 1 URI:" %}</td>
-<td class="td1"><input type="text" class="checkdicturl notempty" name="lgdict1uri" value="{{ lang.lgdict1uri|default:'glosbe_api.php?from=••&dest=••&phrase=###' }}" maxlength="200" size="60" data_info="Dictionary 1 URI" /> <img src="{% static 'lwt/img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" /></td>
-</tr>
-<tr>
-<td class="td1 right">{% trans "Dictionary 2 URI:" %}</td>
-<td class="td1"><input type="text" class="checkdicturl" name="lgdict2uri" value="{{ lang.lgdict2uri|default:"" }}" maxlength="200" size="60" data_info="Dictionary 2 URI" /></td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "GoogleTranslate URI:" %}</td>
-<td class="td1"><input type="text" class="checkdicturl" name="lggoogletranslateuri" value="{{ lang.lggoogletranslateuri|default:"*http://translate.google.com/?ie=UTF-8&sl=••&tl=••&text=###" }}" maxlength="200" size="60" data_info="GoogleTranslate URI" /></td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "Text Size:" %}</td>
-<td class="td1">
-	<select name="lgtextsize" class="notempty"><option value="100" {% if lang.textsize == 100 %}selected="selected"{% endif %}>100 %</option>
-												<option value="150" {% if lang == None %}selected="selected"{% endif %}>150 %</option>
-												<option value="200" {% if lang.textsize == 200 %}selected="selected"{% endif %}>200 %</option>
-												<option value="250" {% if lang.textsize == 250 %}selected="selected"{% endif %}>250 %</option>
-	</select></td>
-</tr>
-<tr>
-<td class="td1 right">{% trans "Character Substitutions:" %}</td>
-<td class="td1"><input type="text" name="lgcharactersubstitutions" value="{{ lang.lgcharactersubstitutions|default:"´='|`='|’='|‘='|...=…|..=‥" }}" maxlength="500" size="60" /></td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "RegExp Split Sentences:" %}</td>
-<td class="td1"><input type="text" class="notempty" name="lgregexpsplitsentences" value="{{ lang.lgflegexpslitsentences|default:".!?:;" }}" maxlength="500" size="60" /> <img src="{% static 'lwt/img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" /></td>
-</tr>
-<tr>
-<td class="td1 right">{% trans "Exceptions Split Sentences:" %}</td>
-<td class="td1"><input type="text" name="lgexceptionssplitsentences" value="{{ lang.lgexceptionssplitsentences|default:"Mr.|Dr.|[A-Z].|Vd.|Vds." }}" maxlength="500" size="60" /></td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "RegExp Word Characters:" %}</td>
-<td class="td1"><input type="text" class="notempty" name="lgregexpwordcharacters" value="{{ lang.lgflegexpwordcharacters|default:"a-zA-ZÀ-ÖØ-öø-ȳ" }}" maxlength="500" size="60" /> <img src="{% static 'lwt/img/icn/status-busy.png' %}" title="Field must not be empty" alt="Field must not be empty" /></td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "Make each character a word:" %}</td>
-<td class="td1"><select name="lgspliteachchar">
-	<option value="0" {% if lang.lgspliteachchar != 0 %}{% else %}selected="selected"{% endif %}>{% trans "No" %}</option>
-	<option value="1" {% if lang.lgspliteachcar == 1 %}selected="selected"{% endif %}>{% trans "Yes" %}</option>
-	</select>{% trans " (e.g. for Chinese, Japanese, etc.)" %}</td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "Remove spaces:" %}</td>
-<td class="td1"><select name="lgremovespaces">
-	<option value="0" {% if lang.lgremovespaces != 0 %}{% else %}selected="selected"{% endif %} >{% trans "No" %}</option>
-	<option value="1" {% if lang.lgremovespaces == 1 %}selected="selected"{% endif %}>{% trans "Yes" %}</option>
-	</select>{% trans " (e.g. for Chinese, Japanese, etc.)" %}</td>
-</tr>
-<tr>
-<td class="td1 right new_language">{% trans "Right-To-Left Script:" %}</td>
-<td class="td1"><select name="lgrighttoleft">
-	<option value="0" {% if lang.lgrighttoleft != 0 %}{% else %}selected="selected"{% endif %} >{% trans "No" %}</option>
-	<option value="1" {% if lang.lgrighttoleft == 1 %}selected="selected"{% endif %}>{% trans "Yes" %}</option>
-	</select>{% trans " (e.g. for Arabic, Hebrew, Farsi, Urdu, etc.)" %}</td>
-</tr>
-<tr>
-<td class="td1 right">{% trans "Export Template " %}<img class="click" src="{% static 'lwt/img/icn/question-frame.png' %}" title="Help" alt="Help" onclick="oewin('info_export_template.htm');" /> :</td>
-<td class="td1"><input type="text" name="lgexporttemplate" value="{{ lang.lgexporttemplate|default:"$y\t$t\n" }}" maxlength="1000" size="60" /></td>
-</tr>
-<tr>
-{% if lang == None %}
-<input type="hidden" name="message_key" value="new">
-<input type="hidden" name="message_val" value="1">
-<td class="td1 right" colspan="2"><input type="button" value="Cancel" onclick="{resetDirty(); location.href='{% url 'language_list' 'new' 1 %}';}" /> 
-<input type="submit" name="op" value="{% trans "Save" %}" /></td>
-{% else %}
-<input type="hidden" name="message_key" value="edit">
-<input type="hidden" name="message_val" value="{{ lang.lgid }}">
-<td class="td1 right" colspan="2"><input type="button" value="Cancel" onclick="{resetDirty(); location.href='{% url 'language_list' 'edit' lang.lgid %}';}" /> 
-<input type="submit" name="op" value="{% trans "Change" %}" /></td>
-{% endif %}
-</tr>
-</table>
-{% if lang == None %}
-	{% blocktrans %}<p class="smallgray"><b>Important:</b><br />The placeholders "••" for the from/sl and dest/tl language codes in the URIs must be <b>replaced</b> by the actual source and target language codes!<br />{% endblocktrans %}<a href="{% url 'help' %}#howtolang" target="_blank">{% blocktrans %}Please read the documentation</a>. Languages with a <b>non-Latin alphabet need special attention</b>,{% endblocktrans %} <a href="{% url 'help' %}#langsetup" target="_blank"> {% trans "see also here" %}</a>.</p>
-{% else %}
-	{% blocktrans %}<p class="smallgray"><b>Warning:</b> Changing certain language settings (e.g. RegExp Word Characters, etc.)<br />may cause partial or complete loss of improved annotated texts!</p>{% endblocktrans %}
-{% endif %}
+<!-- 
+<div id="extra_field">
+{% trans 'Extra Field for this Language (all words in this language will get these additional fields)'%}:<br>
+<ul>
+{% for extra in extra_field_list %}
+	<li>{% for k in extra.keys %}{{ k }}{% endfor %} <a 
+	href="{% url 'language_detail'%}?edit={{ lang_id }}&extra_field_del={% for k in extra.keys %}{{ k }}{% endfor %}#extra_field">
+					{% trans 'Delete it?'%}</a></li>
+{% empty %}
+	{% trans 'No extra field defined' %}
+{% endfor %}
+</ul>
+
+{% trans 'Adding an Extra field :' %}<br>
+<form id="extra_fieldform" method="GET" action="{% url 'language_detail' %}#extra_field">
+{% trans 'Name of the extra field :'%}<input type="text" name="extra_field_new">
+<input type="hidden" name="edit" value="{{ lang_id }}">
+<input type="submit" value="{% trans 'Submit' %}">
 </form>
-	
+
+</div>
+ -->
 {% endblock content %}
+
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}

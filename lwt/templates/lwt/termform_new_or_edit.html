@@ -1,0 +1,91 @@
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load crispy_forms_tags %}
+
+{% block extrajavascript %}
+<script type="text/javascript">
+// send the form to create a new word/edit to /termform/ view, via AJAX
+$(document).ready(function(){
+	// submit word with similar words automatically (words with same writing)
+	$('#submit_word').click(function(e) {
+		ajax_submit_word('{{ op }}', '{{ wo.id }}');
+		e.preventDefault();// prevent the form from being sent
+		return false; // prevent the form from being sent
+		});
+	// same as above but - only one word, not automatically similar words and 
+	//                   - only when editing (it means the similar has already been defined, but )  
+	// we don't like the editing for this single word)
+	$('#submit_singleword').click(function(e) {
+		ajax_submit_singleword('{{ op }}', '{{ wo.id }}');
+		e.preventDefault();// prevent the form from being sent
+		return false; // prevent the form from being sent
+		});
+    }); 
+
+</script>
+{% endblock extrajavascript %}
+
+<!--  used to send data to javascript : to fetch the name to search in dictwebpage -->
+<div class="hidden">
+<script type="text/javascript">
+var compoundword_id_list = {{ compoundword_id_list }};
+var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script> 
+<!--  Not used -->
+<div id="dictwebpage_searched_word">{{ dictwebpage_searched_word }}</div>
+</div>
+<!--  End of Not used -->
+
+<form id="newwordform" name="newword" role="form" class="container-fluid">
+{% csrf_token %}
+{{ form.media }}
+<div class="form-group">
+	{{ Op_Thing }} : "{% if compoundword_list|length > 1 %}
+					{% for wo in compoundword_list %}{% if not forloop.first %}+{% endif %}{{ wo }}{% endfor %}
+					{% else %}{{ wo.wordtext }}{% endif %}"
+</div>
+<div class="form-group" >
+<div class="col-md-6">
+    {{ form.translation|as_crispy_field }}
+    {{ form.wordtags|as_crispy_field }}
+    {{ form.romanization|as_crispy_field }}
+    {{ form.extra_field|as_crispy_field }}
+</div>
+<div class="col-md-6">
+
+			<strong>{% trans "Sentence (Term in {...})" %}: </strong>
+			<textarea id="id_sentence" {% if wo.language.righttoleft %}dir="rtl"{% endif %} name="customsentence" 
+			data_maxlength="1000" rows="3">{{ customsentence }}</textarea><br>
+			
+	<div class="headPlus collapsed" data-toggle="collapse" data-target="#result_sentence" onclick="ajax_showsentence(compoundword_id_list, '{% static 'lwt/img/icn/tick-button.png' %}');">
+		<span><img src="{% static 'lwt/img/magnifying-glass_16x16.png' %}" title="{% trans "Show Sentences" %}" alt="Show Sentences" /> <strong>{% trans "Show other Sentences" %}</strong></span>
+	</div>	
+		<div id="result_sentence" class="collapse"></div>
+
+	<div class="headPlus collapsed" data-toggle="collapse" data-target="#result_similarword" onclick="ajax_search_possiblesimilarword('{{ wo.id }}','');">
+		<span><img src="{% static 'lwt/img/magnifying-glass_16x16.png' %}" title="{% trans "Search Similar words" %}" alt="Search Similar words" /> <strong>{% trans "Search Similar Words" %}</strong></span>
+	</div>	
+	<div id="result_similarword" class="collapse" >
+		<div id="result_possiblesimilarword"></div> <!-- creating a list filled by ajax_searchpossiblesimilarword -->
+		<div id="result_alreadyaddedsimilarword"></div>
+		<select name="chosen_similarword" multiple hidden>
+		</select>
+	</div>
+
+	<div class="form-group">
+
+	  <img src="{% static 'lwt/img/dictionary_16x16.png' %}" title="{% trans "Lookup term" %}" alt="Lookup term" /> <span>Lookup Term:  <a href="" onClick="ajax_dictwebpage('{{ wo.language.dict1uri }}','{{ dictwebpage_searched_word }}','');return false;">Dict1</a>  <a href="" onClick="ajax_dictwebpage('{{ wo.language.dict2uri }}','{{ dictwebpage_searched_word }}','');return false;">Dict2</a>  <a href="" onClick="ajax_dictwebpage('{{ wo.language.googletranslateuri }}','{{ dictwebpage_searched_word }}','');return false;">GTr</a>  | Sent.: <a href="" onClick="ajax_dictwebpage('{{ wo.language.googletranslateuri }}','','{{ wo.id }}');return false;">GTr</a></span>
+	</div>
+	<strong>{% trans "Status" %}: </strong>
+	{% for nb, abbr_and_name in statuses.items %}
+		<span class="status{{ nb }}" title="{{ abbr_and_name.name }}">
+		&nbsp;<input type="radio" name="status" value="{{ nb }}"
+		{% if forloop.first %}checked="checked"{% endif %}
+		/>{{ abbr_and_name.abbr }}"&nbsp;</span>
+	{% endfor %}
+	<button id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>
+	{% if op == 'edit' %}
+	<input type="checkbox" name="redefine_only_this_word">Redefine Only this Word
+	{% endif %}
+</div>
+</div>
+</form>

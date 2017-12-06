@@ -1,0 +1,217 @@
+{% extends "lwt/__baseSkeleton.html" %}
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+
+{% block title %}{% if currentlang_id == -1 %}{% trans "My Words" %}{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %}{% endblock title %}
+
+{% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Words" %}{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
+
+{% endblock pagetitle %}
+
+{% block stylesheets %}{{ block.super }}
+	<!--  Plugin for Bootstrap-table -->
+    <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/bootstrap-table.min.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/bootstrap-table_filter-extension.css' %}" />
+{% endblock stylesheets %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
+
+{% block content %}
+{# FILTERING THE TEXTS #}
+<div class="row filtering_word">
+
+	<div class="col-md-4">
+{# filter on language #}
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
+<ul id="ul_language" class="collapse in">
+	<form id="filterlangform" method="POST" action="{% url 'text_list' %}">
+	{% csrf_token %}
+	{% for lang in languages %}
+	 	{% if lang.id in lang_filter %}
+		<input type="checkbox"  checked onclick="termlist_filter();" value="{{ lang.id }}" class="unstyled">
+		{% else %}
+		<input type="checkbox"  onclick="termlist_filter();" value="{{ lang.id }}" class="unstyled">
+		{% endif %}
+			 {{ lang.name }}
+		 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
+		  src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img 
+		  onclick="location.href='{% url 'term_list' %}?currentlang_id={{ lang.id }}';" 
+		  title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}
+		  <br>
+	{% endfor %}
+
+	</form>
+</ul>
+<br>
+
+	</div>
+
+{# filter on text #}
+	<div class="col-md-4">
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_text">{% trans 'Texts ' %} :</a>
+<ul id="ul_text" class="collapse in">
+	<form id="filtertextform" method="POST" action="{% url 'text_list' %}">
+	{% csrf_token %}
+	{% for text in texts %}
+		<span language="{{ text.language.id }}" {% if text.language.id not in lang_filter %}class="hidden"{% endif %}>	
+		<input type="checkbox" 
+		{% if text_filter|length == 0 or text.id in text_filter %}checked{% endif %} 
+		onclick="termlist_filter();" value="{{ text.id }}" class="unstyled">
+ {{ text.title }}
+		<br></span>
+	{% endfor %}
+	</form>
+</ul>
+	</div>
+
+{# filter on status #}
+	<div class="col-md-4">
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_status">{% trans 'Statuses' %} :</a>
+<ul id="ul_status" class="collapse in">
+	<form id="filterstatusform" method="POST" action="{% url 'text_list' %}">
+	{% csrf_token %}
+	{% for status in statuses %}
+		<input type="checkbox" 
+		{% if status_filter|length == 0 or status.0 in status_filter %}checked{% endif %} 
+		onclick="termlist_filter();" value="{{ status.0 }}" class="unstyled">
+		 {{ status.1 }}
+		  </input><br>
+	{% endfor %}
+	</form>
+</ul>
+	</div>
+
+</div>
+
+
+<div class="row">
+{# DISPLAYING THE WORDS #}
+		{#  ADDING THE TOOLBAR #}
+	<div id="wordtable_toolbar" >
+{# EXPORTING TO ANKI #}
+{% if request.path == '/export2anki/' %}
+<form class="form-inline" enctype="multipart/form-data" action="{% url 'export2anki_exporter'%}" method="post" onsubmit="return confirm('Are you sure?');">
+{% csrf_token %}
+<button class="btn btn-primary" type="submit" name="export2anki" 
+value="export2anki">{% trans 'Export selected words to Anki' %}</button>
+<button id="checkAll" class="btn btn-default">{% trans 'Check All' %}</button>
+<button id="uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
+<span class="alert alert-warning" id="selected_total">{% if total_to_export == 0 %}
+						{% trans 'Nothing to export...' %}{% else %}
+						{% blocktrans count counter=total_to_export %}
+						1 word to export
+						{% plural %}
+						{{ counter }} words to export
+						{% endblocktrans %}
+						{% endif %}
+</form>
+{% endif %}
+	</div>
+<table id="word_table" data-toggle="table" data-sort-name="modified_date" data-sort-order="asc"
+							data-search="true"
+							data-pagination="true" data-side-pagination="server" 
+							data-url="{% url 'load_wordtable' %}"
+							data-row-style="rowStyle"
+							data-toolbar="#wordtable_toolbar">
+		{# DISPLAYING THE HEADERS #}
+	<thead>
+	<tr>
+{% if request.path == '/export2anki/' %}
+	<th data-field="state" data-checkbox="true"></th>
+{% endif %}
+	{% blocktrans %}
+	<th data-field="id" data-sortable="true" data-sorter="numberSorter">id</th>
+	<th data-field="status" data-sortable="true" data-sorter="numberSorter">status</th>
+	{% if lang_filter|length != 1 %}
+	<th data-field="language_name" data-sortable="true">lang.</th>
+	{% endif %}
+	<th data-field="text_title" data-sortable="true">text</th>
+	<th data-field="sentence" data-sortable="true">sent.</th>
+	<th data-field="wordtext" data-sortable="true">word</th>
+	<th data-field="translation" data-sortable="true">trans.</th>
+	<th data-field="romanization" data-sortable="true">roman.</th>
+	<th data-field="customsentence" data-sortable="true">cust. sent.</th>
+	<th data-field="wordtags" data-sortable="true">tags</th>
+	<th data-field="compoundword" data-sortable="true">compoundword</th>
+	<th data-field="grouper_of_same_words" data-sortable="true">similar word(s)</th>
+	<th data-field="modified_date" data-sortable="true" data-sorter="dateSorter">modif. date</th>
+	{% endblocktrans %}
+	{% for extra in extra_field %}
+	<th data-field="{% for k in extra.keys %}{{ k }}{% endfor %}" 
+							data-sortable="true">{% for k in extra.keys %}{{ k }}{% endfor %}</th>
+	{% endfor %}
+	</tr>
+	</thead>
+</table>
+</div>
+{% endblock content %}
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}
+
+
+{% block footjavascript %}
+	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table_filter-extension.js' %}"></script>
+		<script type="text/javascript">
+ 	/* functions to order the numbers inside the bootstrap-table */
+	var word_table = $('#word_table');
+
+	function numberSorter(a, b) {
+		var a_search = parseInt(a.match(/">(\d+)/)[1]);
+		var b_search = b.match(/">(\d+)/)[1];
+	    if (!a_search) return -1 * getOrder();
+	    if (!b_search) return 1 * getOrder();
+	    if (a_search < b_search) return -1;
+	    if (a_search > b_search) return 1;
+	    return 0;
+	}
+	function dateSorter(a, b) {
+		var a_search = a.match(/\"hidden\">(\d+)/)? parseInt(a.match(/\"hidden\">(\d+)/)[1]): 0;
+		var b_search = b.match(/\"hidden\">(\d+)/)? parseInt(b.match(/\"hidden\">(\d+)/)[1]): 0
+	    if (a_search < b_search) return -1;
+	    if (a_search > b_search) return 1;
+	    return 0;
+	}
+	
+	function jumpToRow(page_id, row_id){
+		/* to jump to the given row inside the bootstrap table */
+		word_table.bootstrapTable('selectPage', page_id);
+		// scroll to the row in the page
+		/*
+		var index = row_id;
+		var top = 0;
+		$('#word_table').find('tbody tr').each(function (i) {
+			if (i < index) {
+				top += $(this).height();
+			}
+		});
+		$('#word_table').bootstrapTable('scrollTo', top);
+		*/
+	}
+
+    $(function () {
+    	/* check/unckeck all the items */
+        $('#checkAll').click(function (event) {
+			ajax_select_rows('all', 'check');
+			event.preventDefault(); // do not submit the form
+        });
+        $('#uncheckAll').click(function (event) {
+			ajax_select_rows('none', 'uncheck');
+			event.preventDefault(); // do not submit the form
+        });
+        word_table.on('check.bs.table', function(e, row){
+        	ajax_select_rows(row['id'], 'check');
+        });
+        word_table.on('uncheck.bs.table', function(e, row){
+        	ajax_select_rows(row['id'], 'uncheck');
+        });
+    });
+       
+
+	</script>
+	<script type="text/javascript" src="{% static 'lwt/js/ajax_term_list.js' %}"></script>
+{% endblock footjavascript %}

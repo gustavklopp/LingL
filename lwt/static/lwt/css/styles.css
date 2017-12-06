@@ -1,412 +1,307 @@
-/**************************************************************
-Stylesheet
-***************************************************************/
+/******************************************************************************
+     IN _MENU
+******************************************************************************/
+/* Not working
+#anki {
+  background: url("../img/anki.ico") no-repeat right center; 
+}
+*/
+/******************************************************************************
+     IN TEXT_READ
+******************************************************************************/
 
-body {
-	background-color: #FFFFFF;
-	color: #000000;
-	font: 100%/1.25 "Lucida Grande",Arial,sans-serif,STHeiti,"Arial Unicode MS",MingLiu;
-	margin: 20px;
-	padding: 0px;
+/* the containers: */
+#leftcol {
+	height: 100vh;
+	overflow: auto;	
 }
-input[type=text] {
-	font: 85% "Lucida Grande",Arial,sans-serif,STHeiti,"Arial Unicode MS",MingLiu;
-	border: 1px solid #C6C6C6;
-	padding: 3px;
+
+#rightcol {
+	height: 100vh;
+	overflow: auto;	
 }
-p {
-	margin: 5px 0 5px 0;
-	padding: 0;
+
+#topleft.row {
+	height: 30%;
+	overflow: auto;
 }
-h3 {
-	margin: 0px 0 0px 0;
-	padding: 0;
+
+#bottomleft.row {
+	height: 70%;
+	overflow: auto;
+	padding: 20px; /* else the text is stuck to the screen borders */
 }
-h4 {
-	margin: 5px 0 10px 0;
-	padding: 0;
+
+#bottomright.row {
+	height: 50%;
+	overflow: auto;
 }
-span.status0 {
+
+#topright.row {
+	height: 50%;
+	overflow: auto;
+}
+
+/* for the iframe */
+#bottomright.row iframe{
+	height: 100%;
+	width: 100%
+}
+
+
+
+/* the statuses */
+word_left_todo[wostatus="0"] {
+	/* for display the TODO with the word count */
 	background-color: #ADDFFF;
-	color: #000000;
 }
-span.status1 {
+
+span[wostatus] { /* status default: for learning */
 	background-color: #F5B8A9;
-	color: #000000;
+	cursor: pointer;
 }
-span.status2 {
-	background-color: #F5CCA9;
-	color: #000000;
+
+span[wostatus="0"] { /* status default: for unknown */
+	background-color: #ADDFFF;
 }
-span.status3 {
-	background-color: #F5E1A9;
-	color: #000000;
-}
-span.status4 {
-	background-color: #F5F3A9;
-	color: #000000;
-}
-span.status5 {
-	background-color: #DDFFDD;
-	color: #000000;
-}
-span.status99 {
-	background-color: #F8F8F8;
-	border-bottom: solid 2px #CCFFCC;  
-	color: #000000;
-}
-span.status98 {
-	background-color: #F8F8F8;
-	border-bottom: dashed 1px #000000; 
-	color: #000000;
-}
-span.mwsty {
-	margin-right: 2px;
-	font-size: 60%;
-	font-weight: bold;
-	color: #000000;
-	vertical-align: top; 
-}
-span.wsty {
-	margin-right: 2px;
-	color: #000000;
-}
-span.todosty {
-	background-color: #F5E1A9;
-}
-span.doneoksty {
-	background-color: #A9F5A9;
-}
-span.donewrongsty {
+
+span[wostatus="1"], 
+span[wostatus="2"],
+span[wostatus="3"],
+span[wostatus="4"],
+span[wostatus="5"],
+span[wostatus="6"],
+span[wostatus="7"],
+span[wostatus="8"],
+span[wostatus="9"],
+span[wostatus="10"],
+span[wostatus="11"],
+span[wostatus="12"],
+span[wostatus="13"],
+span[wostatus="14"],
+span[wostatus="15"],
+span[wostatus="16"],
+span[wostatus="17"],
+span[wostatus="18"],
+span[wostatus="19"],
+span[wostatus="20"],
+span[wostatus="21"],
+span[wostatus="22"],
+span[wostatus="23"],
+span[wostatus="24"],
+span[wostatus="25"],
+span[wostatus="26"],
+span[wostatus="27"],
+span[wostatus="28"],
+span[wostatus="29"],
+span[wostatus="30"] {
 	background-color: #F5B8A9;
 }
-span.status5stat {
-	background-color: #BBFFBB;
-	color: #000000;
+span[wostatus="31"],
+span[wostatus="32"],
+span[wostatus="33"],
+span[wostatus="34"],
+span[wostatus="35"],
+span[wostatus="36"],
+span[wostatus="37"],
+span[wostatus="38"],
+span[wostatus="39"],
+span[wostatus="40"],
+span[wostatus="41"],
+span[wostatus="42"],
+span[wostatus="43"],
+span[wostatus="44"],
+span[wostatus="45"],
+span[wostatus="46"],
+span[wostatus="47"],
+span[wostatus="48"],
+span[wostatus="49"],
+span[wostatus="50"],
+span[wostatus="51"],
+span[wostatus="52"],
+span[wostatus="53"],
+span[wostatus="54"],
+span[wostatus="55"],
+span[wostatus="56"],
+span[wostatus="57"],
+span[wostatus="58"],
+span[wostatus="59"],
+span[wostatus="60"],
+span[wostatus="61"],
+span[wostatus="62"],
+span[wostatus="63"],
+span[wostatus="64"],
+span[wostatus="65"],
+span[wostatus="66"] {
+	background-color: #F6CDC3;
 }
-textarea {
-	font: 85% "Lucida Grande",Arial,sans-serif,STHeiti,"Arial Unicode MS",MingLiu;
-	border: 1px solid #C6C6C6;
-	padding: 3px;
+span[wostatus="67"],
+span[wostatus="68"],
+span[wostatus="69"],
+span[wostatus="70"],
+span[wostatus="71"],
+span[wostatus="72"],
+span[wostatus="73"],
+span[wostatus="74"],
+span[wostatus="75"],
+span[wostatus="76"],
+span[wostatus="77"],
+span[wostatus="78"],
+span[wostatus="79"],
+span[wostatus="80"],
+span[wostatus="81"],
+span[wostatus="82"],
+span[wostatus="83"],
+span[wostatus="84"],
+span[wostatus="85"],
+span[wostatus="86"],
+span[wostatus="87"],
+span[wostatus="88"],
+span[wostatus="89"],
+span[wostatus="90"],
+span[wostatus="91"],
+span[wostatus="92"],
+span[wostatus="93"],
+span[wostatus="94"],
+span[wostatus="95"],
+span[wostatus="96"],
+span[wostatus="97"],
+span[wostatus="98"],
+span[wostatus="99"] {
+	background-color: #F7E2DD;
 }
-table.tab1 {
-	background-color: #f8f8f8;
-	margin-bottom: 10px;
-	margin-top: 10px;
-	border-top: 1px solid #808080;
-	border-left: 1px solid #808080;
-	width: 850px;
+
+span[wostatus="100"] { /* status for well-known */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #CCFFCC;
 }
-table.tab2 {
-	background-color: #f8f8f8;
-	margin-bottom: 10px;
-	margin-top: 10px;
-	border-top: 1px solid #808080;
-	border-left: 1px solid #808080;
-	width: 100%;
+
+span[wostatus="101"] { /* status for ignored */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #000000;
 }
-table.tab3 {
-	background-color: #f8f8f8;
-	margin-bottom: 10px;
-	margin-top: 10px;
-	border-top: 1px solid #808080;
-	border-left: 1px solid #808080;
-	width: auto;
+/* if it's a compoundword, it supersedes the word status itself */
+span[show_compoundword="True"]::before,
+span[show_compoundword="true"]::before { /* add a little dot before the compoundword */
+	content: '\2022';
 }
-td.td1 {
-	border-bottom: 1px solid #808080;
-	border-right: 1px solid #808080;
-	vertical-align: top;
+span[show_compoundword="True"], 
+span[show_compoundword="true"] 
+{ /* compoundword status default: for learning */
+	background-color: #F5B8A9;
 }
-td.td1bot {
-	border-bottom: 1px solid #808080;
-	border-right: 1px solid #808080;
-	vertical-align: bottom;
+
+span[show_compoundword="True"][cowostatus="100"],
+span[show_compoundword="true"][cowostatus="100"] 
+{ /* compoundword status for well-known */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #CCFFCC;
 }
-th.th1 {
-	border-bottom: 1px solid #808080;
-	border-right: 1px solid #808080;
-	background-color: #DDDDDD;
-	vertical-align: top;
+
+span[show_compoundword="True"][cowostatus="101"], 
+span[show_compoundword="true"][cowostatus="101"] 
+{ /* compoundword status for ignored */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #000000;
 }
-th.clickable {
-	cursor: pointer;
+
+
+/* Used inside the termform.html: make the possible similar word as 'green'when they have been chosen */
+.chosen_similarword {
+	border: solid #CCFF99;
+	border-width: medium;
 }
-.click {
-	cursor: pointer;
-	color: #C00000;
+
+/*  Boostrap 4 */
+/* Remove blue outline from button */
+
+.btn:focus, .btn:active {
+  box-shadow: none;
 }
-.clickedit {
-	cursor: pointer;
-}
-.hide {
+
+/*********** in termform.html ************/ 
+/* don't display if the status of the word is not unknown */
+.hidden { 
 	display: none;
 }
-a {
-	text-decoration: none;
+/* collapsing the 'show sentences' and 'show similar words'*/
+div.headPlus:before {
+	font-family: FontAwesome;
+	content: "\f147 \00a0"; /* Minus sign */
 }
-a:link {
-	color: #C00000;
+div.headPlus.collapsed:before {
+	font-family: FontAwesome;
+	content: "\f196 \00a0"; /* Plus sign */
 }
-a:visited {
-	color: #C00000;
-}
-a:active {
-	color: #C00000;
-}
-a:focus {
-	color: #C00000;
-}
-a:hover {
-	color: #C00000;
-} 
-img {
-	border: 0pt none;
-}
-.red {
-	color: #FF0000;
-	font-weight: bold;
-	background-color: #FFFFD0;
-	text-align: center;
-	font-size: 120%;
-}
-.msgblue {
-	color: #0000FF;
-	font-weight: bold;
-	background-color: #FFFFE0;
-	text-align: center;
-	font-size: 120%;
-}
-.red2 {
-	color: #FF0000;
-	font-weight: bold;
-}
-.red3 {
-	color: #FF0000;
-}
-.scorered {
-	font-weight: bold;
-	color: #FF0000;
-}
-.scoregreen {
-	color: #006400;
-}
-.left {
-	text-align: left;
-}
-.right {
-	text-align: right;
-}
-.center {
-	text-align: center;
-}
-.bigger {
-	font-size: 130%;
-}
-.smaller {
-	font-size: 80%;
-}
-.backgray {
-	background-color: #DDDDDD;
-}
-.backlightyellow {
-	background-color: #FFFACD;
-}
-.small { 
-	color: black;
-	font-size:60%;
-}
-.smallgray { 
-	color: gray;
-	font-size:60%;
-}
-.smallgray2 { 
-	color: gray;
-	font-size:80%;
-}
-.smallgray3 { 
-	color: gray;
-	font-size:70%;
-	width: 850px;
-	margin-bottom: 20px;
-}
-#learnstatus {
-	color: #000000;
-	font-size: 120%;
-	font-weight: bold;
-}
-#iknowall {
-	background-color: #ADDFFF;
-	cursor: pointer;
-	color: #C00000;
-	padding: 5px;
-	border: 1px solid #000000;
- 	text-align: center;
-}
-img.lwtlogo {
-	margin-right: 15px;
-	float: left;
-}
-img.lwtlogoright {
-	margin-left: 30px;
-	float: right;
-}
-.inline {
-	display: inline;
-}
-.grayborder {
-	border: 1pt solid #808080;
-}
-.graydotted {
-	margin-top: 30px; 
-	padding-top: 5px; 
-	border-top: 1px dotted #808080;
-}
-#printoptions {
-	margin-bottom: 15px;
-	padding-bottom: 15px;
-	border-bottom: 1px dotted #808080;
-	line-height: 1.8; 
-	margin-top: 20px;
-}
-.width50px {
-	width: 50px;
-}
-.width99pc {
-	width: 99%;
-}
-.width45pc {
-	width: 45%;
-}
-dd { 
-	margin-top: 10pt; 
-}
-dt { 
-	margin-top: 10pt; 
-}
-.annterm {
-	font-weight: bold;
-	border-bottom: 2px solid #CCCCCC;
-}
-.anntermruby {
-	font-weight: normal;
-	border-bottom: 2px solid #FFFFFF;
-}
-.annrom {
-	color: #999999;
-	font-size: 60%;
-	font-style: italic;
-}
-.annromruby {
-	color: #000000;
-	font-size: 100%;
-	font-style: italic;
-}
-.annromrubysolo {
-	color: #000000;
-	font-size: 100%;
-	font-style: normal;
-}
-.anntrans {
-	color: #0099CC;
-	font-size: 60%;
-	font-style: normal;
-}
-.anntransruby {
-	color: #0099CC;
-	font-size: 100%;
-	font-style: normal;
-}
-.anntransruby2 {
-	color: #006699;
-	font-size: 125%;
-	font-style: normal;
-}
-#footer {
-	bottom: 0;
-	position: absolute;
-	width: 100%;
-	height: 45px;
-	line-height:30px;
-	background: #DDDDDD;
-	font-size: 14px;
-	text-align: center;
-	border-top: 1px solid #000000;
-}
-.borderl {
-	border-left: 1px solid #000000;
-	border-top: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-}
-.borderr {
-	border-top: 1px solid #000000;
-	border-bottom: 1px solid #000000;
-	border-right: 1px solid #000000;
-}
-.uwordmarked { 
-	font-weight: bold;
-	border-top: 3px solid red;
-	border-bottom: 3px solid red;
-	border-right: 3px solid red;
-	border-left: 3px solid red;
-}
-.kwordmarked { 
-	font-weight: bold;
-	border-top: 3px solid black;
-	border-bottom: 3px solid black;
-	border-left: 3px solid black;
-	border-right: 3px solid black;
-}
-#termtags {
-	width: 340px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 2px;
-}
-#texttags {
-	width: 340px;
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 2px;
-}
-.editable_textarea {
-	display: inline;
-}
-.nowrap {
-	white-space: nowrap;
-	margin-left: 20pt;
-}
-.borderleft {
-	border-left: 1px solid black;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-	background-color: #EEEEEE;
-}
-.bordermiddle {
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-	background-color: #EEEEEE;
-}
-.borderright {
-	border-right: 1px solid black;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
-	background-color: #EEEEEE;
-}
-.wizard {
-	margin: 20px 0 5px 0;
-} 
 
-/**************************************************************
-Additional styles for printing
-***************************************************************/
 
-@media print
-{
-	.noprint {
-		display: none;
-	}
-	#print {
-		font-size: 75%;
-	}
+
+/************** the Tooltip ****************/
+/* because bootstrap is modifying the 'table' of overDiv, unset it :*/
+div#overDiv table  tbody tr td table:nth-child(1){
+	background-color: #333399;
+	border: 0.3px solid black;
 }
+
+div#overDiv table  tbody tr td table:nth-child(2){
+	background-color: #FFFFE8;
+	border: 0.3px solid black;
+}
+
+/* change the css when the word has been clicked */
+.clicked {
+	border-style: solid;
+	border-width: 2px;
+	border-color: red;
+}
+
+.ctrlclicked {
+	border-style: solid;
+	border-width: 2px;
+	border-color: green;
+}
+
+/******************************************************************************
+     IN TEXT_LIST
+******************************************************************************/
+a.unstyled, a.unstyled:link, a.unstyled:hover {
+	/*color: inherit;*/
+	text-decoration: inherit;
+}
+
+a.headCaret.collapsed:before {
+	font-family: FontAwesome;
+	content: "\f0da \00a0"; /* caret right */
+}
+a.headCaret:before {
+	font-family: FontAwesome;
+	content: "\f0d7 \00a0"; /* caret down */
+}
+
+.currentlang {
+	background: url("../img/bullet-green_16x16.png") 100%  no-repeat ;
+}
+.no_currentlang {
+	background: url("../img/bullet-grey_16x16.png") 100%   no-repeat;
+}
+
+.archived {
+	opacity: 0.4;
+}
+/******************************************************************************
+     IN TEXT_DETAIL
+******************************************************************************/
+
+.tooltip_templates { /*so that the content does not get displayed outside of the tooltip.*/
+	display: none; 
+	} 
+.tooltipster-sidetip.tooltipster-noir.tooltipster-noir-customized .tooltipster-box {
+	background: white;
+}
+
+.tooltipster-sidetip.tooltipster-noir.tooltipster-noir-customized .tooltipster-content {
+	color: grey;
+}
+/******************************************************************************
+     IN LANGUAGE_DETAIL
+*******************************************************************************

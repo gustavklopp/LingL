@@ -1,0 +1,42 @@
+{% extends "lwt/__baseSkeleton.html" %}
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load crispy_forms_tags %}
+{% load account socialaccount %}
+
+
+{% block title %}Sin In{% endblock title %}
+
+{% block stylesheets %}{{ block.super }}
+{% endblock stylesheets %}
+
+{% block javascript %}{{ block.super }} 
+ {% endblock javascript %}
+
+{% block pagetitle %}Sign Out | {{ block.super }}
+
+{% endblock pagetitle %}
+
+{% block banner %}
+{% include "lwt/_bannerleft.html" %}
+{% endblock banner %}
+
+
+{% block content %}
+<h1>{% trans "Sign Out" %}</h1>
+
+<p>{% trans 'Are you sure you want to sign out?' %}</p>
+
+<form method="post" action="{% url 'account_logout' %}">
+  {% csrf_token %}
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}"/>
+  {% endif %}
+  <button type="submit">{% trans 'Sign Out' %}</button>
+</form>
+
+{% endblock content %}
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}

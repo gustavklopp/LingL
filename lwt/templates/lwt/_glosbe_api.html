@@ -1,0 +1,99 @@
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+<!-- 
+/**************************************************************
+Call: glosbe_api.php?from=...&dest=...&phrase=...
+      ... from=L2 language code (see Glosbe)
+      ... dest=L1 language code (see Glosbe)
+      ... phrase=... word or expression to be translated by 
+                     Glosbe API (see http://glosbe.com/a-api)
+
+Call Glosbe Translation API, analyze and present JSON results
+for easily filling the "new word form"
+***************************************************************/ -->
+<h3><a href="https://glosbe.com/gapi/translate?from={{ result.from }}&dest={{ result.dest }}&format=json&phrase={{ result.phrase }}">Glosbe Dictionary ({{ result.from }}-{{ result.dest }}):  &nbsp; <span class="red2">{{ result.phrase }}</span></a></h3>
+<p>(Click on <img src="{% static 'lwt/img/icn/tick-button.png' %}" title="{% trans "Choose" %}" alt="Choose" /> {% trans "to copy word(s) into above term)" %}<br />&nbsp;</p>
+
+<script type="text/javascript">
+function addTranslation(s) {
+	var c = $('#id_translation');
+	if (typeof c != 'object') {
+		alert ('Translation can not be copied!');
+		return;
+	}
+	var oldValue = c.val();
+	if (oldValue.trim() == '') {
+		$('#id_translation').val(s); // nothing here, put the new value
+	}
+	else {
+		if (oldValue.indexOf(s) == -1) {
+			c.value = oldValue + ' / ' + s;
+			$('#id_translation').val(c.value); // already something inside (and different). append it
+		}
+		else {
+			if (confirm('"' + s + '" {% trans "seems already to exist as a translation.\nInsert anyway?" %}')) { 
+				c.value = oldValue + ' / ' + s;
+				$('#id_translation').val(c.value); // already something inside, the SAME!!. but append it anyway...)
+			}
+		}
+	}
+}
+</script>
+
+{% if result.result == 'ok' %}
+
+	{% if result.tuc|length > 0 %}
+	
+		{% for trans_item in result.tuc %}
+
+		{% if 	trans_item.phrase.text  or trans_item.meanings.0.text  %} {# no display if no result #}
+		<p><span class="click" onclick="addTranslation(
+			{% if trans_item.phrase.text  %}
+					'{{ trans_item.phrase.text|escapejs }}'
+			{% elif trans_item.meanings.0.text  %}
+					'({{ trans_item.meanings.0.text|escapejs }})'
+			{% endif %}
+		);"><img src="{% static 'lwt/img/icn/tick-button.png' %}" title="Copy" alt="Copy" /> &nbsp;
+			{% if trans_item.phrase.text  %}
+					{{ trans_item.phrase.text }}
+			{% elif trans_item.meanings.0.text  %}
+					({{ trans_item.meanings.0.text }})
+			{% endif %}
+		</span><br /></p>
+		{% endif %}
+		
+		{% if forloop.last %}
+		<p>&nbsp;<br/>{{ result.tuc|length }} {% trans "translation" %}{{ result.tuc|length|pluralize }} {% trans "retrieved via" %} <a href="http://glosbe.com/a-api" target="_blank">Glosbe API</a>.</p>
+		{% endif %}
+		{% endfor %}
+		
+	{% else %}
+		
+		<p>No translations found ({{ result.from }}-{{ result.dest }}).</p>
+	{% endif %}
+	
+{% else %}
+
+	<p>{% trans "Retrieval error " %}({{ result.from }}-{{ result.dest }}). {% trans "Possible reason: There is a limit of Glosbe API calls that may be done from one IP address in a fixed period of time, to prevent from abuse." %}</p>
+
+{% endif %}
+<script>
+$(document).ready(function(){
+	$('#submit_inside_glosbe_api').click(function(e) {
+		// manually submit the form below and send it via AJAX (the function is in tooltip_ajax)
+		var phrase = $('input[name=phrase_inside_glosbe_api]').val();
+		ajax_dictwebpage('https://glosbe.com/gapi/translate?from={{ result.from }}&dest={{ result.dest }}&format=json', phrase);
+
+		e.preventDefault();// prevent the form from being sent
+		return false; // prevent the form from being sent
+		});
+});
+</script>
+
+&nbsp;<hr />&nbsp;<form>{% trans "Unhappy?" %}<br>{% trans "Change term:" %} 
+{% csrf_token %}
+<input type="text" name="phrase_inside_glosbe_api" maxlength="250" size="15" value="{{ result.phrase }}">
+<input type="hidden" name="from" value="{{ result.from }}">
+<input type="hidden" name="dest" value="{{ result.dest }}">
+<input type="submit" id="submit_inside_glosbe_api" value="{% trans "Translate via Glosbe" %}">
+</form>

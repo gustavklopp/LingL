@@ -1,0 +1,19 @@
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load appversion %}{# custom tag which allows to display Django and my app version #}
+{% load djangoversion %}
+{% load pythonversion %}
+<select id="quickmenu" onchange="{var qm = document.getElementById('quickmenu'); 
+								var val=qm.options[qm.selectedIndex].value; 
+								qm.selectedIndex=0; 
+								if (val != '')
+								     { top.location.href = val ;}}">
+<option value="" selected="selected">{% trans '[Menu]' %}</option>
+<option value="{% url "homepage" %}">{% trans 'Home' %}</option>
+<option value="{% url "language_list" %}">{% trans 'Languages' %}</option>
+<option value="{% url "text_list" %}">{% trans 'Texts' %}</option>
+<option value="{% url "term_list" %}">{% trans 'Terms' %}</option>
+<option value="{% url "statistics" %}">{% trans 'Statistics' %}</option>
+<option id="anki" value="{% url "export2anki" %}">{% trans 'Export to Anki' %}</option>
+<option value="{% url "backuprestore" %}">{% trans 'Backup/Restore' %}</option>
+</select>

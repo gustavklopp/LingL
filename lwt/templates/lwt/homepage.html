@@ -1,75 +1,77 @@
-{% extends "lwt/__base.html" %}
+{% extends "lwt/__baseSkeleton.html" %}
 {% load staticfiles %}
 {% load i18n %} {# used for internationalization #}
-{% load debug_tags %}
 
 {% block title %}{{ block.super }} | Home{% endblock title %}
 {% block pagetitle %}Homepage{% endblock pagetitle %}
 
-{% block content %}
-{% if currentlang_name == None %} {# No language has yet been defined #}
-	<table class="tab3" cellspacing="0" cellpadding="5"><tr><th class="th1">{% trans "Hint: The database seems to be empty." %}<br />
-	<a href="{% url 'install_demo' %}">{% trans "You may install the LWT demo database," %} </a><br />
-	{% trans "or" %}<br />
-	<a href="{% url 'language_detail' 'new' 1 %}">{% trans "define the first language you want to learn." %}</a></th></tr></table>
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
 
+{% block content %}
+{% if currentlang_name == "" %} {# No language has yet been defined #}
+<div class="alert alert-danger" role="alert">
+	{% trans "Hint: The database seems to be empty." %}<br>
+	{% trans "You may install the LingL demo database," %}<br>
+	<form action="{% url 'backuprestore'%}" method="post">
+	{% csrf_token %}
+	<button class="btn btn-danger" type="submit" name="install_demo" value="install_demo">Install Demo Database</button>
+	</form>
+	{% trans "or" %}<br>
+	<a href="{% url 'language_detail' %}?new=0">{% trans "define the first language you want to learn." %}</a>
+</div>
 {% else %}
 
 	<ul>{# the drop-down menu for the language selection #}{# setLang is in pgm.js: TODO #}
 	
-	<li>{% trans "Language" %}: <select id="filterlang" onchange="{setLang(document.getElementById('filterlang'),'index.php');}">
-				<optgroup label="[{% trans "Select" %}...]">
-				{% for lang in language_selectoption %}
-				
-					<option value="{{ lang.lgid }}" {% if lang.lgname == currentlang_name %}selected="selected"{% endif %}>{{ lang.lgname }}</option>
-				{% endfor %}
-				</optgroup>
-				</select></li>
+	<li>{% trans "Language" %}: 
+ <select id="filterlang" onchange="if (this.value) {url =  '{% url 'homepage' %}?setcurrentlang=' + value; window.location.href=url;}">
+<optgroup label="[{% trans "Select" %}...]">
+		<option value="-1" {% if currentlang_id == -1 %}selected="selected"{% endif %}>[{% trans "Filter Off" %}]</option>
+	{% for lang in language_selectoption %}
+		<option value="{{ lang.id }}" {% if lang.id == currentlang_id %}selected="selected"{% endif %}>{{ lang.name }}</option>
+	{% endfor %}
+</optgroup>
+</select>
+	</li>
 	</ul>
 		
-	{% if currenttext != None %} {# the last opened text #}
+		{# Display a shortcut to access the last open texts #}
+	{% if lastopentexts %} {# the last opened texts #}
+				{% trans "My last Texts" %}:
 				<ul>
-				<li>{% trans "My last Text (in" %}{{ currentlang_name }}):<br /> <i>{{currenttext}}</i>
-				<br />
-				<a href="{% url 'text_detail' currenttext.txid %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" title="Read" alt="Read" />&nbsp;{% trans "Read" %}</a>
-				&nbsp; &nbsp; 
-				<a href="{% url 'text_test' currenttext.txid %}"><img src="{% static "lwt/img/icn/question-balloon.png" %}" title="Test" alt="Test" />&nbsp;{% trans "Test" %}</a>
-				&nbsp; &nbsp; 
-				<a href="{% url 'print_text' currenttext.txid %}"><img src="{% static "lwt/img/icn/printer.png" %}" title="Print" alt="Print" />&nbsp;{% trans "Print" %}</a>
+				{% for lastopentext in lastopentexts %}
+				<li> <i>{{ lastopentext }}</i>
+				<br>
+				<a href="{% url 'text_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" title="Read" alt="Read" />&nbsp;{% trans "Read" %}</a>
 
-				{% if currenttext.txannotedtext > 0 %}{# No idea what it is... #}
-				&nbsp; &nbsp; 
-				<a href="{% url 'print_impr_text' currenttext.txid %}"><img src="{% static "lwt/img/icn/tick.png" %}" title="Improved Annotated Text" alt="Improved Annotated Text" />&nbsp;Ann. Text</a>
-				{% endif %}
 				</li>
+				{% endfor %}
 				</ul>
 	{% endif %}
 {% endif %}
 
 <ul>
-<li><a href="{% url 'text_list' %}">{% trans "My Texts" %}</a> (-> <a href="{% url 'text_detail' 'new' 1 %}">{% trans "New Text" %}</a>)</li> 
-<li><a href="{% url 'archivedtext_list' %}">{% trans "My Text Archive" %}</a></li>
-<li><a href="{% url 'texttag_list' %}">{% trans "My Text Tags" %}</a>
-	<br /><br /></li>
-	{% if currentlang_name == None %}
-<li><a href="{% url 'language_detail' 'new' 1 %}">{% trans "My Languages" %}</a>
+<li><a href="{% url 'text_list' %}?page=1">{% trans "My Texts" %}</a> (-> <a href="{% url 'text_detail' %}?new=0">{% trans "New Text" %}</a>)</li> 
+	<br><br></li>
+	{% if currentlang_name == "" %}
+<li><a href="{% url 'language_detail' %}?new=0">{% trans "Create New Language" %}</a>
 	{% else %}
-<li><a href="{% url 'language_list' %}">{% trans "My Languages" %}</a> (-> <a href="{% url 'language_detail' 'new' 1 %}">{% trans "New Language" %}</a>)
+<li><a href="{% url 'language_list' %}">{% trans "My Languages" %}</a> (-> <a href="{% url 'language_detail' %}?new=0">{% trans "New Language" %}</a>)
 	{% endif %}
-	<br /><br /></li>
+	<br><br></li>
 <li><a href="{% url 'term_list' %}">{% trans "My Terms (Words and Expressions)" %}</a></li>
-<li><a href="{% url 'termtag_list' %}">{% trans "My Term Tags" %}</a>
-	<br /><br /></li>
+	<br><br></li>
 <li><a href="{% url 'statistics' %}">{% trans "My Statistics" %}</a>
-	<br /><br /></li>
-<li><a href="{% url 'textcheck' %}">{% trans "Check a Text" %}</a></li>
-<li><a href="{% url 'longtextimport' %}">{% trans "Long Text Import" %}</a></li>
-<li><a href="{% url 'term_detail' %}">{% trans "Import Terms" %}</a></li>
+	<br><br></li>
+<li><a href="{% url 'export2anki' %}">{% trans "Exporting to Anki" %} <img src="{% static 'lwt/img/anki_16x16.ico'%}" /></a> 
+	<br><br></li>
 <li><a href="{% url 'backuprestore' %}">{% trans "Backup/Restore/Empty Database" %}</a>
-	<br /><br /></li>
-<li><a href="{% url 'settings' %}">{% trans "Settings/Preferences" %}</a>
-	<br /><br /></li>
-<li><a href="{% url 'help' %}">{% trans "Help/Information" %}</a></li>
+	<br><br></li>
 </ul>
 {% endblock content %}
 
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}

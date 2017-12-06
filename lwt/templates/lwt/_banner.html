@@ -1,0 +1,20 @@
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load appversion %}{# custom tag which allows to display Django and my app version #}
+{% load djangoversion %}
+{% load pythonversion %}     	
+<img class="lwtlogo" src="{% static 'lwt/img/site-icon_64x64.png' %}"  title="LingL" alt="LingL" />
+
+<span>
+{% include 'lwt/_menu.html' %}
+</span>
+
+<span>
+{% if request.user.is_authenticated %}Welcome, '{{ request.user.username }}'
+<a name="logout" href="/accounts/logout/">Logout</a>
+{% else %}<a href="/accounts/login">Login</a>{% endif %}
+</span>
+
+<script type="text/javascript">
+if (! areCookiesEnabled()) document.write('<p class="red">*** Cookies are not enabled! Please enable! ***</p>');
+	</script>

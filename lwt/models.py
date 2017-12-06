@@ -1,3 +1,4 @@
+
 # This is an auto-generated Django model module.
 # You'll have to do the following manually to clean this up:
 #   * Rearrange models' order
@@ -5,161 +6,460 @@
 #   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
 #   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
 # Feel free to rename the models, but don't rename db_table values or field names.
+"""
+The original models in lwt:
+-archivedtexts
+-archtexttags
+-languages
+-sentences
+-settings
+
+-words
+-tags
+-wordtags : relation table betwwen words and wordtags
+            WtWoID: words'ID,   WtTgID: tags ID
+
+-texts:     TxID: texts's ID
+-tags2 (T2): texts's tags  T2ID: pk /T2Text: name/T2Comment 
+-texttags (Tt): Relation table between texts and tags2    
+            TtTxID: texts ID,  TtT2ID: tags2 ID
+
+-textitems
+-_lwtgeneral
+"""
 from __future__ import unicode_literals
-
+# django import
 from django.db import models
+from django.utils import timezone, timesince
+from django.utils.translation import ugettext as _
+from django.contrib.auth.models import AbstractUser
+# second party
+# third party
+from allauth.account.adapter import DefaultAccountAdapter
+# local
+from lwt.constants import STATUS_CHOICES
+
+# class FilterByUser_Manager(models.Manager):
+# 
+#     def get_queryset(self, owner=None):
+#         if owner == None:
+#             return super(FilterByUser_Manager, self).get_queryset()
+#         else:
+#             return super(FilterByUser_Manager, self).get_queryset().filter(owner=owner)
+
+class MyUser(AbstractUser):
+    ''' overrding default User to add complementary data '''
+    # origin lang:
+    origin_lang_code = models.CharField(max_length=40)
 
 
-class Lwtgeneral(models.Model):
-    lwtkey = models.CharField(db_column='LWTKey', primary_key=True, max_length=40)  # Field name made lowercase.
-    lwtvalue = models.CharField(db_column='LWTValue', max_length=40, blank=True, null=True)  # Field name made lowercase.
+class UserAccountAdapter(DefaultAccountAdapter):
+
+    def save_user(self, request, user, form, commit=False):
+        """ This is called when saving user via allauth registration.
+        We override this to set additional data on user object. """
+        # Do not persist the user yet so we pass commit=False  (last argument)
+        user = super(UserAccountAdapter, self).save_user(request, user, form, commit=commit)
+        user.origin_lang_code = form.cleaned_data.get('origin_lang_code')
+        user.save()
+        return user
+
+        
+class BaseModel(models.Model):
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
+    owner = models.ForeignKey(MyUser, null=True) # each user has his own set of the database
+
+#    # You need to redefine save: without it, the password is saved in plain text!
+#     def save(self, commit=True):
+#         user = super(MyForm, self).save(commit=False)
+#         user.set_password(self.cleaned_data["password"])
+#         if commit:
+#             user.save()
+#         return user
 
     class Meta:
-        db_table = '_lwtgeneral'
+        abstract = True
 
 
-class Archivedtexts(models.Model):
-    atid = models.AutoField(db_column='AtID', primary_key=True)  # Field name made lowercase.
-    atlgid = models.IntegerField(db_column='AtLgID')  # Field name made lowercase.
-    attitle = models.CharField(db_column='AtTitle', max_length=200)  # Field name made lowercase.
-    attext = models.TextField(db_column='AtText')  # Field name made lowercase.
-    atannotatedtext = models.TextField(db_column='AtAnnotatedText')  # Field name made lowercase.
-    ataudiouri = models.CharField(db_column='AtAudioURI', max_length=200, blank=True, null=True)  # Field name made lowercase.
-    atsourceuri = models.CharField(db_column='AtSourceURI', max_length=1000, blank=True, null=True)  # Field name made lowercase.
+class Extra_field_key(BaseModel):
+    title = models.CharField( unique=True, max_length=20)  
+
+    def __str__(self):
+        return self.title
 
     class Meta:
-        db_table = 'archivedtexts'
+        db_table = 'extra_field_key'
+        
+        
+class Languages(BaseModel):
+    name = models.CharField(unique=True, max_length=40)  
+    dict1uri = models.CharField(max_length=200, default="https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format=json")  
+    # for ex: English => French   default="https://glosbe.com/gapi/translate?from=eng&dest=fra&format=json")  
+    dict2uri = models.CharField(max_length=200, blank=True, null=True, default="https://en.wiktionary.org/wiki/###")  
+    googletranslateuri = models.CharField(max_length=200, blank=True, null=True, default="*http://translate.google.com/?ie=UTF-8&sl=en&tl=fr&text=###")  
+    exporttemplate = models.CharField(max_length=1000, blank=True, null=True, 
+            default='$status<br>$language<br>$text<br><h1>$word</h1>\t<h1>$translation</h1>'+\
+                    '<br>$romanization<br>$sentence<br>$customsentence<br>$compoundword<br>'+\
+                    '$similarword\<br>$extrafieldn')
+    textsize = models.IntegerField( default=150)  
+    charactersubstitutions = models.CharField(max_length=500, default="´='|`='|’='|‘='|...=…|..=‥")  
+    regexpsplitsentences = models.CharField(max_length=500, default=".!?:;")  
+    exceptionssplitsentences = models.CharField(max_length=500, default="Mr.|Dr.|[A-Z].|Vd.|Vds.")  
+    regexpwordcharacters = models.CharField(max_length=500, default="a-zA-ZÀ-ÖØ-öø-ȳ")  
+    removespaces = models.BooleanField(default=False)  
+    spliteachchar = models.BooleanField(default=False)  
+    righttoleft = models.BooleanField(default=False)  
+    code_639_1 = models.CharField(unique=True, max_length=2, blank=True, null=True) # code for the language, 2 letters
+    code_639_2t =  models.CharField(unique=True, max_length=3, blank=True, null=True) # code for the language, 3 letters
+    code_639_2b =  models.CharField(unique=True, max_length=3, blank=True, null=True) # code for the language, 3 letters in English
+    django_code =  models.CharField(unique=True, max_length=8, blank=True, null=True) # code for the language, 3 letters in English
+    # JSON List of string. the language model stores only the keys for the extra_field JSON of Words
+    extra_field_key = models.ManyToManyField(Extra_field_key, related_name='languagehavingthisextrafieldkey') 
 
-
-class Archtexttags(models.Model):
-    agatid = models.IntegerField(db_column='AgAtID', primary_key=True)  # Field name made lowercase.
-    agt2id = models.IntegerField(db_column='AgT2ID')  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'archtexttags'
-        unique_together = (('agatid', 'agt2id'),)
-
-
-class Languages(models.Model):
-    lgid = models.AutoField(db_column='LgID', primary_key=True)  # Field name made lowercase.
-    lgname = models.CharField(db_column='LgName', unique=True, max_length=40)  # Field name made lowercase.
-    lgdict1uri = models.CharField(db_column='LgDict1URI', max_length=200)  # Field name made lowercase.
-    lgdict2uri = models.CharField(db_column='LgDict2URI', max_length=200, blank=True, null=True)  # Field name made lowercase.
-    lggoogletranslateuri = models.CharField(db_column='LgGoogleTranslateURI', max_length=200, blank=True, null=True)  # Field name made lowercase.
-    lgexporttemplate = models.CharField(db_column='LgExportTemplate', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    lgtextsize = models.IntegerField(db_column='LgTextSize')  # Field name made lowercase.
-    lgcharactersubstitutions = models.CharField(db_column='LgCharacterSubstitutions', max_length=500)  # Field name made lowercase.
-    lgregexpsplitsentences = models.CharField(db_column='LgRegexpSplitSentences', max_length=500)  # Field name made lowercase.
-    lgexceptionssplitsentences = models.CharField(db_column='LgExceptionsSplitSentences', max_length=500)  # Field name made lowercase.
-    lgregexpwordcharacters = models.CharField(db_column='LgRegexpWordCharacters', max_length=500)  # Field name made lowercase.
-    lgremovespaces = models.IntegerField(db_column='LgRemoveSpaces')  # Field name made lowercase.
-    lgspliteachchar = models.IntegerField(db_column='LgSplitEachChar')  # Field name made lowercase.
-    lgrighttoleft = models.IntegerField(db_column='LgRightToLeft')  # Field name made lowercase.
+    def __str__(self):
+        return self.name
 
     class Meta:
         db_table = 'languages'
+    
 
+class Texttags(BaseModel):
+    txtagtext = models.CharField( unique=True, max_length=20)  
+    txtagcomment = models.CharField( max_length=200, default='')  
 
-class Sentences(models.Model):
-    seid = models.AutoField(db_column='SeID', primary_key=True)  # Field name made lowercase.
-    selgid = models.IntegerField(db_column='SeLgID')  # Field name made lowercase.
-    setxid = models.IntegerField(db_column='SeTxID')  # Field name made lowercase.
-    seorder = models.IntegerField(db_column='SeOrder')  # Field name made lowercase.
-    setext = models.TextField(db_column='SeText', blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'sentences'
-
-
-class Settings(models.Model):
-    """ different custom settings are stored like that: setting Key : setting value
-        Warning with stvalue! It's a CharField. Don't forget to do int(stvalue) if you put int inside (like 'currentlanguage' """
-    stkey = models.CharField(db_column='StKey', primary_key=True, max_length=40)  # Field name made lowercase.
-    stvalue = models.CharField(db_column='StValue', max_length=40, blank=True, null=True)  # Field name made lowercase.
+    def __str__(self):
+        return self.txtagtext
 
     class Meta:
-        db_table = 'settings'
-
-
-class Tags(models.Model):
-    tgid = models.AutoField(db_column='TgID', primary_key=True)  # Field name made lowercase.
-    tgtext = models.CharField(db_column='TgText', unique=True, max_length=20)  # Field name made lowercase.
-    tgcomment = models.CharField(db_column='TgComment', max_length=200)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'tags'
-
-
-class Tags2(models.Model):
-    t2id = models.AutoField(db_column='T2ID', primary_key=True)  # Field name made lowercase.
-    t2text = models.CharField(db_column='T2Text', unique=True, max_length=20)  # Field name made lowercase.
-    t2comment = models.CharField(db_column='T2Comment', max_length=200)  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'tags2'
-
-
-class Textitems(models.Model):
-    tiid = models.AutoField(db_column='TiID', primary_key=True)  # Field name made lowercase.
-    tilgid = models.IntegerField(db_column='TiLgID')  # Field name made lowercase.
-    titxid = models.IntegerField(db_column='TiTxID')  # Field name made lowercase.
-    tiseid = models.IntegerField(db_column='TiSeID')  # Field name made lowercase.
-    tiorder = models.IntegerField(db_column='TiOrder')  # Field name made lowercase.
-    tiwordcount = models.IntegerField(db_column='TiWordCount')  # Field name made lowercase.
-    titext = models.CharField(db_column='TiText', max_length=250)  # Field name made lowercase.
-    titextlc = models.CharField(db_column='TiTextLC', max_length=250)  # Field name made lowercase.
-    tiisnotword = models.IntegerField(db_column='TiIsNotWord')  # Field name made lowercase.
-
-    class Meta:
-        db_table = 'textitems'
-
-
-class Texts(models.Model):
-    txid = models.AutoField(db_column='TxID', primary_key=True)  # Field name made lowercase.
-    txlgid = models.IntegerField(db_column='TxLgID')  # Field name made lowercase.
-    txtitle = models.CharField(db_column='TxTitle', max_length=200)  # Field name made lowercase.
-    txtext = models.TextField(db_column='TxText')  # Field name made lowercase.
-    txannotatedtext = models.TextField(db_column='TxAnnotatedText')  # Field name made lowercase.
-    txaudiouri = models.CharField(db_column='TxAudioURI', max_length=200, blank=True, null=True)  # Field name made lowercase.
-    txsourceuri = models.CharField(db_column='TxSourceURI', max_length=1000, blank=True, null=True)  # Field name made lowercase.
+        db_table = 'texttags'
+        
+        
+class Texts(BaseModel):
+    ''' to be deleted, you need to delete the textitem and the sentence containing foreignkey to the text before'''
+    language = models.ForeignKey(Languages, related_name='texthavingthislanguage')
+    title = models.CharField( max_length=200)  
+    text = models.TextField()  
+    annotatedtext = models.TextField()  
+    audiouri = models.CharField( max_length=200, blank=True, null=True)  
+    sourceuri = models.CharField( max_length=1000, blank=True, null=True)  
+    #  Link to the Tags
+    texttags = models.ManyToManyField(Texttags,related_name='texthavingthistag') 
+    lastopentime = models.DateTimeField(blank=True, null=True)
+    archived = models.BooleanField(default=False)
+    
+    def __str__(self):
+        return self.title
 
     class Meta:
         db_table = 'texts'
 
 
-class Texttags(models.Model):
-    tttxid = models.IntegerField(db_column='TtTxID', primary_key=True)  # Field name made lowercase.
-    ttt2id = models.IntegerField(db_column='TtT2ID')  # Field name made lowercase.
+class Sentences(BaseModel): # the Text is cut into sentences
+    language = models.ForeignKey(Languages)
+    text = models.ForeignKey(Texts, on_delete=models.CASCADE)
+    order = models.IntegerField()  # the ordinal number of the sentence in each text
+    sentencetext = models.TextField(blank=True, null=True)
+
+    def __str__(self):
+        return self.sentencetext
 
     class Meta:
-        db_table = 'texttags'
-        unique_together = (('tttxid', 'ttt2id'),)
+        db_table = 'sentences'
 
 
-class Words(models.Model):
-    woid = models.AutoField(db_column='WoID', primary_key=True)  # Field name made lowercase.
-    wolgid = models.IntegerField(db_column='WoLgID')  # Field name made lowercase.
-    wotext = models.CharField(db_column='WoText', max_length=250)  # Field name made lowercase.
-    wotextlc = models.CharField(db_column='WoTextLC', max_length=250)  # Field name made lowercase.
-    wostatus = models.IntegerField(db_column='WoStatus')  # Field name made lowercase.
-    wotranslation = models.CharField(db_column='WoTranslation', max_length=500)  # Field name made lowercase.
-    woromanization = models.CharField(db_column='WoRomanization', max_length=100, blank=True, null=True)  # Field name made lowercase.
-    wosentence = models.CharField(db_column='WoSentence', max_length=1000, blank=True, null=True)  # Field name made lowercase.
-    wocreated = models.DateTimeField(db_column='WoCreated')  # Field name made lowercase.
-    wostatuschanged = models.DateTimeField(db_column='WoStatusChanged')  # Field name made lowercase.
-    wotodayscore = models.FloatField(db_column='WoTodayScore')  # Field name made lowercase.
-    wotomorrowscore = models.FloatField(db_column='WoTomorrowScore')  # Field name made lowercase.
-    worandom = models.FloatField(db_column='WoRandom')  # Field name made lowercase.
+class Wordtags(BaseModel):
+    wotagtext = models.CharField( unique=True, max_length=20)  
+    wotagcomment = models.CharField( max_length=200)  
 
-    class Meta:
-        db_table = 'words'
-        unique_together = (('wolgid', 'wotextlc'),)
-
-
-class Wordtags(models.Model):
-    wtwoid = models.IntegerField(db_column='WtWoID', primary_key=True)  # Field name made lowercase.
-    wttgid = models.IntegerField(db_column='WtTgID')  # Field name made lowercase.
+    def __str__(self):
+        return self.wotagtext
 
     class Meta:
         db_table = 'wordtags'
-        unique_together = (('wtwoid', 'wttgid'),)
+
+
+class Grouper_of_same_words(BaseModel):
+    ''' - words written similarly in differents sentences, text... AND
+        - words written differently, but sharing the same meaning in fact: 
+    in English: 'write', 'written', 'wrote' etc... 
+    
+    Each word has automatically a FK Grouper_of_same_words, whose id is the same as the id of the 
+    word in question. When a word A is written the same as a word B:
+              - update the FK in word B to point to the Grouper_of_same_words of word A.
+    To Unlink word A and word B:
+             - delete the link between the FK and word B
+             - update the FK in word B to point to the Grouper_of_same_words whose id is the id of word B '''
+    id = models.IntegerField(primary_key=True) # not automatic PK because we'll set it to the same as the id for Words
+
+    class Meta:
+        db_table = 'Grouper_of_same_words'
+
+        
+class Words(BaseModel):
+    grouper_of_same_words = models.ForeignKey(Grouper_of_same_words, null=True, related_name='grouper_of_same_words_for_this_word')
+    
+#     STATUS_CHOICES = ( (0, _('Unknown')),
+#                        (1, _('Learning')),
+#                        (100, _('Well-known')),
+#                        (101, _('Ignored')))
+    status = models.IntegerField(choices=STATUS_CHOICES, default=0)  
+    language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage')
+    text = models.ForeignKey(Texts, on_delete=models.CASCADE,blank=True, null=True)
+    sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, null=True)
+    order = models.IntegerField(blank=True, null=True)  
+    wordtext = models.CharField( max_length=250,blank=True, null=True)  
+    isnotword = models.BooleanField(default=False)  
+    translation = models.CharField( max_length=500, blank=True, null=True)  
+    romanization = models.CharField( max_length=100, blank=True, null=True)  
+    customsentence = models.CharField( max_length=1000, blank=True, null=True) 
+    # Added by myself: Link to the Tags
+    wordtags = models.ManyToManyField(Wordtags, related_name='wordtag_with_this_word')
+    
+    # compoundword: Several words which together have a meaning in the language:
+    # in English: 'turn' and 'off', 'get'and 'up'. or even expression longer
+    # we store a ForeignKey on the Words model itself. It takes some extra place in the models but
+    # usually User won't create a lot of them...
+    wordinside_order = models.TextField(max_length=250,blank=True,null=True) # stored by dumping JSON format into str
+    # for example: 'white' 'paper' is different from 'paper' 'white'. so store the order of the words
+    isCompoundword = models.BooleanField(default=False)
+    compoundword = models.ForeignKey('self', blank=True, null=True, \
+                       related_name='compoundwordhavingthiswordinside') # foreignkey to the same table
+    show_compoundword = models.BooleanField(default=False) # showing compoundword or single word in text_read
+    
+    state = models.BooleanField(default=False) # used to export2anki checkox
+    
+    extra_field = models.TextField(max_length=500, blank=True, null=True) # additional, custom field. stored in json format a dict
+
+    def __str__(self):
+        return self.wordtext
+    
+
+    class Meta:
+        db_table = 'words'
+
+# DATABASE 'settings':
+class Settings(models.Model):
+    owner = models.ForeignKey(MyUser)
+    stvalue = models.CharField(blank=True,  max_length=40, null=True) # value chosen by the user
+    stdft = models.CharField(blank=True,  max_length=40, default="") # default value
+    min = models.IntegerField( null=True) # min value allowed for the user
+    max = models.IntegerField(null=True) # max value allowed for the user
+    isinteger = models.BooleanField(default='False')
+
+#     objects = FilterByUser_Manager() # overrriding the model Manager to filter by the user requesting the query
+
+    class Meta:
+        abstract = True
+
+class Settings_origin_language(Settings):
+    pass
+
+class Settings_text_h_frameheight_no_audio(Settings):
+    stdft = models.IntegerField(default=140)
+    min = models.IntegerField(default=10)
+    max = models.IntegerField(default=999)
+    isinteger = models.BooleanField(default='True')
+
+    
+class Settings_text_h_frameheight_with_audio(Settings):
+    stdft= models.IntegerField(default=200)
+    min= models.IntegerField(default=10)
+    max= models.IntegerField(default=999)
+    isinteger = models.BooleanField(default='True')
+
+
+class Settings_text_l_framewidth_percent(Settings):
+    stdft= models.IntegerField(default=50)
+    min= models.IntegerField(default=5)
+    max= models.IntegerField(default=95)
+    isinteger= models.BooleanField(default=True)
+
+
+class Settings_text_r_frameheight_percent(Settings):
+    stdft= models.IntegerField(default=50)
+    min= models.IntegerField(default=5)
+    max= models.IntegerField(default=95)
+    isinteger= models.BooleanField(default=True)
+
+
+class Settings_test_h_frameheight(Settings):
+    stdft= models.IntegerField(default=140)
+    min= models.IntegerField(default=10)
+    max= models.IntegerField(default=999)
+    isinteger = models.BooleanField(default=True)
+
+
+class Settings_test_l_framewidth_percent(Settings):
+    stdft= models.IntegerField(default=50)
+    min= models.IntegerField(default=5)
+    max= models.IntegerField(default=95)
+    isinteger= models.BooleanField(default=True)
+    
+    
+class Settings_test_r_frameheight_percent(Settings):
+    stdft= models.IntegerField(default=50)
+    min= models.IntegerField(default=5)
+    max= models.IntegerField(default=95)
+    isinteger= models.BooleanField(default=True)
+    
+    
+class Settings_test_main_frame_waiting_time(Settings):
+    stdft= models.IntegerField(default=0)
+    min= models.IntegerField(default=0)
+    max= models.IntegerField(default=9999)
+    isinteger= models.BooleanField(default=True)
+    
+    
+class Settings_test_edit_frame_waiting_time(Settings):
+    stdft= models.IntegerField(default=500)
+    min= models.IntegerField(default=0)
+    max= models.IntegerField(default=99999999)
+    isinteger= models.BooleanField(default=True)
+    
+    
+class Settings_test_sentence_count(Settings):
+    stdft= models.IntegerField(default=1)
+    isinteger= models.BooleanField(default=True)
+   
+   
+class Settings_term_sentence_count(Settings):
+    stdft= models.IntegerField(default=1)
+    isinteger= models.BooleanField(default=True)
+   
+    
+class Settings_texts_per_page(Settings):
+    stdft= models.IntegerField(default=10)
+    min= models.IntegerField(default=1)
+    max= models.IntegerField(default=9999)
+    isinteger= models.BooleanField(default=True)
+    
+    
+class Settings_terms_per_page(Settings):
+    stdft= models.IntegerField(default=100)
+    min= models.IntegerField(default=1)
+    max= models.IntegerField(default=9999)
+    isinteger= models.BooleanField(default=True)
+    
+    
+class Settings_tags_per_page(Settings):
+    stdft= models.IntegerField(default=100)
+    min= models.IntegerField(default=1)
+    max= models.IntegerField(default=9999)
+    isinteger= models.BooleanField(default=True)
+    
+    
+class Settings_show_all_words(Settings):
+    stdft= models.IntegerField(default=0)
+    isinteger= models.BooleanField(default=True)
+   
+   
+class Settings_show_text_word_counts(Settings):
+    stdft= models.IntegerField(default=1)
+    isinteger= models.BooleanField(default=True)
+   
+   
+class Settings_text_visit_statuses_via_key(Settings):
+    stdft= models.IntegerField(default=0)
+    isinteger= models.BooleanField(default=True)
+   
+   
+class Settings_term_translation_delimiters(Settings):
+    stdft= models.CharField(max_length=40, default='/;|')
+
+
+class Settings_mobile_display_mode(Settings):
+    stdft= models.IntegerField(default=0)
+    isinteger= models.BooleanField(default=True)
+   
+   
+class Settings_similar_terms_count(Settings):
+    stdft= models.IntegerField(default=0)
+    min= models.IntegerField(default=0)
+    max= models.IntegerField(default=9)
+    isinteger= models.BooleanField(default=True)
+    
+    
+# current settings
+class Settings_currentlang_name(Settings):
+    pass
+
+
+class Settings_currentlang_id(Settings):
+    isinteger= models.BooleanField(default=True)
+
+
+class Settings_currenttext_id(Settings):
+    isinteger= models.BooleanField(default=True)
+
+
+class Settings_currenttextpage(Settings):
+    pass
+
+
+class Settings_currenttextquery(Settings):
+    pass
+
+
+class Settings_currenttextsort(Settings):
+    pass
+
+
+class Settings_currentwordpage(Settings):
+    pass
+
+
+class Settings_currentwordquery(Settings):
+    pass
+
+
+class Settings_currentwordstatus(Settings):
+    pass
+
+
+class Settings_currentwordsort(Settings):
+    pass
+
+
+class Settings_currentfilter_lang(Settings):
+    ''' used in text_list to filter the texts (and terms) to display'''
+    language = models.OneToOneField(Languages, related_name='filterlangforthislanguage')
+    is_strong = models.BooleanField(default=True)
+
+
+class Settings_currentfilter_texttag(Settings):
+    ''' used in text_list to filter the texts to display'''
+    texttag = models.OneToOneField(Texttags, related_name='filtertagforthistexttag')
+    is_strong = models.BooleanField(default=True)
+
+
+class Settings_currentfilter_text(Settings):
+    ''' used in text_list to filter the terms to display'''
+    text = models.OneToOneField(Texts, related_name='filtertextforthistext')
+    is_strong = models.BooleanField(default=True)
+
+
+class Settings_currentfilter_word(Settings):
+    ''' used in text_list to filter the terms to display'''
+    word = models.OneToOneField(Words, related_name='filterwordforthisword')
+    is_strong = models.BooleanField(default=True)
+
+
+class Settings_selected_rows(Settings):
+    ''' used in export2anki to get the list of selected rows'''
+    possible_selected_rows = models.TextField()
+    selected_rows = models.TextField(default='[]') # not used. I used the 'state' inside Words in fact.
+
+
+class Restore(models.Model):
+    ''' Used insided Backup & Restore to upload a backup file '''
+
+    restore_file_name = models.CharField(max_length=255, blank=True)
+    restore_file = models.FileField(blank=True)
+    import_oldlwt = models.FileField(blank=True)
+#     restore_oldlwt_file = models.FileField()
+
+
+class Uploaded_text(models.Model):
+    ''' to upload a text file. in text_detail.html '''
+    uploaded_text = models.FileField(blank=True)

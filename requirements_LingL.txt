@@ -1,0 +1,5 @@
+Django==1.11.4
+django-mathfilters==0.4.0
+django-template-debug==0.3.5
+pytz==2017.2
+six==1.10.0

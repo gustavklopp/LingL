@@ -1,0 +1,94 @@
+
+{% extends "lwt/__baseSkeleton.html" %}
+{% load staticfiles %}
+{% load i18n %} {# used for internationalization #}
+{% load jchart %}
+
+{% block title %}{% if currentlang_id == -1 %}{% trans "Statistics" %}{% else %}{% trans "Statistics" %}{{ currentlang_name }}{% endif %}{% endblock title %}
+
+{% block pagetitle %}{% if currentlang_id == -1 %}{% trans "Statistics" %}{% else %}{% trans "Statistics" %}{{ currentlang_name }}{% endif %} | {{ block.super }}
+
+{% endblock pagetitle %}
+
+{% block stylesheets %}{{ block.super }}
+{% endblock stylesheets %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
+
+{% block content %}
+<div class="row">
+{# FILTERING THE GRAPH #}
+<div class="col-md-2 filtering_graph">
+
+{# filter on language #}
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
+<ul id="ul_language" class="collapse in">
+		<li><a id="total" onclick="ajax_filterlangform_submit('total', {{ currentlang_id }});" class="unstyled" href="#">
+			{% trans 'All Languages' %}
+		  </a></li>
+	{% for lang in filterlangs %}
+		<li><a id="{{ lang.id }}" onclick="ajax_filterlangform_submit('{{ lang.id }}', {{ currentlang_id }});" class="unstyled" href="#">
+			{% if lang.id == currentlang_id %}<strong>{{ lang.name }}</strong> {% else %} {{ lang.name }}{% endif %}
+		  </a> {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.id }}';" title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}</li>
+	{% endfor %}
+</ul>
+<br>
+</div>
+
+{# DISPLAYING THE GRAPH #}
+<div class="col-md-10 displaying_graph">
+{# the stacked bar chart #}
+<div class="chart-container" style="position: relative;  ">
+  <canvas class="chart" id="chart-wordnumber"></canvas>
+</div>
+
+<script type="text/javascript">
+window.addEventListener("DOMContentLoaded", function() {
+	ajax_filterlangform_submit({{ currentlang_id }},{{ currentlang_id }});
+});
+$('#chart-statusnumber').onclick = function(evt){
+	console.log('clicked');
+var activePoints = PieNewChart.getElementsAtEvent(ev);
+var firstPoint = activePoints[0];
+var label = statusnumber.data.labels[firstPoint._index];
+var value = statusnumber.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+if (firstPoint !== undefined)
+	alert(label + ": " + value);
+}
+</script>
+
+{# the pie chart #}
+<div class="chart-container" style="position: relative;  ">
+  <canvas class="chart" id="chart-statusnumber"></canvas>
+</div>
+
+<script type="text/javascript">
+$(document).ready( function() { 
+$('#chart-statusnumber').click(function(ev){
+	console.log('test');
+var activePoints = PieNewChart.getElementsAtEvent(ev);
+var firstPoint = activePoints[0];
+var label = PieNewChart.data.labels[firstPoint._index];
+var value = PieNewChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+if (firstPoint !== undefined)
+	alert(label + ": " + value);
+});
+});
+</script>
+
+</div>
+</div>
+{% endblock content %}
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}
+
+
+{% block footjavascript %}
+	<!--  Plugin for Django-jchart -->
+	<script type="text/javascript" src="{% static 'lwt/js/Chart.bundle.min.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lwt/js/ajax_statistics.js' %}"></script>
+{% endblock footjavascript %}
