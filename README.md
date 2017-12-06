@@ -11,8 +11,12 @@ TODO
 
 ### Use the built-in server inside Django:
 
-Make sure you have `Django >= 1.11`
+It will need `python >=3.6` and `Django >= 1.11`
 
+Set a virtualenv with python 3.6, then inside the virtual env:
+`pip install -r requirement_LingL.txt`
+
+Running the Django project:
 ```
 python manage.py makemigrations
 python manage.py migrate
