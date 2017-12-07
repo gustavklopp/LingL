@@ -100,3 +100,10 @@ ENV/
 
 # Pydev Eclipse:
 *.pydevproject
+
+# for Pythonanywhere
+LingL/settings.py
+LingL/urls.py
+LingL_database.sqlite3
+manage.py
+static/
