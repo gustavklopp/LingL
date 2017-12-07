@@ -3,8 +3,10 @@ from django import forms
 from django.urls import reverse
 from django.utils.translation import ugettext as _, get_language_info
 from django.conf.locale import LANG_INFO
+from django.conf import settings
 from django.db import transaction
 # Second party:
+import os
 import re
 import json
 # third party
@@ -69,7 +71,8 @@ def make_languagesform(dicturi_list=[]):
     ''' pre-initializing LanguagesForm with datalist for the DropDownToggle widget '''
     class LanguagesForm(forms.ModelForm):
         # load and get the real name for the Fixtures of languages (in lwt/fixtures folder)
-        with open('lwt/fixtures/languages_fixtures.json') as lang_json:
+        languages_fixtures = os.path.join(settings.BASE_DIR, 'lwt','fixtures', 'languages_fixtures.json')
+        with open(languages_fixtures) as lang_json:
             lang_json = lang_json.read()
         languages_fixtures = json.loads(lang_json)
         lang_list = languages_fixtures['_languages']
