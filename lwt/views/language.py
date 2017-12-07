@@ -133,7 +133,7 @@ def language_detail(request):
             # STRING CONSTANTS:
             op = 'new'
         if 'edit' in request.GET.keys():
-#             lang_id = int(request.GET['edit'])
+            lang_id = int(request.GET['edit'])
 # 
 
             lang = Languages.objects.filter(id=lang_id).values()[0] # we need a dict for the operation below
