@@ -14,7 +14,7 @@ buildOptions = dict(
 #             '_frozen_importlib_external',
             '_io',
             'marshal',
-#             'posix',
+           'posix',
             'zipimport',
             'encodings',
             'codecs',
