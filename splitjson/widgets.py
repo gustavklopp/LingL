@@ -3,7 +3,6 @@ from django import get_version, forms
 from django.forms import Widget
 from django import utils
 import copy
-from distutils.version import StrictVersion
 import json
 from django.forms.utils import flatatt
 

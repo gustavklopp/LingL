@@ -3,11 +3,24 @@ Learn new languages by reading anything you choose
 
 this was inspired by other site/projects like Lwt, lingq etc...
 
-## How to install it:
+## How to use it:
 
-### Use the executable:
+### Use the online website:
+Generously provided by PythonAnywhere:
 
-TODO
+It's limited in user capacity but I leave it like this for the moment.
+
+Create a User or use the test user: `test` / password: `tst1tst1`
+
+<https://gustavklopp.pythonanywhere.com>
+
+### Use the executable (Standalone application):
+
+#### Linux:
+
+##### x86/64: 
+
+<https://github.com/gustavklopp/LingL/releases>
 
 ### Use the built-in server inside Django:
 
