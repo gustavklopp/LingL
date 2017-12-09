@@ -1,0 +1,307 @@
+/******************************************************************************
+     IN _MENU
+******************************************************************************/
+/* Not working
+#anki {
+  background: url("../img/anki.ico") no-repeat right center; 
+}
+*/
+/******************************************************************************
+     IN TEXT_READ
+******************************************************************************/
+
+/* the containers: */
+#leftcol {
+	height: 100vh;
+	overflow: auto;	
+}
+
+#rightcol {
+	height: 100vh;
+	overflow: auto;	
+}
+
+#topleft.row {
+	height: 30%;
+	overflow: auto;
+}
+
+#bottomleft.row {
+	height: 70%;
+	overflow: auto;
+	padding: 20px; /* else the text is stuck to the screen borders */
+}
+
+#bottomright.row {
+	height: 50%;
+	overflow: auto;
+}
+
+#topright.row {
+	height: 50%;
+	overflow: auto;
+}
+
+/* for the iframe */
+#bottomright.row iframe{
+	height: 100%;
+	width: 100%
+}
+
+
+
+/* the statuses */
+word_left_todo[wostatus="0"] {
+	/* for display the TODO with the word count */
+	background-color: #ADDFFF;
+}
+
+span[wostatus] { /* status default: for learning */
+	background-color: #F5B8A9;
+	cursor: pointer;
+}
+
+span[wostatus="0"] { /* status default: for unknown */
+	background-color: #ADDFFF;
+}
+
+span[wostatus="1"], 
+span[wostatus="2"],
+span[wostatus="3"],
+span[wostatus="4"],
+span[wostatus="5"],
+span[wostatus="6"],
+span[wostatus="7"],
+span[wostatus="8"],
+span[wostatus="9"],
+span[wostatus="10"],
+span[wostatus="11"],
+span[wostatus="12"],
+span[wostatus="13"],
+span[wostatus="14"],
+span[wostatus="15"],
+span[wostatus="16"],
+span[wostatus="17"],
+span[wostatus="18"],
+span[wostatus="19"],
+span[wostatus="20"],
+span[wostatus="21"],
+span[wostatus="22"],
+span[wostatus="23"],
+span[wostatus="24"],
+span[wostatus="25"],
+span[wostatus="26"],
+span[wostatus="27"],
+span[wostatus="28"],
+span[wostatus="29"],
+span[wostatus="30"] {
+	background-color: #F5B8A9;
+}
+span[wostatus="31"],
+span[wostatus="32"],
+span[wostatus="33"],
+span[wostatus="34"],
+span[wostatus="35"],
+span[wostatus="36"],
+span[wostatus="37"],
+span[wostatus="38"],
+span[wostatus="39"],
+span[wostatus="40"],
+span[wostatus="41"],
+span[wostatus="42"],
+span[wostatus="43"],
+span[wostatus="44"],
+span[wostatus="45"],
+span[wostatus="46"],
+span[wostatus="47"],
+span[wostatus="48"],
+span[wostatus="49"],
+span[wostatus="50"],
+span[wostatus="51"],
+span[wostatus="52"],
+span[wostatus="53"],
+span[wostatus="54"],
+span[wostatus="55"],
+span[wostatus="56"],
+span[wostatus="57"],
+span[wostatus="58"],
+span[wostatus="59"],
+span[wostatus="60"],
+span[wostatus="61"],
+span[wostatus="62"],
+span[wostatus="63"],
+span[wostatus="64"],
+span[wostatus="65"],
+span[wostatus="66"] {
+	background-color: #F6CDC3;
+}
+span[wostatus="67"],
+span[wostatus="68"],
+span[wostatus="69"],
+span[wostatus="70"],
+span[wostatus="71"],
+span[wostatus="72"],
+span[wostatus="73"],
+span[wostatus="74"],
+span[wostatus="75"],
+span[wostatus="76"],
+span[wostatus="77"],
+span[wostatus="78"],
+span[wostatus="79"],
+span[wostatus="80"],
+span[wostatus="81"],
+span[wostatus="82"],
+span[wostatus="83"],
+span[wostatus="84"],
+span[wostatus="85"],
+span[wostatus="86"],
+span[wostatus="87"],
+span[wostatus="88"],
+span[wostatus="89"],
+span[wostatus="90"],
+span[wostatus="91"],
+span[wostatus="92"],
+span[wostatus="93"],
+span[wostatus="94"],
+span[wostatus="95"],
+span[wostatus="96"],
+span[wostatus="97"],
+span[wostatus="98"],
+span[wostatus="99"] {
+	background-color: #F7E2DD;
+}
+
+span[wostatus="100"] { /* status for well-known */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #CCFFCC;
+}
+
+span[wostatus="101"] { /* status for ignored */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #000000;
+}
+/* if it's a compoundword, it supersedes the word status itself */
+span[show_compoundword="True"]::before,
+span[show_compoundword="true"]::before { /* add a little dot before the compoundword */
+	content: '\2022';
+}
+span[show_compoundword="True"], 
+span[show_compoundword="true"] 
+{ /* compoundword status default: for learning */
+	background-color: #F5B8A9;
+}
+
+span[show_compoundword="True"][cowostatus="100"],
+span[show_compoundword="true"][cowostatus="100"] 
+{ /* compoundword status for well-known */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #CCFFCC;
+}
+
+span[show_compoundword="True"][cowostatus="101"], 
+span[show_compoundword="true"][cowostatus="101"] 
+{ /* compoundword status for ignored */
+	background-color: #F8F8F8;
+	border-bottom: dashed 1px #000000;
+}
+
+
+/* Used inside the termform.html: make the possible similar word as 'green'when they have been chosen */
+.chosen_similarword {
+	border: solid #CCFF99;
+	border-width: medium;
+}
+
+/*  Boostrap 4 */
+/* Remove blue outline from button */
+
+.btn:focus, .btn:active {
+  box-shadow: none;
+}
+
+/*********** in termform.html ************/ 
+/* don't display if the status of the word is not unknown */
+.hidden { 
+	display: none;
+}
+/* collapsing the 'show sentences' and 'show similar words'*/
+div.headPlus:before {
+	font-family: FontAwesome;
+	content: "\f147 \00a0"; /* Minus sign */
+}
+div.headPlus.collapsed:before {
+	font-family: FontAwesome;
+	content: "\f196 \00a0"; /* Plus sign */
+}
+
+
+
+/************** the Tooltip ****************/
+/* because bootstrap is modifying the 'table' of overDiv, unset it :*/
+div#overDiv table  tbody tr td table:nth-child(1){
+	background-color: #333399;
+	border: 0.3px solid black;
+}
+
+div#overDiv table  tbody tr td table:nth-child(2){
+	background-color: #FFFFE8;
+	border: 0.3px solid black;
+}
+
+/* change the css when the word has been clicked */
+.clicked {
+	border-style: solid;
+	border-width: 2px;
+	border-color: red;
+}
+
+.ctrlclicked {
+	border-style: solid;
+	border-width: 2px;
+	border-color: green;
+}
+
+/******************************************************************************
+     IN TEXT_LIST
+******************************************************************************/
+a.unstyled, a.unstyled:link, a.unstyled:hover {
+	/*color: inherit;*/
+	text-decoration: inherit;
+}
+
+a.headCaret.collapsed:before {
+	font-family: FontAwesome;
+	content: "\f0da \00a0"; /* caret right */
+}
+a.headCaret:before {
+	font-family: FontAwesome;
+	content: "\f0d7 \00a0"; /* caret down */
+}
+
+.currentlang {
+	background: url("../img/bullet-green_16x16.png") 100%  no-repeat ;
+}
+.no_currentlang {
+	background: url("../img/bullet-grey_16x16.png") 100%   no-repeat;
+}
+
+.archived {
+	opacity: 0.4;
+}
+/******************************************************************************
+     IN TEXT_DETAIL
+******************************************************************************/
+
+.tooltip_templates { /*so that the content does not get displayed outside of the tooltip.*/
+	display: none; 
+	} 
+.tooltipster-sidetip.tooltipster-noir.tooltipster-noir-customized .tooltipster-box {
+	background: white;
+}
+
+.tooltipster-sidetip.tooltipster-noir.tooltipster-noir-customized .tooltipster-content {
+	color: grey;
+}
+/******************************************************************************
+     IN LANGUAGE_DETAIL
+*******************************************************************************

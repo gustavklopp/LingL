@@ -106,4 +106,4 @@ LingL/settings.py
 LingL/urls.py
 LingL_database.sqlite3
 manage.py
-static/
+#static/
