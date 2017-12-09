@@ -17,6 +17,7 @@ Create a User or use the test user: `test` / password: `tst1tst1`
 ### Use the executable (Standalone application):
 
 #### Linux:
+the executable is the file `LingL`. Run it by `./LingL`.
 
 ##### x86/64: 
 
