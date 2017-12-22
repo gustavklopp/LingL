@@ -1,4 +1,5 @@
 from cx_Freeze import setup, Executable
+import os
 
 # Dependencies are automatically detected, but it might need
 # fine tuning.
@@ -718,8 +719,10 @@ buildOptions = dict(
             'allauth.account.auth_backends',
 #             'dj-static',
             ], 
-        excludes = [],
-        include_files = ['LingL_database.sqlite3']
+        excludes = ['tkinter',],
+        include_files = [os.path.join('lwt','LingL_database.sqlite3'),
+                #os.path.join('templates','allauth'),
+                ],
         )
 
 import sys
