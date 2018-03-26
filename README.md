@@ -12,7 +12,7 @@ It's limited in user capacity but I leave it like this for the moment.
 
 Create a User or use the test user: `test` / password: `tst1tst1`
 
-<https://gustavklopp.pythonanywhere.com>
+<https://gustav.pythonanywhere.com>
 
 ### Use the executable (Standalone application):
 
