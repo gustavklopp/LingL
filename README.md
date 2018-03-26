@@ -8,11 +8,12 @@ this was inspired by other site/projects like Lwt, lingq etc...
 ### Use the online website:
 Generously provided by PythonAnywhere:
 
-It's limited in user capacity but I leave it like this for the moment.
+It's limited in user capacity b
+ut I leave it like this for the moment.
 
 Create a User or use the test user: `test` / password: `tst1tst1`
 
-<https://gustav.pythonanywhere.com>
+<https://gustavk.pythonanywhere.com>
 
 ### Use the executable (Standalone application):
 
