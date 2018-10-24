@@ -3,7 +3,7 @@ import six
 from django.conf import settings
 from django import forms
 from django.template.loader import render_to_string
-from django.core import urlresolvers
+from django import urls
 from django.contrib.admin import widgets
 
 try:  
@@ -42,7 +42,7 @@ class TagsInputWidgetBase(forms.SelectMultiple):
         context['STATIC_URL'] = settings.STATIC_URL
         context['mapping'] = self.mapping # self.mapping is in fact created by the TagsInputField:
                                         # self.widget.mapping = self.get_mapping()
-        context['autocomplete_url'] = urlresolvers.reverse('tags_input:autocomplete',
+        context['autocomplete_url'] = urls.reverse('tags_input:autocomplete',
                                                             kwargs=dict(app=self.mapping['app'],
                                                                         model=self.mapping['model'],
                                                                         fields='-'.join(self.mapping['fields']),),)

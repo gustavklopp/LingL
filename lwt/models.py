@@ -68,7 +68,7 @@ class UserAccountAdapter(DefaultAccountAdapter):
 class BaseModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey(MyUser, null=True) # each user has his own set of the database
+    owner = models.ForeignKey(MyUser, null=True, on_delete=models.CASCADE) # each user has his own set of the database
 
 #    # You need to redefine save: without it, the password is saved in plain text!
 #     def save(self, commit=True):
@@ -137,7 +137,7 @@ class Texttags(BaseModel):
         
 class Texts(BaseModel):
     ''' to be deleted, you need to delete the textitem and the sentence containing foreignkey to the text before'''
-    language = models.ForeignKey(Languages, related_name='texthavingthislanguage')
+    language = models.ForeignKey(Languages, related_name='texthavingthislanguage', on_delete=models.CASCADE)
     title = models.CharField( max_length=200)  
     text = models.TextField()  
     annotatedtext = models.TextField()  
@@ -156,7 +156,7 @@ class Texts(BaseModel):
 
 
 class Sentences(BaseModel): # the Text is cut into sentences
-    language = models.ForeignKey(Languages)
+    language = models.ForeignKey(Languages, on_delete=models.CASCADE)
     text = models.ForeignKey(Texts, on_delete=models.CASCADE)
     order = models.IntegerField()  # the ordinal number of the sentence in each text
     sentencetext = models.TextField(blank=True, null=True)
@@ -197,16 +197,17 @@ class Grouper_of_same_words(BaseModel):
 
         
 class Words(BaseModel):
-    grouper_of_same_words = models.ForeignKey(Grouper_of_same_words, null=True, related_name='grouper_of_same_words_for_this_word')
+    grouper_of_same_words = models.ForeignKey(Grouper_of_same_words, null=True, related_name='grouper_of_same_words_for_this_word',
+                                              on_delete=models.CASCADE)
     
 #     STATUS_CHOICES = ( (0, _('Unknown')),
 #                        (1, _('Learning')),
 #                        (100, _('Well-known')),
 #                        (101, _('Ignored')))
     status = models.IntegerField(choices=STATUS_CHOICES, default=0)  
-    language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage')
+    language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage', on_delete=models.CASCADE )
     text = models.ForeignKey(Texts, on_delete=models.CASCADE,blank=True, null=True)
-    sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, null=True)
+    sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, null=True, on_delete=models.CASCADE)
     order = models.IntegerField(blank=True, null=True)  
     wordtext = models.CharField( max_length=250,blank=True, null=True)  
     isnotword = models.BooleanField(default=False)  
@@ -224,7 +225,9 @@ class Words(BaseModel):
     # for example: 'white' 'paper' is different from 'paper' 'white'. so store the order of the words
     isCompoundword = models.BooleanField(default=False)
     compoundword = models.ForeignKey('self', blank=True, null=True, \
-                       related_name='compoundwordhavingthiswordinside') # foreignkey to the same table
+                       related_name='compoundwordhavingthiswordinside',\
+                       on_delete=models.CASCADE
+                       ) # foreignkey to the same table
     show_compoundword = models.BooleanField(default=False) # showing compoundword or single word in text_read
     
     state = models.BooleanField(default=False) # used to export2anki checkox
@@ -240,7 +243,7 @@ class Words(BaseModel):
 
 # DATABASE 'settings':
 class Settings(models.Model):
-    owner = models.ForeignKey(MyUser)
+    owner = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     stvalue = models.CharField(blank=True,  max_length=40, null=True) # value chosen by the user
     stdft = models.CharField(blank=True,  max_length=40, default="") # default value
     min = models.IntegerField( null=True) # min value allowed for the user
@@ -423,25 +426,29 @@ class Settings_currentwordsort(Settings):
 
 class Settings_currentfilter_lang(Settings):
     ''' used in text_list to filter the texts (and terms) to display'''
-    language = models.OneToOneField(Languages, related_name='filterlangforthislanguage')
+    language = models.OneToOneField(Languages, related_name='filterlangforthislanguage',
+                                     on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 
 class Settings_currentfilter_texttag(Settings):
     ''' used in text_list to filter the texts to display'''
-    texttag = models.OneToOneField(Texttags, related_name='filtertagforthistexttag')
+    texttag = models.OneToOneField(Texttags, related_name='filtertagforthistexttag',
+                                    on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 
 class Settings_currentfilter_text(Settings):
     ''' used in text_list to filter the terms to display'''
-    text = models.OneToOneField(Texts, related_name='filtertextforthistext')
+    text = models.OneToOneField(Texts, related_name='filtertextforthistext',
+                                 on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 
 class Settings_currentfilter_word(Settings):
     ''' used in text_list to filter the terms to display'''
-    word = models.OneToOneField(Words, related_name='filterwordforthisword')
+    word = models.OneToOneField(Words, related_name='filterwordforthisword',
+                                 on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 

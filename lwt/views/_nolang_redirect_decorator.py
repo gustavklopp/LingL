@@ -1,5 +1,5 @@
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 # helper functions:
 from lwt.views._setting_cookie_db import *
 

@@ -8,7 +8,7 @@ from django.db.models.fields import CharField,IntegerField
 from django.templatetags.i18n import language
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # used for pagination (on text_list for ex.)
 from django.contrib.auth.decorators import login_required
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.core.serializers import serialize
 from django.utils import timezone
 

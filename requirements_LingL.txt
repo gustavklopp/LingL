@@ -5,10 +5,10 @@ chardet==3.0.4
 cx-Freeze==5.0.2
 defusedxml==0.5.0
 dj-static==0.0.6
-Django==1.11.5
-django-allauth==0.33.0
+Django==2.1.2
+django-allauth==0.38.0
 django-bootstrap3==9.0.0
-django-crispy-forms==1.6.1
+django-crispy-forms==1.7.2
 django-jchart==0.4.2
 django-mathfilters==0.4.0
 django-template-debug==0.3.5
