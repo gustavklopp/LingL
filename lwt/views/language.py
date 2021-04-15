@@ -10,7 +10,11 @@ from django.templatetags.i18n import language
 from  django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # used for pagination (on text_list for ex.)
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
+from django.conf import settings
+from django.core.serializers.json import DjangoJSONEncoder # to json.dumps a datetime object
 # second party
+import os
+import yaml
 import json
 import re
 # third party
@@ -34,7 +38,7 @@ def language_list(request):
         else:   # asked via the icon in language_list
             lgid = request.GET['setcurrentlang'] 
         # and put that inside database and cookie:
-        setter_settings_cookie_and_db('setcurrentlang', lgid,request)
+        setter_settings_cookie_and_db('setcurrentlang', lgid, request)
         
     #TODO: delete a language, "refresh a language: ???
     if request.GET.get('refresh'): 
@@ -68,13 +72,13 @@ def language_list(request):
 # languages detail: edit/create a language
 @login_required
 def language_detail(request):
-    if request.method == 'POST':
+    if request.method == 'POST': # clicked on 'Save' button
                 
-        f = make_languagesform()(request.POST or None)
+        f = make_languagesform(request.user.id)(request.POST or None)
         if f.is_valid():
             savedlanguage = f.save()
             # and put that inside database and cookie:
-            setter_settings_cookie_and_db('setcurrentlang', savedlanguage.id,request)
+            setter_settings_cookie_and_db('currentlang_id', savedlanguage.id, request)
             ############## EDIINTG THE JSON EXTRA FIELD in WORDS #########################################
             # only if there are words already defined of course:
             thislang_words = Words.objects.filter(language=savedlanguage).\
@@ -103,7 +107,7 @@ def language_detail(request):
                                 thislang_word.extra_field = insert_key(new_extra_field_json)
                                 thislang_word.save()
 
-                ################################ deleteing an existing extra field: ##########################################
+                ################################ deleting an existing extra field: ##########################################
                 key_to_delete_list = []
                 for el_dict in extra_field_list: # it's the fist word's extrafield that we use as representation of all the other
                     key_to_test = list(el_dict.keys())[0]
@@ -114,10 +118,10 @@ def language_detail(request):
                     with transaction.atomic():
                         for thislang_word in thislang_words: # update all the words
                             old_extra_field_json = thislang_words.extra_field
-                            extra_field_list = json.loads(old_extra_field_json) if old_extra_field_json else []
+                            extra_field_list = yaml.loads(old_extra_field_json) if old_extra_field_json else []
                             # we keep only the keys existing in Language.extra_field
                             new_extra_field_list = [el for el in extra_field_list if list(el.keys())[0] in key_to_delete_list]
-                            thislang_word.extra_field = json.dumps(new_extra_field_list)
+                            thislang_word.extra_field = yaml.dumps(new_extra_field_list)
                             thislang_word.save()
             return redirect(reverse('language_list'))
         else:
@@ -129,64 +133,65 @@ def language_detail(request):
         # a new language is requested:
         if 'new' in request.GET.keys():
             # always set the owner as default request.user
-            f = make_languagesform()(initial = { 'owner': request.user })
+            f = make_languagesform(request.user.id)(initial = { 'owner': request.user.id })
             # STRING CONSTANTS:
             op = 'new'
         if 'edit' in request.GET.keys():
             lang_id = int(request.GET['edit'])
-# 
-
-            lang = Languages.objects.filter(id=lang_id).values()[0] # we need a dict for the operation below
+            lang_query = Languages.objects.filter(id=lang_id)
+            lang_Obj = lang_query[0] 
+            lang = lang_query.values()[0] # we need a dict for the operation below
             if lang['code_639_1']: # if it's defined of course
                 # we get the fixture to add uris to the dropdown menus if the user wants to change it
                 chosen_lang = get_language_fixture(request, lang['code_639_1'])
-                chosen_lang_datalist = [[i,i] for i in chosen_lang['dicturi']]
+                chosen_lang_datalist = [[i,i] for i in chosen_lang['dicturi'].split(',')]
             else:
                 chosen_lang_datalist = []
             # we pre-initialized LanguagesForm with datalist for the dropdowntoggle widget
-            f = make_languagesform(chosen_lang_datalist)(initial = lang)
+            f = make_languagesform(request.user.id, dicturi_list=chosen_lang_datalist)(
+                                    instance= lang_Obj)
             # STRING CONSTANTS:
             op = 'edit'
     # get all the languages (used for javascript script to check no doublon)
     all_languages = Languages.objects.all()
 
-    return render(request, 'lwt/language_detail.html', {
+    return render(request, template_name='lwt/language_detail.html', context={
         'all_languages':all_languages, 'form': f,
+        'origin_lang_code': request.user.origin_lang_code,
 #         'extra_field_list':extra_field_list, 
 #         'lang_id': lang_id, # used to post extra field with the correct language
         # STRING CONSTANTS:
         'op':op,
-        })
+        }
+#         , renderer=None,
+        )
 
 def fill_language_detail(request):
     ''' requested by ajax_fill_language_detail: a code_lang is sent, get all the data for the language '''
     code_lang = request.GET['code_lang']
     chosen_lang = get_language_fixture(request, code_lang)
-    js = json.dumps(chosen_lang)
+    js = json.dumps(chosen_lang, cls=DjangoJSONEncoder)
     return HttpResponse(js)
 
 def get_language_fixture(request, code_lang):
     ''' load and get the real name for the Fixtures of languages (in lwt/fixtures folder) '''
-    with open('lwt/fixtures/languages_fixtures.json') as lang_json:
-        lang_json = lang_json.read()
-    languages_fixtures = json.loads(lang_json)
-    lang_list = languages_fixtures['_languages']
-    # get the destination language for the translation:
+    # get the destination language for the translation
+    # we used this to modify the dict1uri and dict2uri with the correct language destination
+    # We postule that the destination language is the one chosen by the user in his profile
     origin_lang_code = request.user.origin_lang_code
     # then get the language data:
-    for idx, lang in enumerate(lang_list):
-        if lang['code_639_1'] == code_lang:
-            chosen_lang = lang_list[idx]
-        # and for the origin lang too:
-        if lang['code_639_1'] == origin_lang_code:
-            origin_lang = lang_list[idx]
+    chosen_lang = Languages.objects.filter(owner=1, code_639_1=code_lang).values()[0]
+    # and for the origin lang too:
+    origin_lang = Languages.objects.filter(owner=1, code_639_1=origin_lang_code).values()[0]
     # then change the placeholder string for the translation:
-    dicturi_repl_list = []
-    for dicturi in chosen_lang['dicturi']:
-        dicturi_repl = re.sub(r'•••', origin_lang['code_639_2t'], dicturi)
-        dicturi_repl = re.sub(r'••', origin_lang['code_639_1'], dicturi_repl)
-        dicturi_repl_list.append(dicturi_repl)
-    chosen_lang['dicturi'] = dicturi_repl_list
+    chosen_lang['dicturi'] = re.sub(r'••••', origin_lang['name'], 
+                                        chosen_lang['dicturi'])
+    chosen_lang['dicturi'] = re.sub(r'•••', origin_lang['code_639_2t'], 
+                                        chosen_lang['dicturi'])
+    chosen_lang['dicturi']= re.sub(r'••', origin_lang['code_639_1'], 
+                                        chosen_lang['dicturi'])
+    chosen_lang['googletranslateuri'] = re.sub(r'••', origin_lang['code_639_1'], 
+                                        chosen_lang['googletranslateuri'])
     return chosen_lang
     
     

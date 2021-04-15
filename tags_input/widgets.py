@@ -32,7 +32,7 @@ class TagsInputWidgetBase(forms.SelectMultiple):
             attrs.update(extra_attrs)
         return attrs
 
-    def render(self, name, value, attrs=None, choices=()):
+    def render(self, name, value, attrs=None, renderer=None, choices=()):
         ''' create finally the HTML. it uses the template HTML:tags_input_widget.html '''
         context = self.build_attrs(attrs, name=name) # create the dict of attribute (the last one is the name)
         context['on_add_tag'] = self.on_add_tag # put additional tags on_add_tag, on_remove, on_change

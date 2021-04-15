@@ -47,7 +47,7 @@ def wipeout_database(request):
 
 def gunzipper(data_file):
     ''' gunzip (=decompress a gzipped file) the file uploaded'''
-    fp = tempfile.NamedTemporaryFile(suffix='.json')
+    fp = tempfile.NamedTemporaryFile(suffix='.yaml')
     with gzip.open(data_file.path, 'r') as f:
         fp.write(f.read())
     fp.seek(0) # obligatory to rewind the file after having been read/written
@@ -61,9 +61,9 @@ def backuprestore(request):
             all_qs = []
             for mymodel in apps.get_app_config('lwt').get_models():
                 all_qs += mymodel.objects.all()
-            fixture = serialize('json', all_qs)
+            fixture = serialize('yaml', all_qs)
             now = timezone.now().strftime('%Y-%m-%d') 
-            filename = 'lingl_backup_{}.json.gz'.format(now)
+            filename = 'lingl_backup_{}.yaml.gz'.format(now)
             out = io.BytesIO()
             with gzip.GzipFile(fileobj=out, mode='w') as f:
                 f.write(fixture.encode())
@@ -94,7 +94,7 @@ def backuprestore(request):
             
             if 'install_demo' in request.POST.values():
                 wipeout_database(request)
-                fixt = 'lwt/fixtures/lingl_demo.json'
+                fixt = 'lwt/fixtures/lingl_demo.yaml'
                 call_command('loaddata', fixt , app_label='lwt') # load the fixtures
 
             if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):

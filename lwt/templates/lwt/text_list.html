@@ -1,5 +1,5 @@
 {% extends "lwt/__baseSkeleton.html" %}
-{% load staticfiles %}
+{% load static %}
 {% load i18n %} {# used for internationalization #}
 
 {% block title %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %}{% endblock title %}
@@ -124,7 +124,7 @@
 		</button>
 		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Text " %}...</a> 
 	</div>
-	
+    {# Note: the body of the text_table is loaded tx to the 'load_texttable' func, found in `text.py` #}	
 	<table id="text_table" data-toggle="table" data-sort-name="title" data-sort-order="asc"
 								data-search="true"
 								data-pagination="true" data-side-pagination="server" 
@@ -200,10 +200,11 @@
 
 	$("button#delete").click(function(){
 		 /* ajax function to delete the text(s) inside the bootstrap-table */
-		var check = $("input:checked");
+		var check = $("tr.selected");
+		console.log(check);
 		ids_to_delete = [];
 		$.each(check, function(){
-			var text_id =$(this).parents("tr:first").data("val");
+			var text_id =$(this).find('td.hidden').text();
 			ids_to_delete.push(text_id);
 		});
 		if (ids_to_delete.length > 0){

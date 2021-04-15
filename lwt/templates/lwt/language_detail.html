@@ -1,5 +1,5 @@
 {% extends "lwt/__baseSkeleton.html" %}
-{% load staticfiles %}
+{% load static %}
 {% load i18n %} {# used for internationalization #}
 {% load crispy_forms_tags %}
 
@@ -21,7 +21,14 @@ $(document).ready( function() {
 	/* used for the editable dropdown menu in the form */
 	  $("#list__name_lang.dropdown-menu a").bind('click', function(event) {
 		$("input#id_name").val($(this).text());
-		ajax_fill_language_detail($(this).attr("data-value"), '{{ origin_lang.code_639_1 }}');
+		ajax_fill_language_detail($(this).attr("data-value"), '{{ origin_lang_code }}');
+	  });
+	/* same, for the translation uri: */
+	  $("#list__dict1uri.dropdown-menu a").bind('click', function(event) {
+		$("input#id_dict1uri").val($(this).text());
+	  });
+	  $("#list__dict2uri.dropdown-menu a").bind('click', function(event) {
+		$("input#id_dict2uri").val($(this).text());
 	  });
 });
 </script>
@@ -35,7 +42,7 @@ $(document).ready( function() {
 {% if all_languages.all %}{# check whether the chosen language has not already been created with same name #}
 	<script type="text/javascript">
 	var LANGUAGES = { 
-			{% for lang in all_languages %}{{ lang.name}}:{{ lang.id }}{% if not forloop.last %},{% endif %}{% endfor %}
+			{% for lang in all_languages %}'{{ lang.name}}':{{ lang.id }}{% if not forloop.last %},{% endif %}{% endfor %}
 			} 
 
 	function check_dupl_lang(curr) {

@@ -77,8 +77,8 @@ def text_read(request,text_id):
 def dictwebpage(request):
     ''' create dictionary webpage.
     Adapted from: makeOpenDictStrJS(createTheDictLink($wb1,$word)) '''
-    # case 1:  AJAX has fetched the JSON on the wwww, then the JSON obj from the www is sent to the view dictwebpage which processes it and 
-    # and sends back html.
+    # case 1:  AJAX has fetched the JSON on the wwww, then the JSON obj from the www is sent to the view
+    # dictwebpage which processes it and # and sends back html.
     if 'json_obj' in request.GET.keys():
         parsed_json_obj = json.loads(request.GET['json_obj'])
         return render(request, 'lwt/_glosbe_api.html', {'result': parsed_json_obj}) 

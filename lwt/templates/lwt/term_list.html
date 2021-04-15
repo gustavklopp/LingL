@@ -1,5 +1,5 @@
 {% extends "lwt/__baseSkeleton.html" %}
-{% load staticfiles %}
+{% load static %}
 {% load i18n %} {# used for internationalization #}
 
 {% block title %}{% if currentlang_id == -1 %}{% trans "My Words" %}{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %}{% endblock title %}

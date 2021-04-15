@@ -51,7 +51,7 @@ class DropdownToggleWidget(forms.TextInput):
         self._list = data_list
         self.attrs.update({'value': '', 'class':'lang_name dropdown-toggle'})
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         text_html = super(DropdownToggleWidget, self).render(name, value, attrs=attrs)
         data_list = ''
 #         data_list = '<span class="myarrow">'
@@ -67,32 +67,34 @@ class DropdownToggleWidget(forms.TextInput):
         return text_html + data_list
     
     
-def make_languagesform(dicturi_list=[]):
+def make_languagesform(user_id, dicturi_list=[]):
     ''' pre-initializing LanguagesForm with datalist for the DropDownToggle widget '''
     class LanguagesForm(forms.ModelForm):
         # load and get the real name for the Fixtures of languages (in lwt/fixtures folder)
-        languages_fixtures = os.path.join(settings.BASE_DIR, 'lwt','fixtures', 'languages_fixtures.json')
-        with open(languages_fixtures) as lang_json:
-            lang_json = lang_json.read()
-        languages_fixtures = json.loads(lang_json)
-        lang_list = languages_fixtures['_languages']
+#         languages_fixtures = os.path.join(settings.BASE_DIR, 'lwt','fixtures', 'languages_fixtures.json')
+#         with open(languages_fixtures) as lang_json:
+#             lang_json = lang_json.read()
+#         languages_fixtures = json.loads(lang_json)
+        lang_list = Languages.objects.filter(owner__in=[1, user_id])
         name_lang_list = []
         for lang in lang_list:
-            if 'django_code' in lang.keys() and lang['django_code'] != "":
-                lang_code = lang['django_code']
-                name_lang_list.append((lang['code_639_1'], get_language_info(lang_code)['name_translated']))
-            else:
-                name_lang_list.append((lang['code_639_1'], lang['notlocalized_name']))
+            lang_code = lang.django_code
+            name_lang_list.append((lang.code_639_1, 
+                                   get_language_info(lang_code)['name_translated']))
         name_lang_list.sort(key=lambda a: a[1])
         # these 3 ones have an editable dropdown input
-        name = forms.CharField(required=True, max_length=40, widget=DropdownToggleWidget(name_lang_list, 'name_lang'))  
-        dict1uri = forms.CharField(max_length=200, widget=DropdownToggleWidget(dicturi_list, 'dict1uri'))
-        dict2uri = forms.CharField(max_length=200, required=False, widget=DropdownToggleWidget(dicturi_list, 'dict2uri'))
+        name = forms.CharField(required=True, max_length=40, 
+                               widget=DropdownToggleWidget(name_lang_list, 'name_lang'))  
+        dict1uri = forms.CharField(max_length=200, 
+                                   widget=DropdownToggleWidget(dicturi_list, 'dict1uri'))
+        dict2uri = forms.CharField(max_length=200, required=False, 
+                                   widget=DropdownToggleWidget(dicturi_list, 'dict2uri'))
 
         googletranslateuri = forms.CharField(max_length=200, required=False)
         exporttemplate = forms.CharField(widget=forms.Textarea, required=True)
         TEXTSIZE_CHOICES = ((100,100),(150,150),(200,200),(250,250))
-        textsize = forms.ChoiceField(choices=TEXTSIZE_CHOICES, widget=forms.Select(), required=True)
+        textsize = forms.ChoiceField(choices=TEXTSIZE_CHOICES, 
+                                     widget=forms.Select(), required=True)
         charactersubstitutions = forms.CharField(max_length=500)
         regexpsplitsentences = forms.CharField(max_length=500)
         exceptionssplitsentences = forms.CharField(max_length=500)
@@ -100,9 +102,12 @@ def make_languagesform(dicturi_list=[]):
         BOOL_CHOICES = (
             (True, _('Yes')), (False, _('No'))
             )
-        removespaces = forms.ChoiceField(choices=BOOL_CHOICES,  widget=forms.Select(), required=True)
-        spliteachchar = forms.ChoiceField(choices=BOOL_CHOICES, widget=forms.Select(), required=True)
-        righttoleft = forms.ChoiceField(choices=BOOL_CHOICES, widget=forms.Select(), required=True)
+        removespaces = forms.ChoiceField(choices=BOOL_CHOICES,  widget=forms.Select(), 
+                                         required=True)
+        spliteachchar = forms.ChoiceField(choices=BOOL_CHOICES, widget=forms.Select(), 
+                                          required=True)
+        righttoleft = forms.ChoiceField(choices=BOOL_CHOICES, widget=forms.Select(), 
+                                        required=True)
         extra_field_key = tag_fields.TagsInputField(Extra_field_key.objects.all(),
                                                     create_missing=True,
                                                     required=False) 
@@ -117,12 +122,13 @@ def make_languagesform(dicturi_list=[]):
             self.helper.add_input(Submit('save', 'save'))
             self.helper.layout = Layout(
                 Field('owner', type="hidden"),
+                Field('dicturi', type="hidden"),
             'name', 'dict1uri', 'dict2uri', 'googletranslateuri', 'exporttemplate', 'textsize',\
              'charactersubstitutions', 'regexpsplitsentences', 'exceptionssplitsentences',\
             'regexpwordcharacters', 'removespaces', 'spliteachchar', 'righttoleft',
             'code_639_1','code_639_2t','code_639_2b','django_code', 'extra_field_key')
             # overriding this because bug when rendering with the error and the dropdowntoglle
-            self.helper.field_template = 'custom_bootstrap_field.html'
+#             self.helper.field_template = 'custom_bootstrap_field.html'
             # rename the labels for the field:
             self.fields['dict1uri'].label = _('Link to 1st dictionary')
             self.fields['dict2uri'].label = _('Link to 2st dictionary')

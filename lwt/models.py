@@ -27,7 +27,6 @@ The original models in lwt:
 -textitems
 -_lwtgeneral
 """
-from __future__ import unicode_literals
 # django import
 from django.db import models
 from django.utils import timezone, timesince
@@ -93,11 +92,15 @@ class Extra_field_key(BaseModel):
         
         
 class Languages(BaseModel):
-    name = models.CharField(unique=True, max_length=40)  
-    dict1uri = models.CharField(max_length=200, default="https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format=json")  
+    name = models.CharField(max_length=40)  
+    dicturi = models.TextField(
+                    default="https://glosbe.com/gapi/translate?from=eng&&dest=•••&&format=json, "+\
+                            "https://en.wiktionary.org/wiki/###")  
+    dict1uri = models.CharField(max_length=200, blank=True, null=True) 
     # for ex: English => French   default="https://glosbe.com/gapi/translate?from=eng&dest=fra&format=json")  
-    dict2uri = models.CharField(max_length=200, blank=True, null=True, default="https://en.wiktionary.org/wiki/###")  
-    googletranslateuri = models.CharField(max_length=200, blank=True, null=True, default="*http://translate.google.com/?ie=UTF-8&sl=en&tl=fr&text=###")  
+    dict2uri = models.CharField(max_length=200, blank=True, null=True)
+    googletranslateuri = models.CharField(max_length=200, blank=True, null=True, 
+                    default="*http://translate.google.com/?ie=UTF-8&sl=en&tl=••&text=###")  
     exporttemplate = models.CharField(max_length=1000, blank=True, null=True, 
             default='$status<br>$language<br>$text<br><h1>$word</h1>\t<h1>$translation</h1>'+\
                     '<br>$romanization<br>$sentence<br>$customsentence<br>$compoundword<br>'+\
@@ -110,10 +113,10 @@ class Languages(BaseModel):
     removespaces = models.BooleanField(default=False)  
     spliteachchar = models.BooleanField(default=False)  
     righttoleft = models.BooleanField(default=False)  
-    code_639_1 = models.CharField(unique=True, max_length=2, blank=True, null=True) # code for the language, 2 letters
-    code_639_2t =  models.CharField(unique=True, max_length=3, blank=True, null=True) # code for the language, 3 letters
-    code_639_2b =  models.CharField(unique=True, max_length=3, blank=True, null=True) # code for the language, 3 letters in English
-    django_code =  models.CharField(unique=True, max_length=8, blank=True, null=True) # code for the language, 3 letters in English
+    code_639_1 = models.CharField(max_length=2, blank=True, null=True) # code for the language, 2 letters
+    code_639_2t =  models.CharField(max_length=3, blank=True, null=True) # code for the language, 3 letters
+    code_639_2b =  models.CharField(max_length=3, blank=True, null=True) # code for the language, 3 letters in English
+    django_code =  models.CharField(max_length=8, blank=True, null=True) # code for the language, 3 letters in English
     # JSON List of string. the language model stores only the keys for the extra_field JSON of Words
     extra_field_key = models.ManyToManyField(Extra_field_key, related_name='languagehavingthisextrafieldkey') 
 

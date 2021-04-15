@@ -1,0 +1,47 @@
+﻿############# USERS 
+- model: "lwt.myuser"
+  pk: 2
+  fields:
+     username: "test"
+     # password is 'test'
+     password: "pbkdf2_sha256$10000$vkRy7QauoLLj$ry+3xm3YX+YrSXbri8s3EcXDIrx5ceM+xQjtpLdw2oE="
+     is_superuser: false
+     is_staff: false
+     is_active: true
+     email: gilga@hotmail.fr
+     origin_lang_code: en
+############# LANGUAGES 
+- model: "lwt.languages"
+  pk: 12
+  fields:
+     created_date: "2020-07-25"
+     modified_date: "2020-07-25"
+     owner: 2
+     name: "Portuguese (Portugal)"
+     dict1uri: "http://www.wordreference.com/pten/###"
+     dict2uri: "https://context.reverso.net/translation/portuguese-english/###"
+     googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=pt&tl=en&text=###" 
+     textsize: 150
+     charactersubstitutions: "´=\"|`=\"|’=\"|‘=\"|...=…|..=‥"
+     regexpsplitsentences: ".!?:;"
+     exceptionssplitsentences: "Mr.|Dr.|[A-Z].|Vd.|Vds."
+     regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
+     removespaces: false
+     spliteachchar: false
+     righttoleft: false
+     code_639_1: pt
+     code_639_2t: por
+     code_639_2b: por
+     django_code: pt
+     exporttemplate: "$word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status"
+############# SETTINGS 
+- model: "lwt.settings_currentlang_id"
+  pk: 2
+  fields:
+     stvalue: 12
+     owner_id: 2
+- model: "lwt.settings_currentlang_name"
+  pk: 2
+  fields:
+     stvalue: Portuguese (Portugal)
+     owner_id: 2

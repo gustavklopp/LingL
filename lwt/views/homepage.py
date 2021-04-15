@@ -32,7 +32,7 @@ def homepage(request):
     if request.GET.get('setcurrentlang'):
         lgid = int(request.GET['setcurrentlang'])
         # and put that inside database and cookie:
-        setter_settings_cookie_and_db('setcurrentlang', lgid,request)
+        setter_settings_cookie_and_db('currentlang_id', lgid, request)
         currentlang_id = lgid
         if lgid == -1: # -1 is the code for: Filter Off
             currentlang_name = -1 
@@ -43,7 +43,7 @@ def homepage(request):
             currentlang_name = Languages.objects.values_list('name',flat=True).get(id=lgid)
     else:
         # get the currentlang.
-        currentlang_id = getter_settings_cookie_else_db('currentlang_id',request)
+        currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
         if currentlang_id == '': # first time launching: no Language.
             currentlang_name = ''
         else: # Languages exist

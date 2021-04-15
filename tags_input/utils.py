@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.db import models
-from django.utils.functional import curry 
+from functools import partial as curry
 #  curry function: it lets you take function with pre-defined arguments 
 # and save it as a new function to use later only with needed arguments. 
 # All this without running the function. 

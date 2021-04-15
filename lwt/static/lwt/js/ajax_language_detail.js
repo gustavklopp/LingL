@@ -21,14 +21,14 @@ function ajax_fill_language_detail(code_lang){
 				$('ul#list__dict2uri').empty()
 				$('ul#list__dict1uri ').next().addClass('hidden'); // and make hidden 
 				$('ul#list__dict2uri ').next().addClass('hidden'); 
-				$.each(data['dicturi'], function(index, value){
+				var dicturi_list = data['dicturi'].split(',');
+				$.each(dicturi_list, function(index, value){
 					$('ul#list__dict1uri').append('<li><a href="#" data-value="'+value+'">'+value+'</a></li>'); 
 					if (index == 0){
 						$('input#id_dict1uri').val(value); 
 					}
 					$('ul#list__dict1uri ').next().removeClass('hidden'); 
-				});
-				$.each(data['dicturi'], function(index, value){
+
 					$('ul#list__dict2uri').append('<li><a href="#" data-value="'+value+'">'+value+'</a></li>'); 
 					if (index == 0){
 						$('input#id_dict2uri').val(value); 
@@ -42,8 +42,10 @@ function ajax_fill_language_detail(code_lang){
 			  $("#list__dict2uri.dropdown-menu a").bind('click', function(event) {
 				$("input#id_dict2uri").val($(this).text());
 			  });
+				$('input#id_dict1uri').val(data['dict1uri']); 
+				$('input#id_dict2uri').val(data['dict2uri']); 
 				$('input#id_googletranslateuri').val(data['googletranslateuri']); 
-				$('input#id_exporttemplate').val(data['exporttemplate']); 
+				$('textarea#id_exporttemplate').val(data['exporttemplate']); 
 				$('select#id_textsize').val(data['textsize'].toString());  // don't forget to convert the int to string
 				$('input#id_charactersubstitutions').val(data['charactersubstitutions']); 
 				$('input#id_regexpsplitsentences').val(data['regexpsplitsentences']); 

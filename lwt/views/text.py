@@ -11,7 +11,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # used 
 from django.urls import reverse
 from django.utils.translation import ugettext as _, ungettext as s_
 from django.contrib.auth.decorators import login_required
-from django.contrib.staticfiles.templatetags.staticfiles import static # to use the 'static' tag as in the templates
+from django.templatetags.static import static # to use the 'static' tag as in the templates
 from django.http import HttpResponse, JsonResponse
 from django.utils import timezone
 # second party
@@ -34,7 +34,8 @@ def textlist_filter(request):
         limit = request.POST['limit']
         limit = int(limit)
     all_texts = Texts.objects.filter(owner=request.user).all()
-    all_texts = list_filtering(all_texts, request) # apply the filtering (it sets also the cookie)
+    # then apply the filtering (it sets also the cookie). Func list_filtering is in lwt/views/_utilities_views.py
+    all_texts = list_filtering(all_texts, request) 
     total = all_texts.count()
     all_texts = all_texts[:limit]
     all_texts = serialize_bootstraptable(all_texts,total)
@@ -48,6 +49,7 @@ def load_texttable(request):
         search = request.GET['search']
         if search != '': # when deleting the previous search, ajax will send the search word ''. consider it like No filter
             all_texts = all_texts.filter(title=search)
+    # then apply the filtering (it sets also the cookie). Func list_filtering is in lwt/views/_utilities_views.py
     all_texts = list_filtering(all_texts, request) 
     
     total = all_texts.count() 
@@ -91,13 +93,15 @@ def load_texttable(request):
         t_dict['language'] = t.language.name
         ##############################
         r = t.title
-        r += ' <span class="small">['+ ','.join([tt.txtagtext for tt in t.texttags.all()]) + ']</span>'
+        tag_for_text = [tt.txtagtext for tt in t.texttags.all()]
+        if tag_for_text: # display the tags if there are
+            r += ' <span class="small">['+ ','.join(tag_for_text) + ']</span>'
         ##############################
         if t.audiouri != "":
             r += ' <img src="' + static('lwt/img/icn/speaker-volume.png') +\
                 '" title="'+_("With Audio")+'" alt="'+_('With Audio')+ '/>'
         ##############################
-        if t.sourceuri != "":
+        if t.sourceuri != "" and t.sourceuri != None:
             r += '<a href="'+ t.sourceuri + '" target="_blank"><img src="'+\
             static('lwt/img/icn/chain.png')+'" title="'+_("Link to Text Source")+'" alt="'+_("Link to Text Source")+\
             '"/></a>'
@@ -213,8 +217,8 @@ def text_list(request):
     ##################################### Lastopentime filtering #############################################################
     now = timezone.now()
     possible_time = [
-        {'week': [0,4], 'string':_('< 1 week ago')},
-        {'week': [4,12], 'string': _('1 wk - 3 mo ago')},
+        {'week': [0,4], 'string':_('< 1 month ago')},
+        {'week': [4,12], 'string': _('1 mo - 3 mo ago')},
         {'week': [12,24], 'string': _('3 mo - 6 mo ago')},
         {'week': [24,-1], 'string':_('> 6 months ago or never opened')}
         ]
@@ -348,7 +352,7 @@ def text_list(request):
                                       unarchtx_nb) % { 'unarchtx_nb': unarchtx_nb} +\
                             '<br>' +s_('%(delunknown_nb)d unknown Word deleted', 
                                       '%(delunknown_nb)d unknowns Words deleted',
-                                      delunknown_nb) % { 'unknown_nb': delunknown_nb} +\
+                                      delunknown_nb) % { 'delunknown_nb': delunknown_nb} +\
                             '<br>' +s_('%(delnotword_nb)d non-Word deleted', 
                                       '%(delnotword_nb)d non-Words deleted',
                                       delnotword_nb) % { 'delnotword_nb': delnotword_nb} +\
@@ -386,7 +390,7 @@ def text_detail(request):
             savedtext = f.save()
             # Process the file :
             # split the text into sentences and into words and put it in Unknownwords
-            splitText(savedtext) #  in _utilities_views
+            splitText(request, savedtext) #  in _utilities_views
             return redirect(reverse('text_list'))
         else:
             return render(request, 'lwt/text_detail.html', {'form':f})

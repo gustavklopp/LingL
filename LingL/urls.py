@@ -33,27 +33,27 @@ from lwt import views
 urlpatterns = [
 
     url(r'^admin/', admin.site.urls),
-    ##############LOCAL##############################################################################################
+    ##############LOCAL######################################################
     url(r'^$', views.homepage, name='homepage'),
-    ###### LANGUAGES ###############################################################################################
+    ###### LANGUAGES ########################################################
     # create a new language or edit, or other options...:
     url(r'^language_detail/$',views.language_detail,name='language_detail'),
     # List of all languages. It is the target page after saving a new language/edit an exsting one also:
     url(r'^language_list/$',views.language_list,name='language_list'),
     url(r'^fill_language_detail/$',views.fill_language_detail,name='fill_language_detail'),
 
-    ###### TEXTS ###################################################################################################
+    ###### TEXTS ############################################################
     # read, test, print and improvedAnnotedText 
     url(r'^text_detail/$', views.text_detail, name='text_detail'),
     url(r'^uploaded_text/$', views.uploaded_text, name='uploaded_text'),
 
     # List of texts:
-    url(r'^text_list/$',views.text_list,name='text_list'),
-    url(r'^load_texttable/$',views.load_texttable,name='load_texttable'),
-    url(r'^textlist_filter/$',views.textlist_filter,name='textlist_filter'),
+    url(r'^text_list/$',views.text_list, name='text_list'),
+    url(r'^load_texttable/$',views.load_texttable, name='load_texttable'),
+    url(r'^textlist_filter/$',views.textlist_filter, name='textlist_filter'),
 
 
-    ####### TERMS ###################################################################################################
+    ####### TERMS ###########################################################
     # create, edit a term:
     # these 2 urls are called by AJAX (display to create a term and display dictionary webpage):
     url(r'^termform/(?P<message_key>\w+)/(?P<message_val>\w+)/$',views.termform,name='termform'),
@@ -85,15 +85,15 @@ urlpatterns = [
     
     url(r'^backuprestore/$',views.backuprestore,name='backuprestore'),
     
-    #####################THIRD PARTY ##########################################################################
+    #####################THIRD PARTY ########################################
     url(r'^tags_input/', include(('tags_input.urls','tags_input'), namespace='tags_input')), # used for tagging, like in "text_detail"
     url(r'^accounts/', include('allauth.urls')), # used by django-allatuh
 
-    #####################INTERNATIONALIZATION FOR JAVASCRIPT###################################################
+    #####################INTERNATIONALIZATION FOR JAVASCRIPT#################
    url(r'^jsi18n/lwt/$', JavaScriptCatalog.as_view(packages=['lwt']), name='javascript-catalog'), 
 
 ]
 
-##################### UPLOADED RESTORE FILE    ###################################################
+##################### UPLOADED RESTORE FILE    ##############################
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # used by django-allatuh
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) # used by django-allauth

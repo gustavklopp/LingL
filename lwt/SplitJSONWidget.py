@@ -140,7 +140,7 @@ class SplitJSONWidget(forms.Widget):
         result = self._to_pack_up(name, data_copy)
         return json.dumps(result)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         try:
             value = json.loads(value)
         except TypeError:

@@ -1,5 +1,5 @@
 {% extends "lwt/__baseSkeleton.html" %}
-{% load staticfiles %}
+{% load static %}
 {% load i18n %} {# used for internationalization #}
 
 {% block title %}{% trans "My Language" %}{% endblock title %}
@@ -59,7 +59,7 @@
 		{% endif %}
 		&nbsp;</td>
 		<td data-val="{{ a_l.lang.name }}">{{ a_l.lang.name }}</td>
-		<td >{% if a_l.lang.texthavingthislanguage.count == 0 %}0{ a_l.lang.texthavingthislanguage.count }}{% else %}
+		<td >{% if a_l.lang.texthavingthislanguage.count == 0 %}0{% else %}
 			<a href="{% url 'text_list' %}?lang={{ a_l.lang.id }}">{{ a_l.lang.texthavingthislanguage.count }}</a>{% endif %}
 		</td>
 		<td >{% if a_l.word_count > 0 %}<a href="{% url 'term_list' %}?lang={{ a_l.lang.id }}">{{ a_l.word_count }}</a>{% else %}0{% endif %}</td>

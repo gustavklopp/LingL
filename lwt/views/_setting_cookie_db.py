@@ -16,7 +16,7 @@ from lwt.models import *
 """ Helper functions. Don't call them directly. """
 
 
-def setter_settings_cookie_and_db(stkey,stvalue,request, owner=None):
+def setter_settings_cookie_and_db(stkey, stvalue, request, owner=None):
     """ set the setting value set by user in key in Cookie and also set it in Settings database """
     if owner == None: # if it's not defined elsewhere (for example when restoring database
         owner = request.user

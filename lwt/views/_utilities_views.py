@@ -88,7 +88,10 @@ def create_filter(filter_type, filter_list_json):
                     filter_Q |= Q(**filter_args)
         return filter_Q
     else:# no cookie defined 
-        filter_args = {filter_type: -1}
+        if filter_type == 'archived':
+            filter_args = {filter_type: False}
+        else:
+            filter_args = {filter_type: -1}
         return Q(**filter_args) 
 
 def time_filter_args(week_json):
@@ -121,11 +124,11 @@ def list_filtering( model, request):
     # the User is setting the filters
     if request.method == 'POST': 
         lang_filter_json = request.POST['lang_filter']
-        if isinstance(model.first(), Texts):
+        if isinstance(model.first(), Texts): # texts table is filtered
             tag_filter_json = request.POST['tag_filter']
             time_filter_json = request.POST['time_filter']
             archived_filter_json = request.POST['archived_filter']
-        if isinstance(model.first(), Words):
+        if isinstance(model.first(), Words): # words table is filtered 
             text_filter_json = request.POST['text_filter']
             status_filter_json = request.POST['status_filter']
     # only getting the filter
@@ -138,40 +141,34 @@ def list_filtering( model, request):
         if isinstance(model.first(), Words):
             text_filter_json = getter_settings_cookie('text_filter', request)
             status_filter_json = getter_settings_cookie('status_filter', request)
-    # put this inside cookies:
-    setter_settings_cookie('lang_filter', lang_filter_json,request)
-    if isinstance(model.first(), Texts):
-        setter_settings_cookie('tag_filter', tag_filter_json,request)
-        setter_settings_cookie('time_filter', time_filter_json,request)
-        setter_settings_cookie('archived_filter', archived_filter_json,request)
-    if isinstance(model.first(), Words):
-        setter_settings_cookie('text_filter', text_filter_json,request)
-        setter_settings_cookie('status_filter', status_filter_json,request)
+    # put this inside cookies (the func setter_settings_cookie is in lwt/views/_setting_cookie_db.py):
+    setter_settings_cookie('lang_filter', lang_filter_json, request)
+    if isinstance(model.first(), Texts): # texts table is filtered
+        setter_settings_cookie('tag_filter', tag_filter_json, request)
+        setter_settings_cookie('time_filter', time_filter_json, request)
+        setter_settings_cookie('archived_filter', archived_filter_json,
+                                                            request)
+    if isinstance(model.first(), Words): # words table is filtered
+        setter_settings_cookie('text_filter', text_filter_json, request)
+        setter_settings_cookie('status_filter', status_filter_json,
+                                                            request)
     # Create the filters for lang
     filter_Q_lang = create_filter('language_id', lang_filter_json)
-    # ... and for the other:
-    if lang_filter_json != '[]': 
-        if isinstance(model.first(), Texts):
-            filter_Q_tag = Q() if not tag_filter_json else create_filter('texttags__id', tag_filter_json)
-            filter_Q_time = Q() if not time_filter_json else create_filter('lastopentime', time_filter_json)
-            filter_Q_archived = Q() if not archived_filter_json else create_filter('archived', archived_filter_json)
-        if isinstance(model.first(), Words):
-            filter_Q_text = Q() if not text_filter_json else create_filter('text_id', text_filter_json)
-            filter_Q_status = Q() if not status_filter_json else create_filter('status', status_filter_json)
-    else: # no filtering, so evering is blank
-        filter_Q_lang = Q(language_id=-1)
-        filter_Q_tag = Q(tag_id=-1)
-        filter_Q_time = Q(time=-1)
-        filter_Q_text = Q(text_id=-1)
-        filter_Q_status = Q(status=-1)
-        filter_Q_archived = Q(archived=-1)
+    if isinstance(model.first(), Texts): # texts table is filtered
+        filter_Q_tag = create_filter('texttags__id', tag_filter_json)
+        filter_Q_time = create_filter('lastopentime', time_filter_json)
+        filter_Q_archived = create_filter('archived', archived_filter_json)
+    if isinstance(model.first(), Words): # words table is filtered
+       filter_Q_text = create_filter('text_id', text_filter_json) 
+       filter_Q_status = create_filter('status', status_filter_json)
     # And finally filter the models:
-    if isinstance(model.first(), Texts):
+    if isinstance(model.first(), Texts): # texts table is filtered
         results = model.filter(filter_Q_lang).\
                         filter(filter_Q_time).\
                         filter(filter_Q_archived).\
-                        filter(filter_Q_tag).distinct() # because many2many, a text can have 2 tags. don't count 2 times so...
-    if isinstance(model.first(), Words):
+                        distinct() # because many2many, a text can have 2 tags. don't count 2 times so...
+#                         filter(filter_Q_tag).\
+    if isinstance(model.first(), Words): # words table is filtered
         results = model.filter(filter_Q_lang).\
                         filter(filter_Q_status).\
                         filter(filter_Q_text)
@@ -239,7 +236,7 @@ def splitSentence(t, splitSentenceMark):
                     temp_t[id-1] += s
     return temp_t 
     
-def splitText(text):
+def splitText(request, text):
     ''' split the text into sentences.
         and then insert sentences/words in DB '''
 
@@ -330,11 +327,12 @@ def splitText(text):
     new_words_created_sorted = sorted(new_words_created, key=lambda word: word.wordtext)
     temp_word = ''
     for word in new_words_created_sorted:
-        if word.wordtext == temp_word.wordtext: # it's the same word than the word before in the list:
-            word.grouper_of_same_words = temp_word.grouper_of_same_words
-            word.status = temp_word.status
-            word.save()
-            temp_word = word
+        if temp_word != '':
+            if word.wordtext == temp_word.wordtext: # it's the same word than the word before in the list:
+                word.grouper_of_same_words = temp_word.grouper_of_same_words
+                word.status = temp_word.status
+                word.save()
+                temp_word = word
         else: # word with a different wordtext: we search for other words in other texts:
             similar_wo = Words.objects.filter(language=text.language).exclude(text=text).filter(wordtext=word.wordtext).first()
             if similar_wo:
@@ -347,7 +345,7 @@ def splitText(text):
     total_words_in_this_lang = Words.objects.filter(owner=request.user, language=text.language).count()
     if total_words_in_this_lang > MAX_WORDS:
         messages.warning(request, _('With this additional text, you\'ve got now ') + \
-                        total_words_in_this_lang + _(' words for ') + text.language.name + \
+                        str(total_words_in_this_lang) + _(' words for ') + text.language.name + \
                         _('. This could slow the program a lot. Please consider archiving some texts.'))
 
 # IS IT USEFUL???

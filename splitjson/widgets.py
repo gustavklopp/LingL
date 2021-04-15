@@ -98,7 +98,7 @@ class SplitJSONWidget(forms.Widget):
         for k, v in raw_data.iteritems():
             if k in copy_raw_data:
                 # to transform value from list to string
-                v = v[0] if isinstance(v, list) and len(v) is 1 else v
+                v = v[0] if isinstance(v, list) and len(v) == 1 else v
                 if k.find(self.separator) != -1:
                     d = _to_parse_key(k, v)
                     # set type result
@@ -115,7 +115,7 @@ class SplitJSONWidget(forms.Widget):
 #         result = self._to_pack_up(name, data_copy)
 #         return json.dumps(result)
 
-    def render(self, name, value, attrs=None):
+    def render(self, name, value, attrs=None, renderer=None):
         try:
             value = json.loads(value)
         except (TypeError, KeyError):
