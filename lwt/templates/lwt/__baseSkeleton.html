@@ -13,11 +13,13 @@
 			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         {% endblock meta_tags%}
         <title>
-            {% block title %}{% trans "LingL" %}{% endblock title %}
+            {% block pagetitle %}{% trans "LingL" %}{% endblock pagetitle %}
         </title>
         	<link rel="icon" href="{% static 'lwt/img/site_icon_16x16.png' %}" type="image/png" />
-        	<!--  bootstrap css -->
-			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/bootstrap.min.css' %}">  
+        	<!--  bootstrap -->
+			<!-- Latest compiled and minified CSS -->
+			<link rel="stylesheet" href="{% static 'lwt/css/bootstrap4.0.min.css' %}">
+
         	<!--  jquery-ui. used by tagsinputs -->
 			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/jquery-ui.1.12.1.min.css' %}">
 			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/jquery.tagsinput-revisited.css' %}">
@@ -30,7 +32,7 @@
 
         	<!-- internationalization in javascript -->
 			<script type="text/javascript" src="{% url 'javascript-catalog' %}"></script>
-			<script type="text/javascript" src="{% static 'lwt/js/__jquery.js' %}"></script>
+			<script type="text/javascript" src="{% static 'lwt/js/__jquery-3.6.0.min.js' %}"></script>
         	<!--  jquery-ui. used by tagsinputs -->
 			<script type="text/javascript" src="{% static 'lwt/js/__jquery-ui.min.js' %}"></script>
 			<script type="text/javascript" src="{% static 'lwt/js/_jquery.tagsinput-revisited.js' %}"></script>
@@ -77,7 +79,8 @@
 
 {# script for Bootstrap #}
 	<script type="text/javascript" src="{% static 'lwt/js/__popper.min.js' %}"></script>
-<script type="text/javascript" src="{% static 'lwt/js/__bootstrap-3.3.7.min.js' %}"></script>
+			<!-- Latest compiled and minified JavaScript for Bootstrap -->
+			<script src="{% static 'lwt/js/bootstrap4.0.min.js' %}"></script>
 			<!--  enable tooltip Bootstrap -->
 <script>
 			$(document).ready(function () {

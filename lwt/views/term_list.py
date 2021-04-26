@@ -10,10 +10,12 @@ from django.db.models.fields import CharField,IntegerField
 from django.templatetags.i18n import language
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # used for pagination (on text_list for ex.)
 from django.http import JsonResponse, HttpResponse #used for ajax
+from django.http.response import JsonResponse
 from django.utils import timezone, timesince
 from django.utils.translation import ugettext as _
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
+from django.utils.lorem_ipsum import sentence
 # second party
 import json
 # local
@@ -25,8 +27,6 @@ from lwt.views._nolang_redirect_decorator import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from ast import parse
-from django.http.response import JsonResponse
-from django.utils.lorem_ipsum import sentence
 
 
 def termlist_filter(request):
@@ -44,14 +44,16 @@ def termlist_filter(request):
     all_words = serialize_bootstraptable(all_words,total)
     return JsonResponse(all_words, safe=False)
     
+''' called by ajax (built-in function) inside bootstrap-table #word_table to fill the table'''
 def load_wordtable(request):
-    ''' called by ajax (built-in function) inside bootstrap-table #word_table to fill the table'''
+    # func requesting_get_by_table is in lwt/views/_utilities_views.py
     order, sort, sort_modif, offset, offset_modif, limit, limit_modif, all_words = requesting_get_by_table(request, Words)
 
     if 'search' in request.GET.keys():
         search = request.GET['search']
         if search != '': # when deleting the previous search, ajax will send the search word ''. consider it like No filter
             all_words = all_words.filter(wordtext=search)
+    # func list_filtering is in lwt/views/_utilities_views.py
     all_words = list_filtering(all_words, request) 
     
     # save the total list of item (used for export2anki to get the list of possible selected words):
@@ -74,13 +76,13 @@ def load_wordtable(request):
     all_words_filtered = all_words[offset_modif:offset_modif + limit_modif]
     data = []
 
+    ''' create a link inside the bootstrap table: clicking on the word jump to the right place 
+    we use 'original_word' only to get the annotation if the sorting is on 'extra_field': indeed,
+    we have previously annotated 'original_word' with the key form 'extra_field' and the annotation
+    is not passed to 'word' (w.grouper_of_same_words.grouper_of_same_word_having_this_word.all()':
+    if we do: getattr(word, sort) with sort is key inside extra_field ==> No field 
+    '''
     def linked(word, original_word):
-        ''' create a link inside the bootstrap table: clicking on the word jump to the right place 
-       we use 'original_word' only to get the annotation if the sorting is on 'extra_field': indeed,
-       we have previously annotated 'original_word' with the key form 'extra_field' and the annotation
-       is not passed to 'word' (w.grouper_of_same_words.grouper_of_same_word_having_this_word.all()':
-       if we do: getattr(word, sort) with sort is key inside extra_field ==> No field 
-        '''
         st = '<a href="#" onclick="jumpToRow('
         # calculate at which page and row is this word:
         filter_kw = {'{}__lt'.format(sort) : getattr(original_word, sort)} # we can't do getaatr(word, sort) 
@@ -97,7 +99,7 @@ def load_wordtable(request):
         w_dict = {}
         w_dict['state'] = 'checked' if w.state else '' # checkbox to export to anki
         w_dict['id'] = w.id
-        w_dict['status'] = w.status
+        w_dict['status'] = get_name_status(w.status)
         w_dict['language_name'] = w.language.name
         w_dict['text_title'] = w.text.title
         w_dict['sentence'] = w.sentence.sentencetext if w.sentence else ''
@@ -169,6 +171,22 @@ def term_list(request):
         status_filter_json = getter_settings_cookie('status_filter', request)
     status_filter = [] if not status_filter_json else json.loads(status_filter_json)
     status_filter = [int(i) for i in status_filter]
+    ################## WORDTAG FILTERING ######################################################################################
+    wordtag_filter_json = getter_settings_cookie('wordtag_filter', request)
+    wordtag_filter = [] if not wordtag_filter_json else json.loads(wordtag_filter_json)
+    wordtag_filter = [int(i) for i in wordtag_filter]
+    wordtags = Wordtags.objects.filter(owner=request.user).all().order_by('wotagtext')
+    # creating the wordtags_list
+    wordtags_list = []
+    wordtags_list_empty = True
+    for wordtag in wordtags:
+        # get the languages which are found associated to this wordtag
+        wordtag_lang = Words.objects.filter(wordtags=wordtag).values_list('language_id', flat=True).all()
+        if set(wordtag_lang).isdisjoint(set(lang_filter)): # some languages are common
+            wordtags_list.append({'tag':wordtag, 'hidden': True, 'lang': list(wordtag_lang)})
+        else:
+            wordtags_list.append({'tag':wordtag, 'hidden': False, 'lang': list(wordtag_lang)})
+            wordtags_list_empty = False
 
     # get the list of languages to display them in the drop-down menu:
     languages = Languages.objects.filter(owner=request.user).all().order_by('name')
@@ -195,13 +213,18 @@ def term_list(request):
         extra_field = json.loads(extra_field_json)
     else:
         extra_field = None
+    
+    # get the current database size:
+    database_size = get_word_database_size(request)
 
     return render(request, 'lwt/term_list.html',
                    {
                     'languages':languages, 'texts':texts,'statuses':statuses,
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
                     'lang_filter': lang_filter, 'text_filter': text_filter, 'status_filter': status_filter,
+                    'wordtag_filter': wordtag_filter, 'wordtags_list':wordtags_list, 'wordtags_list_empty':wordtags_list_empty,
                     'message':message,'errormessage':errormessage,'noback':noback,
                     'total_to_export':total_to_export,
                     'extra_field': extra_field,
-                     })
+                     'database_size':database_size})
+    

@@ -32,6 +32,7 @@ function termlist_filter() {
 	var filterlangform = $('#filterlangform');
 	var filtertextform = $('#filtertextform');
 	var filterstatusform = $('#filterstatusform');
+	var filterwordtagform = $('#filterwordtagform');
 	var chosen_lang = [];
 	// get the checkbox checked
 	$.each($("#filterlangform input:checked"), function(){
@@ -42,13 +43,18 @@ function termlist_filter() {
 		chosen_text.push($(this).val());
 	});
 	var chosen_status = [];
-	$.each($("#filterstatusform").find("span").not(".hidden").find("input:checked"), function(){
+	$.each($("#filterstatusform").find("input:checked"), function(){
 		chosen_status.push($(this).val());
+	});
+	var chosen_wordtag = [];
+	$.each($("#filterwordtagform").find("input:checked"), function(){
+		chosen_wordtag.push($(this).val());
 	});
 	// stringify them
 	var chosen_lang_json = JSON.stringify(chosen_lang);
 	var chosen_text_json = JSON.stringify(chosen_text);
 	var chosen_status_json = JSON.stringify(chosen_status);
+	var chosen_wordtag_json = JSON.stringify(chosen_wordtag);
 	// get the options for the rows per page
 	var word_table = $('#word_table');
 	var options = word_table.bootstrapTable('getOptions'); // get the number of rows per page
@@ -59,6 +65,7 @@ function termlist_filter() {
 	data_to_go.append('lang_filter', chosen_lang_json);
 	data_to_go.append('text_filter', chosen_text_json);
 	data_to_go.append('status_filter', chosen_status_json);
+	data_to_go.append('wordtag_filter', chosen_wordtag_json);
 	data_to_go.append('limit', options['pageSize']);
 	data_to_go.append('csrfmiddlewaretoken', token);
 	// and send it!

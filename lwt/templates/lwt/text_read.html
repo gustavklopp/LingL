@@ -3,7 +3,7 @@
 {% load i18n %} {# used for internationalization #}
 {% load mathfilters %}
 
-{% block title %}{% trans "Read" %}{% endblock title %}
+{% block pagetitle %}{% trans "Reading" %} "{{ text.title }}"{% endblock pagetitle %}
 
 {% comment %}
 
@@ -37,41 +37,28 @@ $(document).ready( function() {
 		$(this).attr('title', title);
 		});
 
-	$('span[woid]').bind('click', function(event) { // check whether a word is clicked (and +ctrl-clicked)
-		click_ctrlclick_toggle(this,event); // creating: clicktooltip
-		// and if status == 0: the termform at the top right, and the dictwebpage at the bottom right
-		
-		// change the color when clicked:
-		if (event.ctrlKey){
-			$(this).addClass('ctrlclicked');
-		} else {
-			$('.clicked').removeClass('clicked'); // only one word can be clicked at one time
-			$('.ctrlclicked').removeClass('ctrlclicked'); 
-			$(this).addClass('clicked');
-		}
+	$('span[woid]').bind('click', clickword);
 	
-		});
-
-	$(document).keydown(text_read_keydownevent); // used for shortcut. TODO:
-		
 	update_workcount(); 
 });
 </script>
 <script type="text/javascript" src="{% static 'lwt/js/ajax_update.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/hovertooltip.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/click_ctrlclick_toggle.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/helppage.js' %}" charset="utf-8"></script>
 {% endblock javascript %}
 
 {% block content %}
-<div class="text_read row"> <!-- Start of row main container -->
+
+<div class="row text_read textread_row"> <!-- Start of row main container -->
 
 <div class="text_read col-md-6" id="leftcol"> <!-- Start of 50% col left -->
 
-<div class="text_read row" id="topleft">
+<div class="text_read textread_row LOCAL_bootstrap4" id="topleft">
 {% include 'lwt/_bannerleft.html' %}&nbsp;&nbsp;&nbsp;{% include 'lwt/_menu.html'%}&nbsp; | &nbsp;
 {% if previoustext %}
 	<a href="{% url 'text_read' previoustext.id %}" target="_top"><img 
-	src="{% static 'lwt/img/icn/navigation-180-button.png' %}" title="{% trans "Previous Text: " %}:{{ previoustext.title }}"
+	src="{% static 'lwt/img/icn/navigation-180-button.png' %}" title="{% trans "Previous Text" %} : &quot;{{ previoustext.title }}&quot;"
 	 alt="Previous Text: {{ previoustext.title }}" /></a>
 {% else %}
 	<img src="{% static 'lwt/img/icn/navigation-180-button-light.png' %}" 
@@ -80,38 +67,42 @@ $(document).ready( function() {
 {% if nexttext %}
 	<a href="{% url 'text_read' nexttext.id %}" target="_top"><img 
 	src="{% static 'lwt/img/icn/navigation-000-button.png' %}" 
-	title="{% trans "Next Text: " %}:{{ nexttext.title }}" alt="Next Text: {{ nexttext.title }}" /></a>
+	title="{% trans "Next Text" %} : &quot;{{ nexttext.title }}&quot;" alt="Next Text: {{ nexttext.title }}" /></a>
 {% else %}
 	<img src="{% static 'lwt/img/icn/navigation-000-button-light.png' %}" 
 	title="{% trans "No Next Text" %}" alt="No Next Text" />{% endif %}
 &nbsp;<a target="_top" href="{% url 'text_detail' %}?edit= {{ text.id }}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit Text" %}" alt="Edit Text" /></a>
 
-<div>
-	<div class="col-md-9">
-	<h4>{% trans "READING" %}&nbsp;▶ "{{ text.title }}"{% if text.sourceuri %}<a href="{{ text.sourceURI }}" target="_blank"><img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Text Source" %}" alt="Text Source" /></a>{% endif %}
+<div class="d-flex">
+	<div class="col-md-8">
+	<h4 class="pl-50">{% trans "READING" %}&nbsp;▶ "{{ text.title }}"{% if text.sourceuri %}<a href="{{ text.sourceURI }}" target="_blank"><img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Text Source" %}" alt="Text Source" /></a>{% endif %}
 	</h4>
 	</div>
-<div class="col-md-3">
-	TO DO: <span title="To Do" id="word_left_todo" wostatus="0">&nbsp;{{ textwordcount|sub:textworkcount }}&nbsp;</span>
-	{% if textwordcount|sub:textworkcount > 0 %}&nbsp;&nbsp;&nbsp;<button class="btn btn-primary btn-xs"  onclick="iknowall('{{ text.id }}');">{% trans "I KNOW ALL" %}</button>{% endif %}
+	<div class="col-md-1">
+	<a href="{% url 'helppage' %}#keyboard_shortcut" target="_blank"><img src="{% static 'lwt/img/keyboard_mouse-icon50x25.png' %}" title="{% trans "Controls (and Keyboard shortcuts)" %}" alt="Control (and Keyboard shortcuts)" /></a>
+	</div>
+	<div class="col-md-3">
+	{% trans 'TO DO:' %} <span title="To Do" id="word_left_todo" wostatus="0">&nbsp;{{ textwordcount|sub:textworkcount }}&nbsp;</span>
+	&nbsp;&nbsp;&nbsp;<button title="{% trans 'Mark all the remaining unknown words in this sentence as known' %}" class="btn btn-primary btn-sm" {% ifequal textwordcount|sub:textworkcount 0 %}disabled{% endifequal %} id="iknowall" onclick="iknowall();">{% trans "I KNOW ALL" %}</button>
 	</div>
 </div>
 
 </div>
 
-
-<div class="text_read row" id="bottomleft">
+<div class="text_read textread_row" id="bottomleft">
 <div id="thetext" {% if text.language.righttoleft %}style="text-align:right;"{% endif %}><p style="{% if text.language.removespaces %}word-break:break-all;{% endif %}font-size:{{ text.language.textsize }}%;line-height: 1.4; margin-bottom: 10px;">
 
 {#   DISPLAYING THE TEXT      #}
 {# the 'if wo.order == 0... is to add a space after a delimiter: aering the text! #}
 {% for wo in word_inthistext %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span >{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}<span 
 woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
-woromanization="{{ wo.romanization }}" iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
-{% if wo.isCompoundword %}
-cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" coworomanization="{{ wo.compoundword.romanization }}" 
+{% if wo.language.has_romanization %}woromanization="{{ wo.romanization }}"
 {% else %}
-cowostatus="" cowotranslation="" coworomanization="" 
+woromanization=""
+{% endif %} iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
+{% if wo.isCompoundword %} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
+{% else %}
+cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
 {% endif %}
 {% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}
 >{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
@@ -124,15 +115,15 @@ cowostatus="" cowotranslation="" coworomanization=""
 
 <div class="text_read col-md-6" id="rightcol"> <!--  Start of flexboxcontainer_right -->
 
-<div class="text_read row" id="topright">
+<div class="text_read textread_row" id="topright">
 </div>
 
-<div class="text_read row" id="bottomright">
+<div class="text_read textread_row" id="bottomright">
 </div>
 
 </div> <!-- End of 50% col  right -->
 
-</div> <!-- End of row main container -->
+</div> <!-- End of textread_row main container -->
 
 
 

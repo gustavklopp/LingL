@@ -2,8 +2,7 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-{% block title %}{{ block.super }} | Backup & Restore{% endblock title %}
-{% block pagetitle %}Backup & Restore{% endblock pagetitle %}
+{% block pagetitle %}{% trans 'Backup & Restore' %} | {{ block.super }}{% endblock pagetitle %}
 
 {% block banner %}
 {% include "lwt/_banner.html" %}

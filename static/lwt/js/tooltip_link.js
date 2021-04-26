@@ -3,11 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**************************************************************
- called by 
-create_tooltip_stat_unkwn(WBLINK1,WBLINK2,WBLINK3,$(this).attr('wotranslation'), $(this).attr('wowordtext'), RTL, $(this).attr('woid'), status); 
-     wblink1: language.dict1uri
-     wblink2: language.dict2uri
-     wblink3: language.lggoogletranslateuri
+ Helpers funcs for the funcs 'create_tooltip_stat_...(WBLINK1,WBLINK2,WBLINK3,$(this).attr('wotranslation'), $(this).attr('wowordtext'), RTL, $(this).attr('woid'), status); 
+    @wblink1: language.dict1uri
+    @wblink2: language.dict2uri
+    @wblink3: language.lggoogletranslateuri
+	@return: the link
 ***************************************************************/
 
 function text_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, cotrans, iscompoundword, show_compoundword, rtl)
@@ -63,8 +63,10 @@ function text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, t
 		'</div>' ;
 	return r;
 }
-/* the user clicked on a WORD 
- the word can be of the status: ignored, well-known, learning, unknown. */
+/****************************************************************************************** */
+/*         the user clicked on a WORD. create the tooltip                                   */
+/* the word can be of the status: ignored, well-known, learning, unknown.****************** */
+/****************************************************************************************** */
 function create_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 		cotrans, iscompoundword, show_compoundword, rtl)
 {
@@ -170,11 +172,11 @@ function create_link_deletesingleword(wo_id) {
 }
 
 function create_link_stat_wellkwn(wo_id) {
-	return ' <a href="" onClick="ajax_update_status(\''+wo_id+'\',\'wellkwn\');return false;">I know this term well</a> ';
+	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'wellkwn\');return false;">I know this term well</a> ';
 }
 
 function create_link_stat_ignored(wo_id) {
-	return ' <a href="" onClick="ajax_update_status(\''+wo_id+'\',\'ignored\');return false;">Ignore this term</a> ';
+	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'ignored\');return false;">Ignore this term</a> ';
 }
 
 /**************************************************************

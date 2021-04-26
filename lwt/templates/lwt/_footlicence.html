@@ -6,10 +6,10 @@
 <p class="smallgray graydotted">&nbsp;</p>
 <table><tr>
 <td class="width50px"><a target="_blank" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="Public Domain" title="Public Domain" src="{% static 'lwt/img/gplv3.png' %}" /></a></td>
-<td><p class="small"><a href="http://lwt.sourceforge.net/" target="_blank">"LingL" (LWT)</a> is free and opensource software released<br />
+<td><p class="small"><a href="http://lwt.sourceforge.net/" target="_blank">LingLibre ("LingL")</a> is free and opensource software released<br />
 under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public Licence </a>.<br />
 {% trans "This is LingL Version" %} {% version_date %}<br />
-<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}</a> {% trans "Size" %}: {% trans "MB" %}<br />
+<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}</a> {% trans "Size" %}: {% load l10n %}{{ database_size|localize }} {% trans "words in the database" %}<br />
 {% trans "Proudly built with" %} <a href="https://www.djangoproject.com/" target="_blank">{% trans "Django" %}</a> {% trans "version" %} {% version_django %}, {% trans "based on "%}<a href="https://www.python.org/" target="_blank">Python</a> {% version_python %}<br />
 </p>
 </td>

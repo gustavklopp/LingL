@@ -4,8 +4,6 @@
 {% load i18n %} {# used for internationalization #}
 {% load jchart %}
 
-{% block title %}{% if currentlang_id == -1 %}{% trans "Statistics" %}{% else %}{% trans "Statistics" %}{{ currentlang_name }}{% endif %}{% endblock title %}
-
 {% block pagetitle %}{% if currentlang_id == -1 %}{% trans "Statistics" %}{% else %}{% trans "Statistics" %}{{ currentlang_name }}{% endif %} | {{ block.super }}
 
 {% endblock pagetitle %}
@@ -24,7 +22,7 @@
 
 {# filter on language #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
-<ul id="ul_language" class="collapse in">
+<ul id="ul_language" class="collapse show">
 		<li><a id="total" onclick="ajax_filterlangform_submit('total', {{ currentlang_id }});" class="unstyled" href="#">
 			{% trans 'All Languages' %}
 		  </a></li>

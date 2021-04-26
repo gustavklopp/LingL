@@ -12,9 +12,9 @@ from django.db.models import Q
 # first party:
 from datetime import timedelta
 # second party:
+# third party
 from jchart import Chart
 from jchart.config import Axes, DataSet, rgba
-# third party
 # local
 from lwt.models import *
 from lwt.constants import STATUS_CHOICES
@@ -132,7 +132,12 @@ def statistics(request):
     currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
         # get the list of languages for filtering:
     filterlangs = Languages.objects.filter(owner=request.user).all().order_by('name')
+        
+    # get the current database size:
+    database_size = get_word_database_size(request)
+
     return render(request, 'lwt/statistics.html',{
         'filterlangs':filterlangs, 'currentlang_id':currentlang_id,
+         'database_size':database_size
         })
 

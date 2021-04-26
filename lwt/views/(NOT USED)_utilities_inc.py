@@ -4,9 +4,9 @@ from django.contrib import messages
 from django.db import transaction
 from django.utils.translation import ugettext as _
 # second party
-import re
-import json 
-import urllib
+import re #it's standard in python
+import json  #it's standard in python
+import urllib #it's standard in python
 # local
 from lwt.models import *
 

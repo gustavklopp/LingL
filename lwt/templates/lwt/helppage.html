@@ -1,0 +1,147 @@
+{% extends "lwt/__baseSkeleton.html" %}
+{% load static %}
+{% load i18n %} {# used for internationalization #}
+{% load mathfilters %}
+
+{% block title %}{% trans "Keyboard shortcuts" %}{% endblock title %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
+
+{% comment %}
+{% endcomment %}
+
+
+{% block javascript %}
+{% endblock javascript %}
+
+{% block content %}
+
+<div class="row">
+<div class="col-md-6">
+<h3 id="keyboard_shortcut">{% trans "Keyboard shortcuts when reading a text" %}</h3>
+<h5>{% trans "When the text is in focus (normal start) :" %}</h5>
+<table class="table shortcut_table">
+  <tbody>
+    <tr>
+      <td class="text-center"><div class="key align-middle text-center">←</div></td>
+      <td>{% trans "Select the previous word" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="key text-center">→</div></td>
+      <td>{% trans "Select the next word. Note: Contray to the 'previous word move', it moves only by unknown word" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="key text-center">A</div></td>
+      <td>{% trans "Make the word as 'well known' (*A*llright)" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="key text-center">S</div></td>
+      <td>{% trans "Make the word as 'ignored' (*S*kip it)" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="key text-center">D</div></td>
+      <td>{% trans "Look up this word in the first *D*ictionary" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="d-flex justify-content-start">
+	<div class="shift key text-center">shift</div>+<div class="key text-center align-middle d-inline-block">D</div>
+	</div></td>
+      <td>{% trans "Look up this word in the second *D*ictionary" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="d-flex justify-content-start">
+	<div class="shift key text-center">shift</div>+<div class="key text-center align-middle d-inline-block">G</div>
+	</div></td>
+      <td>{% trans "Look up the sentence (where this word is) in *G*oogle translate" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="key text-center">E</div></td>
+      <td>{% trans "**E**dit this word" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="d-flex justify-content-start">
+	<div class="shift key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">K</div>
+	</div></td>
+      <td>{% trans "Mark all the words in this sentence (where the word is currently selected) as **K**nown" %}</td>
+    </tr>
+  </tbody>
+</table>
+
+<h5>{% trans "Editing the Word description (the top right panel)):" %}</h5>
+<table class="table shortcut_table">
+  <tbody>
+    <tr>
+      <td class="text-center"><div class="d-flex justify-content-start">
+	<div class="shift key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">T</div>
+	</div></td>
+      <td>{% trans "Change the focus to the *T*ranslation input box (in the form at the top right)" %}</td>
+    </tr>
+    <tr>
+      <td class="text-center"><div class="d-flex justify-content-start">
+	<div class="shift key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">S</div>
+	</div></td>
+      <td>{% trans "Change the focus to the 'other **S**pelling' box (in the form at the top right)" %}</td>
+    </tr>
+    <tr>
+      <td><div class="d-flex justify-content-start">
+	<div class="alt key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">W</div>
+	</div></td>
+      <td>{% trans "Save this word (*W*rite it)" %}</td>
+    </tr>
+    <tr>
+      <td><div class="d-flex justify-content-start">
+	<div class="key text-center">1</div> or <div class="key text-center align-middle d-inline-block">2</div> or <div class="key text-center align-middle d-inline-block">3</div>...
+	</div></td>
+      <td>{% trans "Choose this word as similar word. The key number corresponds to the number noted in '[..]' just beside" %}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+<div class="col-md-6">
+<h3 id="mouse_control">{% trans "Mouse controls" %}</h3>
+<table class="table mousecontrol_table">
+  <tbody>
+    <tr>
+      <td><img src="{% static 'lwt/img/animation_leftclick_textread.gif' %}" alt="leftclickanim" /></td>
+      <td>{% trans "Creating/editing a single word:" %}<br>{% trans "Left click on it" %}</td>
+    </tr>
+    <tr>
+      <td><img src="{% static 'lwt/img/animation_rightclick_textread.gif' %}" alt="rightclickanim" /></td>
+      <td>{% trans "Creating/editing an expression (i.e composed of several words)):" %}<br>{% trans "Left click to select the first word, than right click to select the other components" %}</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+<div class="row">
+<div class="col-md-12">
+<h3 id="dicturi">{% trans "Creating your own dictionary link:" %}</h3>
+{% blocktrans %}
+<p><em>LingL</em> provides a few choice of dictionary links which could work for your language (like Wiktionary, Google etc...)
+but you can provide your own link to your prefered dictionary.</p>
+<p>The easiest way is to look at this predefined dictionary links to use a example. But here how it works:</p>
+<p>The link should have this format:</p>
+<ul><li>.....###... : '###' will be processed as the searched word. </li>
+	<li>(optional) use '••' (or '•••') in the link to specified the destination code language. 
+	<em>LingL</em> will replace it with correct code of the language (for ex. 'en' or 'eng')
+	that you've chosen in your profile. The code can be 2 letters (use '••') or 3 letters 
+	(use '•••') depending on the dictionary website.
+	<li><em>Warning!</em> Some dictionary webpage prevent the opening of their website on <em>LingL</em> (or any other third party websites) (for ex. Google translate).
+	<p><em>LingL</em> has 2 ways to counteract this:</p>
+		<ul><li>Make the website opening in a new window: To have it, prepend the link with the '*' character. For ex.: write *https://..</li>
+			<li><p>Scrape the website from its content: To have it prepend the link with the '^' character. For ex.: write ^https://</p>
+		<p>The first solution may make the website faster than the second one but with the disadvantage of a new window. 
+		The scraped website may also lead to wrong layout of the original dictionary website.</p></li></ul>
+		</li>
+</ul>
+{% endblocktrans %}
+</div></div>
+{% endblock content %}
+
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}

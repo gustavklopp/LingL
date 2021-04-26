@@ -2,8 +2,7 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-{% block title %}{{ block.super }} | Home{% endblock title %}
-{% block pagetitle %}Homepage{% endblock pagetitle %}
+{% block pagetitle %}{% trans 'Homepage' %} | {{ block.super }}{% endblock pagetitle %}
 
 {% block banner %}
 {% include "lwt/_banner.html" %}
@@ -13,12 +12,15 @@
 {% if currentlang_name == "" %} {# No language has yet been defined #}
 <div class="alert alert-danger" role="alert">
 	{% trans "Hint: The database seems to be empty." %}<br>
+	   {# Install the demo database if the website is on localhost #}
+{% ifequal request.get_host|slice:":9" "127.0.0.1" %}
 	{% trans "You may install the LingL demo database," %}<br>
 	<form action="{% url 'backuprestore'%}" method="post">
 	{% csrf_token %}
 	<button class="btn btn-danger" type="submit" name="install_demo" value="install_demo">Install Demo Database</button>
 	</form>
 	{% trans "or" %}<br>
+{% endifequal %}
 	<a href="{% url 'language_detail' %}?new=0">{% trans "define the first language you want to learn." %}</a>
 </div>
 {% else %}
@@ -39,7 +41,7 @@
 		
 		{# Display a shortcut to access the last open texts #}
 	{% if lastopentexts %} {# the last opened texts #}
-				{% trans "My last Texts" %}:
+				{% trans "My last open Texts" %}:
 				<ul>
 				{% for lastopentext in lastopentexts %}
 				<li> <i>{{ lastopentext }}</i>

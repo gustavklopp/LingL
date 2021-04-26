@@ -21,29 +21,29 @@
 	overflow: auto;	
 }
 
-#topleft.row {
-	height: 30%;
+#topleft.textread_row {
+	height: 22%;
 	overflow: auto;
 }
 
-#bottomleft.row {
-	height: 70%;
+#bottomleft.textread_row {
+	height: 78%;
 	overflow: auto;
-	padding: 20px; /* else the text is stuck to the screen borders */
+	/*padding: 5px;*/ /* else the text is stuck to the screen borders */
 }
 
-#bottomright.row {
-	height: 50%;
+#topright.textread_row {
+	height: 45%;
 	overflow: auto;
 }
 
-#topright.row {
-	height: 50%;
+#bottomright.textread_row {
+	height: 55%;
 	overflow: auto;
 }
 
 /* for the iframe */
-#bottomright.row iframe{
+#bottomright.textread_row iframe{
 	height: 100%;
 	width: 100%
 }
@@ -52,7 +52,7 @@
 
 /* the statuses */
 word_left_todo[wostatus="0"] {
-	/* for display the TODO with the word count */
+	/* for display the TO DO with the word count */
 	background-color: #ADDFFF;
 }
 
@@ -219,6 +219,21 @@ span[show_compoundword="true"][cowostatus="101"]
   box-shadow: none;
 }
 
+/* disable the link inside iframe */
+/* not working...
+.iframe_container {
+	background: transparent; 
+}
+.nolink_iframe { 
+	z-index: -2; 
+}
+*/
+
+/* restyle the tags-input in the termform */
+#topright #id_wordtags_tags_input_tagsinput {
+	width: auto !important;
+	height: auto !important;
+}
 /*********** in termform.html ************/ 
 /* don't display if the status of the word is not unknown */
 .hidden { 
@@ -236,7 +251,7 @@ div.headPlus.collapsed:before {
 
 
 
-/************** the Tooltip ****************/
+/************** the word Tooltip ****************/
 /* because bootstrap is modifying the 'table' of overDiv, unset it :*/
 div#overDiv table  tbody tr td table:nth-child(1){
 	background-color: #333399;
@@ -279,10 +294,10 @@ a.headCaret:before {
 }
 
 .currentlang {
-	background: url("../img/bullet-green_16x16.png") 100%  no-repeat ;
+	background: url("../img/bullet-green_16x16.png") 100%  no-repeat ; /* not working? */
 }
 .no_currentlang {
-	background: url("../img/bullet-grey_16x16.png") 100%   no-repeat;
+	background: url("../img/bullet-grey_16x16.png") 100%   no-repeat; /* NOt working?? */
 }
 
 .archived {
@@ -304,4 +319,19 @@ a.headCaret:before {
 }
 /******************************************************************************
      IN LANGUAGE_DETAIL
-*******************************************************************************
+*******************************************************************************/
+
+/******************************************************************************
+     IN helppage
+*******************************************************************************/
+.shortcut_table .key {
+	background: url("/static/lwt/img/keyboard_key_blank.png") 100%  no-repeat ; 
+	width: 32px;
+	height: 32px;
+}
+
+.shortcut_table .shift, .shortcut_table .alt {
+	background: url("/static/lwt/img/keyboard_key_blank.png")  no-repeat !important; 
+	width: 50px !important;
+	background-size: 100% 100%  !important; 
+}

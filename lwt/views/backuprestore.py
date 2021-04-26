@@ -19,9 +19,9 @@ from django.conf import settings
 from django.apps import apps
 # second party
 import os
-import gzip
-import io
-import tempfile
+import gzip #it's standard in python
+import io #it's standard in python
+import tempfile #it's standard in python
 # third party
 # local
 from lwt.models import *
@@ -33,27 +33,29 @@ from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
 
 
+''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
 def wipeout_database(request):
-    ''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
     for mymodel in apps.get_app_config('lwt').get_models():
         if mymodel == MyUser: # don't delete the MyUser
             continue
         mymodel.objects.all().delete()
+    #update the cookie for the database_size
+    set_word_database_size(request)
     # and delete cookies:
     if 'currentlang_id' in request.session.keys(): # if the session has been defined
         del request.session['currentlang_id'] 
         del request.session['currentlang_name']
         request.session.modified = True
 
+''' gunzip (=decompress a gzipped file) the file uploaded'''
 def gunzipper(data_file):
-    ''' gunzip (=decompress a gzipped file) the file uploaded'''
     fp = tempfile.NamedTemporaryFile(suffix='.yaml')
     with gzip.open(data_file.path, 'r') as f:
         fp.write(f.read())
     fp.seek(0) # obligatory to rewind the file after having been read/written
     return fp
 
-# Backup/restore
+""" Backup/restore """
 def backuprestore(request):
     if request.method == 'POST':
         # backing up:
@@ -111,5 +113,10 @@ def backuprestore(request):
             return redirect(reverse('homepage'))
     else:
         form = RestoreForm()
-    return render(request, 'lwt/backuprestore.html', {'form': form})
+            
+    # get the current database size:
+    database_size = get_word_database_size(request)
+
+    return render(request, 'lwt/backuprestore.html', {'form': form,
+                                                 'database_size':database_size})
 

@@ -1,5 +1,5 @@
+/* because json gives back a bool whereas to set the select html we need a string */
 function convert_true_to_True(val){
-	/* because json gives back a bool whereas to set the select html we need a string */
 	if (val == true){
 		return 'True';
 	} else if (val == false){
@@ -7,9 +7,8 @@ function convert_true_to_True(val){
 	}
 }
 
+/* from the language code, get the data for the given language */
 function ajax_fill_language_detail(code_lang){
-	/* from the language code, get the data for the given language */
-	
 	$.ajax({url: '/fill_language_detail/', type: 'GET',
 			type: 'GET',
 			dataType: 'json',
@@ -17,24 +16,24 @@ function ajax_fill_language_detail(code_lang){
 					'code_lang' : code_lang, 
 					},
 			success: function(data){
-				$('ul#list__dict1uri').empty() // remove all the children
-				$('ul#list__dict2uri').empty()
-				$('ul#list__dict1uri ').next().addClass('hidden'); // and make hidden 
-				$('ul#list__dict2uri ').next().addClass('hidden'); 
-				$.each(data['dicturi'], function(index, value){
-					$('ul#list__dict1uri').append('<li><a href="#" data-value="'+value+'">'+value+'</a></li>'); 
-					if (index == 0){
+				$('div#list__dict1uri').empty() // remove all the children
+				$('div#list__dict2uri').empty()
+				$('div#list__dict1uri ').next().addClass('hidden'); // and make hidden 
+				$('div#list__dict2uri ').next().addClass('hidden'); 
+				var dicturi_list = data['dicturi'].split(',');
+				$.each(dicturi_list, function(index, value){
+					if (index == 0){ //default inside the input
 						$('input#id_dict1uri').val(value); 
-					}
-					$('ul#list__dict1uri ').next().removeClass('hidden'); 
-				});
-				$.each(data['dicturi'], function(index, value){
-					$('ul#list__dict2uri').append('<li><a href="#" data-value="'+value+'">'+value+'</a></li>'); 
-					if (index == 0){
 						$('input#id_dict2uri').val(value); 
-					$('ul#list__dict2uri ').next().removeClass('hidden'); 
 					}
+					$('div#list__dict1uri').append('<a class="dropdown-item" href="#" data-value="'+value+'">'+value+'</a>'); 
+					$('div#list__dict2uri').append('<a class="dropdown-item"  href="#" data-value="'+value+'">'+value+'</a>'); 
 				});
+				if (dicturi_list.length > 1){ // show the button if there's enough dicturi to show
+					$('#input-group-append_list__dict1uri ').removeClass('hidden'); 
+					$('#input-group-append_list__dict2uri ').removeClass('hidden'); 
+				}
+
 				// bind them to a click 
 			  $("#list__dict1uri.dropdown-menu a").bind('click', function(event) {
 				$("input#id_dict1uri").val($(this).text());
@@ -42,8 +41,10 @@ function ajax_fill_language_detail(code_lang){
 			  $("#list__dict2uri.dropdown-menu a").bind('click', function(event) {
 				$("input#id_dict2uri").val($(this).text());
 			  });
+				//$('input#id_dict1uri').val(data['dict1uri']); 
+				//$('input#id_dict2uri').val(data['dict2uri']); 
 				$('input#id_googletranslateuri').val(data['googletranslateuri']); 
-				$('input#id_exporttemplate').val(data['exporttemplate']); 
+				$('textarea#id_exporttemplate').val(data['exporttemplate']); 
 				$('select#id_textsize').val(data['textsize'].toString());  // don't forget to convert the int to string
 				$('input#id_charactersubstitutions').val(data['charactersubstitutions']); 
 				$('input#id_regexpsplitsentences').val(data['regexpsplitsentences']); 
@@ -51,6 +52,7 @@ function ajax_fill_language_detail(code_lang){
 				$('input#id_regexpwordcharacters').val(data['regexpwordcharacters']); 
 				$('select#id_removespaces').val(convert_true_to_True(data['removespaces'])); 
 				$('select#id_spliteachchar').val(convert_true_to_True(data['spliteachchar'])); 
+				$('select#id_has_romanization').val(convert_true_to_True(data['has_romanization'])); 
 				$('select#id_righttoleft').val(convert_true_to_True(data['righttoleft'])); 
 				$('input#id_code_639_1').val(data['code_639_1']); 
 				$('input#id_code_639_2b').val(data['code_639_2b']); 

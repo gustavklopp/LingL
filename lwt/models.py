@@ -113,6 +113,7 @@ class Languages(BaseModel):
     removespaces = models.BooleanField(default=False)  
     spliteachchar = models.BooleanField(default=False)  
     righttoleft = models.BooleanField(default=False)  
+    has_romanization = models.BooleanField(default=False)  
     code_639_1 = models.CharField(max_length=2, blank=True, null=True) # code for the language, 2 letters
     code_639_2t =  models.CharField(max_length=3, blank=True, null=True) # code for the language, 3 letters
     code_639_2b =  models.CharField(max_length=3, blank=True, null=True) # code for the language, 3 letters in English
@@ -133,7 +134,7 @@ class Texttags(BaseModel):
 
     def __str__(self):
         return self.txtagtext
-
+        
     class Meta:
         db_table = 'texttags'
         
@@ -188,12 +189,40 @@ class Grouper_of_same_words(BaseModel):
     in English: 'write', 'written', 'wrote' etc... 
     
     Each word has automatically a FK Grouper_of_same_words, whose id is the same as the id of the 
-    word in question. When a word A is written the same as a word B:
+    word in question. 
+    for ex:  Grouper_of_same_words     id          
+                                       12         
+                                       13           
+                                       14           
+            ---------------------------------------------------
+             Words    FK GOSW          id           wordtext
+                        id_12          12           'write'
+                        id_13          13           'test'
+                        id_14          14           'wrote'
+
+     =>  After recognizing it´s the same word in fact:
+             Grouper_of_same_words     id            
+                                       12           
+                                       13           
+                                       14     ==> DELETE IT
+            ---------------------------------------------------
+             Words    FK GOSW          id           wordtext
+                        id_12          12           'write'
+                        id_13          13           'test'
+       => CHANGE FK    *id_12          14           'wrote'
+
+    When a word A is written the same as a word B:
               - update the FK in word B to point to the Grouper_of_same_words of word A.
     To Unlink word A and word B:
-             - delete the link between the FK and word B
-             - update the FK in word B to point to the Grouper_of_same_words whose id is the id of word B '''
+            - create a new FK with the same id than B if this GOSW has been deleted
+             - update the FK in word B to point to the Grouper_of_same_words of the same id than B '''
     id = models.IntegerField(primary_key=True) # not automatic PK because we'll set it to the same as the id for Words
+    # words can be looks similar but in fact have different meaning:
+    # say we have: fall: autumn OR to fall. LingL will make all this word as similar: not too problematic
+    # the problem is if you´ve got another words that you want to make it similar to ´fall´:
+    # ´fallen´: will display then ´to fall/ autumn´ in its definition. so we must separate different
+    # similar words. Maybe with ´translation´ field? GOSW fall/fallen/fell : FK in fall, transl: ´to lose´
+    translation = models.CharField( max_length=500, blank=True, null=True)  
 
     class Meta:
         db_table = 'Grouper_of_same_words'
@@ -201,7 +230,7 @@ class Grouper_of_same_words(BaseModel):
         
 class Words(BaseModel):
     grouper_of_same_words = models.ForeignKey(Grouper_of_same_words, null=True, related_name='grouper_of_same_words_for_this_word',
-                                              on_delete=models.CASCADE)
+                                              on_delete=models.SET_NULL)
     
 #     STATUS_CHOICES = ( (0, _('Unknown')),
 #                        (1, _('Learning')),
@@ -229,7 +258,7 @@ class Words(BaseModel):
     isCompoundword = models.BooleanField(default=False)
     compoundword = models.ForeignKey('self', blank=True, null=True, \
                        related_name='compoundwordhavingthiswordinside',\
-                       on_delete=models.CASCADE
+                       on_delete=models.SET_NULL
                        ) # foreignkey to the same table
     show_compoundword = models.BooleanField(default=False) # showing compoundword or single word in text_read
     

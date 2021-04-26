@@ -2,8 +2,6 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-{% block title %}{% trans "My Language" %}{% endblock title %}
-
 {% block pagetitle %}{% trans "My Language" %} | {{ block.super }}
 {% endblock pagetitle %}
 
@@ -50,13 +48,16 @@
 
 		<tr data-val="{{ a_l.lang.id }}">
 		<td></td>	
-		<td >{% if a_l.lang.id == currentlang_id %}<img src="{% static 'lwt/img/bullet-green_16x16.png' %}" title="Current Language" alt="Current Language" />{% else %}<a href="{% url 'language_list' %}?setcurrentlang={{ lang.id }}"><img src="{% static 'lwt/img/bullet-grey_16x16.png' %}" title="{% trans "Set as Current Language" %}" alt="Set as Current Language" /></a>{% endif %}</td>
+		<td >{% if a_l.lang.id == currentlang_id %}<img src="{% static 'lwt/img/bullet-green_16x16.png' %}" title="{% trans "This is your curent langugage" %}" alt="Current Language" />
+			{% else %}<a href="{% url 'language_list' %}?setcurrentlang={{ a_l.lang.id }}"><img src="{% static 'lwt/img/bullet-grey_16x16.png' %}" 
+			title="{% trans "Set as Current Language" %}" alt="Set as Current Language" /></a>{% endif %}</td>
 		<td >&nbsp;<a href="{% url 'language_detail' %}?edit={{ a_l.lang.id }}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit" %}" alt="Edit" /></a>
-		{% if a_l.lang.texthavingthislanguage.count == 0 and a_l.lang.wordhavingthislanguage.count == 0 %} 
-			&nbsp; <span class="click" onclick="if (confirm (\'Are you sure?\')) location.href="{% url 'language_detail' %}?delete={{ a_l.lang.id }}"><img src="{% static 'lwt/img/icn/minus-button.png' %}" title="{% trans "Delete" %}" alt="Delete" /></span>
-		{% else %}
-			&nbsp; <img src="{% static 'lwt/img/icn/placeholder.png' %}" title="{% trans "Delete not possible" %}" alt="Delete not possible" />
-		{% endif %}
+			&nbsp; 
+			{% if a_l.lang.id == currentlang_id %}
+			<img src="{% static 'lwt/img/icn/minus.png' %}" title="{% trans "You can´t delete your current language" %}" alt="no_Delete" />
+			{% else %}
+			<span class="click" onclick="if (confirm('{% trans "Are you sure? \n** All the texts/Words associated with this language will be deleted also **" %}')) location.href='{% url 'language_list' %}?delete=\[{{ a_l.lang.id }}\]';"><img src="{% static 'lwt/img/icn/minus-button.png' %}" title="{% trans "Delete" %}" alt="Delete" /></span>
+			{% endif %}
 		&nbsp;</td>
 		<td data-val="{{ a_l.lang.name }}">{{ a_l.lang.name }}</td>
 		<td >{% if a_l.lang.texthavingthislanguage.count == 0 %}0{% else %}
@@ -100,15 +101,18 @@
 	}
 
 	$("button#delete").click(function(){
-		 /* function to delete the text(s) inside the bootstrap-table */
-		var check = $("input:checked");
-		ids_to_delete = [];
-		$.each(check, function(){
-			var text_id =$(this).parents("tr:first").data("val");
-			ids_to_delete.push(text_id);
-		});
-		if (ids_to_delete.length > 0){
-			document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete);
+		 /* function to delete the languages inside the bootstrap-table */
+		if (confirm ("{% trans "Are you sure? \n** All the texts/Words associated with this language will be deleted also **" %}"))
+		{
+			var check = $("input:checked");
+			ids_to_delete = [];
+			$.each(check, function(){
+				var text_id =$(this).parents("tr:first").data("val");
+				ids_to_delete.push(text_id);
+			});
+			if (ids_to_delete.length > 0){
+				document.location = '{% url 'language_list' %}?delete='+JSON.stringify(ids_to_delete);
+			}
 		}
 	});
 	

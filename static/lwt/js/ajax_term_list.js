@@ -42,7 +42,7 @@ function termlist_filter() {
 		chosen_text.push($(this).val());
 	});
 	var chosen_status = [];
-	$.each($("#filterstatusform").find("span").not(".hidden").find("input:checked"), function(){
+	$.each($("#filterstatusform").find("input:checked"), function(){
 		chosen_status.push($(this).val());
 	});
 	// stringify them

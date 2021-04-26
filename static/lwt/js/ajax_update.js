@@ -1,5 +1,5 @@
-function ajax_update_word_simword_compoundword(data, op){
-	/* update all parameters for the word, similar words of this word, compound words in HTML */
+/* update all parameters for the word, similar words of this word, compound words in HTML */
+function update_data_of_wo_cowo_and_sims(data, op){
 	// update parameters of the word/simword and the counter at the top
 	$.each(data['wo_id_to_update_in_ajax'], function(idx, val){
 			update_status(val, op, data['wostatus']);
@@ -25,10 +25,15 @@ function ajax_update_word_simword_compoundword(data, op){
 		});
 }
 
-/* Helper functions for ajax_update_word_simword_compoundword() */
+/* Helper functions for update_data_of_wo_cowo_and_sims() */
 
-/* UPDATING THE STATUS (WELL-KNOWN or IGNORED) */
-function ajax_update_status(wo_id, status) {
+/* UPDATING THE STATUS (WELL-KNOWN or IGNORED) 
+	called by: - helpage.js: shortcut keyboard when clicking on 'a' or 's'
+			   - tooltip_link.js: the link inside the tooltip 
+	@event	the event which has triggered the function
+	@wo_id	the id of the word
+	@status the updated status (number in string) of the word (for ex.: '101' for ignored) */
+function ajax_update_status(event, wo_id, status) {
 	$.ajax({url: '/termform/', 
 			type: 'GET',
 			dataType: 'json',
@@ -40,8 +45,9 @@ function ajax_update_status(wo_id, status) {
 				$('#topright.text_read').html(data['html']); 
 				// update status of the word and the counter at the top
 				$.each(data['wo_id_to_update_in_ajax'], function(idx, val){
-						update_status(val, status, '');
-						update_title(val, op, data['iscompoundword'], data['wowordtext'], 
+						update_status(val, '', data['wostatus']);
+						//update the tooltip also
+						update_title(val, '', data['iscompoundword'], data['wowordtext'], 
 											  data['wotranslation'], data['woromanization'], data['wostatus'],
 											  data['cowotranslation'], data['coworomanization'], data['cowostatus']);
 					});
@@ -51,19 +57,15 @@ function ajax_update_status(wo_id, status) {
 	});
 }
 
-/* UPDATING THE <SPAN> OF WORDS IN THE TEXT_READ --> I.E THE CLICKED TOOLTIP (the updating of the workcount is done here also) */
+/* UPDATING THE <SPAN> OF WORDS IN THE TEXT_READ --> I.E THE CLICKED TOOLTIP 
+(the updating of the workcount is done here also) */
+/* update status of the word in question: */
 function update_status(wo_id, op, wostatus){
-				/* update status of the word in question: */
-				if (op == 'edit'){
-						$('span[woid='+wo_id+']').attr('wostatus', wostatus);}
-				else if (op == 'del'){
+				if (op == 'del'){
 						$('span[woid='+wo_id+']').attr('wostatus','0');}
-				else if (op == 'new'){
-						$('span[woid='+wo_id+']').attr('wostatus','1');}
-				else if (op == 'wellkwn'){
-						$('span[woid='+wo_id+']').attr('wostatus','100');}
-				else if (op == 'ignored'){
-						$('span[woid='+wo_id+']').attr('wostatus','101');}
+				else {
+						$('span[woid='+wo_id+']').attr('wostatus', wostatus);}
+
 				var originalcolor =$('span[woid='+wo_id+']').css('background-color'); 
 				$('span[woid='+wo_id+']').animate( // animation background-color thx to Jquery UI
 						{backgroundColor: "#aa0000"}, 150, function(){
@@ -75,19 +77,20 @@ function update_status(wo_id, op, wostatus){
 				update_workcount();
 }
 
+/* update the translation of the word in question: */
 function update_translation(wo_id, op, wotranslation){
-				/* update the translation of the word in question:*/
 				$('span[woid='+wo_id+']').attr('wotranslation',wotranslation);
 }
 
+/* update the romanization of the word in question: */
 function update_romanization(wo_id, op, woromanization){
-				/* update the romanization of the word in question: */
 				$('span[woid='+wo_id+']').attr('woromanization',woromanization);
 }
 
 // for compoundwords, same functions of updating:
+
+/* update the parameter iscompoundword of the word in question:*/
 function update_iscompoundword(wo_id, op){
-				/* update the parameter iscompoundword of the word in question:*/
 				if (op == 'del'){
 					$('span[woid='+wo_id+']').attr('isCompoundword','False');
 				} else {
@@ -95,8 +98,8 @@ function update_iscompoundword(wo_id, op){
 				}
 }
 
+/* update the show_compoundword bool of the word in question:*/
 function update_show_compoundword(wo_id, op){
-				/* update the show_compoundword bool of the word in question:*/
 				if (op == 'del'){
 					$('span[woid='+wo_id+']').attr('show_compoundword','False');
 				} else {
@@ -104,9 +107,9 @@ function update_show_compoundword(wo_id, op){
 				}
 }
 
+/* update status of the word in question:*/
 function update_costatus(wo_id, op, wostatus){
-				/* update status of the word in question:*/
-				if (op == 'edit'){
+				if (op == 'edit' || op == 'similar'){
 						$('span[woid='+wo_id+']').attr('cowostatus', wostatus);}
 				else if (op == 'del'){
 						$('span[woid='+wo_id+']').attr('cowostatus','0');}
@@ -120,19 +123,19 @@ function update_costatus(wo_id, op, wostatus){
 				update_workcount();
 }
 
+/* update the translation of the word in question:*/
 function update_cotranslation(wo_id, op, wotranslation){
-	/* update the translation of the word in question:*/
 	$('span[woid='+wo_id+']').attr('cowotranslation',wotranslation);
 }
 
+/* update the romanization of the word in question:*/
 function update_coromanization(wo_id, op, woromanization){
-	/* update the romanization of the word in question:*/
 	$('span[woid='+wo_id+']').attr('coworomanization',woromanization);
 }
 
+/* update the title */
 function update_title(wo_id, op, iscompoundword, wowordtext, wotranslation, woromanization, wostatus, 
 															 cowotranslation, coworomanization, cowostatus){
-	/* update the title */
 	var title = wowordtext;
 	title += create_tooltip_title('word_symbol', wotranslation, woromanization, wostatus);
 	if (iscompoundword == 'true' || iscompoundword == 'True' || iscompoundword == true){
@@ -141,9 +144,9 @@ function update_title(wo_id, op, iscompoundword, wowordtext, wotranslation, woro
 	$('span[woid='+wo_id+']').attr('title', title);
 }
 
+/* called by update_status (for Cliked tooltip)
+ change the number of word 'TO DO' at the top of text_read.html*/
 function update_workcount(){
-	/* called by update_status (for Cliked tooltip)
-	 change the number of word 'TO DO' at the top of text_read.html*/
 	var work_left_todo = $('span[woid][wostatus=0]').length - $('span[woid][iscompoundword="True"][cowostatus!=0]').length;
 	$('#word_left_todo').html('&nbsp;'+work_left_todo.toString()+'&nbsp;');
 	// and change the color if necessary:
@@ -153,15 +156,17 @@ function update_workcount(){
 		$('#word_left_todo').attr('wostatus','0'); }
 }
 
+/* NOT USED FINALLY */
+/* update span attribute of word in text_read */
 function ajax_update_HTML_show_compoundword(compoundword_id_list, show_compoundword){
-	/* update span attribute of word in text_read */
 	$.each(compoundword_id_list, function(key, val){
 		$('span[woid='+val+']').attr('show_compoundword', show_compoundword);
 	});
 }
 
+/* NOT USED finally */
+/* called by: click_ctrlclick_toggle() */
 function ajax_update_DB_show_compoundword(wo_id, show_compoundword){
-	/* called by: click_ctrlclick_toggle() */
 	$.ajax({url: '/update_show_compoundword/', 
 			type: 'GET',
 			dataType: 'json',

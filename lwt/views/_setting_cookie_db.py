@@ -21,24 +21,31 @@ def setter_settings_cookie_and_db(stkey, stvalue, request, owner=None):
     if owner == None: # if it's not defined elsewhere (for example when restoring database
         owner = request.user
     model_name = 'Settings_'+str(stkey)
-    currentset = apps.get_model('lwt', model_name)
-    # put in Settings table
-    currentset.objects.filter(owner=owner).\
-                                        update_or_create(defaults={'stvalue':stvalue, 'owner':owner})
-    # and edit cookies:
-    request.session[str(stkey)] = stvalue
 
-    if model_name == 'Settings_currentlang_id':
+    # special case when setting of curent lang: (we need to update ´id´ and ´name´
+    if model_name == 'Settings_setcurrentlang':
         # and put currentlang_name too:
         if int(stvalue) == -1: # code for: No languages to filter on
             currentlang_name = -1
         else:
             currentlang_name = Languages.objects.filter(owner=owner).values_list('name',flat=True).get(id=stvalue)
         # put in Settings table
+        Settings_currentlang_id.objects.filter(owner=owner).\
+                            update_or_create(defaults={'stvalue':stvalue, 'owner':owner})
         Settings_currentlang_name.objects.filter(owner=owner).\
-                                            update_or_create(defaults={'stvalue':currentlang_name, 'owner':owner})
+                            update_or_create(defaults={'stvalue':currentlang_name, 'owner':owner})
         # and edit cookies:
         request.session['currentlang_name'] = currentlang_name
+        request.session['currentlang_id'] = stvalue
+
+    else:
+        currentset = apps.get_model('lwt', model_name)
+        # put in Settings table
+        currentset.objects.filter(owner=owner).\
+                                            update_or_create(defaults={'stvalue':stvalue, 'owner':owner})
+        # and edit cookies:
+        request.session[str(stkey)] = stvalue
+
         
 def setter_settings_cookie(stkey,stvalue,request):
     """ set the setting value set by user in key in Cookie only """
@@ -59,15 +66,16 @@ def getter_settings_cookie(stkey,request):
     if stkey in request.session.keys(): # it's in a Cookie?
         stvar = request.session.get(stkey)
     else:
-        stvar = None
+        stvar = None # no cookie set
     # Converter to int if it's possible:
     if stvar and isinstance(stvar,str): # stvar is not "" or None and is a string
         if stvar.isdigit(): # then, check if it can be convert to digit 
                 stvar = int(stvar)
     return stvar
 
+''' same as func above getter_settings_cookie but which search in database
+    in fact, it´s used only for currentlanguage_name and currentlanguage_id'''
 def getter_settings_cookie_else_db(stkey,request):
-    """ get the setting value set by user in key in Cookie if it was set, else get it in Settings database """
     if stkey in request.session.keys(): # it's in a Cookie?
         stvar = request.session.get(stkey)
     else: # no cookie set for this key. Check in the database

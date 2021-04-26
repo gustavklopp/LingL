@@ -103,7 +103,7 @@
 	$.fn.tagsInput = function(options) {
 		var settings = jQuery.extend({
 			interactive: true,
-			placeholder: 'Add a tag',
+			placeholder: gettext('Add tag(s) (space separated)'),
 			minChars: 0,
 			maxChars: null,
 			limit: null,

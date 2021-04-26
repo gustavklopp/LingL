@@ -12,3 +12,4 @@ from lwt.views.termform import *
 from lwt.views.backuprestore import *
 from lwt.views.statistics import *
 from lwt.views.export2anki_exporter import *
+from lwt.views.helppage import *

@@ -2,10 +2,8 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-{% block title %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %}{% endblock title %}
 
 {% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
-
 {% endblock pagetitle %}
 
 {% block stylesheets %}{{ block.super }}
@@ -28,7 +26,7 @@
 
 {# filter on language #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
-<ul id="ul_language" class="collapse in">
+<ul id="ul_language" class="collapse show">
 	<form id="filterlangform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
 	{% for lang in languages %}
@@ -46,12 +44,12 @@
 	{% endfor %}
 
 	</form>
+	<span id="no_langfilter" class="error text-danger"></span>
 </ul>
-<br>
 
 {# filter on texttag #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_texttag">{% trans 'Text tags' %} :</a>
-<ul id="ul_texttag" class="collapse in">
+<ul id="ul_texttag" class="collapse show">
 	<form id="filtertagform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
 	{% if texttags_list_empty %}{% trans 'Nothing to display'%}{% endif %}
@@ -67,47 +65,23 @@
 	</form>
 </ul>
 
-<br>
 {# filter on time #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_time">{% trans 'Last time open' %} :</a>
-<ul id="ul_time" class="collapse in">
+<ul id="ul_time" class="collapse show">
 	<form id="timeform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
 	{% if time_list_empty %}{% trans 'Nothing to display'%}{% endif %}
 	{% for ti_ls in time_list %}
 		<span possible_time="{{ ti_ls.pt.week }}" text_ids="{{ ti_ls.text_ids }}" 
 		{% if ti_ls.hidden %}class="hidden"{% endif %}>	
-		<input type="checkbox" 
-		{% if time_filter|length == 0 %}checked{% endif %} 
-		onclick="textlist_filter();" value="{{ ti_ls.pt.week }}" class="unstyled">
+			<input type="checkbox" 
+			{% if ti_ls.pt.week in time_filter %}checked{% endif %} 
+			onclick="textlist_filter();" value="{{ ti_ls.pt.week }}" class="unstyled">
 		{{ ti_ls.pt.string }}
 		<br></span>
 	{% endfor %}
 	</form>
-</ul>
-
-<br>
-{# filter on archived #}
-<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_archived">{% trans 'Display Archived texts' %} :</a>
-<ul id="ul_archived" class="collapse in">
-	<form id="archivedform" method="POST" action="{% url 'text_list' %}">
-	{% csrf_token %}
-	{% if archived_list_empty %}{% trans 'Nothing to display'%}{% else %}
-		<span non_archived="{{ archived_list.0.text_ids }}" 
-		{% if archived_list.hidden %}class="hidden"{% endif %}>	
-		<input type="checkbox" 
-		{% if archived_filter|length == 0 %}checked{% endif %} 
-		onclick="textlist_filter();" value="False" class="unstyled">
-		{% trans 'non-archived' %}
-		<br></span>
-		<span archived="{{ archived_list.1.text_ids }}" 
-		{% if archived_list.hidden %}class="hidden"{% endif %}>	
-		<input type="checkbox" 
-		{% if archived_filter|length == 0 %}checked{% endif %} 
-		onclick="textlist_filter();" value="True" class="unstyled">
-		{% trans 'archived' %}
-		<br></span>{% endif %}
-	</form>
+	<span id="no_timefilter" class="error text-danger">{% ifequal time_filter|length 0 %}{% trans 'No time chosen: no texts will be displayed' %}{% endifequal %}</span>
 </ul>
 
 </div>
@@ -118,9 +92,6 @@
 	<div id="texttable_toolbar" class="btn-group">
 		<button id="delete" type="button" class="btn btn-default">
 			<i class="fa fa-trash" aria-hidden="true"></i>
-		</button>
-		<button id="archive" type="button" class="btn btn-default">
-			<img src="{% static 'lwt/img/convert_compress_16x16.png' %}"/>
 		</button>
 		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Text " %}...</a> 
 	</div>
@@ -152,7 +123,6 @@
 	<th data-field="unknown_words" data-sortable="true" data-sorter="numberSorter">Unkn.<br />Words</th>
 	<th data-field="unknown_words_pc" data-sortable="true" data-sorter="numberSorter">Unkn.<br />(%)</th>
 	<th data-field="lastopentime" data-sortable="true" data-sorter="dateSorter">Last<br />open</th>
-	<th data-field="archived" data-sortable="true" data-sorter="numberSorter">Arch.</th>
 	{% endblocktrans %}
 	</tr>
 	</thead>
@@ -209,19 +179,6 @@
 		});
 		if (ids_to_delete.length > 0){
 			document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete);
-		}
-	});
-
-	$("button#archive").click(function(){
-		 /* ajax function to archive the text(s) inside the bootstrap-table */
-		var check = $('tbody').find("input:checked");
-		ids_to_archive = [];
-		$.each(check, function(){
-			var text_id =$(this).parent().prev().text();
-			ids_to_archive.push(text_id);
-		});
-		if (ids_to_archive.length > 0){
-			document.location = '{% url 'text_list' %}?archive='+JSON.stringify(ids_to_archive);
 		}
 	});
 	</script>

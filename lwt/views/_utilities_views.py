@@ -20,9 +20,22 @@ from lwt.constants import MAX_WORDS
 if __name__ != '__main__':
     from lwt.models import *
 
+''' get the current database size and put it in cookie (if not found in cookie)'''
+def get_word_database_size(request):
+    database_size = getter_settings_cookie('database_size', request)
+    if not database_size:
+        database_size = Words.objects.filter(owner=request.user).count()
+        setter_settings_cookie('database_size', database_size, request)
+    return database_size
+
+''' the Words model has changed, update the count of database_size'''
+def set_word_database_size(request):
+    database_size = Words.objects.filter(owner=request.user).count()
+    setter_settings_cookie('database_size', database_size, request)
+
+''' helper function for load_table: the built-in ajax in bootstrap-table
+sends a GET request: we get the parameters sent '''
 def requesting_get_by_table(request, model):
-    ''' helper function for load_table: the built-in ajax in bootstrap-table
-    sends a GET request: we get the parameters sent '''
     sort = request.GET.get('sort')
     order = request.GET.get('order')
     sort_modif = '-'+sort if order == 'desc' else sort
@@ -32,7 +45,8 @@ def requesting_get_by_table(request, model):
     limit_modif = int(limit)
 
     if model == Words:
-        all_words =  model.objects.exclude(Q(isnotword=True)&Q(isCompoundword=False)).filter(owner=request.user).all()
+        all_words =  model.objects.exclude(Q(isnotword=True)&Q(isCompoundword=False)).\
+            filter(owner=request.user).distinct() # don´t know why but theere are in double... so: distinct()
         # sorting on Extra_field: we can't use directly the 'sort_modif' which is on ly 'extra_field'
         if sort not in [f.name for f in model._meta.get_fields()]:
             pattern = r'(?<="'+sort+'":\s").+(?=")'
@@ -49,8 +63,8 @@ def requesting_get_by_table(request, model):
         model_result = model.objects.filter(owner=request.user).all().order_by(sort_modif)
     return order, sort, sort_modif, offset, offset_modif, limit, limit_modif, model_result
 
+''' convert a queryset into a bootstrap-table data format '''
 def serialize_bootstraptable(queryset, total):
-    ''' convert a queryset into a bootstrap-table data format '''
     json_data = serialize('json', queryset)
     json_final = {"total": total, "rows": []}
     data = json.loads(json_data)
@@ -61,53 +75,46 @@ def serialize_bootstraptable(queryset, total):
         json_final['rows'].append(item)
     return json_final
 
+''' helper function for list_filtering'''
 def create_filter(filter_type, filter_list_json):
-    ''' helper function for list_filtering'''
-    filter = json.loads(filter_list_json)
-    if filter:
+    if filter_list_json:
+        filter = json.loads(filter_list_json)
         for idx, filter_id in enumerate(filter):
+            # special case for latopentime filter
             if filter_type == 'lastopentime':
                 filter_args = time_filter_args(filter_id)
             else:
-                if filter_type == 'archived':
-                    filter_id = str_to_bool(filter_id)
-                else:
-                    filter_id = int(filter_id)
+                filter_id = int(filter_id)
                 filter_args = {filter_type: filter_id}
-            if 'lastopentime_can_be_null' in filter_args.keys():
-                filter_Q_can_be_null = Q(**{'lastopentime__lte':filter_args['lastopentime__lte']})|\
-                            Q(lastopentime__isnull=True)
-                if idx == 0:
-                    filter_Q = filter_Q_can_be_null
-                else:
-                    filter_Q |= filter_Q_can_be_null
+            
+            if idx == 0:
+                filter_Q = Q(**filter_args)
             else:
-                if idx == 0:
-                    filter_Q = Q(**filter_args)
-                else:
-                    filter_Q |= Q(**filter_args)
-        return filter_Q
+                filter_Q |= Q(**filter_args)
+        try:
+            return filter_Q
+        except NameError: # if the dict is empty. for ex: filter_type : []
+            filter_args = {filter_type: None}
+            return Q(**filter_args)
     else:# no cookie defined 
-        if filter_type == 'archived':
-            filter_args = {filter_type: False}
-        else:
-            filter_args = {filter_type: -1}
+        return Q() # don´t filter on this
+        #filter_args = {filter_type: -1}
         return Q(**filter_args) 
 
+'''special func because time filter is special...
+possible_time = [
+    {'week': '[0,4]', 'string':_('< 1 week ago')},
+    {'week': '[4,12]', 'string': _('1 wk - 3 mo ago')},
+    {'week': '[12,24]', 'string': _('3 mo - 6 mo ago')},
+    {'week': '[24,-1]', 'string':_('> 6 months ago')} 
+    ]'''
 def time_filter_args(week_json):
-    '''special func because time filter is special...
-    possible_time = [
-        {'week': '[0,4]', 'string':_('< 1 week ago')},
-        {'week': '[4,12]', 'string': _('1 wk - 3 mo ago')},
-        {'week': '[12,24]', 'string': _('3 mo - 6 mo ago')},
-        {'week': '[24,-1]', 'string':_('> 6 months ago')} 
-        ]'''
     now = timezone.now()
     week = json.loads(week_json)
     if week[1] == -1: # it's older than 6 months
         length_of_time = timedelta(weeks=week[0])
         cutout_date = now - length_of_time
-        filter_args = {'lastopentime__lte':cutout_date, 'lastopentime_can_be_null': ''}
+        filter_args = {'lastopentime__lte':cutout_date}
     else:
         # for the recent cutout date:
         recent_length_of_time = timedelta(weeks=week[0])
@@ -119,72 +126,76 @@ def time_filter_args(week_json):
         filter_args = {'lastopentime__gt': ancient_cutout_date, 'lastopentime__lte': recent_cutout_date}
     return filter_args
 
+''' filter the texts/terms displayed inside bootstrap-table. we use the cookies if they are set 
+    called by: lwt/views/load_texttable 
+    @model  the model will be filtered. for ex: ´Texts´ for load_texttable
+    @request 
+'''
 def list_filtering( model, request):
-    ''' filter the texts/terms displayed inside bootstrap-table. we use the cookies if they are set '''
     # the User is setting the filters
     if request.method == 'POST': 
         lang_filter_json = request.POST['lang_filter']
         if isinstance(model.first(), Texts): # texts table is filtered
             tag_filter_json = request.POST['tag_filter']
             time_filter_json = request.POST['time_filter']
-            archived_filter_json = request.POST['archived_filter']
         if isinstance(model.first(), Words): # words table is filtered 
             text_filter_json = request.POST['text_filter']
             status_filter_json = request.POST['status_filter']
+            wordtag_filter_json = request.POST['wordtag_filter']
     # only getting the filter
     else: 
         lang_filter_json = getter_settings_cookie('lang_filter', request)
         if isinstance(model.first(), Texts):
             tag_filter_json = getter_settings_cookie('tag_filter', request)
             time_filter_json = getter_settings_cookie('time_filter', request)
-            archived_filter_json = getter_settings_cookie('archived_filter', request)
         if isinstance(model.first(), Words):
             text_filter_json = getter_settings_cookie('text_filter', request)
             status_filter_json = getter_settings_cookie('status_filter', request)
+            wordtag_filter_json = getter_settings_cookie('wordtag_filter', request)
     # put this inside cookies (the func setter_settings_cookie is in lwt/views/_setting_cookie_db.py):
     setter_settings_cookie('lang_filter', lang_filter_json, request)
     if isinstance(model.first(), Texts): # texts table is filtered
-        setter_settings_cookie('tag_filter', tag_filter_json, request)
-        setter_settings_cookie('time_filter', time_filter_json, request)
-        setter_settings_cookie('archived_filter', archived_filter_json,
-                                                            request)
+        if tag_filter_json: setter_settings_cookie('tag_filter', tag_filter_json, request)
+        if time_filter_json: setter_settings_cookie('time_filter', time_filter_json, request)
     if isinstance(model.first(), Words): # words table is filtered
         setter_settings_cookie('text_filter', text_filter_json, request)
         setter_settings_cookie('status_filter', status_filter_json,
                                                             request)
+        setter_settings_cookie('wordtag_filter', wordtag_filter_json, request)
     # Create the filters for lang
     filter_Q_lang = create_filter('language_id', lang_filter_json)
     if isinstance(model.first(), Texts): # texts table is filtered
         filter_Q_tag = create_filter('texttags__id', tag_filter_json)
         filter_Q_time = create_filter('lastopentime', time_filter_json)
-        filter_Q_archived = create_filter('archived', archived_filter_json)
     if isinstance(model.first(), Words): # words table is filtered
-       filter_Q_text = create_filter('text_id', text_filter_json) 
-       filter_Q_status = create_filter('status', status_filter_json)
+        filter_Q_text = create_filter('text_id', text_filter_json) 
+        filter_Q_status = create_filter('status', status_filter_json)
+        filter_Q_wordtag = create_filter('wordtags', wordtag_filter_json)
     # And finally filter the models:
     if isinstance(model.first(), Texts): # texts table is filtered
         results = model.filter(filter_Q_lang).\
                         filter(filter_Q_time).\
-                        filter(filter_Q_archived).\
+                        filter(filter_Q_tag).\
                         distinct() # because many2many, a text can have 2 tags. don't count 2 times so...
 #                         filter(filter_Q_tag).\
     if isinstance(model.first(), Words): # words table is filtered
         results = model.filter(filter_Q_lang).\
                         filter(filter_Q_status).\
+                        filter(filter_Q_wordtag).\
                         filter(filter_Q_text)
     
     return results
 
 def str_to_bool(s):
     if s == 'True':
-         return True
+        return True
     elif s == 'False':
-         return False
+        return False
     else:
-         raise ValueError 
+        raise ValueError 
 
+''' clean after uploading the file: remove the file in the dir and the Object'''
 def delete_uploadedfiles(Model_to_delete):
-    ''' clean after uploading the file: remove the file in the dir and the Object'''
     for dirpath, subdirs, files in os.walk(settings.MEDIA_ROOT):
         for file in files:
             os.remove(os.path.join(dirpath, file))
@@ -192,15 +203,17 @@ def delete_uploadedfiles(Model_to_delete):
     for qr in qrs:
         qr.delete()
 
+""" Does the language with this ID 'currentlang' exists in db? """
+''' NOT USED
 def validateLang(currentlang):
-    """ Does the language with this ID 'currentlang' exists in db? """
     if currentlang != '':
         if not Languages.objects.filter(owner=text.owner).get(id=int(currentlang)):
             currentlang = ''
-    return currentlang
+    return currentlang '''
 
+""" Is the tag is used in the texts? Return '' if not """
+'''NOT USED
 def validateTextTag(currenttag, currentlang):
-    """ Is the tag is used in the texts? Return '' if not """
     if currenttag != '' and currenttag != -1:
         if currentlang != '' and currentlang != -1:
             t = Texts.objects.filter(owner=text.owner).filter(language__id=currentlang).values_list(
@@ -210,16 +223,16 @@ def validateTextTag(currenttag, currentlang):
             t = Texts.objects.filter(owner=text.owner).values_list('texttags', flat=True).distinct()
         r = Texttags.objects.filter(owner=text.owner).filter(id__in=t).count()
         currenttag = '' if r == 0 else currenttag
-    return currenttag
+    return currenttag'''
     
+''' Helper function for splitText. split the text into sentence '''
 def splitSentence(t, splitSentenceMark):
-    ''' Helper function for splitText. split the text into sentence '''
     # split by paragraph (end of line)
     split_pat = r'(\n+)'
     paragraphs = re.split(split_pat, t)
     # split by dedicated character for end of sentence:
     temp_t = []
-    id = 0
+    index = 0
     # find sentences inside each paragraph. the Delimiter is appended to the sentence found just before 
     for paragraph in paragraphs:
         split_pat  = r'([' + re.escape(splitSentenceMark) + '])'
@@ -231,15 +244,14 @@ def splitSentence(t, splitSentenceMark):
             else: # appending the delimiter to the element before: which is the sentence found
                 if idx %2 == 0:
                     temp_t.append(s)
-                    id += 1
+                    index += 1
                 elif idx %2 != 0:
-                    temp_t[id-1] += s
+                    temp_t[index-1] += s
     return temp_t 
     
+''' split the text into sentences.
+    and then insert sentences/words in DB '''
 def splitText(request, text):
-    ''' split the text into sentences.
-        and then insert sentences/words in DB '''
-
     removeSpaces = text.language.removespaces # Used for Chinese,Jap where the white spaces are not used.
     splitEachChar = text.language.spliteachchar
     splitSentenceMark = text.language.regexpsplitsentences
@@ -356,21 +368,21 @@ def splitText(request, text):
 #     else:
 #         return s
 
+''' some other cleaning for the splitting in textitems function '''
 def repl_tab_nl(s):
-    ''' some other cleaning for the splitting in textitems function '''
     s = re.sub(r'[\r\n\t]', r' ', s)
     s = re.sub(r'\r\n', r' ', s)
     s = re.sub(r'\s', r' ', s)
     s = re.sub(r'\s{2,}', r' ', s)
     return s.strip()
 
+''' original php function converted in python ''' 
 def isset(variable):
-    ''' original php function converted in python ''' 
     return variable in locals() or variable in globals()
 
+''' Converts the field in text, annotatedtx to json format
+to be readable inside the javascript part in text_read '''
 def annotation_to_json(ann):
-    ''' Converts the field in text, annotatedtx to json format
-    to be readable inside the javascript part in text_read '''
     if ann == '':
         return "{}"
     arr = {}
@@ -381,8 +393,8 @@ def annotation_to_json(ann):
             arr[vals[0]-1] = [vals[1],vals[2],vals[3]]
     return json.dump(arr)
 
+''' don't know what it's doing...'''
 def makeStatusClassFilter(status):
-    ''' don't know what it's doing...'''
     if status == '':
         return ''
     ls = [1,2,3,4,5,98,99]
@@ -403,17 +415,17 @@ def makeStatusClassFilter(status):
     return r
 
 
+''' don't know what it's doing...'''
 def makeStatusClassFilterHelper(status,ls):
-    ''' don't know what it's doing...'''
     try:
         pos = ls.index(status)
         ls[pos] = -1
     except ValueError: # not found
         pass
 
+''' escapes everything to "Â¤xx" but not 0-9, a-z, A-Z, and unicode >= (hex 00A5, dec 165) '''
+''' What's the need of this???...'''
 def strToClassName(mystring):
-    ''' escapes everything to "Â¤xx" but not 0-9, a-z, A-Z, and unicode >= (hex 00A5, dec 165) '''
-    ''' What's the need of this???...'''
     l = len(mystring)
     r = ''
     for i in range(l):
@@ -425,8 +437,8 @@ def strToClassName(mystring):
             r += c
     return r
 
+''' What's the need of this???...'''
 def strToHex(mystring):
-    ''' What's the need of this???...'''
     myhex=''
     for c in mystring:
         h = hex(ord(c))
@@ -436,21 +448,34 @@ def strToHex(mystring):
             myhex += h
     return myhex.upper()
 
+''' CONSTANTS (I know, it's not me...) used inside text_read when displaying the tooltip '''
+    #TODO increase the status of learning words each time we open a text that contains this word??
 def get_statuses():
-    ''' CONSTANTS (I know, it's not me...) used inside text_read when displaying the tooltip '''
     statuses = { 0 : {"abbr" :   "0", "name" : _("Unknown")},
                 1 : {"abbr" :   "1", "name" : _("Learning")},
-                100 : {"abbr" : "WKn", "name" : _("Well Known")},
-                101 : {"abbr" : "Ign", "name" : _("Ignored")}, }
+                100 : {"abbr" : _("WKn"), "name" : _("Well Known")},
+                101 : {"abbr" : _("Ign"), "name" : _("Ignored")}, }
     return statuses
 
+''' same as above but with using parameter. NOTE: It allows to get intermediate number
+    for example: 56, would be considered as 'Learning'. '''
+def get_name_status(nb):
+    if nb == 0:
+        return _("Unknown")
+    if nb == 100:
+        return _("Well Known")
+    if nb == 101:
+        return _("Ignored")
+    else:
+        return _('Learning')
+        
+''' 
+- called by view dictwebpage to create the dict link in text_read bottomright 
+- called by pgm.js:  create_link_webdict(wblink1,wblink2,wblink3,txt,txid,torder)
+createTheDictLink(wblink1,txt,'Dict1','Lookup Term: ') + =>http://127.0.0.1/trans.php?x=2&i=http%3A//www.wordreference.com/enfr/%23%23%23&t=This  
+createTheDictLink(wblink2,txt,'Dict2','') +
+createTheDictLink(wblink3,txt,'GTr','') + ...'''
 def createTheDictLink(u,t): 
-    ''' 
-    - called by view dictwebpage to create the dict link in text_read bottomright 
-    - called by pgm.js:  create_link_webdict(wblink1,wblink2,wblink3,txt,txid,torder)
-    createTheDictLink(wblink1,txt,'Dict1','Lookup Term: ') + =>http://127.0.0.1/trans.php?x=2&i=http%3A//www.wordreference.com/enfr/%23%23%23&t=This  
-    createTheDictLink(wblink2,txt,'Dict2','') +
-    createTheDictLink(wblink3,txt,'GTr','') + ...'''
     # Case 1: url without any ###: append UTF-8-term
     # Case 2: url with 1 ###: substitute UTF-8-term
     # Case 3: url with 2 ###enc###: substitute enc-encoded-term

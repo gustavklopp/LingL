@@ -2,8 +2,6 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-{% block title %}{% if currentlang_id == -1 %}{% trans "My Words" %}{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %}{% endblock title %}
-
 {% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Words" %}{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
 
 {% endblock pagetitle %}
@@ -22,10 +20,10 @@
 {# FILTERING THE TEXTS #}
 <div class="row filtering_word">
 
-	<div class="col-md-4">
+	<div class="col-md-3">
 {# filter on language #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
-<ul id="ul_language" class="collapse in">
+<ul id="ul_language" class="collapse show">
 	<form id="filterlangform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
 	{% for lang in languages %}
@@ -49,9 +47,9 @@
 	</div>
 
 {# filter on text #}
-	<div class="col-md-4">
+	<div class="col-md-3">
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_text">{% trans 'Texts ' %} :</a>
-<ul id="ul_text" class="collapse in">
+<ul id="ul_text" class="collapse show">
 	<form id="filtertextform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
 	{% for text in texts %}
@@ -67,9 +65,9 @@
 	</div>
 
 {# filter on status #}
-	<div class="col-md-4">
+	<div class="col-md-3">
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_status">{% trans 'Statuses' %} :</a>
-<ul id="ul_status" class="collapse in">
+<ul id="ul_status" class="collapse show">
 	<form id="filterstatusform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
 	{% for status in statuses %}
@@ -78,6 +76,26 @@
 		onclick="termlist_filter();" value="{{ status.0 }}" class="unstyled">
 		 {{ status.1 }}
 		  </input><br>
+	{% endfor %}
+	</form>
+</ul>
+	</div>
+
+{# filter on wordtag #}
+	<div class="col-md-3">
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_wordtag">{% trans 'Tags' %} :</a>
+<ul id="ul_wordtag" class="collapse show">
+	<form id="filterwordtagform" method="POST" action="{% url 'term_list' %}">
+	{% csrf_token %}
+	{% if wordtags_list_empty %}{% trans 'Nothing to display'%}{% endif %}
+	{% for wt_ls in wordtags_list %} {# loop on a zipped(tag, languages contained in this tag) #}
+		<span wordtag="{{ wt_ls.tag.id }}" language="{{ wt_ls.lang }}"
+		{% if wt_ls.hidden %}class="hidden"{% endif %}>	
+		<input type="checkbox" 
+		{% if wordtag_filter|length == 0 %}checked{% endif %} 
+		onclick="termlist_filter();" value="{{ wt_ls.tag.id }}" class="unstyled">
+		{{ wt_ls.tag.wotagtext }}
+		<br></span>
 	{% endfor %}
 	</form>
 </ul>

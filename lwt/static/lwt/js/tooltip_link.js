@@ -3,11 +3,11 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 /**************************************************************
- called by 
-create_tooltip_stat_unkwn(WBLINK1,WBLINK2,WBLINK3,$(this).attr('wotranslation'), $(this).attr('wowordtext'), RTL, $(this).attr('woid'), status); 
-     wblink1: language.dict1uri
-     wblink2: language.dict2uri
-     wblink3: language.lggoogletranslateuri
+ Helpers funcs for the funcs 'create_tooltip_stat_...(WBLINK1,WBLINK2,WBLINK3,$(this).attr('wotranslation'), $(this).attr('wowordtext'), RTL, $(this).attr('woid'), status); 
+    @wblink1: language.dict1uri
+    @wblink2: language.dict2uri
+    @wblink3: language.lggoogletranslateuri
+	@return: the link
 ***************************************************************/
 
 function text_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, cotrans, iscompoundword, show_compoundword, rtl)
@@ -63,15 +63,17 @@ function text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, t
 		'</div>' ;
 	return r;
 }
-/* the user clicked on a WORD 
- the word can be of the status: ignored, well-known, learning, unknown. */
+/****************************************************************************************** */
+/*         the user clicked on a WORD. create the tooltip                                   */
+/* the word can be of the status: ignored, well-known, learning, unknown.****************** */
+/****************************************************************************************** */
 function create_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 		cotrans, iscompoundword, show_compoundword, rtl)
 {
 	return overlib(
 		text_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'New Word');                                                // "Loolup Sentence: GTr"        
+		CAPTION, gettext('New Word'));                                                // "Loolup Sentence: GTr"        
 }
 
 function create_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -80,7 +82,7 @@ function create_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext
 	return overlib(
 		text_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'Learning');
+		CAPTION, gettext('Learning'));
 }
 function create_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 		cotrans, iscompoundword, show_compoundword, rtl)
@@ -88,7 +90,7 @@ function create_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext,
 	return overlib(
 		text_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'ignored');
+		CAPTION, gettext('ignored'));
 }
 
 function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -97,7 +99,7 @@ function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext,
 	return overlib(
 		text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'Well-known');
+		CAPTION, gettext('Well-known'));
 }
 
 /**************************************************************
@@ -140,7 +142,7 @@ function create_links_webdict(wblink1,wblink2,wblink3,wowordtext,wo_id) {
 	create_link_webdict(wblink2,wowordtext,'Dict2','') +
 	create_link_webdict(wblink3,wowordtext,'GTr','') + 
 	// search also for sentence in lggoogletranslate (wblink3)
-	'<br>Lookup Sentence: ' + createSentLookupLink(wblink3,'GTr',wo_id);
+	'<br>'+gettext('Lookup Sentence: ') + createSentLookupLink(wblink3,'GTr',wo_id);
 	return s;
 }
 
@@ -170,11 +172,11 @@ function create_link_deletesingleword(wo_id) {
 }
 
 function create_link_stat_wellkwn(wo_id) {
-	return ' <a href="" onClick="ajax_update_status(\''+wo_id+'\',\'wellkwn\');return false;">I know this term well</a> ';
+	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'wellkwn\');return false;">I know this term well</a> ';
 }
 
 function create_link_stat_ignored(wo_id) {
-	return ' <a href="" onClick="ajax_update_status(\''+wo_id+'\',\'ignored\');return false;">Ignore this term</a> ';
+	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'ignored\');return false;">Ignore this term</a> ';
 }
 
 /**************************************************************

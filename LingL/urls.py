@@ -62,12 +62,17 @@ urlpatterns = [
     url(r'^show_sentence/$',views.show_sentence,name='show_sentence'),
     # searching for similar word and then create the link with the original word
     url(r'^search_possiblesimilarword/$',views.search_possiblesimilarword,name='search_possiblesimilarword'),
+    url(r'^search_possiblesimilarCompoundword/$',views.search_possiblesimilarCompoundword,name='search_possiblesimilarCompoundword'),
     url(r'^create_or_del_similarword/$',views.create_or_del_similarword,name='create_or_del_similarword'),
+    url(r'^submit_termformSearchbox/$',views.submit_termformSearchbox,name='submit_termformSearchbox'),
 
     url(r'^text_read/(?P<text_id>\w+)/$',views.text_read,name='text_read'),
     url(r'^dictwebpage/$',views.dictwebpage,name='dictwebpage'), # when it's the callback of AJAX (when clicking on word in text_read, it's at the oring ot the domain strangely...
     url(r'dictwebpage/$',views.dictwebpage,name='dictwebpage'), # no '^' because text_read calls it to display the webpage
     url(r'^update_show_compoundword/$',views.update_show_compoundword,name='toggle_show_compoundword'),
+    
+    # AJAX text_read iknowall
+    url(r'^iknowall/$', views.iknowall, name='iknowall'),
     
     # List of the words:
     url(r'^term_list/$',views.term_list,name='term_list'),
@@ -92,6 +97,8 @@ urlpatterns = [
     #####################INTERNATIONALIZATION FOR JAVASCRIPT#################
    url(r'^jsi18n/lwt/$', JavaScriptCatalog.as_view(packages=['lwt']), name='javascript-catalog'), 
 
+    # keyboard shortcuts, controls and other helps:
+    url(r'^helppage/$',views.helppage, name='helppage'),
 ]
 
 ##################### UPLOADED RESTORE FILE    ##############################

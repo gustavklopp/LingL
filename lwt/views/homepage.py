@@ -23,11 +23,12 @@ from lwt.forms import *
 
 # helper functions:
 from lwt.views._setting_cookie_db import *
+from lwt.views._utilities_views import get_word_database_size
 
 
+''' Home Page '''
 @login_required
 def homepage(request):
-    '''' Home Page '''
     # User wants to change the language:
     if request.GET.get('setcurrentlang'):
         lgid = int(request.GET['setcurrentlang'])
@@ -58,7 +59,11 @@ def homepage(request):
     # get the list of languages to display them in the drop-down menu:
     language_selectoption = Languages.objects.filter(owner=request.user).values('name','id').order_by('name')
     
+    # get the current database size:
+    database_size = get_word_database_size(request)
+
     return render(request, 'lwt/homepage.html', {'currentlang_name':currentlang_name,'currentlang_id':currentlang_id,
                                                  'lastopentexts':lastopentexts, 
-                                                 'language_selectoption':language_selectoption})
+                                                 'language_selectoption':language_selectoption,
+                                                 'database_size':database_size})
 

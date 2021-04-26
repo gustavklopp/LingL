@@ -4,7 +4,6 @@
 {% load crispy_forms_tags %}
 
 
-	{% block title %}{% if op == 'new' %}New Language{% elif op == 'edit' %}Edit Language{% endif %}{% endblock title %}
 	{% block pagetitle %}{% if op == 'new' %}New Language{% elif op == 'edit' %}Edit Language{% endif %} | {{ block.super }}
 	{% endblock pagetitle %}
 

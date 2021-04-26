@@ -4,7 +4,6 @@
 {% load crispy_forms_tags %}
 
 
-{% block title %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %}{% endblock title %}
 
 {% block stylesheets %}{{ block.super }}
 	<!--  Plugin for tooltip: tooltipster -->
@@ -17,8 +16,7 @@
 	<script type="text/javascript" src="{% static 'lwt/js/tooltipster_js/tooltipster.bundle.min.js' %}"></script>
  {% endblock javascript %}
 
-{% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
-
+{% block pagetitle %}{% ifequal op 'new' %}{% trans "Creating a new text" %}{% else %}{% trans "Editing Text : " %}{{ text_title }}"{% endifequal %} | {{ block.super }}
 {% endblock pagetitle %}
 
 {% block banner %}
@@ -28,7 +26,7 @@
 {% block content %}
 
 {% if op == 'new' %}
-	<h4>{% trans "New Text : Upload your text file or Fill the form " %} </h4>
+	<h4>{% trans "New Text : Upload your text file -or- Fill the form " %} </h4>
 
 	{% crispy form_uploaded_text %}
 	{% crispy form %}

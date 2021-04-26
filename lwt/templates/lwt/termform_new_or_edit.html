@@ -8,7 +8,7 @@
 $(document).ready(function(){
 	// submit word with similar words automatically (words with same writing)
 	$('#submit_word').click(function(e) {
-		ajax_submit_word('{{ op }}', '{{ wo.id }}');
+		ajax_submit_word(e, '{{ op }}', '{{ wo.id }}', '{{ wo.language.id }}');
 		e.preventDefault();// prevent the form from being sent
 		return false; // prevent the form from being sent
 		});
@@ -38,53 +38,89 @@ var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script>
 <form id="newwordform" name="newword" role="form" class="container-fluid">
 {% csrf_token %}
 {{ form.media }}
-<div class="form-group">
-	{{ Op_Thing }} : "{% if compoundword_list|length > 1 %}
+<div class="row">
+	{{ Op_Thing }} : <h5>"{% if compoundword_list|length > 1 %}
 					{% for wo in compoundword_list %}{% if not forloop.first %}+{% endif %}{{ wo }}{% endfor %}
-					{% else %}{{ wo.wordtext }}{% endif %}"
+					{% else %}{{ wo.wordtext }}{% endif %}"</h5>
 </div>
-<div class="form-group" >
+<div class="form-group row" >
 <div class="col-md-6">
     {{ form.translation|as_crispy_field }}
     {{ form.wordtags|as_crispy_field }}
-    {{ form.romanization|as_crispy_field }}
+    {% if wo.language.has_romanization %}{{ form.romanization|as_crispy_field }}{% endif %}
     {{ form.extra_field|as_crispy_field }}
 </div>
 <div class="col-md-6">
 
-			<strong>{% trans "Sentence (Term in {...})" %}: </strong>
-			<textarea id="id_sentence" {% if wo.language.righttoleft %}dir="rtl"{% endif %} name="customsentence" 
-			data_maxlength="1000" rows="3">{{ customsentence }}</textarea><br>
+	<!--  Possible sentences -->
+	<label for="id_sentence" class="control-label ">{% trans "Sentence (Term in **...**)" %}:</label>
+	<div class="controls ">
+	<textarea name="customsentence" cols="40" rows="3" class="textarea form-control"
+		 id="id_sentence" {% if wo.language.righttoleft %}dir="rtl"{% endif %}>{{ customsentence }}</textarea>
+	</div>
+	<!-- 
+	<textarea id="id_sentence" {% if wo.language.righttoleft %}dir="rtl"{% endif %} name="customsentence" 
+	>{{ customsentence }}</textarea><br>
+	<!-- data_maxlength="1000" rows="3">{{ customsentence }}</textarea><br> Sentence areo too little...-->
 			
+			<!--  not used finally...
 	<div class="headPlus collapsed" data-toggle="collapse" data-target="#result_sentence" onclick="ajax_showsentence(compoundword_id_list, '{% static 'lwt/img/icn/tick-button.png' %}');">
-		<span><img src="{% static 'lwt/img/magnifying-glass_16x16.png' %}" title="{% trans "Show Sentences" %}" alt="Show Sentences" /> <strong>{% trans "Show other Sentences" %}</strong></span>
+		<span><img src="{% static 'lwt/img/magnifying-glass_16x16.png' %}" title="{% trans "Show Sentences" %}" alt="Show Sentences" /> <strong>
+			<span title="{% trans "Search in texts (this one but also other) where this word is present" %}">{% trans "Show other Sentences" %}</span></strong></span>
 	</div>	
 		<div id="result_sentence" class="collapse"></div>
+ -->
 
+	<!--  Possible similar words -->
+	<div id="result_possiblesimilarword"></div>
+	<!--  end of Possible similar words -->
+
+<!-- NOT USED. AJAX IS NOT the best way for similar word... 
 	<div class="headPlus collapsed" data-toggle="collapse" data-target="#result_similarword" onclick="ajax_search_possiblesimilarword('{{ wo.id }}','');">
-		<span><img src="{% static 'lwt/img/magnifying-glass_16x16.png' %}" title="{% trans "Search Similar words" %}" alt="Search Similar words" /> <strong>{% trans "Search Similar Words" %}</strong></span>
+		<span><img src="{% static 'lwt/img/magnifying-glass_16x16.png' %}" title="{% trans "Search Similar words" %}" alt="Search Similar words" /> <strong> 
+			<span title="{% trans "Search in texts (this one but also other) for words which could be the same word (but with different form - like declension e.g)" %}">{% trans "Search Similar Words" %}</span></strong></span>
 	</div>	
 	<div id="result_similarword" class="collapse" >
 		<div id="result_possiblesimilarword"></div> <!-- creating a list filled by ajax_searchpossiblesimilarword -->
-		<div id="result_alreadyaddedsimilarword"></div>
+	<!--<div id="result_alreadyaddedsimilarword"></div>
 		<select name="chosen_similarword" multiple hidden>
 		</select>
 	</div>
+ -->
 
-	<div class="form-group">
+	<div class="form-group" id="wblnk_search" data-dictwebpage_searched_word="{{ dictwebpage_searched_word }}" data-wo_id="{{ wo.id }}">
 
-	  <img src="{% static 'lwt/img/dictionary_16x16.png' %}" title="{% trans "Lookup term" %}" alt="Lookup term" /> <span>Lookup Term:  <a href="" onClick="ajax_dictwebpage('{{ wo.language.dict1uri }}','{{ dictwebpage_searched_word }}','');return false;">Dict1</a>  <a href="" onClick="ajax_dictwebpage('{{ wo.language.dict2uri }}','{{ dictwebpage_searched_word }}','');return false;">Dict2</a>  <a href="" onClick="ajax_dictwebpage('{{ wo.language.googletranslateuri }}','{{ dictwebpage_searched_word }}','');return false;">GTr</a>  | Sent.: <a href="" onClick="ajax_dictwebpage('{{ wo.language.googletranslateuri }}','','{{ wo.id }}');return false;">GTr</a></span>
+	  <img src="{% static 'lwt/img/dictionary_16x16.png' %}" title="{% trans "Lookup term" %}" alt="Lookup term" /> 
+	  <label title="{% trans "Search word in : " %}{{ wo.language.dict1uri }}" class="radio-inline"><input value="{{ wo.language.dict1uri }}" type="radio" name="wblnk" checked>{% trans "Dict1" %}</label> 
+	  <label title="{% trans "Search word in : " %}{{ wo.language.dict2uri }}" class="radio-inline"><input value="{{ wo.language.dict2uri }}" type="radio" name="wblnk">{% trans "Dict2" %}</label>    
+	  <label title="{% trans "Search word in : " %}{{ wo.language.googletranslateuri }}" class="radio-inline"><input value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "GTr" %}</label>
+	  |<label title="{% trans "Search sentence in : " %}{{ wo.language.googletranslateuri }}" class="radio-inline"><input id="sent_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "Sent.: GTr" %}</label>  
 	</div>
+	
+	<!--  Custom searchbox of a word (it calls: function submit_termformSearchbox() )-->
+    <div class="input-group" id="termformSearchbox_div">
+  <input id="termformSearchbox" title="{% trans "Note: If it's a compound word, separate the element by a space" %}" type="text" class="form-control" placeholder="{% trans "Search with another spelling?" %}" aria-label="{% trans "Search with another spelling?" %}" aria-describedby="termformSearchbox">
+  <div class="input-group-append">
+    <button class="btn btn-outline-secondary" onclick="submit_termformSearchbox({{ wo.id }}, {{ wo.language.id }})" type="button">go</button>
+  </div>
+</div>
+	<!--  End custom... -->
+
 	<strong>{% trans "Status" %}: </strong>
 	{% for nb, abbr_and_name in statuses.items %}
 		<span class="status{{ nb }}" title="{{ abbr_and_name.name }}">
 		&nbsp;<input type="radio" name="status" value="{{ nb }}"
 		{% if forloop.first %}checked="checked"{% endif %}
-		/>{{ abbr_and_name.abbr }}"&nbsp;</span>
+		/>{{ abbr_and_name.abbr }}&nbsp;</span>
 	{% endfor %}
 	<button id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>
 	{% if op == 'edit' %}
-	<input type="checkbox" name="redefine_only_this_word">Redefine Only this Word
+	<!--  Redefine only this word -->
+    <div class="form-group">
+	<input type="checkbox" name="redefine_only_this_word id="redefine_only_this_word">
+	<label for="redefine_only_this_word">{% trans "Redefine Only this Word" %}</label>
+	<div>
+	<!--  End Redefine only this... -->
 	{% endif %}
 </div>
 </div>
