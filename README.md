@@ -23,9 +23,10 @@ Set a virtualenv with python 3.8, then inside the virtual env:
 `pip install -r requirements.txt`
 
 Running the Django project:
+
+move inside the LingL folder (where `manage.py` is) and:
 	
 ```
-python manage.py makemigrations
 python manage.py migrate
 python manage.py createsuperuser #<--- you can use username: lingl / and password: lingl for example. No need of email
 
