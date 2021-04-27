@@ -73,7 +73,7 @@ function create_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, t
 	return overlib(
 		text_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'New Word');                                                // "Loolup Sentence: GTr"        
+		CAPTION, gettext('New Word'));                                                // "Loolup Sentence: GTr"        
 }
 
 function create_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -82,7 +82,7 @@ function create_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext
 	return overlib(
 		text_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'Learning');
+		CAPTION, gettext('Learning'));
 }
 function create_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 		cotrans, iscompoundword, show_compoundword, rtl)
@@ -90,7 +90,7 @@ function create_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext,
 	return overlib(
 		text_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'ignored');
+		CAPTION, gettext('ignored'));
 }
 
 function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -99,7 +99,7 @@ function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext,
 	return overlib(
 		text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, 'Well-known');
+		CAPTION, gettext('Well-known'));
 }
 
 /**************************************************************
@@ -142,7 +142,7 @@ function create_links_webdict(wblink1,wblink2,wblink3,wowordtext,wo_id) {
 	create_link_webdict(wblink2,wowordtext,'Dict2','') +
 	create_link_webdict(wblink3,wowordtext,'GTr','') + 
 	// search also for sentence in lggoogletranslate (wblink3)
-	'<br>Lookup Sentence: ' + createSentLookupLink(wblink3,'GTr',wo_id);
+	'<br>'+gettext('Lookup Sentence: ') + createSentLookupLink(wblink3,'GTr',wo_id);
 	return s;
 }
 

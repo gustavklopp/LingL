@@ -108,3 +108,7 @@ LingL_database.sqlite3
 manage.py
 static/
 MY_NOTES.md
+/127.0.0.1-key.pem
+/127.0.0.1.pem
+/LingL SSL.launch
+/LingL+++.launch

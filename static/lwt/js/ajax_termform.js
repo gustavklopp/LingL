@@ -8,49 +8,63 @@
 			   - clicking on the ´plus´ to signify it´s a similar word in the top right panel
 									(or using keyboard shortcut) op == 'similar'
 */ 
-function ajax_submit_word(event, op, wo_id, simwo_id=null){
-	var token =  $("#newwordform").find('input[name=csrfmiddlewaretoken]').val(); // Indispensable. Get the csrf already defined in the form
-	var data_to_go = {}; // get the individual data of the form, then we'll JSON.stringify them.
-	data_to_go['translation'] = $("textarea[name=translation]").val();
-	data_to_go['sentence'] = $("textarea[name=customentence]").val();
-	data_to_go['status'] = $("input[name=status]:checked").val();
-	data_to_go['romanization'] = $("input[name=romanization]").val();
-	data_to_go['wordtags'] = $("input[name=wordtags]").val();
-	// extra_field:
-	var extra_field = '[';
-	$("#div_id_extra_field input").each(function(idx, el){
-		if (idx != 0){
-			extra_field += ',';
-		}
-		var k = $(this).attr('name');
-		var v = $(this).val();
-		extra_field += '{"' + k + '":"'+ v +'"}'; 
-	});
-	extra_field += ']';
-	//console.log(extra_field);
-	data_to_go['extra_field'] = extra_field;
+function ajax_submit_word(event, op, wo_id, language_id, simwo_id=null){
+	// The Submit button could be intented from the termform searchbox though : if the User
+	// presses Enter but meants to launch the searchbox, not submit the word...
+	// Detect if the User has put focus on the search box: It's more an error from the User
+	// than a bug of the program but we are tolerant for this...
 	
-	var redefine_only_this_word = $("input[name=redefine_only_this_word]:checked").val();
-	$.ajax({url: '/termform/', 
-			type: 'POST',
-			dataType: 'json',
-			data: 
-				{ 
-					'newwordform': JSON.stringify(data_to_go),
-					'csrfmiddlewaretoken': token,
-					'op': op,
-					'wo_id': wo_id,
-					'simwo_id': simwo_id,
-					'redefine_only_this_word': redefine_only_this_word,
-					'compoundword_id_list': JSON.stringify(compoundword_id_list),
-				},
-			success: function(data){ 
-				$('#newwordform').replaceWith(data['html']);
-				update_data_of_wo_cowo_and_sims(data, op);
-				$('#bottomleft').focus(); //and set the focus to the text again (useful for keyboard shortcuts)
-				},
-			error : function(data , status , xhr){ console.log('ERROR'); console.log(data); console.log(status); console.log(xhr); }
-	});
+	// if op==similar, it means the keyboard shortcut (or click on the link)has been pressed. 
+	//it's evidently not a request for the searchbox then...
+	if (op != 'similar' && $("#topright #termformSearchbox").is(":focus")){
+		submit_termformSearchbox(wo_id, language_id);	
+	} else {
+		var token =  $("#newwordform").find('input[name=csrfmiddlewaretoken]').val(); // Indispensable. Get the csrf already defined in the form
+		var data_to_go = {}; // get the individual data of the form, then we'll JSON.stringify them.
+		data_to_go['translation'] = $("textarea[name=translation]").val();
+		data_to_go['sentence'] = $("textarea[name=customentence]").val();
+		data_to_go['status'] = $("input[name=status]:checked").val();
+		data_to_go['romanization'] = $("input[name=romanization]").val();
+		data_to_go['wordtags'] = $("input[name=wordtags]").val();
+		// extra_field:
+		var extra_field = '[';
+		$("#div_id_extra_field input").each(function(idx, el){
+			if (idx != 0){
+				extra_field += ',';
+			}
+			var k = $(this).attr('name');
+			var v = $(this).val();
+			extra_field += '{"' + k + '":"'+ v +'"}'; 
+		});
+		extra_field += ']';
+		//console.log(extra_field);
+		data_to_go['extra_field'] = extra_field;
+		
+		var redefine_only_this_word = $("input[name=redefine_only_this_word]:checked").val();
+		$.ajax({url: '/termform/', 
+				type: 'POST',
+				dataType: 'json',
+				data: 
+					{ 
+						'newwordform': JSON.stringify(data_to_go),
+						'csrfmiddlewaretoken': token,
+						'op': op,
+						'wo_id': wo_id,
+						'simwo_id': simwo_id,
+						'redefine_only_this_word': redefine_only_this_word,
+						'compoundword_id_list': JSON.stringify(compoundword_id_list),
+					},
+				success: function(data){ 
+					$('#newwordform').replaceWith(data['html']);
+					update_data_of_wo_cowo_and_sims(data, op);
+					$('#bottomleft').focus(); //and set the focus to the text again (useful for keyboard shortcuts)
+					//update the tooltip for the word also
+					var sel_word = $('.clicked');
+					click_ctrlclick_toggle(sel_word, event, 'update_tooltip');
+					},
+				error : function(data , status , xhr){ console.log('ERROR'); console.log(data); console.log(status); console.log(xhr); }
+		});
+	}
 }
 
 /* not used in fact. It was used to AJAX search similar word */
@@ -77,10 +91,42 @@ function toggle_makeit_similarword(e, simwo_id, wo_id){
 }
 
 /* clicking on 'go' in the termform searchbox (to search other word) */
-function submit_termformSearchbox(){
-	var dictwebpage_searched_word = $('#termformSearchbox').val();	
+function submit_termformSearchbox(wo_id, language_id){
+	var searched_word = $('#termformSearchbox').val();	
 	if (dictwebpage_searched_word != ''){
-		_clicked_weblink_radiobutton(dictwebpage_searched_word);
+		// search in the dictionary with the text given
+		_clicked_weblink_radiobutton(searched_word);
+		// search similar word with the text given 
+		// it can be a compound word: the user has written firstword secondword ...
+		searched_word_list = searched_word.split(' ');
+		if (searched_word_list.length == 1){
+			$.ajax({url: '/search_possiblesimilarword/', type: 'GET',
+			data: {
+					'searchboxtext' : searched_word, 
+					'language_id': language_id
+					},
+			success: function(data){
+				var data = JSON.parse(data);
+				var r = _display_possiblesimilarword(data, wo_id);
+				$('#result_possiblesimilarword').html(r);
+			},
+			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
+			});
+		} else { //it's a compound word
+			$.ajax({url: '/search_possiblesimilarCompoundword/', type: 'GET',
+			data: {
+					'firstsearch_el' : firstsearch_el, 
+					'secondsearch_el' : secondsearch_el, 
+					'language_id': language_id
+					},
+			success: function(data){
+				var data = JSON.parse(data);
+				var r = _display_possiblesimilarword(data, wo_id);
+				$('#result_possiblesimilarword').html(r);
+			},
+			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
+			});
+		}
 	}
 }
 

@@ -42,15 +42,19 @@ function ajax_update_status(event, wo_id, status) {
 					'op':'update_status', 'status': status, 'wo_id' : wo_id,
 				},
 			success: function(data){ 
-				$('#topright.text_read').html(data['html']); 
+				// don't update the topright panel if the clicked word has already move to a next word
+				var sel_word = $('.clicked');
+				if (data['wowordtext'] == sel_word.attr('wowordtext')){
+					$('#topright.text_read').html(data['html']); 
+				}
 				// update status of the word and the counter at the top
-				$.each(data['wo_id_to_update_in_ajax'], function(idx, val){
+				$.each(data['wo_id_to_update_in_ajax'], function(idx, val){ // val=wo_id
 						update_status(val, '', data['wostatus']);
-						//update the tooltip also
+						//update the title in word also
 						update_title(val, '', data['iscompoundword'], data['wowordtext'], 
-											  data['wotranslation'], data['woromanization'], data['wostatus'],
-											  data['cowotranslation'], data['coworomanization'], data['cowostatus']);
-					});
+								  data['wotranslation'], data['woromanization'], data['wostatus'],
+								  data['cowotranslation'], data['coworomanization'], data['cowostatus'])
+						});
 			},
 			error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
 			}
@@ -147,25 +151,29 @@ function update_title(wo_id, op, iscompoundword, wowordtext, wotranslation, woro
 /* called by update_status (for Cliked tooltip)
  change the number of word 'TO DO' at the top of text_read.html*/
 function update_workcount(){
-	var work_left_todo = $('span[woid][wostatus=0]').length - $('span[woid][iscompoundword="True"][cowostatus!=0]').length;
+	var work_left_todo = $('span[woid][iscompoundword="False"][wostatus=0]').length;
 	$('#word_left_todo').html('&nbsp;'+work_left_todo.toString()+'&nbsp;');
 	// and change the color if necessary:
 	if (work_left_todo == 0){
-		$('#word_left_todo').attr('wostatus','1'); }
-	else {
+		$('#word_left_todo').attr('wostatus','1'); 
+		// and disable the 'i know all' button
+		$('button#iknowall').attr('disabled','');
+	} else {
 		$('#word_left_todo').attr('wostatus','0'); }
 }
 
 /* NOT USED FINALLY */
 /* update span attribute of word in text_read */
+/*
 function ajax_update_HTML_show_compoundword(compoundword_id_list, show_compoundword){
 	$.each(compoundword_id_list, function(key, val){
 		$('span[woid='+val+']').attr('show_compoundword', show_compoundword);
 	});
-}
+}*/
 
 /* NOT USED finally */
 /* called by: click_ctrlclick_toggle() */
+/*
 function ajax_update_DB_show_compoundword(wo_id, show_compoundword){
 	$.ajax({url: '/update_show_compoundword/', 
 			type: 'GET',
@@ -179,4 +187,4 @@ function ajax_update_DB_show_compoundword(wo_id, show_compoundword){
 			},
 			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
 			});
-}
+} */

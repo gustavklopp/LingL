@@ -92,7 +92,7 @@ urlpatterns = [
     
     #####################THIRD PARTY ########################################
     url(r'^tags_input/', include(('tags_input.urls','tags_input'), namespace='tags_input')), # used for tagging, like in "text_detail"
-    url(r'^accounts/', include('allauth.urls')), # used by django-allatuh
+    url(r'^accounts/', include('allauth.urls')), # used by django-allauth
 
     #####################INTERNATIONALIZATION FOR JAVASCRIPT#################
    url(r'^jsi18n/lwt/$', JavaScriptCatalog.as_view(packages=['lwt']), name='javascript-catalog'), 

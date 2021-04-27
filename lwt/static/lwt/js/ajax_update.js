@@ -151,7 +151,7 @@ function update_title(wo_id, op, iscompoundword, wowordtext, wotranslation, woro
 /* called by update_status (for Cliked tooltip)
  change the number of word 'TO DO' at the top of text_read.html*/
 function update_workcount(){
-	var work_left_todo = $('span[woid][wostatus=0]').length - $('span[woid][iscompoundword="True"][cowostatus!=0]').length;
+	var work_left_todo = $('span[woid][iscompoundword="False"][wostatus=0]').length;
 	$('#word_left_todo').html('&nbsp;'+work_left_todo.toString()+'&nbsp;');
 	// and change the color if necessary:
 	if (work_left_todo == 0){

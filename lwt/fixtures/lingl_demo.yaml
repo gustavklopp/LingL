@@ -441,7 +441,7 @@
     text: "はい。いいえ。\nすみません。\nどうも。\nありがとうございます。\n日本語を話しますか。はい、少し。\nイギリスから来ました。"
     annotatedtext: ""
     audiouri: "http://lwt.sourceforge.net/media/jap.mp3"
-    sourceuri: NULL
+    sourceuri: null
     lastopentime: null
     texttags: 
      -    10
@@ -457,7 +457,7 @@
     text: "좋은 아침.\n안녕하세요.\n잘자요.\n잘가요.\n안녕하세요, 잘지냈어요?\n네, 잘지냈어요?\n네 그럼요.\n이름이 뭐에요?\n제 이름은 존이에요, 이름이 뭐에요?\n제 이름은 메리에요."
     annotatedtext: ""
     audiouri: "http://lwt.sourceforge.net/media/korean.mp3"
-    sourceuri: NULL
+    sourceuri: null
     lastopentime: null
     texttags: 
      -    10
@@ -473,7 +473,7 @@
     text: "ส วัส ดี ครับ\nส วัส ดี ค่ะ"
     annotatedtext: ""
     audiouri: "http://lwt.sourceforge.net/media/thai.mp3"
-    sourceuri: NULL
+    sourceuri: null
     lastopentime: null
     texttags: 
      -    10
@@ -489,7 +489,7 @@
     text: "בוקר טוב\nאחר צהריים טובים\nערב טוב\nלילה טוב\nלהתראות"
     annotatedtext: ""
     audiouri: "http://lwt.sourceforge.net/media/hebrew.mp3"
-    sourceuri: NULL
+    sourceuri: null
     lastopentime: null
     texttags: 
      -    10
@@ -16390,7 +16390,7 @@
     wordtext: Bonjour
     isnotword: false
     translation: "hello / good morning / good afternoon"
-    romanization: NULL
+    romanization: null
     customsentence: "{Bonjour} Manon."
     wordinside_order: null
     isCompoundword: false
@@ -16437,7 +16437,7 @@
     wordtext: Manon
     isnotword: false
     translation: "(name)"
-    romanization: NULL
+    romanization: null
     customsentence: "Bonjour {Manon}."
     wordinside_order: null
     isCompoundword: false
@@ -16502,7 +16502,7 @@
     wordtext: Bonjour
     isnotword: false
     translation: "hello / good morning / good afternoon"
-    romanization: NULL
+    romanization: null
     customsentence: "{Bonjour} Manon."
     wordinside_order: null
     isCompoundword: false
@@ -16570,7 +16570,7 @@
     wordtext: Alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16614,7 +16614,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16659,7 +16659,7 @@
     wordtext: crois
     isnotword: false
     translation: "believe / think"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je {crois} qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16706,7 +16706,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16750,7 +16750,7 @@
     wordtext: il
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "{Il} faut attendre trois mois."
     wordinside_order: null
     isCompoundword: false
@@ -16796,7 +16796,7 @@
     wordtext: y
     isnotword: false
     translation: "there / here / in"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il {y} a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16838,7 +16838,7 @@
     wordtext: a
     isnotword: false
     translation: "have / has"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y {a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16880,7 +16880,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16922,7 +16922,7 @@
     wordtext: longtemps
     isnotword: false
     translation: "long time / long while / long"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas {longtemps}, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -16966,7 +16966,7 @@
     wordtext: "là"
     isnotword: false
     translation: there
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, {là}, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17008,7 +17008,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17053,7 +17053,7 @@
     wordtext: avez
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce que vous {avez} fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -17099,7 +17099,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17147,7 +17147,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17189,7 +17189,7 @@
     wordtext: bonne
     isnotword: false
     translation: good
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait une {bonne} action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17234,7 +17234,7 @@
     wordtext: action
     isnotword: false
     translation: "action / deed"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait une bonne {action} ?"
     wordinside_order: null
     isCompoundword: false
@@ -17297,7 +17297,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -17381,7 +17381,7 @@
     wordtext: On
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -17423,7 +17423,7 @@
     wordtext: peut
     isnotword: false
     translation: "can / may"
-    romanization: NULL
+    romanization: null
     customsentence: "On {peut} dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -17465,7 +17465,7 @@
     wordtext: dire
     isnotword: false
     translation: "say / tell"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut {dire} ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -17510,7 +17510,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -17552,7 +17552,7 @@
     wordtext: comme
     isnotword: false
     translation: "as / just as / like / how"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire ça {comme} ça."
     wordinside_order: null
     isCompoundword: false
@@ -17594,7 +17594,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -17657,7 +17657,7 @@
     wordtext: Qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17701,7 +17701,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -17749,7 +17749,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -17791,7 +17791,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -17833,7 +17833,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17878,7 +17878,7 @@
     wordtext: avez
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce que vous {avez} fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -17924,7 +17924,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -17972,7 +17972,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -18037,7 +18037,7 @@
     wordtext: Alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -18081,7 +18081,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -18123,7 +18123,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -18169,7 +18169,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -18217,7 +18217,7 @@
     wordtext: mon
     isnotword: false
     translation: my
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait {mon} premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -18262,7 +18262,7 @@
     wordtext: premier
     isnotword: false
     translation: "first / primary / prime / initial"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon {premier} don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -18307,7 +18307,7 @@
     wordtext: don
     isnotword: false
     translation: donation
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier {don} du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -18349,7 +18349,7 @@
     wordtext: du
     isnotword: false
     translation: "of / from / some"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don {du} sang …"
     wordinside_order: null
     isCompoundword: false
@@ -18391,7 +18391,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -18496,7 +18496,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -18538,7 +18538,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -18628,7 +18628,7 @@
     wordtext: dire
     isnotword: false
     translation: "say / tell"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut {dire} ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -18673,7 +18673,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -18715,7 +18715,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -18841,7 +18841,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -19513,7 +19513,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -19996,7 +19996,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -20794,7 +20794,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -20836,7 +20836,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -21046,7 +21046,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -21132,7 +21132,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -21342,7 +21342,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -21384,7 +21384,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -21534,7 +21534,7 @@
     wordtext: C
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -21576,7 +21576,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -21792,7 +21792,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -21876,7 +21876,7 @@
     wordtext: a
     isnotword: false
     translation: "have / has"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y {a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -22002,7 +22002,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -22044,7 +22044,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -22086,7 +22086,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -22153,7 +22153,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -22195,7 +22195,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -22724,7 +22724,7 @@
     wordtext: J
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -22808,7 +22808,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -22875,7 +22875,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -23274,7 +23274,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -23505,7 +23505,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -23757,7 +23757,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -23841,7 +23841,7 @@
     wordtext: "là"
     isnotword: false
     translation: there
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, {là}, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -23883,7 +23883,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -23925,7 +23925,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -23973,7 +23973,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -24015,7 +24015,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -24372,7 +24372,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -24525,7 +24525,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -24903,7 +24903,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -25011,7 +25011,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -25308,7 +25308,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -25413,7 +25413,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -25455,7 +25455,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -25566,7 +25566,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -25608,7 +25608,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -26007,7 +26007,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -26052,7 +26052,7 @@
     wordtext: avez
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce que vous {avez} fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -26182,7 +26182,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -26392,7 +26392,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -26499,7 +26499,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -26541,7 +26541,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -26628,7 +26628,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -26670,7 +26670,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -26712,7 +26712,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -27012,7 +27012,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -27054,7 +27054,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -27096,7 +27096,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -27184,7 +27184,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -27226,7 +27226,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -27268,7 +27268,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -27356,7 +27356,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -27545,7 +27545,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -27608,7 +27608,7 @@
     wordtext: C
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -27650,7 +27650,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -27887,7 +27887,7 @@
     wordtext: C
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -27929,7 +27929,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -27977,7 +27977,7 @@
     wordtext: quoi
     isnotword: false
     translation: what
-    romanization: NULL
+    romanization: null
     customsentence: "C'est {quoi} ?"
     wordinside_order: null
     isCompoundword: false
@@ -28042,7 +28042,7 @@
     wordtext: A
     isnotword: false
     translation: "have / has"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y {a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -28294,7 +28294,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -28336,7 +28336,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -28441,7 +28441,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -28483,7 +28483,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -28594,7 +28594,7 @@
     wordtext: C
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -28636,7 +28636,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -28726,7 +28726,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -28831,7 +28831,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -28873,7 +28873,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -28984,7 +28984,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -29026,7 +29026,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -29383,7 +29383,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -29827,7 +29827,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -29911,7 +29911,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -29999,7 +29999,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -30128,7 +30128,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -30464,7 +30464,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -30506,7 +30506,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -30758,7 +30758,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -30845,7 +30845,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -30908,7 +30908,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -30950,7 +30950,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -31139,7 +31139,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -31225,7 +31225,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -31456,7 +31456,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -31648,7 +31648,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -31903,7 +31903,7 @@
     wordtext: "là"
     isnotword: false
     translation: there
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, {là}, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -31966,7 +31966,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -32137,7 +32137,7 @@
     wordtext: comme
     isnotword: false
     translation: "as / just as / like / how"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire ça {comme} ça."
     wordinside_order: null
     isCompoundword: false
@@ -32179,7 +32179,7 @@
     wordtext: il
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "{Il} faut attendre trois mois."
     wordinside_order: null
     isCompoundword: false
@@ -32309,7 +32309,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -32353,7 +32353,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -32398,7 +32398,7 @@
     wordtext: y
     isnotword: false
     translation: "there / here / in"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il {y} a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -32587,7 +32587,7 @@
     wordtext: On
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -32629,7 +32629,7 @@
     wordtext: y
     isnotword: false
     translation: "there / here / in"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il {y} a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -32713,7 +32713,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -32863,7 +32863,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -33643,7 +33643,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -33727,7 +33727,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -33811,7 +33811,7 @@
     wordtext: a
     isnotword: false
     translation: "have / has"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y {a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -33853,7 +33853,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -34252,7 +34252,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -34336,7 +34336,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -34525,7 +34525,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -34570,7 +34570,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -34699,7 +34699,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -34804,7 +34804,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -34972,7 +34972,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -35017,7 +35017,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -35083,7 +35083,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -35128,7 +35128,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -35320,7 +35320,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -35467,7 +35467,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -35656,7 +35656,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -35971,7 +35971,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -36019,7 +36019,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -36166,7 +36166,7 @@
     wordtext: On
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -36292,7 +36292,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -36523,7 +36523,7 @@
     wordtext: On
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -36733,7 +36733,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -37177,7 +37177,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -37221,7 +37221,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -37284,7 +37284,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -37328,7 +37328,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -37622,7 +37622,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -37666,7 +37666,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -37834,7 +37834,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -37918,7 +37918,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -37962,7 +37962,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -38214,7 +38214,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -38508,7 +38508,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -39012,7 +39012,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -39729,7 +39729,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -39771,7 +39771,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -40008,7 +40008,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -40155,7 +40155,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -40197,7 +40197,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -40323,7 +40323,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -40365,7 +40365,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -40407,7 +40407,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -40554,7 +40554,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -40724,7 +40724,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -40768,7 +40768,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -40816,7 +40816,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -41005,7 +41005,7 @@
     wordtext: A
     isnotword: false
     translation: "have / has"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y {a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -41131,7 +41131,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -41176,7 +41176,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -41494,7 +41494,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -41536,7 +41536,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -41584,7 +41584,7 @@
     wordtext: "là"
     isnotword: false
     translation: there
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, {là}, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -41626,7 +41626,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -41668,7 +41668,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -42175,7 +42175,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -42217,7 +42217,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -42280,7 +42280,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -42430,7 +42430,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -42874,7 +42874,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -42982,7 +42982,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -43195,7 +43195,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -43279,7 +43279,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -43345,7 +43345,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -43474,7 +43474,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -43558,7 +43558,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -43729,7 +43729,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -43771,7 +43771,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -43861,7 +43861,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -44074,7 +44074,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -44245,7 +44245,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -44395,7 +44395,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -44587,7 +44587,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -44629,7 +44629,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -44759,7 +44759,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -44930,7 +44930,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -44972,7 +44972,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -45245,7 +45245,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -45289,7 +45289,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -45964,7 +45964,7 @@
     wordtext: Alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -46008,7 +46008,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -46305,7 +46305,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -46410,7 +46410,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -46559,7 +46559,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -46604,7 +46604,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -46838,7 +46838,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -46943,7 +46943,7 @@
     wordtext: J
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -46985,7 +46985,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -47220,7 +47220,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -47262,7 +47262,7 @@
     wordtext: longtemps
     isnotword: false
     translation: "long time / long while / long"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas {longtemps}, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -47348,7 +47348,7 @@
     wordtext: peut
     isnotword: false
     translation: "can / may"
-    romanization: NULL
+    romanization: null
     customsentence: "On {peut} dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -47432,7 +47432,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -47684,7 +47684,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -47747,7 +47747,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -47789,7 +47789,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -47894,7 +47894,7 @@
     wordtext: Je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -47981,7 +47981,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -48023,7 +48023,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -48653,7 +48653,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -49499,7 +49499,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -49604,7 +49604,7 @@
     wordtext: Vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -49733,7 +49733,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -49922,7 +49922,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -49964,7 +49964,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -50363,7 +50363,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -50407,7 +50407,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -50451,7 +50451,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -50499,7 +50499,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -50541,7 +50541,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -50585,7 +50585,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -50672,7 +50672,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -50783,7 +50783,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -50828,7 +50828,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -50936,7 +50936,7 @@
     wordtext: quoi
     isnotword: false
     translation: what
-    romanization: NULL
+    romanization: null
     customsentence: "C'est {quoi} ?"
     wordinside_order: null
     isCompoundword: false
@@ -51001,7 +51001,7 @@
     wordtext: Je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -51088,7 +51088,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -51424,7 +51424,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -51763,7 +51763,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -51805,7 +51805,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -51847,7 +51847,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -51889,7 +51889,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -51998,7 +51998,7 @@
     wordtext: Il
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "{Il} faut attendre trois mois."
     wordinside_order: null
     isCompoundword: false
@@ -52170,7 +52170,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -52212,7 +52212,7 @@
     wordtext: bonne
     isnotword: false
     translation: good
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait une {bonne} action ?"
     wordinside_order: null
     isCompoundword: false
@@ -52299,7 +52299,7 @@
     wordtext: quoi
     isnotword: false
     translation: what
-    romanization: NULL
+    romanization: null
     customsentence: "C'est {quoi} ?"
     wordinside_order: null
     isCompoundword: false
@@ -52364,7 +52364,7 @@
     wordtext: C
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -52406,7 +52406,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -52454,7 +52454,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -52559,7 +52559,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -52877,7 +52877,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -53027,7 +53027,7 @@
     wordtext: Ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -53597,7 +53597,7 @@
     wordtext: Je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -53684,7 +53684,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -53726,7 +53726,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -53768,7 +53768,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -53810,7 +53810,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -53978,7 +53978,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -54209,7 +54209,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -54251,7 +54251,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -54440,7 +54440,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -55031,7 +55031,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -55073,7 +55073,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -55184,7 +55184,7 @@
     wordtext: J
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -55268,7 +55268,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -55583,7 +55583,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -55856,7 +55856,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -55898,7 +55898,7 @@
     wordtext: comme
     isnotword: false
     translation: "as / just as / like / how"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire ça {comme} ça."
     wordinside_order: null
     isCompoundword: false
@@ -55940,7 +55940,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -56045,7 +56045,7 @@
     wordtext: il
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "{Il} faut attendre trois mois."
     wordinside_order: null
     isCompoundword: false
@@ -56091,7 +56091,7 @@
     wordtext: y
     isnotword: false
     translation: "there / here / in"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il {y} a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -56133,7 +56133,7 @@
     wordtext: a
     isnotword: false
     translation: "have / has"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y {a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -56175,7 +56175,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -56490,7 +56490,7 @@
     wordtext: C
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -56532,7 +56532,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -56580,7 +56580,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -56769,7 +56769,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -56877,7 +56877,7 @@
     wordtext: ils
     isnotword: false
     translation: they
-    romanization: NULL
+    romanization: null
     customsentence: "A la fin, {ils} vous enlèvent la piqure."
     wordinside_order: null
     isCompoundword: false
@@ -57006,7 +57006,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -57048,7 +57048,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -57092,7 +57092,7 @@
     wordtext: on
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -58730,7 +58730,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -58772,7 +58772,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -58862,7 +58862,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -58990,7 +58990,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -59038,7 +59038,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -59101,7 +59101,7 @@
     wordtext: Est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -59149,7 +59149,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -59191,7 +59191,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -59233,7 +59233,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -59320,7 +59320,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -59385,7 +59385,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -59427,7 +59427,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -59490,7 +59490,7 @@
     wordtext: Il
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "{Il} faut attendre trois mois."
     wordinside_order: null
     isCompoundword: false
@@ -59767,7 +59767,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -59854,7 +59854,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -59900,7 +59900,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -60074,7 +60074,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -60371,7 +60371,7 @@
     wordtext: "là"
     isnotword: false
     translation: there
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, {là}, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -60707,7 +60707,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -60751,7 +60751,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -60838,7 +60838,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -61072,7 +61072,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -61222,7 +61222,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -61603,7 +61603,7 @@
     wordtext: Je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -61774,7 +61774,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -61816,7 +61816,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -62197,7 +62197,7 @@
     wordtext: oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -62407,7 +62407,7 @@
     wordtext: peut
     isnotword: false
     translation: "can / may"
-    romanization: NULL
+    romanization: null
     customsentence: "On {peut} dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -62491,7 +62491,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -62659,7 +62659,7 @@
     wordtext: comme
     isnotword: false
     translation: "as / just as / like / how"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire ça {comme} ça."
     wordinside_order: null
     isCompoundword: false
@@ -62701,7 +62701,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -62872,7 +62872,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -62998,7 +62998,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -63145,7 +63145,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -63187,7 +63187,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -63421,7 +63421,7 @@
     wordtext: Je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -63487,7 +63487,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -64057,7 +64057,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -64288,7 +64288,7 @@
     wordtext: c
     isnotword: false
     translation: "that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "{C}'est quoi ?"
     wordinside_order: null
     isCompoundword: false
@@ -64330,7 +64330,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -64420,7 +64420,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -64548,7 +64548,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -64596,7 +64596,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -64659,7 +64659,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -65268,7 +65268,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -65457,7 +65457,7 @@
     wordtext: Manon
     isnotword: false
     translation: "(name)"
-    romanization: NULL
+    romanization: null
     customsentence: "Bonjour {Manon}."
     wordinside_order: null
     isCompoundword: false
@@ -65501,7 +65501,7 @@
     wordtext: "一"
     isnotword: false
     translation: "one / a"
-    romanization: NULL
+    romanization: null
     customsentence: "{一}天，{一}个男人走在街上。"
     wordinside_order: null
     isCompoundword: true
@@ -65522,7 +65522,7 @@
     wordtext: "天"
     isnotword: false
     translation: "sky, day"
-    romanization: NULL
+    romanization: null
     customsentence: "一{天}，一个男人走在街上。"
     wordinside_order: null
     isCompoundword: true
@@ -65564,7 +65564,7 @@
     wordtext: "一"
     isnotword: false
     translation: "one / a"
-    romanization: NULL
+    romanization: null
     customsentence: "{一}天，{一}个男人走在街上。"
     wordinside_order: null
     isCompoundword: true
@@ -65585,7 +65585,7 @@
     wordtext: "个"
     isnotword: false
     translation: "(MW)"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一{个}男人走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -65606,7 +65606,7 @@
     wordtext: "男"
     isnotword: false
     translation: male
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个{男}人走在街上。"
     wordinside_order: null
     isCompoundword: true
@@ -65627,7 +65627,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: true
@@ -65648,7 +65648,7 @@
     wordtext: "走"
     isnotword: false
     translation: walk
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男人{走}在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -65669,7 +65669,7 @@
     wordtext: "在"
     isnotword: false
     translation: "be / live/ at"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男人走{在}街上。"
     wordinside_order: null
     isCompoundword: false
@@ -65690,7 +65690,7 @@
     wordtext: "街"
     isnotword: false
     translation: street
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男人走在{街}上。"
     wordinside_order: null
     isCompoundword: true
@@ -65711,7 +65711,7 @@
     wordtext: "上"
     isnotword: false
     translation: "on / in / go up / upper part / last"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男人走在街{上}。"
     wordinside_order: null
     isCompoundword: true
@@ -65816,7 +65816,7 @@
     wordtext: "他"
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "突然，{他}看见前面有一只黑色的大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -65921,7 +65921,7 @@
     wordtext: "有"
     isnotword: false
     translation: "have / occur"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面{有}一只黑色的大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -65942,7 +65942,7 @@
     wordtext: "一"
     isnotword: false
     translation: "one / a"
-    romanization: NULL
+    romanization: null
     customsentence: "{一}天，{一}个男人走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -65963,7 +65963,7 @@
     wordtext: "只"
     isnotword: false
     translation: "(MW) / only"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一{只}黑色的大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66026,7 +66026,7 @@
     wordtext: "的"
     isnotword: false
     translation: "(Part.) / 's"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色{的}大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66047,7 +66047,7 @@
     wordtext: "大"
     isnotword: false
     translation: "big / strong"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的{大}狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66068,7 +66068,7 @@
     wordtext: "狗"
     isnotword: false
     translation: dog
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大{狗}，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66173,7 +66173,7 @@
     wordtext: "很"
     isnotword: false
     translation: very
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大狗，看起来{很}凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66194,7 +66194,7 @@
     wordtext: "凶"
     isnotword: false
     translation: "ferocious / terrible"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大狗，看起来很{凶}。"
     wordinside_order: null
     isCompoundword: false
@@ -66236,7 +66236,7 @@
     wordtext: "男"
     isnotword: false
     translation: male
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个{男}人走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -66257,7 +66257,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -66383,7 +66383,7 @@
     wordtext: "不"
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "男人非常害怕，{不}敢往前走。"
     wordinside_order: null
     isCompoundword: false
@@ -66404,7 +66404,7 @@
     wordtext: "敢"
     isnotword: false
     translation: dare
-    romanization: NULL
+    romanization: null
     customsentence: "男人非常害怕，不{敢}往前走。"
     wordinside_order: null
     isCompoundword: false
@@ -66467,7 +66467,7 @@
     wordtext: "走"
     isnotword: false
     translation: walk
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男人{走}在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -66509,7 +66509,7 @@
     wordtext: "狗"
     isnotword: false
     translation: dog
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大{狗}，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66530,7 +66530,7 @@
     wordtext: "的"
     isnotword: false
     translation: "(Part.) / 's"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色{的}大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66593,7 +66593,7 @@
     wordtext: "站"
     isnotword: false
     translation: stand
-    romanization: NULL
+    romanization: null
     customsentence: "狗的旁边{站}着一个女人，男人问她："
     wordinside_order: null
     isCompoundword: false
@@ -66614,7 +66614,7 @@
     wordtext: "着"
     isnotword: false
     translation: "(there) / (cont.)"
-    romanization: NULL
+    romanization: null
     customsentence: "狗的旁边站{着}一个女人，男人问她："
     wordinside_order: null
     isCompoundword: false
@@ -66635,7 +66635,7 @@
     wordtext: "一"
     isnotword: false
     translation: "one / a"
-    romanization: NULL
+    romanization: null
     customsentence: "{一}天，{一}个男人走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -66656,7 +66656,7 @@
     wordtext: "个"
     isnotword: false
     translation: "(MW)"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一{个}男人走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -66698,7 +66698,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: true
@@ -66740,7 +66740,7 @@
     wordtext: "男"
     isnotword: false
     translation: male
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个{男}人走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -66761,7 +66761,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: true
@@ -66782,7 +66782,7 @@
     wordtext: "问"
     isnotword: false
     translation: ask
-    romanization: NULL
+    romanization: null
     customsentence: "狗的旁边站着一个女人，男人{问}她："
     wordinside_order: null
     isCompoundword: false
@@ -66803,7 +66803,7 @@
     wordtext: "她"
     isnotword: false
     translation: "she / her"
-    romanization: NULL
+    romanization: null
     customsentence: "狗的旁边站着一个女人，男人问{她}："
     wordinside_order: null
     isCompoundword: false
@@ -66845,7 +66845,7 @@
     wordtext: "你"
     isnotword: false
     translation: you
-    romanization: NULL
+    romanization: null
     customsentence: "{你}的狗咬人吗？"
     wordinside_order: null
     isCompoundword: true
@@ -66866,7 +66866,7 @@
     wordtext: "的"
     isnotword: false
     translation: "(Part.) / 's"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色{的}大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: true
@@ -66887,7 +66887,7 @@
     wordtext: "狗"
     isnotword: false
     translation: dog
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大{狗}，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -66908,7 +66908,7 @@
     wordtext: "咬"
     isnotword: false
     translation: bite
-    romanization: NULL
+    romanization: null
     customsentence: "你的狗{咬}人吗？"
     wordinside_order: null
     isCompoundword: false
@@ -66929,7 +66929,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -66950,7 +66950,7 @@
     wordtext: "吗"
     isnotword: false
     translation: "(QW)"
-    romanization: NULL
+    romanization: null
     customsentence: "你的狗咬人{吗}？"
     wordinside_order: null
     isCompoundword: false
@@ -67013,7 +67013,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -67034,7 +67034,7 @@
     wordtext: "说"
     isnotword: false
     translation: say
-    romanization: NULL
+    romanization: null
     customsentence: "女人{说}："
     wordinside_order: null
     isCompoundword: false
@@ -67097,7 +67097,7 @@
     wordtext: "的"
     isnotword: false
     translation: "(Part.) / 's"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色{的}大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: true
@@ -67118,7 +67118,7 @@
     wordtext: "狗"
     isnotword: false
     translation: dog
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大{狗}，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -67139,7 +67139,7 @@
     wordtext: "不"
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "男人非常害怕，{不}敢往前走。"
     wordinside_order: null
     isCompoundword: false
@@ -67160,7 +67160,7 @@
     wordtext: "咬"
     isnotword: false
     translation: bite
-    romanization: NULL
+    romanization: null
     customsentence: "你的狗{咬}人吗？"
     wordinside_order: null
     isCompoundword: false
@@ -67181,7 +67181,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -67223,7 +67223,7 @@
     wordtext: "这"
     isnotword: false
     translation: this
-    romanization: NULL
+    romanization: null
     customsentence: "{这}不是我的狗。"
     wordinside_order: null
     isCompoundword: false
@@ -67286,7 +67286,7 @@
     wordtext: "那"
     isnotword: false
     translation: that
-    romanization: NULL
+    romanization: null
     customsentence: "这时，{那}只狗咬了男人。"
     wordinside_order: null
     isCompoundword: false
@@ -67307,7 +67307,7 @@
     wordtext: "只"
     isnotword: false
     translation: "(MW) / only"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一{只}黑色的大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -67328,7 +67328,7 @@
     wordtext: "狗"
     isnotword: false
     translation: dog
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大{狗}，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -67349,7 +67349,7 @@
     wordtext: "咬"
     isnotword: false
     translation: bite
-    romanization: NULL
+    romanization: null
     customsentence: "你的狗{咬}人吗？"
     wordinside_order: null
     isCompoundword: false
@@ -67370,7 +67370,7 @@
     wordtext: "了"
     isnotword: false
     translation: "(compl.) / finish / (change)"
-    romanization: NULL
+    romanization: null
     customsentence: "这时，那只狗咬{了}男人。"
     wordinside_order: null
     isCompoundword: false
@@ -67391,7 +67391,7 @@
     wordtext: "男"
     isnotword: false
     translation: male
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个{男}人走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -67412,7 +67412,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -67454,7 +67454,7 @@
     wordtext: "他"
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "突然，{他}看见前面有一只黑色的大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -67517,7 +67517,7 @@
     wordtext: "了"
     isnotword: false
     translation: "(compl.) / finish / (change)"
-    romanization: NULL
+    romanization: null
     customsentence: "这时，那只狗咬{了}男人。"
     wordinside_order: null
     isCompoundword: false
@@ -67559,7 +67559,7 @@
     wordtext: "大"
     isnotword: false
     translation: "big / strong"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的{大}狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -67580,7 +67580,7 @@
     wordtext: "叫"
     isnotword: false
     translation: shout
-    romanization: NULL
+    romanization: null
     customsentence: "他气坏了，大{叫}："
     wordinside_order: null
     isCompoundword: false
@@ -67622,7 +67622,7 @@
     wordtext: "你"
     isnotword: false
     translation: you
-    romanization: NULL
+    romanization: null
     customsentence: "{你}的狗咬人吗？"
     wordinside_order: null
     isCompoundword: false
@@ -67643,7 +67643,7 @@
     wordtext: "说"
     isnotword: false
     translation: say
-    romanization: NULL
+    romanization: null
     customsentence: "女人{说}："
     wordinside_order: null
     isCompoundword: false
@@ -67664,7 +67664,7 @@
     wordtext: "你"
     isnotword: false
     translation: you
-    romanization: NULL
+    romanization: null
     customsentence: "{你}的狗咬人吗？"
     wordinside_order: null
     isCompoundword: false
@@ -67685,7 +67685,7 @@
     wordtext: "的"
     isnotword: false
     translation: "(Part.) / 's"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色{的}大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -67706,7 +67706,7 @@
     wordtext: "狗"
     isnotword: false
     translation: dog
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大{狗}，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -67727,7 +67727,7 @@
     wordtext: "不"
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "男人非常害怕，{不}敢往前走。"
     wordinside_order: null
     isCompoundword: false
@@ -67748,7 +67748,7 @@
     wordtext: "咬"
     isnotword: false
     translation: bite
-    romanization: NULL
+    romanization: null
     customsentence: "你的狗{咬}人吗？"
     wordinside_order: null
     isCompoundword: false
@@ -67769,7 +67769,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -67832,7 +67832,7 @@
     wordtext: "人"
     isnotword: false
     translation: "human being / person"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男{人}走在街上。"
     wordinside_order: null
     isCompoundword: false
@@ -67916,7 +67916,7 @@
     wordtext: "这"
     isnotword: false
     translation: this
-    romanization: NULL
+    romanization: null
     customsentence: "{这}不是我的狗。"
     wordinside_order: null
     isCompoundword: false
@@ -67937,7 +67937,7 @@
     wordtext: "不"
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "男人非常害怕，{不}敢往前走。"
     wordinside_order: null
     isCompoundword: false
@@ -67958,7 +67958,7 @@
     wordtext: "是"
     isnotword: false
     translation: be
-    romanization: NULL
+    romanization: null
     customsentence: "这不{是}我的狗。"
     wordinside_order: null
     isCompoundword: false
@@ -68000,7 +68000,7 @@
     wordtext: "的"
     isnotword: false
     translation: "(Part.) / 's"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色{的}大狗，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -68021,7 +68021,7 @@
     wordtext: "狗"
     isnotword: false
     translation: dog
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大{狗}，看起来很凶。"
     wordinside_order: null
     isCompoundword: false
@@ -68063,7 +68063,7 @@
     wordtext: Wie
     isnotword: false
     translation: how
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie} froh bin ich, daß ich weg bin!"
     wordinside_order: null
     isCompoundword: true
@@ -68105,7 +68105,7 @@
     wordtext: froh
     isnotword: false
     translation: "happy / glad"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie {froh} bin ich, daß ich weg bin!"
     wordinside_order: null
     isCompoundword: true
@@ -68147,7 +68147,7 @@
     wordtext: bin
     isnotword: false
     translation: am
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh {bin} ich, daß ich weg {bin}!"
     wordinside_order: null
     isCompoundword: true
@@ -68189,7 +68189,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: true
@@ -68231,7 +68231,7 @@
     wordtext: "daß"
     isnotword: false
     translation: "that / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, {daß} ich weg bin!"
     wordinside_order: null
     isCompoundword: true
@@ -68273,7 +68273,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: true
@@ -68315,7 +68315,7 @@
     wordtext: weg
     isnotword: false
     translation: "away / gone / path / way"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, daß ich {weg} bin!"
     wordinside_order: null
     isCompoundword: true
@@ -68357,7 +68357,7 @@
     wordtext: bin
     isnotword: false
     translation: am
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh {bin} ich, daß ich weg {bin}!"
     wordinside_order: null
     isCompoundword: true
@@ -68630,7 +68630,7 @@
     wordtext: Herz
     isnotword: false
     translation: heart
-    romanization: NULL
+    romanization: null
     customsentence: "Bester Freund, was ist das {Herz} des Menschen!"
     wordinside_order: null
     isCompoundword: false
@@ -68945,7 +68945,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -69155,7 +69155,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -69323,7 +69323,7 @@
     wordtext: froh
     isnotword: false
     translation: "happy / glad"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie {froh} bin ich, daß ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -69470,7 +69470,7 @@
     wordtext: Ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -69743,7 +69743,7 @@
     wordtext: Waren
     isnotword: false
     translation: "were / goods"
-    romanization: NULL
+    romanization: null
     customsentence: "{Waren} nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -69785,7 +69785,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -69827,7 +69827,7 @@
     wordtext: meine
     isnotword: false
     translation: my
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht {meine} übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das {meine} zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -69869,7 +69869,7 @@
     wordtext: "übrigen"
     isnotword: false
     translation: others
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine {übrigen} Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -70121,7 +70121,7 @@
     wordtext: um
     isnotword: false
     translation: to
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, {um} ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -70163,7 +70163,7 @@
     wordtext: ein
     isnotword: false
     translation: "a / one"
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, um {ein} Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -70205,7 +70205,7 @@
     wordtext: Herz
     isnotword: false
     translation: heart
-    romanization: NULL
+    romanization: null
     customsentence: "Bester Freund, was ist das {Herz} des Menschen!"
     wordinside_order: null
     isCompoundword: false
@@ -70247,7 +70247,7 @@
     wordtext: wie
     isnotword: false
     translation: how
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie} froh bin ich, daß ich weg bin!"
     wordinside_order: null
     isCompoundword: true
@@ -70331,7 +70331,7 @@
     wordtext: meine
     isnotword: false
     translation: my
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht {meine} übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das {meine} zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -70562,7 +70562,7 @@
     wordtext: Leonore
     isnotword: false
     translation: "*"
-    romanization: NULL
+    romanization: null
     customsentence: "Die arme {Leonore}!"
     wordinside_order: null
     isCompoundword: false
@@ -70751,7 +70751,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -70898,7 +70898,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -70982,7 +70982,7 @@
     wordtext: "daß"
     isnotword: false
     translation: "that / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, {daß} ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -71486,7 +71486,7 @@
     wordtext: "daß"
     isnotword: false
     translation: "that / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, {daß} ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -71969,7 +71969,7 @@
     wordtext: bin
     isnotword: false
     translation: am
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh {bin} ich, daß ich weg {bin}!"
     wordinside_order: null
     isCompoundword: false
@@ -72011,7 +72011,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -72200,7 +72200,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -72242,7 +72242,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -72473,7 +72473,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -72557,7 +72557,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -73355,7 +73355,7 @@
     wordtext: waren
     isnotword: false
     translation: "were / goods"
-    romanization: NULL
+    romanization: null
     customsentence: "{Waren} nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -73544,7 +73544,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -73586,7 +73586,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -73838,7 +73838,7 @@
     wordtext: "daß"
     isnotword: false
     translation: "that / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, {daß} ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -74111,7 +74111,7 @@
     wordtext: Ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -74279,7 +74279,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -74447,7 +74447,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -74657,7 +74657,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -74741,7 +74741,7 @@
     wordtext: ein
     isnotword: false
     translation: "a / one"
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, um {ein} Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -75119,7 +75119,7 @@
     wordtext: wie
     isnotword: false
     translation: how
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie} froh bin ich, daß ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -75161,7 +75161,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -75392,7 +75392,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -76505,7 +76505,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -78101,7 +78101,7 @@
     wordtext: "daß"
     isnotword: false
     translation: "that / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, {daß} ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -78143,7 +78143,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -78668,7 +78668,7 @@
     wordtext: Ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -78752,7 +78752,7 @@
     wordtext: meine
     isnotword: false
     translation: my
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht {meine} übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das {meine} zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -79130,7 +79130,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -79970,7 +79970,7 @@
     wordtext: Ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -81335,7 +81335,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -81986,7 +81986,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -82406,7 +82406,7 @@
     wordtext: "daß"
     isnotword: false
     translation: "that / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, {daß} ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -83456,7 +83456,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -84653,7 +84653,7 @@
     wordtext: Herz
     isnotword: false
     translation: heart
-    romanization: NULL
+    romanization: null
     customsentence: "Bester Freund, was ist das {Herz} des Menschen!"
     wordinside_order: null
     isCompoundword: false
@@ -84926,7 +84926,7 @@
     wordtext: ein
     isnotword: false
     translation: "a / one"
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, um {ein} Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -85346,7 +85346,7 @@
     wordtext: um
     isnotword: false
     translation: to
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, {um} ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -88139,7 +88139,7 @@
     wordtext: "daß"
     isnotword: false
     translation: "that / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin ich, {daß} ich weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -88181,7 +88181,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -88223,7 +88223,7 @@
     wordtext: ein
     isnotword: false
     translation: "a / one"
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, um {ein} Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -88391,7 +88391,7 @@
     wordtext: ein
     isnotword: false
     translation: "a / one"
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, um {ein} Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -88475,7 +88475,7 @@
     wordtext: Herz
     isnotword: false
     translation: heart
-    romanization: NULL
+    romanization: null
     customsentence: "Bester Freund, was ist das {Herz} des Menschen!"
     wordinside_order: null
     isCompoundword: false
@@ -89084,7 +89084,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -89861,7 +89861,7 @@
     wordtext: ich
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Wie froh bin {ich}, daß {ich} weg bin!"
     wordinside_order: null
     isCompoundword: false
@@ -90680,7 +90680,7 @@
     wordtext: nicht
     isnotword: false
     translation: not
-    romanization: NULL
+    romanization: null
     customsentence: "Waren {nicht} meine übrigen Verbindungen recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: null
     isCompoundword: false
@@ -97400,7 +97400,7 @@
     wordtext: Bonjour
     isnotword: false
     translation: "hello / good morning / good afternoon"
-    romanization: NULL
+    romanization: null
     customsentence: "{Bonjour} Manon."
     wordinside_order: null
     isCompoundword: false
@@ -97447,7 +97447,7 @@
     wordtext: Manon
     isnotword: false
     translation: "(name)"
-    romanization: NULL
+    romanization: null
     customsentence: "Bonjour {Manon}."
     wordinside_order: null
     isCompoundword: false
@@ -97512,7 +97512,7 @@
     wordtext: Bonjour
     isnotword: false
     translation: "hello / good morning / good afternoon"
-    romanization: NULL
+    romanization: null
     customsentence: "{Bonjour} Manon."
     wordinside_order: null
     isCompoundword: false
@@ -97580,7 +97580,7 @@
     wordtext: Alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97624,7 +97624,7 @@
     wordtext: je
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {je} crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97669,7 +97669,7 @@
     wordtext: crois
     isnotword: false
     translation: "believe / think"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je {crois} qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97716,7 +97716,7 @@
     wordtext: qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97760,7 +97760,7 @@
     wordtext: il
     isnotword: false
     translation: he
-    romanization: NULL
+    romanization: null
     customsentence: "{Il} faut attendre trois mois."
     wordinside_order: null
     isCompoundword: false
@@ -97806,7 +97806,7 @@
     wordtext: y
     isnotword: false
     translation: "there / here / in"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il {y} a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97848,7 +97848,7 @@
     wordtext: a
     isnotword: false
     translation: "have / has"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y {a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97890,7 +97890,7 @@
     wordtext: pas
     isnotword: false
     translation: "(not) / footstep / step / walk"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a {pas} longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97932,7 +97932,7 @@
     wordtext: longtemps
     isnotword: false
     translation: "long time / long while / long"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas {longtemps}, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -97976,7 +97976,7 @@
     wordtext: "là"
     isnotword: false
     translation: there
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, {là}, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98018,7 +98018,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98063,7 +98063,7 @@
     wordtext: avez
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce que vous {avez} fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -98109,7 +98109,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98157,7 +98157,7 @@
     wordtext: une
     isnotword: false
     translation: "a / an / one / front page"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait {une} bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98199,7 +98199,7 @@
     wordtext: bonne
     isnotword: false
     translation: good
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait une {bonne} action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98244,7 +98244,7 @@
     wordtext: action
     isnotword: false
     translation: "action / deed"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait une bonne {action} ?"
     wordinside_order: null
     isCompoundword: false
@@ -98307,7 +98307,7 @@
     wordtext: Oui
     isnotword: false
     translation: yes
-    romanization: NULL
+    romanization: null
     customsentence: "{Oui}."
     wordinside_order: null
     isCompoundword: false
@@ -98391,7 +98391,7 @@
     wordtext: On
     isnotword: false
     translation: "someone / somebody / you / one / we"
-    romanization: NULL
+    romanization: null
     customsentence: "{On} peut dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -98433,7 +98433,7 @@
     wordtext: peut
     isnotword: false
     translation: "can / may"
-    romanization: NULL
+    romanization: null
     customsentence: "On {peut} dire ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -98475,7 +98475,7 @@
     wordtext: dire
     isnotword: false
     translation: "say / tell"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut {dire} ça comme ça."
     wordinside_order: null
     isCompoundword: false
@@ -98520,7 +98520,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -98562,7 +98562,7 @@
     wordtext: comme
     isnotword: false
     translation: "as / just as / like / how"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire ça {comme} ça."
     wordinside_order: null
     isCompoundword: false
@@ -98604,7 +98604,7 @@
     wordtext: "ça"
     isnotword: false
     translation: "that / this / it"
-    romanization: NULL
+    romanization: null
     customsentence: "On peut dire {ça} comme {ça}."
     wordinside_order: null
     isCompoundword: false
@@ -98667,7 +98667,7 @@
     wordtext: Qu
     isnotword: false
     translation: "that / how / so that"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois {qu}'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98711,7 +98711,7 @@
     wordtext: est
     isnotword: false
     translation: "is / east"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est}-ce que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -98759,7 +98759,7 @@
     wordtext: ce
     isnotword: false
     translation: "this / that / it"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-{ce} que vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -98801,7 +98801,7 @@
     wordtext: que
     isnotword: false
     translation: "that / how / so that / so"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce {que} vous avez fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -98843,7 +98843,7 @@
     wordtext: vous
     isnotword: false
     translation: "you / you all"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, {vous} avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98888,7 +98888,7 @@
     wordtext: avez
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'est-ce que vous {avez} fait, alors ?"
     wordinside_order: null
     isCompoundword: false
@@ -98934,7 +98934,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -98982,7 +98982,7 @@
     wordtext: alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -99047,7 +99047,7 @@
     wordtext: Alors
     isnotword: false
     translation: "then / in that case / at the time / else / if not / my goodness / well"
-    romanization: NULL
+    romanization: null
     customsentence: "{Alors}, je crois qu'il y a pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -99091,7 +99091,7 @@
     wordtext: j
     isnotword: false
     translation: I
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, {j}'ai fait mon premier don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -99133,7 +99133,7 @@
     wordtext: ai
     isnotword: false
     translation: have
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'{ai} fait mon premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -99179,7 +99179,7 @@
     wordtext: fait
     isnotword: false
     translation: "made / done / make / fact / occurrence"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez {fait} une bonne action ?"
     wordinside_order: null
     isCompoundword: false
@@ -99227,7 +99227,7 @@
     wordtext: mon
     isnotword: false
     translation: my
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait {mon} premier don du sang."
     wordinside_order: null
     isCompoundword: false
@@ -99272,7 +99272,7 @@
     wordtext: premier
     isnotword: false
     translation: "first / primary / prime / initial"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon {premier} don du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -99317,7 +99317,7 @@
     wordtext: don
     isnotword: false
     translation: donation
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier {don} du sang …"
     wordinside_order: null
     isCompoundword: false
@@ -99359,7 +99359,7 @@
     wordtext: du
     isnotword: false
     translation: "of / from / some"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don {du} sang …"
     wordinside_order: null
     isCompoundword: false
@@ -99401,7 +99401,7 @@
     wordtext: sang
     isnotword: false
     translation: blood
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier don du {sang} …"
     wordinside_order: null
     isCompoundword: false
@@ -99443,7 +99443,7 @@
     wordtext: null
     isnotword: true
     translation: "there is / there are"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'{il y a} pas longtemps, là, vous avez fait une bonne action ?"
     wordinside_order: "[3992,7822,3994,7824,3996,7826]"
     isCompoundword: true
@@ -99464,7 +99464,7 @@
     wordtext: null
     isnotword: true
     translation: "one day"
-    romanization: NULL
+    romanization: null
     customsentence: "{一天}，一个男人走在街上。"
     wordinside_order: "[6287,6290,6288]"
     isCompoundword: true
@@ -99485,7 +99485,7 @@
     wordtext: null
     isnotword: true
     translation: man
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个{男人}走在街上。"
     wordinside_order: "[6292,6293]"
     isCompoundword: true
@@ -99506,7 +99506,7 @@
     wordtext: null
     isnotword: true
     translation: "on the street"
-    romanization: NULL
+    romanization: null
     customsentence: "一天，一个男人走在{街上}。"
     wordinside_order: "[6296,6297]"
     isCompoundword: true
@@ -99527,7 +99527,7 @@
     wordtext: null
     isnotword: true
     translation: suddenly
-    romanization: NULL
+    romanization: null
     customsentence: "{突然}，他看见前面有一只黑色的大狗，看起来很凶。"
     wordinside_order: "[6299,6300]"
     isCompoundword: true
@@ -99548,7 +99548,7 @@
     wordtext: null
     isnotword: true
     translation: what
-    romanization: NULL
+    romanization: null
     customsentence: "{Qu'est-ce que} vous avez fait, alors ?"
     wordinside_order: "[4034,7864,4036,7866,4038,7868,4040,7870]"
     isCompoundword: true
@@ -99571,7 +99571,7 @@
     wordtext: null
     isnotword: true
     translation: "is it that"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est-ce que} vous avez fait, alors ?"
     wordinside_order: "[4036,7866,4038,7868,4040,7870]"
     isCompoundword: true
@@ -99592,7 +99592,7 @@
     wordtext: null
     isnotword: true
     translation: "is that / is this"
-    romanization: NULL
+    romanization: null
     customsentence: "Qu'{est-ce} que vous avez fait, alors ?"
     wordinside_order: "[4036,7866,4038,7868]"
     isCompoundword: true
@@ -99613,7 +99613,7 @@
     wordtext: null
     isnotword: true
     translation: "blood donation"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, j'ai fait mon premier {don du sang}."
     wordinside_order: "[4063,7893,4065,7895,4067,7897]"
     isCompoundword: true
@@ -99637,7 +99637,7 @@
     wordtext: null
     isnotword: true
     translation: "it's / that's"
-    romanization: NULL
+    romanization: null
     customsentence: "{C'est} quoi ?"
     wordinside_order: "[4515,4517]"
     isCompoundword: true
@@ -99658,7 +99658,7 @@
     wordtext: null
     isnotword: true
     translation: "good deed"
-    romanization: NULL
+    romanization: null
     customsentence: "Alors, je crois qu'il y a pas longtemps, là, vous avez fait une {bonne action} ?"
     wordinside_order: "[4012,7842,4014,7844]"
     isCompoundword: true
@@ -99934,7 +99934,7 @@
     wordtext: null
     isnotword: true
     translation: "how happy"
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie froh} bin ich, daß ich weg bin!"
     wordinside_order: "[6409,6411]"
     isCompoundword: true
@@ -99955,7 +99955,7 @@
     wordtext: null
     isnotword: true
     translation: "how happy am"
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie froh bin} ich, daß ich weg bin!"
     wordinside_order: "[6409,6411,6413,6423]"
     isCompoundword: true
@@ -99976,7 +99976,7 @@
     wordtext: null
     isnotword: true
     translation: "how happy I am"
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie froh bin ich}, daß ich weg bin!"
     wordinside_order: "[6409,6411,6413,6423,6415,6419]"
     isCompoundword: true
@@ -99997,7 +99997,7 @@
     wordtext: null
     isnotword: true
     translation: "how happy I am that"
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie froh bin ich, daß} ich weg bin!"
     wordinside_order: "[6409,6411,6413,6423,6415,6419,6417]"
     isCompoundword: true
@@ -100018,7 +100018,7 @@
     wordtext: null
     isnotword: true
     translation: "how happy I am that I"
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie froh bin ich, daß ich} weg bin!"
     wordinside_order: "[6409,6411,6413,6423,6415,6419,6417,6415,6419]"
     isCompoundword: true
@@ -100039,7 +100039,7 @@
     wordtext: null
     isnotword: true
     translation: "how happy I am that I (am) gone"
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie froh bin ich, daß ich weg} bin!"
     wordinside_order: "[6409,6411,6413,6423,6415,6419,6417,6415,6419,6421]"
     isCompoundword: true
@@ -100060,7 +100060,7 @@
     wordtext: null
     isnotword: true
     translation: "how happy I am that I am gone"
-    romanization: NULL
+    romanization: null
     customsentence: "{Wie froh bin ich, daß ich weg bin}!"
     wordinside_order: "[6409,6411,6413,6423,6415,6419,6417,6415,6419,6421,6413,6423]"
     isCompoundword: true
@@ -100081,7 +100081,7 @@
     wordtext: null
     isnotword: true
     translation: "have not other attachments been specially appointed by fate"
-    romanization: NULL
+    romanization: null
     customsentence: "{Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal}, um ein Herz wie das meine zu ängstigen?"
     wordinside_order: "[6489,6491,6493,6517,6495,6497,6499,6501,6503,6505]"
     isCompoundword: true
@@ -100102,7 +100102,7 @@
     wordtext: null
     isnotword: true
     translation: "to torment a head like mine"
-    romanization: NULL
+    romanization: null
     customsentence: "Waren nicht meine übrigen Verbindungen recht ausgesucht vom Schicksal, {um ein Herz wie das meine zu ängstigen}?"
     wordinside_order: "[6507,6509,6511,6513,6515,6493,6517,6519,6521]"
     isCompoundword: true
@@ -100249,7 +100249,7 @@
     wordtext: null
     isnotword: true
     translation: "see / catch sight"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他{看见}前面有一只黑色的大狗，看起来很凶。"
     wordinside_order: "[6303,6316,6304]"
     isCompoundword: true
@@ -100270,7 +100270,7 @@
     wordtext: null
     isnotword: true
     translation: "ahead / front"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见{前面}有一只黑色的大狗，看起来很凶。"
     wordinside_order: "[6305,6306]"
     isCompoundword: true
@@ -100291,7 +100291,7 @@
     wordtext: null
     isnotword: true
     translation: "black color"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只{黑色}的大狗，看起来很凶。"
     wordinside_order: "[6310,6311]"
     isCompoundword: true
@@ -100312,7 +100312,7 @@
     wordtext: null
     isnotword: true
     translation: "seems / appears / looks as"
-    romanization: NULL
+    romanization: null
     customsentence: "突然，他看见前面有一只黑色的大狗，{看起来}很凶。"
     wordinside_order: "[6303,6316,6317,6318]"
     isCompoundword: true
@@ -100333,7 +100333,7 @@
     wordtext: null
     isnotword: true
     translation: "exceptional / very"
-    romanization: NULL
+    romanization: null
     customsentence: "男人{非常}害怕，不敢往前走。"
     wordinside_order: "[6324,6325]"
     isCompoundword: true
@@ -100354,7 +100354,7 @@
     wordtext: null
     isnotword: true
     translation: "be afraid"
-    romanization: NULL
+    romanization: null
     customsentence: "男人非常{害怕}，不敢往前走。"
     wordinside_order: "[6326,6327]"
     isCompoundword: true
@@ -100375,7 +100375,7 @@
     wordtext: null
     isnotword: true
     translation: "go forward / move ahead"
-    romanization: NULL
+    romanization: null
     customsentence: "男人非常害怕，不敢{往前}走。"
     wordinside_order: "[6331,6332]"
     isCompoundword: true
@@ -100396,7 +100396,7 @@
     wordtext: null
     isnotword: true
     translation: "side / near by position/ right by"
-    romanization: NULL
+    romanization: null
     customsentence: "狗的{旁边}站着一个女人，男人问她："
     wordinside_order: "[6337,6338]"
     isCompoundword: true
@@ -100417,7 +100417,7 @@
     wordtext: null
     isnotword: true
     translation: woman
-    romanization: NULL
+    romanization: null
     customsentence: "狗的旁边站着一个{女人}，男人问她："
     wordinside_order: "[6343,6344,6347]"
     isCompoundword: true
@@ -100438,7 +100438,7 @@
     wordtext: null
     isnotword: true
     translation: my
-    romanization: NULL
+    romanization: null
     customsentence: "{我的}狗不咬人。"
     wordinside_order: "[6362,6363]"
     isCompoundword: true
@@ -100459,7 +100459,7 @@
     wordtext: null
     isnotword: true
     translation: "at this time"
-    romanization: NULL
+    romanization: null
     customsentence: "{这时}，那只狗咬了男人。"
     wordinside_order: "[6369,6370]"
     isCompoundword: true
@@ -100480,7 +100480,7 @@
     wordtext: null
     isnotword: true
     translation: furious
-    romanization: NULL
+    romanization: null
     customsentence: "他{气坏}了，大叫："
     wordinside_order: "[6381,6382]"
     isCompoundword: true
@@ -100501,7 +100501,7 @@
     wordtext: null
     isnotword: true
     translation: answer
-    romanization: NULL
+    romanization: null
     customsentence: "女人{回答}："
     wordinside_order: "[6399,6400]"
     isCompoundword: true
@@ -100522,7 +100522,7 @@
     wordtext: null
     isnotword: true
     translation: your
-    romanization: NULL
+    romanization: null
     customsentence: "{你的}狗咬人吗？"
     wordinside_order: "[6351,6352]"
     isCompoundword: true

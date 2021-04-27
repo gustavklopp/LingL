@@ -90,9 +90,9 @@ def load_texttable(request):
         if tag_for_text: # display the tags if there are
             r += ' <span class="small">['+ ','.join(tag_for_text) + ']</span>'
         ##############################
-        if t.audiouri != "":
+        if t.audiouri != "" and t.audiouri != None: #I use the 'or' because in the fixture demo, it's sometimes null or ''
             r += ' <img src="' + static('lwt/img/icn/speaker-volume.png') +\
-                '" title="'+_("With Audio")+'" alt="'+_('With Audio')+ '/>'
+                '" title="'+_("With Audio")+'" alt="'+_('With Audio')+ '"/>'
         ##############################
         if t.sourceuri != "" and t.sourceuri != None:
             r += '<a href="'+ t.sourceuri + '" target="_blank"><img src="'+\
@@ -134,7 +134,7 @@ def load_texttable(request):
         ############################## Uknown words percent
         r = '<span title="'+_("Unknown (%)")+'" class="status0">'
         r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=0'\
-        '">'+ str(textunknownwordpercent)+ '</a></span>'
+        '">'+ str(textunknownwordpercent)+ '%</a></span>'
         t_dict['unknown_words_pc'] = r
             
         ##############################

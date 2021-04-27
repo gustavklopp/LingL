@@ -16,6 +16,8 @@ six = "*"
 dj-static = "*"
 django-crispy-forms = "*"
 django-tags-input = "*"
+cx-freeze = "*"
+waitress = "*"
 
 [dev-packages]
 

@@ -1,5 +1,5 @@
+/* helper function for textlist_filter: equivalent to python .isdisjoint */
 function isdisjoint(array1, array2){
-	/* helper function for textlist_filter: equivalent to python .isdisjoint */
 	var toReturn = true;
 	$.each(array1, function(idx, el){
 		if ($.inArray(el, array2) !== -1) { 
@@ -10,35 +10,47 @@ function isdisjoint(array1, array2){
 	return toReturn;
 }
 
+/* dynamic filtering when check/unckeck the ckeckbox */
 function textlist_filter() {
-	/* dynamic filtering when check/unckeck the ckeckbox */
 	// get the form
 	var filterlangform = $('#filterlangform');
 	var filtertagform = $('#filtertagform');
 	var timeform = $('#timeform');
-	var archivedform = $('#archivedform');
+
+	// get what are the checkbox checked for: language
 	var chosen_lang = [];
-	// get the checkbox checked
 	$.each($("#filterlangform input:checked"), function(){
 		chosen_lang.push(parseInt($(this).val()));
 	});
+	//if nothing was chosen, display a warning
+	if (chosen_lang.length === 0){
+		$('#no_langfilter').text(gettext('No language chosen: no texts will be displayed'));
+	} else {
+		$('#no_langfilter').text('');
+	}
+
+	// get what are the checkbox checked for: tags
 	var chosen_tag = [];
 	$.each($("#filtertagform").find("span").not(".hidden").find("input:checked"), function(){
 		chosen_tag.push($(this).val());
 	});
+
+	// get what are the checkbox checked for: time
 	var chosen_time = [];
 	$.each($("#timeform").find("span").not(".hidden").find("input:checked"), function(){
 		chosen_time.push($(this).val());
 	});
-	var chosen_archived = [];
-	$.each($("#archivedform").find("span").not(".hidden").find("input:checked"), function(){
-		chosen_archived.push($(this).val());
-	});
+	//if nothing was chosen, display a warning
+	if (chosen_time.length === 0){
+		$('#no_timefilter').text(gettext('No time chosen: no texts will be displayed'));
+	} else {
+		$('#no_timefilter').text('');
+	}
+
 	// stringify them
 	var chosen_lang_json = JSON.stringify(chosen_lang);
 	var chosen_tag_json = JSON.stringify(chosen_tag);
 	var chosen_time_json = JSON.stringify(chosen_time);
-	var chosen_archived_json = JSON.stringify(chosen_archived);
 	// get the options for the rows per page
 	var text_table = $('#text_table');
 	var options = text_table.bootstrapTable('getOptions'); // get the number of rows per page
@@ -49,7 +61,6 @@ function textlist_filter() {
 	data_to_go.append('lang_filter', chosen_lang_json);
 	data_to_go.append('tag_filter', chosen_tag_json);
 	data_to_go.append('time_filter', chosen_time_json);
-	data_to_go.append('archived_filter', chosen_archived_json);
 	data_to_go.append('limit', options['pageSize']);
 	data_to_go.append('csrfmiddlewaretoken', token);
 	// and send it!

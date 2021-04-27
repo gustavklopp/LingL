@@ -1,42 +1,37 @@
-# LingL
-Learn new languages by reading anything you choose
+# LingLibre
+Learn new languages by reading anything you choose.
 
-this was inspired by other site/projects like Lwt, lingq etc...
+This was inspired by other site/projects like the opensource Lwt, the closed source lingq etc...
 
 ## How to use it:
 
-### Use the online website:
-Generously provided by PythonAnywhere:
+### 1. Use the executable (Standalone application):
 
-It's limited in user capacity b
-ut I leave it like this for the moment.
-
-Create a User or use the test user: `test` / password: `tst1tst1`
-
-<https://gustavk.pythonanywhere.com>
-
-### Use the executable (Standalone application):
-
-#### Linux:
-the executable is the file `LingL`. Run it by `./LingL`.
-
-##### x86/64: 
+#### 1.2 Linux/Windows:
+the executable `Lingl` is in the folder `LingL/`.
 
 <https://github.com/gustavklopp/LingL/releases>
 
-### Use the built-in server inside Django:
+#### 1.2 (future) Mac:
+Maybe later if people interested.
 
-It will need `python >=3.6` and `Django >= 1.11`
+### 2. Use the built-in server inside Django:
 
-Set a virtualenv with python 3.6, then inside the virtual env:
-`pip install -r requirement_LingL.txt`
+It will need `python >=3.8` and `Django >= 3.2`
+
+Set a virtualenv with python 3.8, then inside the virtual env:
+`pip install -r requirements.txt`
 
 Running the Django project:
+	
 ```
 python manage.py makemigrations
 python manage.py migrate
+python manage.py createsuperuser #<--- you can use username: lingl / and password: lingl for example. No need of email
 
 python manage.py runserver
 ```
+then open your browser to <http://127.0.0.1:8000>
 
-
+### 3. (future) Use the online website:
+Maybe later if people interested.

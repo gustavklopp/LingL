@@ -52,10 +52,9 @@ def text_read(request, text_id):
             wo.save()
     
     # calculate the statistic (it's the same stats than in text_list)s
-    texttotalword = Words.objects.filter(text=text,isnotword=False).count()
-    textsavedword = Words.objects.filter(text=text,isnotword=False,status__gt=0).count()
-    textwordcount = texttotalword
-    textworkcount = textsavedword
+    texttotalword = Words.objects.filter(text=text,isnotword=False).exclude(isCompoundword=True).count()
+    textsavedword = Words.objects.filter(text=text,isnotword=False,status__gt=0).exclude(isCompoundword=True).count()
+    todo_wordcount = texttotalword - textsavedword 
     
     # to have the tooltip displayed. Creating the block of text which the Javascript aill read:
     statuses = json.dumps(get_statuses()) # function in _utilities_views
@@ -71,7 +70,7 @@ def text_read(request, text_id):
     return render(request, 'lwt/text_read.html',{ 
                 'text':text,
                 'previoustext':previoustext,'nexttext':nexttext,
-                'textwordcount':textwordcount,'textworkcount':textworkcount,
+                'todo_wordcount': todo_wordcount,
                 # inside thetext div:
                 'word_inthistext':word_inthistext,
                 # for tooltip

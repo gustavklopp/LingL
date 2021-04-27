@@ -82,8 +82,8 @@ $(document).ready( function() {
 	<a href="{% url 'helppage' %}#keyboard_shortcut" target="_blank"><img src="{% static 'lwt/img/keyboard_mouse-icon50x25.png' %}" title="{% trans "Controls (and Keyboard shortcuts)" %}" alt="Control (and Keyboard shortcuts)" /></a>
 	</div>
 	<div class="col-md-3">
-	{% trans 'TO DO:' %} <span title="To Do" id="word_left_todo" wostatus="0">&nbsp;{{ textwordcount|sub:textworkcount }}&nbsp;</span>
-	&nbsp;&nbsp;&nbsp;<button title="{% trans 'Mark all the remaining unknown words in this sentence as known' %}" class="btn btn-primary btn-sm" {% ifequal textwordcount|sub:textworkcount 0 %}disabled{% endifequal %} id="iknowall" onclick="iknowall();">{% trans "I KNOW ALL" %}</button>
+	{% trans 'TO DO:' %} <span title="To Do" id="word_left_todo" wostatus="0">&nbsp;{{ todo_wordcount }}&nbsp;</span>
+	&nbsp;&nbsp;&nbsp;<button title="{% trans 'Mark all the remaining unknown words in this sentence as known' %}" class="btn btn-primary btn-sm" {% ifequal todo_wordcount 0 %}disabled{% endifequal %} id="iknowall" onclick="iknowall();">{% trans "I KNOW ALL" %}</button>
 	</div>
 </div>
 

@@ -18,7 +18,8 @@ function ajax_uploaded_text(){
 				if ('error' in data) {
 					$('#uploaded_textform').find('.controls').append('<div class="text-danger">'+data['error']+'</div>');
 				} else {
-					$('#id_title').val(data['title']);
+					var title = data['title'].replace(/_/g, ' ');
+					$('#id_title').val(title);
 					$('#id_text').val(data['text']);
 					}
 				},
@@ -26,3 +27,13 @@ function ajax_uploaded_text(){
 	});	
 	return false;
 }
+
+$(document).ready(function(e) {
+	/* clicking on the radio button in termform to choose link */
+	$('input#id_uploaded_text').change(function() {
+			$("#uploaded_textform").submit(ajax_uploaded_text());
+					});
+});
+					
+					
+					

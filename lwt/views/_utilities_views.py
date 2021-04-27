@@ -75,38 +75,13 @@ def serialize_bootstraptable(queryset, total):
         json_final['rows'].append(item)
     return json_final
 
-''' helper function for list_filtering'''
-def create_filter(filter_type, filter_list_json):
-    if filter_list_json:
-        filter = json.loads(filter_list_json)
-        for idx, filter_id in enumerate(filter):
-            # special case for latopentime filter
-            if filter_type == 'lastopentime':
-                filter_args = time_filter_args(filter_id)
-            else:
-                filter_id = int(filter_id)
-                filter_args = {filter_type: filter_id}
-            
-            if idx == 0:
-                filter_Q = Q(**filter_args)
-            else:
-                filter_Q |= Q(**filter_args)
-        try:
-            return filter_Q
-        except NameError: # if the dict is empty. for ex: filter_type : []
-            filter_args = {filter_type: None}
-            return Q(**filter_args)
-    else:# no cookie defined 
-        return Q() # don´t filter on this
-        #filter_args = {filter_type: -1}
-        return Q(**filter_args) 
-
-'''special func because time filter is special...
+'''helper func for create_filter: special func because time filter is special...
 possible_time = [
     {'week': '[0,4]', 'string':_('< 1 week ago')},
     {'week': '[4,12]', 'string': _('1 wk - 3 mo ago')},
     {'week': '[12,24]', 'string': _('3 mo - 6 mo ago')},
     {'week': '[24,-1]', 'string':_('> 6 months ago')} 
+    {'week': 'null', 'string':_('never opened')} 
     ]'''
 def time_filter_args(week_json):
     now = timezone.now()
@@ -125,6 +100,41 @@ def time_filter_args(week_json):
 
         filter_args = {'lastopentime__gt': ancient_cutout_date, 'lastopentime__lte': recent_cutout_date}
     return filter_args
+
+''' helper function for list_filtering'''
+def create_filter(filter_type, filter_list_json):
+    if filter_list_json:
+        filter_list = json.loads(filter_list_json)
+        # special case for filtering on time: if list if empty,
+        # we shouldn't display any objects
+        if filter_type == 'lastopentime' and not filter_list:
+            filter_args = {'lastopentime': timezone.now() + timedelta(days=1)} #1 day in the future
+            return Q(**filter_args)
+        for idx, filter_id in enumerate(filter_list):
+            # special case for latopentime filter
+            if filter_type == 'lastopentime':
+                filter_args = time_filter_args(filter_id)
+            else:
+                filter_id = int(filter_id)
+                filter_args = {filter_type: filter_id}
+            
+            if idx == 0:
+                filter_Q = Q(**filter_args)
+            else:
+                filter_Q |= Q(**filter_args)
+        # special case to get also the obj never opened
+        if filter_type == 'lastopentime' and '[24, -1]' in filter_list:
+            filter_args = {'lastopentime':None}
+            filter_Q |= Q(**filter_args)
+        try:
+            return filter_Q
+        except NameError: # if the dict is empty. for ex: filter_type : []
+            filter_args = {filter_type: None}
+            return Q(**filter_args)
+    else:# no cookie defined 
+        return Q() # don´t filter on this
+        #filter_args = {filter_type: -1}
+        return Q(**filter_args) 
 
 ''' filter the texts/terms displayed inside bootstrap-table. we use the cookies if they are set 
     called by: lwt/views/load_texttable 

@@ -17,10 +17,12 @@ function _display_possiblesimilarword(data, wo_id){
 			r += '<li ';
 			r += '> <span simwo_id="'+val.id+'" href="#" data=toggle="tooltip" class="possible_similarword" ';
 			r += ' wostatus='+ val.status +
-				' onClick="ajax_submit_word(event, \'similar\','+val.id+','+wo_id+');return false;"'+
+				' onClick="ajax_submit_word(event, \'similar\','+val.id+', null, '+wo_id+');return false;"'+
 				' title="'+gettext('Click if you want to consider this as the same word in fact (i.e = &#39similar&#39 word)')+'">'+
 				'<i class="fa fa-plus-circle" aria-hidden="true"></i> '+
-				val.wordtext +'</span> (= '+val.translation+') ['+gettext('in : ')+'"'+val.customsentence+'"]'+
+				val.wordtext +'</span>';
+			if (val.translation){ r += ' (= '+val.translation+')'; }
+			r += ' ['+gettext('in : ')+'"'+val.customsentence+'"]'+
 				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('Number keyboard shortcut')+'">['+(key+1)+']</span></li>';
 		});
 		r += '</ul>';
@@ -49,9 +51,12 @@ function _clicked_weblink_radiobutton(dictwebpage_searched_word=null){
  called by: func clickword() (defined here below)
 		 if status == 0: op: 'new'
 	        and called by: create_link_newword: op: 'new'
-	        and called by: create_link_editword: op: 'edit' */
+	        and called by: create_link_editword: op: 'edit' 
+	@return an AJAX obj: allows to abort the previous AJAX if another call arrives */
 function ajax_clicked_word(wo_id, show_compoundword, op, rtl) {
-	$.ajax({url: '/termform/', type: 'GET',
+
+	var finished_code = false;
+	var $ajaxClickedWord = $.ajax({url: '/termform/', type: 'GET',
 			data: {
 					'op' : op, 
 					'wo_id' : wo_id, 
@@ -60,21 +65,26 @@ function ajax_clicked_word(wo_id, show_compoundword, op, rtl) {
 					},
 			success: function(data){
 				var data = JSON.parse(data);
-				$('#topright.text_read').html(data['html']); // show the termform at the topright
 				var dictwebpage_searched_word = data['dictwebpage_searched_word'];
+				$('#topright.text_read').html(data['html']); // show the termform at the topright
 				ajax_dictwebpage(WBLINK1, dictwebpage_searched_word); // and the dictwebpage at the bottomright
 				
 				var r = _display_possiblesimilarword(data, wo_id);
 				$('#result_possiblesimilarword').html(r);
 				
-				/* clicking on the radio button in termform to choose link */
+				// clicking on the radio button in termform to choose link 
 				$('#wblnk_search input').change(function() {
 						_clicked_weblink_radiobutton();
 					});
-				
 			},
-			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
+
+			 error : function(data , status , xhr){ 
+				if (data.statusText != 'abort'){ // Aborting is a normal process that I've coded for this func
+					console.log(data); console.log(status); console.log(xhr);
+					} 
+				}
 			});
+	return $ajaxClickedWord;
 }
 
 /* same as ´func ajax_clicked_word but for compound word:
@@ -118,7 +128,8 @@ function ajax_termform(wo_id, op, rtl) {
 	$.ajax({url: '/termform/', type: 'GET',
 			data: {'op':op, 'wo_id': wo_id},
 			success: function(data){
-				$('#topright.text_read').html(data);
+				var data = JSON.parse(data);
+				$('#topright.text_read').html(data['html']);
 			},
 			 error : function(data , status , xhr){
 					console.log(data);
@@ -216,5 +227,40 @@ function ajax_dictwebpage(WBLINK, phrase, issentence) {
 					 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr); }
 					});
 			}
+}
 
+/* mark all the remaining words in the sentence as known */
+function iknowall(event, wo_id){
+	//the current selected word:
+	var sel_word = $('.clicked');
+	var wo_id = sel_word.attr('woid');
+	$.ajax({url: '/iknowall/', 
+			type: 'GET',
+			dataType: 'json',
+			data: 
+				{ 
+					'wo_id':wo_id,
+				},
+			success: function(data){ 
+				$('#topright.text_read').html(data['html']); 
+				// update status of the word and the counter at the top
+				$.each(data['wo_id_to_update_in_ajax'], function(idx, val){ // val=wo_id
+						update_status(val, '', data['wostatus']);
+						//update the title in word also
+						update_title(val, '', data['iscompoundword'], data['wowordtext'], 
+								  data['wotranslation'], data['woromanization'], data['wostatus'],
+								  data['cowotranslation'], data['coworomanization'], data['cowostatus'])
+					});
+				// and move to the next sentence if it's not the last known
+				if(data['firstWord_of_nextSentence']){
+					var sel_word = $('.clicked'); //don't know why but I need to re-get this...
+					sel_word.removeClass('clicked');
+					var sel_word = $('#thetext span[woid="'+data['firstWord_of_nextSentence']+'"]');
+					sel_word.addClass('clicked');	
+					click_ctrlclick_toggle(sel_word, event); // creating: clicktooltip and the right panel (bottom & top)
+				}
+			},
+			error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);
+			}
+	});	
 }

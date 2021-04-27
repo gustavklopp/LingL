@@ -2,10 +2,10 @@
 /* HOVERING */
 // the tooltip displayed when hovering over words in text_read
 
+/* called by updating the hovering tooltip. 
+either for a word => presymbol: ▶   
+either for a compountword => presymbol: • */
 function create_tooltip_title(chosen_symbol, trans,roman,status) {
-	/* called by updating the hovering tooltip. 
-	either for a word => presymbol: ▶   
-	either for a compountword => presymbol: • */
 	var ret = '\x0d'; // line return
 	var r = '';
 	var symbol;
@@ -23,8 +23,9 @@ function create_tooltip_title(chosen_symbol, trans,roman,status) {
 }
 
 /* Helper functions for create_tooltip_title */
+
+/* Display the tooltip when hovering (not clicked) over words in text_read -> Blablabla Unknown[?] */
 function getStatusName(status) {
-	/* Display the tooltip when hovering (not clicked) over words in text_read -> Blablabla Unknown[?] */
 	var stat = STATUSES[status];
 	if (stat === undefined || stat == '1') { // Learning status can be between 1 and 99, so no defined as a constant
 		return 'Learning';
@@ -33,8 +34,8 @@ function getStatusName(status) {
 	} 
 }
 
+/* Display the tooltip when hovering (not clicked) over words in text_read -> Blablabla Unknown[?] */
 function getStatusAbbr(status) {
-	/* Display the tooltip when hovering (not clicked) over words in text_read -> Blablabla Unknown[?] */
 	var stat = STATUSES[status];
 	if (stat === undefined || stat == '1') { // Learning status can be between 1 and 99, so no defined as a constant
 		return status;

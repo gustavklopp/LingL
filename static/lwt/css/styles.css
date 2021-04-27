@@ -33,12 +33,12 @@
 }
 
 #topright.textread_row {
-	height: 40%;
+	height: 45%;
 	overflow: auto;
 }
 
 #bottomright.textread_row {
-	height: 60%;
+	height: 55%;
 	overflow: auto;
 }
 
@@ -52,7 +52,7 @@
 
 /* the statuses */
 word_left_todo[wostatus="0"] {
-	/* for display the TODO with the word count */
+	/* for display the TO DO with the word count */
 	background-color: #ADDFFF;
 }
 
@@ -228,6 +228,12 @@ span[show_compoundword="true"][cowostatus="101"]
 	z-index: -2; 
 }
 */
+
+/* restyle the tags-input in the termform */
+#topright #id_wordtags_tags_input_tagsinput {
+	width: auto !important;
+	height: auto !important;
+}
 /*********** in termform.html ************/ 
 /* don't display if the status of the word is not unknown */
 .hidden { 
@@ -245,7 +251,7 @@ div.headPlus.collapsed:before {
 
 
 
-/************** the Tooltip ****************/
+/************** the word Tooltip ****************/
 /* because bootstrap is modifying the 'table' of overDiv, unset it :*/
 div#overDiv table  tbody tr td table:nth-child(1){
 	background-color: #333399;
