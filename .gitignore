@@ -102,11 +102,13 @@ ENV/
 *.pydevproject
 
 # for Pythonanywhere
-LingL/settings.py
+LingL.launch
+lwt/migrations
+#LingL/settings.py
 #LingL/urls.py
-LingL_database.sqlite3
-manage.py
-static/
+#LingL_database.sqlite3
+#manage.py
+#static/
 MY_NOTES.md
 /127.0.0.1-key.pem
 /127.0.0.1.pem
