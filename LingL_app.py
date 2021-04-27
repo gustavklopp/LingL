@@ -34,7 +34,7 @@ window = Tk()
 window.title("LingLibre")
 window.geometry('250x100')
 cwd = os.getcwd()
-lingl_image_path = os.path.join(cwd,'lwt','static','lwt','img','site_icon_16x16.png')
+lingl_image_path = os.path.join(cwd,'lib','lwt','static','lwt','img','site_icon_16x16.png')
 photo = PhotoImage(file = lingl_image_path)
 window.iconphoto(False, photo)
 

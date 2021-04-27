@@ -2,9 +2,7 @@ from cx_Freeze import setup, Executable
 import os
 
 cwd = os.getcwd()
-lingl_image_path = os.path.join(cwd,'lwt','static','lwt','img','site_icon_16x16.png')
-# Dependencies are automatically detected, but it might need
-# fine tuning.
+lingl_image_path = os.path.join(cwd,'LingL','lwt','static','lwt','img','site_icon_16x16.png') # Dependencies are automatically detected, but it might need # fine tuning.
 buildOptions = dict(
         packages = [
             'builtins',
@@ -734,7 +732,9 @@ import sys
 base = 'Win32GUI' if sys.platform=='win32' else None
 
 executables = [
-    Executable('LingL_app.py', base=base, icon=lingl_image_path, target_name='LingLibre')
+    Executable('LingL_app.py', base=base,
+        icon="LingL_app.ico", 
+        target_name='LingLibre')
 ]
 
 setup(name='LingL',
