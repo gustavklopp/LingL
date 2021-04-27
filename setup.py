@@ -1,6 +1,9 @@
 from cx_Freeze import setup, Executable
 import os
 
+
+cwd = os.getcwd()
+lingl_image_path = os.path.join(cwd,'lwt','static','lwt','img','site_icon_16x16.png')
 # Dependencies are automatically detected, but it might need
 # fine tuning.
 buildOptions = dict(
@@ -721,7 +724,8 @@ buildOptions = dict(
             'setuptools',
             'waitress',
             ], 
-        excludes = ['tkinter',],
+#         excludes = ['tkinter',],
+        excludes = [],
         include_files = [
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined
 #                 os.path.join('templates','allauth'),
@@ -732,11 +736,11 @@ import sys
 base = 'Win32GUI' if sys.platform=='win32' else None
 
 executables = [
-    Executable('LingL.py', base=base)
+    Executable('LingL_app.py', base=base, icon=lingl_image_path, target_name='LingLibre')
 ]
 
 setup(name='LingL',
       version = '0.1',
-      description = 'learn languages by reading what you want!',
+      description = 'Learn languages by reading what you want!',
       options = dict(build_exe = buildOptions),
       executables = executables)

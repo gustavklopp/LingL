@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-from django.shortcuts import _get_queryset
 from django.contrib.messages import constants as messages
 
 # For using PyMSQL:
@@ -48,17 +47,17 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # needed by django-allauth
     'django.contrib.sites',
+    # local
+    'lwt',
+    'jchart', # graphical tool to display statistics. Local, because Jchart is outdated(it lacks: the simple "import six")
     # third party
     'tags_input',
     'mathfilters', # allow to do math in template
-    'allauth', # django usesr registration
+    'allauth', # django usesr registration /!\WARNING: To override the templates, 'allauth' must appear AFTER the app 'lwt'!
     'allauth.account', # django user registration
     'allauth.socialaccount', # django user registration
     'crispy_forms', # linker between django and bootstrap form. 'pipenv install django-crispy-forms'
 #     'sslserver', # use in DEBUG to run https on localhost
-    # local
-    'lwt',
-    'jchart', # graphical tool to display statistics. Local, because Jchart is outdated(it lacks: the simple "import six")
 ]
 
 MIDDLEWARE = [
