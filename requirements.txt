@@ -11,7 +11,6 @@ dj-static==0.0.6
 Django==3.2
 django-allauth==0.44.0
 django-crispy-forms==1.11.2
-django-jchart==0.4.2
 django-mathfilters==1.0.0
 django-tags-input==5.0.0
 idna==2.10

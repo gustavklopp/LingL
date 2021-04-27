@@ -48,8 +48,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # needed by django-allauth
     'django.contrib.sites',
-    # local
-    'lwt',
     # third party
     'tags_input',
     'mathfilters', # allow to do math in template
@@ -57,8 +55,10 @@ INSTALLED_APPS = [
     'allauth.account', # django user registration
     'allauth.socialaccount', # django user registration
     'crispy_forms', # linker between django and bootstrap form. 'pipenv install django-crispy-forms'
-    'jchart', # graphical tool to display statistics
 #     'sslserver', # use in DEBUG to run https on localhost
+    # local
+    'lwt',
+    'jchart', # graphical tool to display statistics. Local, because Jchart is outdated(it lacks: the simple "import six")
 ]
 
 MIDDLEWARE = [
