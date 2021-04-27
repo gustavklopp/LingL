@@ -103,7 +103,7 @@ ENV/
 
 # for Pythonanywhere
 LingL.launch
-lwt/migrations
+#lwt/migrations
 #LingL/settings.py
 #LingL/urls.py
 #LingL_database.sqlite3
