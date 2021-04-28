@@ -3,6 +3,11 @@ Learn new languages by reading anything you choose.
 
 This was inspired by other site/projects like the opensource Lwt, the closed source lingq etc...
 
+![lingl_German](https://user-images.githubusercontent.com/6438275/116419745-a6369b00-a83d-11eb-9a88-2e6b3f23fb3f.png)
+![lingl_homepage](https://user-images.githubusercontent.com/6438275/116419775-ac2c7c00-a83d-11eb-8330-e5afebda7a30.png)
+![lingl_texts](https://user-images.githubusercontent.com/6438275/116419787-af276c80-a83d-11eb-8bd8-32688b606225.png)
+
+
 ## How to use it:
 
 ### 1. Use the executable (Standalone application):
