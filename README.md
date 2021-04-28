@@ -8,7 +8,7 @@ This was inspired by other site/projects like the opensource Lwt, the closed sou
 ### 1. Use the executable (Standalone application):
 
 #### 1.2 Linux/Windows:
-the executable `Lingl` is in the folder `LingL/`.
+the executable `Linglibre` is in the folder `LingL/`.
 
 <https://github.com/gustavklopp/LingL/releases>
 
@@ -28,8 +28,6 @@ move inside the LingL folder (where `manage.py` is) and:
 	
 ```
 python manage.py migrate
-python manage.py createsuperuser #<--- you can use username: lingl / and password: lingl for example. No need of email
-
 python manage.py runserver
 ```
 then open your browser to <http://127.0.0.1:8000>
