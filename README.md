@@ -11,12 +11,13 @@ This was inspired by other site/projects like the opensource Lwt, the closed sou
 
 ### 1. Use the executable (Standalone application):
 
-Available for Linux/Windows/Mac:
-
-the executable is `Linglibre`.
+#### 1.2 Linux/Windows:
+the executable `Linglibre` is in the folder `LingL/`.
 
 <https://github.com/gustavklopp/LingL/releases>
 
+#### 1.2 (future) Mac:
+Maybe later if people interested.
 
 ### 2. Use the built-in server inside Django:
 
