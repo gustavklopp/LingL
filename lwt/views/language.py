@@ -215,20 +215,19 @@ def fill_language_detail(request):
     we used this to modify the dict1uri and dict2uri with the correct language destination
     We postulate that the destination language is the one chosen by the user in his profile '''
 def get_language_fixture(request, code_lang):
-    origin_lang_code = request.user.origin_lang_code
     # then get the language data:
     chosen_lang = Languages.objects.filter(owner=1, code_639_1=code_lang).values()[0]
     # and for the origin lang too:
-    origin_lang = Languages.objects.filter(owner=1, code_639_1=origin_lang_code).values()[0]
-    # then change the placeholder string for the translation:
-    chosen_lang['dicturi'] = re.sub(r'••••', origin_lang['name'], 
-                                        chosen_lang['dicturi'])
-    chosen_lang['dicturi'] = re.sub(r'•••', origin_lang['code_639_2t'], 
-                                        chosen_lang['dicturi'])
-    chosen_lang['dicturi']= re.sub(r'••', origin_lang['code_639_1'], 
-                                        chosen_lang['dicturi'])
-    chosen_lang['googletranslateuri'] = re.sub(r'••', origin_lang['code_639_1'], 
-                                        chosen_lang['googletranslateuri'])
+    origin_lang_code = request.user.origin_lang_code
+    if origin_lang_code:
+        origin_lang = Languages.objects.filter(owner=1, code_639_1=origin_lang_code).values()[0]
+        # then change the placeholder string for the translation:
+        chosen_lang['dicturi'] = re.sub(r'••••', origin_lang['name'],
+                                            chosen_lang['dicturi'])
+        chosen_lang['dicturi'] = re.sub(r'•••', origin_lang['code_639_2t'],
+                                            chosen_lang['dicturi'])
+        chosen_lang['dicturi']= re.sub(r'••', origin_lang['code_639_1'],
+                                            chosen_lang['dicturi'])
+        chosen_lang['googletranslateuri'] = re.sub(r'••', origin_lang['code_639_1'],
+                                            chosen_lang['googletranslateuri'])
     return chosen_lang
-    
-    
