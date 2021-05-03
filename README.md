@@ -17,6 +17,8 @@ the executable is `Linglibre`.
 
 <https://github.com/gustavklopp/LingL/releases>
 
+After launching the app, you will need to create an account (this way, the app allows multi-accounts).
+
 ### 2. Use the built-in server inside Django:
 
 It will need `python >=3.8` and `Django >= 3.2`
@@ -33,6 +35,9 @@ python manage.py migrate
 python manage.py runserver
 ```
 then open your browser to <http://127.0.0.1:8000>
+
+After launching the app, you will need to create an account (this way, the app allows multi-accounts).
+There's also a `superuser` account for Django admin use: it's : username: `lingl` / password: `lingl`.
 
 ### 3. (future) Use the online website:
 Maybe later if people interested.

@@ -48,7 +48,6 @@ for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 <p>{% blocktrans %}If you have not created an account yet, then please
 <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
 {% endif %}
-  {% ifequal request.get_host|slice:":9" "127.0.0.1" %}<div class="font-weight-bold mb-3">(default account: Username: "lingl" / Password: "lingl")</div>{% endifequal %}
   {% crispy form %}
   {% if redirect_field_value %} {# what is it doing??? #}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
