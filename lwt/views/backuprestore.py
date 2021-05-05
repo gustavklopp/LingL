@@ -36,9 +36,13 @@ from lwt.views._import_oldlwt import *
 ''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
 def wipeout_database(request):
     for mymodel in apps.get_app_config('lwt').get_models():
-        if mymodel == MyUser: # don't delete the MyUser
+        if mymodel == Restore or mymodel == Uploaded_text: 
+            # don't delete the MyUser, Restore, Uploaded_text models:
             continue
-        mymodel.objects.filter(owner=request.user).all().delete()
+        elif mymodel == MyUser: 
+            mymodel.objects.get(id=request.user.id).delete()
+        else:
+            mymodel.objects.filter(owner=request.user).all().delete()
     #update the cookie for the database_size
     set_word_database_size(request)
     # and delete cookies:
@@ -61,8 +65,13 @@ def backuprestore(request):
         # backing up:
         if 'backingup' in request.POST.values():
             all_qs = []
+
             for mymodel in apps.get_app_config('lwt').get_models():
-                all_qs += mymodel.objects.filter(owner=request.user).all()
+                if mymodel == MyUser or mymodel == Restore or mymodel == Uploaded_text: 
+                    # don't delete the MyUser, Restore, Uploaded_text models:
+                    continue
+                else:
+                    all_qs += mymodel.objects.filter(owner=request.user).all()
             fixture = serialize('yaml', all_qs)
             now = timezone.now().strftime('%Y-%m-%d') 
             filename = 'lingl_backup_{}.yaml.gz'.format(now)
