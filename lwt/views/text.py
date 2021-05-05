@@ -205,9 +205,18 @@ def text_list(request):
         {'week': [24,-1], 'string':_('> 6 months ago or never opened')}
         ]
     # cookie for TIME FILTERING
-    time_filter_json = getter_settings_cookie('time_filter', request)
-    time_filter = [] if not time_filter_json else json.loads(time_filter_json)
-    time_filter = [json.loads(tf) for tf in time_filter]
+    time_filter_json = getter_settings_cookie('time_filter', request) # --> ex.: str: "["[24, -1]"]"
+    if time_filter_json == None: 
+        # first time opening LingL: no cookie: the default is then to make it all time...
+        # ... selected
+        time_filter = [el['week'] for el in possible_time]
+    elif time_filter_json == '[]':
+        time_filter = []
+    else:
+        time_filter = [json.loads(tf) for tf in json.loads(time_filter_json)]
+        
+#     time_filter = [] if not time_filter_json else json.loads(time_filter_json)
+#     time_filter = [json.loads(tf) for tf in time_filter]
 #     time_filter = [int(i) for i in time_filter]
     # create a zipped list of texttag with its associated languages found inside:
     time_list = []
