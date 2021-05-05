@@ -38,7 +38,7 @@ def wipeout_database(request):
     for mymodel in apps.get_app_config('lwt').get_models():
         if mymodel == MyUser: # don't delete the MyUser
             continue
-        mymodel.objects.all().delete()
+        mymodel.objects.filter(owner=request.user).all().delete()
     #update the cookie for the database_size
     set_word_database_size(request)
     # and delete cookies:
@@ -62,7 +62,7 @@ def backuprestore(request):
         if 'backingup' in request.POST.values():
             all_qs = []
             for mymodel in apps.get_app_config('lwt').get_models():
-                all_qs += mymodel.objects.all()
+                all_qs += mymodel.objects.filter(owner=request.user).all()
             fixture = serialize('yaml', all_qs)
             now = timezone.now().strftime('%Y-%m-%d') 
             filename = 'lingl_backup_{}.yaml.gz'.format(now)
@@ -95,14 +95,25 @@ def backuprestore(request):
                 delete_uploadedfiles(Restore)
             
             if 'install_demo' in request.POST.values():
-                wipeout_database(request)
-                fixt = 'lwt/fixtures/lingl_demo.yaml'
-                call_command('loaddata', fixt , app_label='lwt') # load the fixtures
+                # make the user the owner of the elements in the fixture
+                fixt = 'lwt/fixtures/lingl_demo_user_1.yaml'
+                user_id = str(request.user.id)
+                fixt_copy = fixt.replace("1", user_id)
+                with open(fixt, "r") as fixt_file:
+                    texts = fixt_file.read()
+                    texts = texts.replace("owner: 1", "owner: "+user_id)
+                with open(fixt_copy, "w") as fixtCopy_file:
+                    fixtCopy_file.write(texts)
+                call_command('loaddata', fixt_copy , app_label='lwt') # load the fixtures
+                os.remove(fixt_copy)
+                # the language chosen initially for the User is in double: remove it
+                # (it was first loaded by 'initial_fixture.yaml')
+                Languages.objects.filter(owner=request.user).order_by('-created_date').first().delete()
 
             if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):
                 # set the currentlang if not aloready defined
-                lang = Languages.objects.all().order_by('id').first() # choose the 1st lang for example
-                owner = lang.owner
+                owner = request.user
+                lang = Languages.objects.get(owner=owner, django_code=owner.origin_lang_code)
                 setter_settings_cookie_and_db('currentlang_id', lang.id, request, owner)
             
             if set(['install_demo','restore']) & set(request.POST.values()):

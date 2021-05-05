@@ -9,7 +9,7 @@
 {% endblock banner %}
 
 {% block content %}
-{% if currentlang_name == "" %} {# No language has yet been defined #}
+{% if text_exist == 0 and language_selectoption|length == 1 %} {# First time user: No texts in the database and only one language #}
 <div class="alert alert-danger" role="alert">
 	{% trans "Hint: The database seems to be empty." %}<br>
 	   {# Install the demo database if the website is on localhost #}
@@ -21,7 +21,7 @@
 	</form>
 	{% trans "or" %}<br>
 {% endifequal %}
-	<a href="{% url 'language_detail' %}?new=0">{% trans "define the first language you want to learn." %}</a>
+	<a href="{% url 'text_detail' %}?new=0">{% trans "create your first text." %}</a>
 </div>
 {% else %}
 

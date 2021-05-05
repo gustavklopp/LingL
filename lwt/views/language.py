@@ -14,6 +14,7 @@ from django.conf import settings
 from django.core.serializers.json import DjangoJSONEncoder # to json.dumps a datetime object
 from django.utils.translation import gettext as _
 from django.contrib import messages
+from django.urls import reverse
 # second party
 import os
 import json # it's standard in python
@@ -22,7 +23,7 @@ import re
 import yaml # pipenv install pyyaml
 # local
 from lwt.models import *
-from lwt.forms import *
+from lwt.forms import make_languagesform
 
 # helper functions:
 from lwt.views._setting_cookie_db import *

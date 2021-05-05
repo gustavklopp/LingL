@@ -11,13 +11,14 @@ from django.apps import apps
 from django.core.exceptions import ObjectDoesNotExist
 # third party
 # local
-from lwt.models import *
 
-""" Helper functions. Don't call them directly. """
+""" Helper functions. """
 
 
 def setter_settings_cookie_and_db(stkey, stvalue, request, owner=None):
     """ set the setting value set by user in key in Cookie and also set it in Settings database """
+    from lwt.models import Settings_currentlang_id, Settings_currentlang_name, Languages
+
     if owner == None: # if it's not defined elsewhere (for example when restoring database
         owner = request.user
     model_name = 'Settings_'+str(stkey)
@@ -47,21 +48,24 @@ def setter_settings_cookie_and_db(stkey, stvalue, request, owner=None):
         request.session[str(stkey)] = stvalue
 
         
-def setter_settings_cookie(stkey,stvalue,request):
-    """ set the setting value set by user in key in Cookie only """
+""" set the setting value set by user in key in Cookie only """
+def setter_settings_cookie(stkey, stvalue,request):
     request.session[stkey] = stvalue
 
-def setter_settings_db(stkey,stvalue,request, owner=None):
-    """ set the setting value set by user in key in Cookie and also set it in Settings database """
-    if owner == None: # if it's not defined elsewhere (for example when restoring database
-        owner = request.user
-    model_name = 'Settings_'+str(stkey)
-    currentset = apps.get_model('lwt', model_name)
-    # put in Settings table
-    currentset.objects.filter(owner=owner, stvalue=stvalue).\
-                                        update_or_create(defaults={'stvalue':stvalue, 'owner':owner})
+''' same as func above setter_settings_cookie but which set also in database
+    in fact, it´s used only for currentlanguage_name and currentlanguage_id'''
+# def setter_settings_db_and_cookie(stkey, stvalue, request, owner=None):
+#     if owner == None: # if it's not defined elsewhere (for example when restoring database
+#         owner = request.user
+#     model_name = 'Settings_'+str(stkey)
+#     currentset = apps.get_model('lwt', model_name)
+#     # put in Settings table
+#     currentset.objects.filter(owner=owner, stvalue=stvalue).\
+#                                         update_or_create(defaults={'stvalue':stvalue, 'owner':owner})
+#     # and set in cookie
+#     request.session[stkey] = stvalue
 
-def getter_settings_cookie(stkey,request):
+def getter_settings_cookie(stkey, request):
     """ get the setting value set by user in key in Cookie if it was set"""
     if stkey in request.session.keys(): # it's in a Cookie?
         stvar = request.session.get(stkey)

@@ -19,7 +19,7 @@ import io
 # third party)
 # local
 from lwt.models import *
-from lwt.forms import *
+# from lwt.forms import *
 
 # helper functions:
 from lwt.views._setting_cookie_db import *
@@ -56,6 +56,9 @@ def homepage(request):
     # Last open texts:
     lastopentexts = Texts.objects.filter(owner=request.user, lastopentime__isnull=False).order_by('lastopentime').all()[:5]
 
+    # To display the suggestion to load the demo
+    text_exist = Texts.objects.filter(owner=request.user).count()
+
     # get the list of languages to display them in the drop-down menu:
     language_selectoption = Languages.objects.filter(owner=request.user).values('name','id').order_by('name')
     
@@ -64,6 +67,7 @@ def homepage(request):
 
     return render(request, 'lwt/homepage.html', {'currentlang_name':currentlang_name,'currentlang_id':currentlang_id,
                                                  'lastopentexts':lastopentexts, 
+                                                 'text_exist': text_exist,
                                                  'language_selectoption':language_selectoption,
                                                  'database_size':database_size})
 

@@ -20,7 +20,7 @@ from allauth.account.adapter import get_adapter
 # TO CHANGE
 from splitjson import fields as json_fields, widgets as json_widgets
 # local
-from lwt.models import *
+from lwt.models import Languages, Texts, Extra_field_key, MyUser, Texttags, Words, Wordtags, Restore, Uploaded_text
 
 
 # class TexttagForm(forms.Form):
@@ -363,17 +363,11 @@ class Uploaded_textForm(forms.ModelForm):
 
 ''' Used by Django-allauth: custom forms '''
 class MySignUpForm(SignupForm):
-    django_code_list = list(set(LANG_INFO.keys()))
-    LANG_CHOICES = [[i, get_language_info(i)['name_translated']] for i in django_code_list]
-    LANG_CHOICES.sort(key=lambda a: a[1])
-    # remove duplicates ('simplidied Chinese' is in 4 example (with different code)
-    LANG_CHOICES_NODUP = []
-    I = ''
-    for i in LANG_CHOICES:
-        if i[1] != I:
-            LANG_CHOICES_NODUP.append(i)
-        I = i[1]
-    origin_lang_code = forms.ChoiceField(choices=LANG_CHOICES_NODUP, required=True)
+    try: # Bug? It triggers an error when doing ./manage.py migrate
+        LANG_CHOICES = list(Languages.objects.filter(owner_id=1).values_list('django_code', 'name').order_by('name'))
+        origin_lang_code = forms.ChoiceField(choices=LANG_CHOICES, required=True)
+    except:
+        pass
 
     def __init__(self, *args, **kwargs):
         super(MySignUpForm, self).__init__(*args, **kwargs)

@@ -2,26 +2,24 @@
 - model: "lwt.myuser"
   pk: 1
   fields:
-     username: "admin"
-     # password is 'test'
-     password: "pbkdf2_sha256$10000$vkRy7QauoLLj$ry+3xm3YX+YrSXbri8s3EcXDIrx5ceM+xQjtpLdw2oE="
+     username: "lingl"
+     # password is 'lingl'
+     password: "pbkdf2_sha256$260000$9BrZ6kd6IVOLAbnMEq9ub6$GUTUfijCB3CWEpCTxqlkMCi5vcQZHlUjeOT/5g73otE="
      is_superuser: true
      is_staff: true
      is_active: true
-     email: admin@lingl.com
      origin_lang_code: en
 ############# LANGUAGES 
 #   "this is the fixtures for a bunch of languages."
 #   "language code: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes "
 #   "Django code: See LANG_INFO in https://github.com/django/django/blob/master/django/conf/locale/__init__.py"
-#
 - model: "lwt.languages"
   pk: 1
   fields:
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: English
+     name: "English"
      dicturi: >-
         https://glosbe.com/gapi/translate?from=eng&&dest=•••&format=json, 
         https://en.wiktionary.org/wiki/###
@@ -33,6 +31,7 @@
      regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
      removespaces: false
      spliteachchar: false
+     has_romanization: false
      righttoleft: false
      code_639_1: en
      code_639_2t: eng
@@ -46,7 +45,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: French
+     name: "French"
      dicturi: >-
         https://glosbe.com/gapi/translate?from=fra&&dest=•••&format=json, 
         https://en.wiktionary.org/wiki/###, http://www.wordreference.com/fr••/###
@@ -58,6 +57,7 @@
      regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
      removespaces: false
      spliteachchar: false
+     has_romanization: false
      righttoleft: false
      code_639_1: fr
      code_639_2t: fra
@@ -71,7 +71,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: Italian
+     name: "Italian"
      dicturi: >-
         https://glosbe.com/gapi/translate?from=ita&&dest=•••&format=json, 
         http://www.wordreference.com/it••/###
@@ -83,6 +83,7 @@
      regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
      removespaces: false
      spliteachchar: false
+     has_romanization: false
      righttoleft: false
      code_639_1: it
      code_639_2t: ita
@@ -95,7 +96,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: German
+     name: "German"
      dicturi: >-
         https://glosbe.com/gapi/translate?from=deu&&dest=•••&format=json, 
         http://www.wordreference.com/ge••/###, 
@@ -108,6 +109,7 @@
      regexpwordcharacters: "a-zA-ZäöüÄÖÜß"
      removespaces: false
      spliteachchar: false
+     has_romanization: false
      righttoleft: false
      code_639_1: de
      code_639_2t: deu
@@ -136,6 +138,7 @@
      regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
      removespaces: false
      spliteachchar: false
+     has_romanization: false
      righttoleft: false
      code_639_1: pt
      code_639_2t: por
@@ -148,7 +151,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: Chinese
+     name: "Chinese"
      dicturi: >-
         http://ce.linedict.com/#/cn••/search?query=###, 
         https://kanji.koohii.com/study/kanji/###, 
@@ -163,6 +166,7 @@
      regexpwordcharacters: "一-龥"
      removespaces: true
      spliteachchar: true
+     has_romanization: true
      righttoleft: false
      code_639_1: zh
      code_639_2t: zho
@@ -176,7 +180,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: Japanese
+     name: "Japanese"
      dicturi: >-
         http://jisho.org/words?•••=&dict=edict&jap=###, 
         https://kanji.koohii.com/study/kanji/###, 
@@ -190,6 +194,7 @@
      regexpwordcharacters: "一-龥ぁ-ヾ"
      removespaces: true
      spliteachchar: true
+     has_romanization: true
      righttoleft: false
      code_639_1: ja
      code_639_2t: jap
@@ -202,7 +207,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: Korean
+     name: "Korean"
      dicturi: >-
         http://dictionary.sensagent.com/###/ko-••, 
         http://en.wiktionary.org/wiki/###
@@ -214,6 +219,7 @@
      regexpwordcharacters: "가-힣ᄀ-ᇂ"
      removespaces: false
      spliteachchar: false
+     has_romanization: true
      righttoleft: false
      code_639_1: ko
      code_639_2t: kor
@@ -226,7 +232,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: Thai
+     name: "Thai"
      dicturi: >-
         https://glosbe.com/gapi/translate?from=tha&&dest=•••&format=json, 
         http://dict.longdo.com/search/###,
@@ -239,6 +245,7 @@
      regexpwordcharacters: "ก-๛"
      removespaces: true
      spliteachchar: false
+     has_romanization: false
      righttoleft: false
      code_639_1: th
      code_639_2t: tha
@@ -251,7 +258,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: Hebrew
+     name: "Hebrew"
      dicturi: >-
         https://glosbe.com/gapi/translate?from=heb&&dest=•••&format=json, 
         http://morfix.mako.co.il/default.aspx?q=###,
@@ -264,6 +271,7 @@
      regexpwordcharacters: "֐-׿"
      removespaces: false
      spliteachchar: false
+     has_romanization: true
      righttoleft: true
      code_639_1: he
      code_639_2t: heb
@@ -277,7 +285,7 @@
      created_date: "2020-07-25"
      modified_date: "2020-07-25"
      owner: 1
-     name: Slovenian
+     name: "Slovenian"
      dicturi: >-
         https://glosbe.com/gapi/translate?from=sl&&dest=••&format=json, 
         http://www.wordreference.com/sl••/###,
@@ -290,6 +298,7 @@
      regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
      removespaces: false
      spliteachchar: false
+     has_romanization: false
      righttoleft: false
      code_639_1: sl
      code_639_2t: slo

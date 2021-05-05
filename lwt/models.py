@@ -51,18 +51,6 @@ class MyUser(AbstractUser):
     # origin lang:
     origin_lang_code = models.CharField(max_length=40)
 
-
-class UserAccountAdapter(DefaultAccountAdapter):
-
-    def save_user(self, request, user, form, commit=False):
-        """ This is called when saving user via allauth registration.
-        We override this to set additional data on user object. """
-        # Do not persist the user yet so we pass commit=False  (last argument)
-        user = super(UserAccountAdapter, self).save_user(request, user, form, commit=commit)
-        user.origin_lang_code = form.cleaned_data.get('origin_lang_code')
-        user.save()
-        return user
-
         
 class BaseModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
@@ -126,7 +114,6 @@ class Languages(BaseModel):
 
     class Meta:
         db_table = 'languages'
-    
 
 class Texttags(BaseModel):
     txtagtext = models.CharField( unique=True, max_length=20)  
@@ -271,9 +258,10 @@ class Words(BaseModel):
     
 
     class Meta:
-        db_table = 'words'
-
-# DATABASE 'settings':
+        db_table = 'words'        
+#####################################################
+#             DATABASE 'settings':                  #
+#####################################################
 class Settings(models.Model):
     owner = models.ForeignKey(MyUser, on_delete=models.CASCADE)
     stvalue = models.CharField(blank=True,  max_length=40, null=True) # value chosen by the user
@@ -489,9 +477,33 @@ class Settings_selected_rows(Settings):
     possible_selected_rows = models.TextField()
     selected_rows = models.TextField(default='[]') # not used. I used the 'state' inside Words in fact.
 
+#####################################################
+#             end 'settings':                       #
+#####################################################
+        
+""" This is called when saving user via allauth registration.
+    We override this to set additional data on user object. """
+class UserAccountAdapter(DefaultAccountAdapter):
 
+    def save_user(self, request, user, form, commit=False):
+        # Do not persist the user yet so we pass commit=False  (last argument)
+        user = super(UserAccountAdapter, self).save_user(request, user, form, commit=commit)
+        user.origin_lang_code = form.cleaned_data.get('origin_lang_code')
+        user.save()
+        # create a duplicate of the Admin's language that the User has chosen
+        chosen_lang = Languages.objects.get(django_code=user.origin_lang_code)
+        chosen_lang.pk = None
+        chosen_lang.owner = user
+        chosen_lang.save()
+#         # and set this as the currentlang in database and cookie
+#         chosen_lang = Languages.objects.filter(owner=user).get(django_code=user.origin_lang_code)
+        Settings_currentlang_id.objects.create(owner=user, stvalue=chosen_lang.pk)
+        Settings_currentlang_name.objects.create(owner=user, stvalue=chosen_lang.name)
+        return user    
+
+
+''' Used insided Backup & Restore to upload a backup file '''
 class Restore(models.Model):
-    ''' Used insided Backup & Restore to upload a backup file '''
 
     restore_file_name = models.CharField(max_length=255, blank=True)
     restore_file = models.FileField(blank=True)
@@ -499,6 +511,6 @@ class Restore(models.Model):
 #     restore_oldlwt_file = models.FileField()
 
 
+''' to upload a text file. in text_detail.html '''
 class Uploaded_text(models.Model):
-    ''' to upload a text file. in text_detail.html '''
     uploaded_text = models.FileField(blank=True)
