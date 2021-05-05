@@ -107,6 +107,7 @@ LingL.launch
 #LingL/settings.py
 #LingL/urls.py
 LingL_database.sqlite3
+lwt/LingL_database.sqlite3
 #manage.py
 #static/
 MY_NOTES.md

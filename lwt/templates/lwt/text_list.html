@@ -38,7 +38,7 @@
 			 {{ lang.name }}
 		 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
 		  src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img 
-		  onclick="location.href='{% url 'term_list' %}?currentlang_id={{ lang.id }}';" 
+		  onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.id }}';" 
 		  title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}
 		  <br>
 	{% endfor %}
