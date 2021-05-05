@@ -32,6 +32,7 @@ move inside the LingL folder (where `manage.py` is) and:
 	
 ```
 python manage.py migrate
+python manage.py loaddata ./lwt/fixtures/initial_fixture.yaml
 python manage.py runserver
 ```
 then open your browser to <http://127.0.0.1:8000>
