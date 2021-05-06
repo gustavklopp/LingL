@@ -1,4 +1,5 @@
-/* helper function for textlist_filter: equivalent to python .isdisjoint */
+/* helper function for textlist_filter: equivalent to python set.isdisjoint 
+   check whether 2 arrays have elements in common. Return True if nothing in common */
 function isdisjoint(array1, array2){
 	var toReturn = true;
 	$.each(array1, function(idx, el){
@@ -18,9 +19,13 @@ function textlist_filter() {
 	var timeform = $('#timeform');
 
 	// get what are the checkbox checked for: language
+	// and also get the texts Ids for the chosen langs:
 	var chosen_lang = [];
+	var chosenlang_textIds = []
 	$.each($("#filterlangform input:checked"), function(){
 		chosen_lang.push(parseInt($(this).val()));
+		var textIds = $(this).data('textids');
+		chosenlang_textIds = chosenlang_textIds.concat(textIds);
 	});
 	//if nothing was chosen, display a warning
 	if (chosen_lang.length === 0){
@@ -31,14 +36,30 @@ function textlist_filter() {
 
 	// get what are the checkbox checked for: tags
 	var chosen_tag = [];
-	$.each($("#filtertagform").find("span").not(".hidden").find("input:checked"), function(){
-		chosen_tag.push($(this).val());
+	$.each($("#filtertagform").find("span").find("input"), function(){
+		if ($(this).is(':checked')){
+			chosen_tag.push($(this).val());
+		}
+		var tag_textIds = $(this).data('textids');
+		if (isdisjoint(chosenlang_textIds, tag_textIds)){
+			$(this).next().attr('class', 'checkboxitem-normal');
+		} else {
+			$(this).next().attr('class', 'checkboxitem-bold');
+		}
 	});
 
 	// get what are the checkbox checked for: time
 	var chosen_time = [];
-	$.each($("#timeform").find("span").not(".hidden").find("input:checked"), function(){
-		chosen_time.push($(this).val());
+	$.each($("#timeform").find("span").find("input"), function(){
+		if ($(this).is(':checked')){
+			chosen_time.push($(this).val());
+		}
+		var time_textIds = $(this).data('textids');
+		if (isdisjoint(chosenlang_textIds, time_textIds)){
+			$(this).next().attr('class', 'checkboxitem-normal');
+		} else {
+			$(this).next().attr('class', 'checkboxitem-bold');
+		}
 	});
 	//if nothing was chosen, display a warning
 	if (chosen_time.length === 0){
@@ -73,14 +94,6 @@ function textlist_filter() {
 		success: function(data){ 
 			text_table.bootstrapTable('load', data); 
 			text_table.bootstrapTable('selectPage', 1); // go to first page
-			$.each(filtertagform.find('span[language]'), function(){
-				var texttag_lang = JSON.parse($(this).attr('language'));
-				if (isdisjoint(texttag_lang, chosen_lang)){
-					$(this).attr('class', 'hidden'); // hide the text which are not in the languages selected
-				} else {
-					$(this).attr('class', '');
-				}
-			});
 		},
 		error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
 		}

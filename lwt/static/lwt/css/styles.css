@@ -303,6 +303,13 @@ a.headCaret:before {
 .archived {
 	opacity: 0.4;
 }
+
+.checkboxitem-normal{
+	opacity: 0.6; 	
+}
+.checkboxitem-bold{
+  font-weight: bold;	
+}
 /******************************************************************************
      IN TEXT_DETAIL
 ******************************************************************************/

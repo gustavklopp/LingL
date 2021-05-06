@@ -29,55 +29,51 @@
 <ul id="ul_language" class="collapse show">
 	<form id="filterlangform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
-	{% for lang in languages %}
-	 	{% if lang.id in lang_filter %}
-		<input type="checkbox"  checked onclick="textlist_filter();" value="{{ lang.id }}" class="unstyled">
-		{% else %}
-		<input type="checkbox"  onclick="textlist_filter();" value="{{ lang.id }}" class="unstyled">
-		{% endif %}
-			 {{ lang.name }}
-		 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
-		  src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img 
-		  onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.id }}';" 
-		  title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}
-		  <br>
+	{% for lang in lang_textIds_list %}
+	<input data-textids="{{ lang.txt_set_json }}" type="checkbox" {% if lang.lang.id in lang_filter %}checked{% endif %} onclick="textlist_filter();" value="{{ lang.lang.id }}" class="unstyled">
+	 <span class="checkboxitem-bold">{{ lang.lang.name }}</span>
+	 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
+	  src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img 
+	  onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.lang.id }}';" 
+	  title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}
+	  <br>
 	{% endfor %}
 
 	</form>
 	<span id="no_langfilter" class="error text-danger"></span>
 </ul>
 
+<br/>
+
 {# filter on texttag #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_texttag">{% trans 'Text tags' %} :</a>
 <ul id="ul_texttag" class="collapse show">
 	<form id="filtertagform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
-	{% if texttags_list_empty %}{% trans 'Nothing to display'%}{% endif %}
-	{% for tt_ls in texttags_list %} {# loop on a zipped(tag, languages contained in this tag) #}
-		<span texttag="{{ tt_ls.tag.id }}" language="{{ tt_ls.lang }}"
-		{% if tt_ls.hidden %}class="hidden"{% endif %}>	
-		<input type="checkbox" 
+	{% for tt_ls in texttag_textIds_boldlist %} {# loop on a zipped(tag, languages contained in this tag) #}
+		<span texttag="{{ tt_ls.texttag.id }}" language="{{ tt_ls.texttag.lang }}">	
+		<input data-textids="{{ tt_ls.txt_set_json }}"  type="checkbox" 
 		{% if texttag_filter|length == 0 %}checked{% endif %} 
-		onclick="textlist_filter();" value="{{ tt_ls.tag.id }}" class="unstyled">
-		{{ tt_ls.tag.txtagtext }}
+		onclick="textlist_filter();" value="{{ tt_ls.texttag.id }}" class="unstyled">
+		<span class="checkboxitem-{% if tt_ls.bold %}bold{% else %}normal{% endif %}">{{ tt_ls.texttag.txtagtext }}</span>
 		<br></span>
 	{% endfor %}
 	</form>
 </ul>
+
+<br/>
 
 {# filter on time #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_time">{% trans 'Last time open' %} :</a>
 <ul id="ul_time" class="collapse show">
 	<form id="timeform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
-	{% if time_list_empty %}{% trans 'Nothing to display'%}{% endif %}
-	{% for ti_ls in time_list %}
-		<span possible_time="{{ ti_ls.pt.week }}" text_ids="{{ ti_ls.text_ids }}" 
-		{% if ti_ls.hidden %}class="hidden"{% endif %}>	
-			<input type="checkbox" 
-			{% if ti_ls.pt.week in time_filter %}checked{% endif %} 
-			onclick="textlist_filter();" value="{{ ti_ls.pt.week }}" class="unstyled">
-		{{ ti_ls.pt.string }}
+	{% for ti_ls in time_textIds_boldlist %}
+		<span possible_time="{{ ti_ls.time.week }}" text_ids="{{ ti_ls.txt_set_json }}">	
+			<input data-textids="{{ ti_ls.txt_set_json }}"  type="checkbox" 
+			{% if ti_ls.time.week in time_filter %}checked{% endif %} 
+			onclick="textlist_filter();" value="{{ ti_ls.time.week }}" class="unstyled">
+		<span class="checkboxitem-{% if ti_ls.bold %}bold{% else %}normal{% endif %}">{{ ti_ls.time.string }}</span>
 		<br></span>
 	{% endfor %}
 	</form>

@@ -28,21 +28,6 @@ from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._utilities_views import get_word_database_size
 
-''''the checkboxes to filter the terms '''
-def textlist_filter(request):
-    limit = -1
-
-    if 'limit' in request.POST.keys(): # number of rows to display per page
-        limit = request.POST['limit']
-        limit = int(limit)
-    all_texts = Texts.objects.filter(owner=request.user).all()
-    # then apply the filtering (it sets also the cookie). Func list_filtering is in lwt/views/_utilities_views.py
-    all_texts = list_filtering(all_texts, request) 
-    total = all_texts.count()
-    all_texts = all_texts[:limit]
-    all_texts = serialize_bootstraptable(all_texts,total)
-    return JsonResponse(all_texts, safe=False)
-
 ''' called by ajax (built-in function) inside bootstrap-table #text_table to fill the table'''
 def load_texttable(request):
     order, sort, sort_modif, offset, offset_modif, limit, limit_modif, all_texts = requesting_get_by_table(request, Texts)
@@ -150,6 +135,20 @@ def load_texttable(request):
             
     return JsonResponse({'total': total, 'rows': data}, safe=False)
 
+''''the checkboxes to filter the terms. called by Ajax_text_list '''
+def textlist_filter(request):
+    limit = -1
+
+    if 'limit' in request.POST.keys(): # number of rows to display per page
+        limit = request.POST['limit']
+        limit = int(limit)
+    all_texts = Texts.objects.filter(owner=request.user).all()
+    # then apply the filtering (it sets also the cookie). Func list_filtering is in lwt/views/_utilities_views.py
+    all_texts = list_filtering(all_texts, request) 
+    total = all_texts.count()
+    all_texts = all_texts[:limit]
+    all_texts = serialize_bootstraptable(all_texts,total)
+    return JsonResponse(all_texts, safe=False)
 
 ''' all of the Texts list in the selected langugage'''
 @login_required
@@ -160,8 +159,8 @@ def text_list(request):
     currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
     currentlang_name = getter_settings_cookie_else_db('currentlang_name',request)
 
-    # Filtering when we first open the page. there's another filtering which is done by clicking on checkbox
-    # get the cookie if set: 
+    # Filtering when we first open the page. there's another AJAX filtering which is done by 
+    # ...clicking on checkbox. We get the cookie if set: 
     ############## cookie for LANGUAGE FILTERING ##########################################################################
     if 'lang' in request.GET.keys(): # the language_list page has a link to display the texts with specific language
         lang_filter_json = '[' + request.GET['lang'] + ']'
@@ -171,11 +170,22 @@ def text_list(request):
         if not lang_filter_json or lang_filter_json == '[]': # first time openin, default it to currentlang
             lang_filter_json = '['+ str(currentlang_id) + ']'
             setter_settings_cookie('lang_filter', lang_filter_json, request)
-    lang_filter = json.loads(lang_filter_json)
-    lang_filter = [int(i) for i in lang_filter]
+    lang_Ids_list = json.loads(lang_filter_json)
+    lang_Ids_list = [int(i) for i in lang_Ids_list]
+
+    languages = Languages.objects.filter(owner=request.user).all().order_by('name')
+    lang_textIds_list = []
+    lang_textIds_set = set()
+    for lang in languages:
+        txts = list(Texts.objects.filter(Q(owner=request.user)&\
+                                      Q(language=lang)).values_list('id', flat=True))
+        lang_textIds_list.append({'lang':lang, 'txt_set':txts, 'txt_set_json':json.dumps(txts)})
+        if lang.id in lang_Ids_list:
+            lang_textIds_set |= set(txts)
+
 
     ############## cookie for TEXTTAG FILTERING ##########################################################################
-    texttag_filter_json = getter_settings_cookie('texttag_filter', request)
+    texttag_filter_json = getter_settings_cookie('tag_filter', request)
     texttag_filter = [] if not texttag_filter_json else json.loads(texttag_filter_json)
     texttag_filter = [int(i) for i in texttag_filter]
     texttags = Texttags.objects.filter(owner=request.user).all().order_by('txtagtext')
@@ -189,12 +199,19 @@ def text_list(request):
     for texttag in texttags:
         # get the languages which are found associated to this texttag
         texttag_lang = Texts.objects.filter(texttags=texttag).values_list('language_id', flat=True).all()
-        if set(texttag_lang).isdisjoint(set(lang_filter)): # some languages are common
-            texttags_list.append({'tag':texttag, 'hidden': True, 'lang': list(texttag_lang)})
+        if set(texttag_lang).isdisjoint(set(lang_Ids_list)): # some languages are common
+            texttags_list.append({'tag':texttag, 'bold': False, 'lang': list(texttag_lang)})
         else:
-            texttags_list.append({'tag':texttag, 'hidden': False, 'lang': list(texttag_lang)})
+            texttags_list.append({'tag':texttag, 'bold': True, 'lang': list(texttag_lang)})
             texttags_list_empty = False
-        
+    # list of all texts having the selected texttags (whatever language or time)
+    texttag_textIds_boldlist = []
+    texttag_textIds_set = set()
+    for ttag in texttags:
+        txts = list(Texts.objects.filter(Q(owner=request.user)&Q(texttags=ttag)).values_list('id', flat=True))
+        texttag_textIds_set |= set(txts)
+        texttag_textIds_boldlist.append({'texttag':ttag, 'txt_set':txts, 
+                                         'txt_set_json':json.dumps(txts), 'bold':False})
 
     ##################################### Lastopentime filtering #############################################################
     now = timezone.now()
@@ -215,12 +232,14 @@ def text_list(request):
     else:
         time_filter = [json.loads(tf) for tf in json.loads(time_filter_json)]
         
-#     time_filter = [] if not time_filter_json else json.loads(time_filter_json)
-#     time_filter = [json.loads(tf) for tf in time_filter]
-#     time_filter = [int(i) for i in time_filter]
     # create a zipped list of texttag with its associated languages found inside:
     time_list = []
     time_list_empty = True # everything is hidden
+
+    # get all texts (whatever languages or texttag) with this time
+    time_textIds_boldlist = []
+    time_textIds_set = set()
+
     for pt in possible_time:
         week = pt['week']
         if week[1] == -1: # it's older than 6 months. We put also texts never opened before
@@ -228,8 +247,17 @@ def text_list(request):
             cutout_date = now - length_of_time
             time_text_ids = list(Texts.objects.filter(owner=request.user).\
                         filter(Q(lastopentime__lte=cutout_date)|\
-                                Q(lastopentime__isnull=True)).\
+                                Q(lastopentime__isnull=True)&\
+                                Q(language_id__in=lang_Ids_list)).\
                               values_list('id', flat=True))
+            # get all texts (whatever languages and texttags) with this time
+            txts = list(Texts.objects.filter(Q(owner=request.user)&\
+                                             Q(lastopentime__lte=cutout_date)|\
+                                             Q(lastopentime__isnull=True)).\
+                                     values_list('id', flat=True))
+            time_textIds_set |= set(txts)
+            time_textIds_boldlist.append({'time':pt, 'txt_set':txts, 
+                                          'txt_set_json':json.dumps(txts), 'bold':False})
         else:
             # and for the recent cutout date:
             recent_length_of_time = timedelta(weeks=week[0])
@@ -242,16 +270,32 @@ def text_list(request):
             time_text_ids = list(Texts.objects.filter(owner=request.user).\
                                  filter(recent_time_Q_filter&ancient_time_Q_filter).\
                                 values_list('id', flat=True))
-        if time_text_ids: # some languages are common
-            dic = {'pt': pt, 'text_ids':time_text_ids, 'hidden': False}
-            time_list.append(dic)
-        else:
-            dic = {'pt': pt, 'text_ids':time_text_ids, 'hidden': True}
-            time_list.append(dic)
-            time_list_empty = False
+            # get all texts (whatever languages and texttags) with this time
+            txts = list(Texts.objects.filter(owner=request.user).\
+                                      filter(recent_time_Q_filter&ancient_time_Q_filter).\
+                                     values_list('id', flat=True))
+            time_textIds_set |= set(txts)
+            time_textIds_boldlist.append({'time':pt, 'txt_set':txts, 
+                                          'txt_set_json':json.dumps(txts), 'bold':False})
 
-    # get the list of languages to display them in the drop-down menu:
-    languages = Languages.objects.filter(owner=request.user).all().order_by('name')
+        if time_text_ids: # no languages selected has this time frame
+            dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': False}
+        else:
+            time_list_empty = False
+            dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': True}
+        time_list.append(dic)
+
+    
+    # which items of each checkbox forms (language, texttags, time) should be displayed in bold?
+    for idx, texttag in enumerate(texttag_textIds_boldlist):
+        iscommonwith = False if (set(texttag['txt_set']).isdisjoint(lang_textIds_set) \
+                                 or set(texttag['txt_set']).isdisjoint(time_textIds_set)) else True
+        texttag_textIds_boldlist[idx]['bold'] = iscommonwith
+    for idx, time in enumerate(time_textIds_boldlist):
+        iscommonwith = False if (set(time['txt_set']).isdisjoint(lang_textIds_set) \
+                                 or set(time['txt_set']).isdisjoint(texttag_textIds_set)) else True
+        time_textIds_boldlist[idx]['bold'] = iscommonwith
+    
 
     ##################################### Deleting a file #############################################################
     if request.GET.get('del'):
@@ -281,10 +325,13 @@ def text_list(request):
     return render (request, 'lwt/text_list.html',
                    {
                     'languages':languages, 
-                    'lang_filter':lang_filter, 'texttag_filter':texttag_filter, 
+                    'lang_filter':lang_Ids_list, 'texttag_filter':texttag_filter, 
                     'time_filter':time_filter, 
                     'texttags_list': texttags_list, 'texttags_list_empty':texttags_list_empty,
                     'time_list': time_list, 'time_list_empty':time_list_empty,
+                    'lang_textIds_list':lang_textIds_list,
+                    'texttag_textIds_boldlist':texttag_textIds_boldlist,
+                    'time_textIds_boldlist':time_textIds_boldlist,
                     'timezone_now': now,
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
                      'database_size':database_size})
