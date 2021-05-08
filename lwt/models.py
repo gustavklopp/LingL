@@ -216,47 +216,45 @@ class Grouper_of_same_words(BaseModel):
 
         
 class Words(BaseModel):
+    #### Foreign keys:
+    language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage', on_delete=models.CASCADE )
+    text = models.ForeignKey(Texts, on_delete=models.CASCADE,blank=True, null=True, related_name='texthavingthisword')
+    sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, null=True, on_delete=models.CASCADE)
+    # compoundword: Several words which together have a meaning in the language:
+    # in English: 'turn' and 'off', 'get'and 'up'. or even expression longer
+    # we store a ForeignKey on the Words model itself. It takes some extra place in the models but
+    # usually User won't create a lot of them...
+    # for example: 'white' 'paper' is different from 'paper' 'white'. so store the order of the words
+    compoundword = models.ForeignKey('self', blank=True, null=True, \
+                       related_name='compoundwordhavingthiswordinside',\
+                       on_delete=models.SET_NULL
+                       ) # foreignkey to the same table
     grouper_of_same_words = models.ForeignKey(Grouper_of_same_words, null=True, related_name='grouper_of_same_words_for_this_word',
                                               on_delete=models.SET_NULL)
-    
+    # Added by myself: Link to the Tags
+    wordtags = models.ManyToManyField(Wordtags, related_name='wordtag_with_this_word')
+
+    #### Not foreign keys:
 #     STATUS_CHOICES = ( (0, _('Unknown')),
 #                        (1, _('Learning')),
 #                        (100, _('Well-known')),
 #                        (101, _('Ignored')))
     status = models.IntegerField(choices=STATUS_CHOICES, default=0)  
-    language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage', on_delete=models.CASCADE )
-    text = models.ForeignKey(Texts, on_delete=models.CASCADE,blank=True, null=True)
-    sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, null=True, on_delete=models.CASCADE)
     order = models.IntegerField(blank=True, null=True)  
     wordtext = models.CharField( max_length=250,blank=True, null=True)  
     isnotword = models.BooleanField(default=False)  
     translation = models.CharField( max_length=500, blank=True, null=True)  
     romanization = models.CharField( max_length=100, blank=True, null=True)  
     customsentence = models.CharField( max_length=1000, blank=True, null=True) 
-    # Added by myself: Link to the Tags
-    wordtags = models.ManyToManyField(Wordtags, related_name='wordtag_with_this_word')
-    
-    # compoundword: Several words which together have a meaning in the language:
-    # in English: 'turn' and 'off', 'get'and 'up'. or even expression longer
-    # we store a ForeignKey on the Words model itself. It takes some extra place in the models but
-    # usually User won't create a lot of them...
     wordinside_order = models.TextField(max_length=250,blank=True,null=True) # stored by dumping JSON format into str
-    # for example: 'white' 'paper' is different from 'paper' 'white'. so store the order of the words
     isCompoundword = models.BooleanField(default=False)
-    compoundword = models.ForeignKey('self', blank=True, null=True, \
-                       related_name='compoundwordhavingthiswordinside',\
-                       on_delete=models.SET_NULL
-                       ) # foreignkey to the same table
     show_compoundword = models.BooleanField(default=False) # showing compoundword or single word in text_read
-    
     state = models.BooleanField(default=False) # used to export2anki checkox
-    
     extra_field = models.TextField(max_length=500, blank=True, null=True) # additional, custom field. stored in json format a dict
 
     def __str__(self):
         return self.wordtext
     
-
     class Meta:
         db_table = 'words'        
 #####################################################

@@ -193,9 +193,11 @@ def make_languagesform(user_id, dicturi_list=[]):
 
 
 class TextsForm(forms.ModelForm):
+    id = forms.IntegerField()
     language = forms.ModelChoiceField(Languages.objects.all(),empty_label=_("[Choose...]"),
                                       required=True)
     owner = forms.ModelChoiceField(MyUser.objects.all(), required=True)
+    lastopentime = forms.DateTimeField(required=False)
     title = forms.CharField(max_length=200,required=True)
     text = forms.CharField(widget=forms.Textarea(attrs={'rows': 20, 'cols': 60}), required=True)
 #                                                         'pattern':'.*\p{L}.*'}))
@@ -229,13 +231,17 @@ class TextsForm(forms.ModelForm):
         self.helper_edit1.form_tag = False
         self.helper_edit1.layout = Layout(
             Field('owner', type="hidden"),
+            Field('id', type="hidden"),
             'language', 'title')
         self.helper_edit2 = FormHelper()
         self.helper_edit2.label_class = 'col-md-3'
         self.helper_edit2.field_class = 'col-md-9'
         self.helper_edit2.form_tag = False
         self.helper_edit2.layout = Layout(
+            Field('text', type="hidden"),
+            Field('lastopentime', type="hidden"),
             'annotatedtext','audiouri','sourceuri','texttags')
+        self.helper_edit2.add_input(Submit('save', 'save'))
  
 #         if hasattr(self.Meta, 'fields'): delattr(self.Meta, 'fields')
 
@@ -252,7 +258,7 @@ class TextsForm(forms.ModelForm):
         fields = '__all__'
         widget= {
             'texttags': tag_widgets.TagsInputWidget, # getting the tags fo the texts (using Django tagsinput app)
-}
+        }
     
 
 class WordsForm(forms.ModelForm):

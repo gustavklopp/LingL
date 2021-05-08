@@ -27,6 +27,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._utilities_views import get_word_database_size
+from _ast import Or
 
 ''' called by ajax (built-in function) inside bootstrap-table #text_table to fill the table'''
 def load_texttable(request):
@@ -341,29 +342,48 @@ def text_list(request):
 @nolang_redirect
 def text_detail(request):
         
-    # POST method: a new language has been created or a old one is edited, or a filter is applied
+    # POST method: a new text has been created or a old one is edited
+    # Triggered by the "Submit" button at the end of the text_detail page
     if request.method == 'POST':
         f = TextsForm(request.POST or None)
         if f.is_valid():
-            savedtext = f.save()
+            if 'new' in request.GET.keys():
+                savedtext = f.save()
+                # Process the file :
+                # split the text into sentences and into words and put it in Unknownwords
+                splitText(request, savedtext) #  in _utilities_views
+
+            else:
+                savedtext = f.save(commit=False)
+                # the field 'created_date' isn't copied in the model because it's an 'auto_add=True'
+                # ... do it manually:
+                savedtext.created_date = f.data['created_date']
+                text_id = f.data['id'] 
+                savedtext.id = int(text_id) # Without doing this, modelform is creating a new object, strangely...
+                savedtext.save()
+
             # add the Owner in the texttags model (not done automatically)
             for ttag in savedtext.texttags.all():
                 ttag.owner = request.user
                 ttag.save()
-            
-            # Process the file :
-            # split the text into sentences and into words and put it in Unknownwords
-            splitText(request, savedtext) #  in _utilities_views
 
-            messages.add_message(request, messages.SUCCESS, _('Text successfully added'))
+            if 'new' in request.GET.keys():
+                messages.add_message(request, messages.SUCCESS, _('Text successfully added'))
+            else:
+                messages.add_message(request, messages.SUCCESS, _('Text successfully modified'))
             #update the cookie for the database_size
             set_word_database_size(request)
-
             return redirect(reverse('text_list'))
-        else:
-            messages.add_message(request, messages.ERROR, _('There was an error in adding this text.'))
+
+        else: # errors processing
+            if 'new' in request.GET.keys():
+                messages.add_message(request, messages.ERROR, _('There was an error in adding this text.'))
+            else:
+                messages.add_message(request, messages.ERROR, _('There was an error in modifying this text.'))
             return render(request, 'lwt/text_detail.html', {'form':f})
-    # Displaying the form to Create a new text, Edting a text:
+
+    # Displaying the form to Create a new text, or Delete/Edit a word or Insert a Word:
+    # (for the edit part: triggered by the submit in the tooltip)
     elif request.method == 'GET':
         # get currentlang_id from cookie, else from database
         currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
@@ -382,14 +402,90 @@ def text_detail(request):
             # STRING CONSTANTS:
             op = 'new'
             text_title = '' # used by edit section
-        if 'edit' in request.GET.keys():
+            created_date = None
+            text_id = None
+
+        # deleting a word
+        elif 'word_delete' in request.GET.keys():
+            wo_id = request.GET['word_delete']
+            deleted_or_edited_word = Words.objects.get(id=wo_id)
+            text_id = deleted_or_edited_word.text.id
+            deleted_or_edited_word.delete()
+            text = Texts.objects.get(id=text_id)
+
+        # editing a word
+        elif 'word_edit' in request.GET.keys():
+            wo_id = request.GET['wo_id'] # where is the word edited
+            wo_wordtext = request.GET['word_edit'] # with what will the word be replace
+            deleted_or_edited_word = Words.objects.get(id=wo_id)
+            deleted_or_edited_word.wordtext = wo_wordtext
+            deleted_or_edited_word.save()
+            text = Words.objects.get(id=wo_id).text
+        
+        # inserting a word
+        elif 'word_insert' in request.GET.keys():
+            wo_id = request.GET['wo_id'] # where to insert the word
+            wo_wordtext = request.GET['word_insert'] # what word will be inserted
+            previous_space = Words.objects.get(id=wo_id)
+            text = previous_space.text
+            new_word = Words()
+            new_word.id = previous_space.id +1
+            new_word.order = previous_space.order +1
+            # copy all the rests
+            new_word.wordtext = wo_wordtext
+            new_word.isnotword = False
+            new_word.owner = previous_space.owner
+            new_word.language = previous_space.language
+            new_word.sentence = previous_space.sentence
+            new_word.text = previous_space.text
+            new_word.created_date = timezone.now()
+
+            # we insert a space also:
+            new_space = Words()
+            new_space.id = previous_space.id +2
+            new_space.wordtext = previous_space.wordtext
+            new_space.isnotword = True
+            new_space.owner = previous_space.owner
+            new_space.language = previous_space.language
+            new_space.sentence = previous_space.sentence
+            new_space.text = previous_space.text
+            new_space.created_date = timezone.now()
+
+            # shift all the ids of the next words by 2 (we begin the shift by the last one)
+            lastword = Words.objects.filter(id__gt=previous_space.id).order_by('-id').first()
+            for id_to_update in range(lastword.id, previous_space.id+2, -1):
+                Words.objects.filter(id=id_to_update).update(id=id_to_update+2)
+            new_word.save()
+            new_space.save()
+
+        # displaying the editable text
+        elif 'edit' in request.GET.keys():
             text_id = request.GET['edit']
-            text = Texts.objects.all().get(id=text_id)
+            text = Texts.objects.get(id=text_id)
+        
+        # the field 'text' in Text must be changed also, and the sentence where this word is
+        if 'word_delete' in request.GET.keys() or \
+                'word_edit' in request.GET.keys():
+            # updating the field 'text' in Text
+            allwords_in_this_text = Words.objects.filter(text=text)
+            text_text = ''.join(list(allwords_in_this_text.values_list('wordtext', flat=True)))
+            text.text = text_text
+            text.save()
+            # updating the filed 'sentencetext' in Sentence
+            allwords_in_this_sentence = allwords_in_this_text.filter(sentence=deleted_or_edited_word.sentence)
+            sentence_sentencetext = ''.join(list(allwords_in_this_sentence.values_list('wordtext', flat=True)))
+            Sentences.objects.filter(id=deleted_or_edited_word.sentence.id).update(sentencetext=sentence_sentencetext)
+
+        # common for edit/delete a word or display the editable text
+        if 'new' not in request.GET.keys(): 
             f = TextsForm(instance=text)
             word_inthistext = Words.objects.filter(text=text).order_by('sentence_id', 'order')
             # STRING CONSTANTS:
             op = 'edit'
             text_title = text.title # used by edit section
+            created_date = text.created_date
+            text_id = text.id
+
 
         f_uploaded_text = Uploaded_textForm()
         # get the list of languages to display them in the drop-down menu:
@@ -401,7 +497,8 @@ def text_detail(request):
                             # inside thetext div:
                             'word_inthistext':word_inthistext,
                             # STRING CONSTANTS:
-                            'op':op, 'text_title':text_title
+                            'op':op, 'text_title':text_title, 'text_id': text_id,
+                            'created_date':created_date
                                                      })
         
 ''' called by ajax in text_detail.html to uploade a text file, process it 
@@ -420,7 +517,7 @@ def uploaded_text(request):
                 return HttpResponse(json.dumps({'title':title, 'text':text}))
             except UnicodeDecodeError as e: # the file contains not unicode characters
                 delete_uploadedfiles(Uploaded_text)
-                return HttpResponse(json.dumps({'error':'{} ("{}")'.format(gettext('Check coding of this text!'), e)}))
+                return HttpResponse(json.dumps({'error':'{} ("{}")'.format(_('Check coding of this text!'), e)}))
         else:
             delete_uploadedfiles(Uploaded_text)
             return HttpResponse(json.dumps({'error':form.errors}))

@@ -32,7 +32,7 @@
 	{% for lang in lang_textIds_list %}
 	<input data-textids="{{ lang.txt_set_json }}" type="checkbox" {% if lang.lang.id in lang_filter %}checked{% endif %} onclick="textlist_filter();" value="{{ lang.lang.id }}" class="unstyled">
 	 <span class="checkboxitem-bold">{{ lang.lang.name }}</span>
-	 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
+	 {% if lang.lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
 	  src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img 
 	  onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.lang.id }}';" 
 	  title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}

@@ -12,8 +12,6 @@
 
 {% block javascript %}{{ block.super }} 
 	<script type="text/javascript" src="{% static 'lwt/js/ajax_text_detail.js' %}" charset="utf-8"> </script>
-	<!--  Plugin for tooltip: tooltipster -->
-	<script type="text/javascript" src="{% static 'lwt/js/tooltipster_js/tooltipster.bundle.min.js' %}"></script>
  {% endblock javascript %}
 
 {% block pagetitle %}{% ifequal op 'new' %}{% trans "Creating a new text" %}{% else %}{% trans "Editing Text : " %}{{ text_title }}"{% endifequal %} | {{ block.super }}
@@ -37,13 +35,20 @@
 <form class="form-horizontal text_detail" method="post" novalidate="novalidate">
 
 	{% crispy form  form.helper_edit1 %}
+
 <div id="div_id_text" class="form-group"> 
 	<label for="id_text" class="control-label col-md-3"> text </label> 
 	<div class="controls col-md-9"> 
-{#   EDITING THE TEXT      #}
+{#     EDITING THE TEXT      #}
 {# the 'if wo.order == 0... is to add a space after a delimiter: aering the text! #}
-{% for wo in word_inthistext %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span title="click to insert word(s)"'>{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}<span 
-class="mytooltip" data-tooltip-content="#tooltip_content" woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
+
+{% for wo in word_inthistext %}
+	{% if wo.isCompoundword and wo.isnotword %}
+	{% else %}
+		{% if wo.isnotword %}<span woid="{{ wo.id }}" {% ifequal wo.wordtext " " %}class="noword_tooltip" data-tooltip-content="#tooltip_content">&nbsp;{% else %}>{{ wo.wordtext|linebreaksbr }}{% endifequal %}</span>
+		{% else %}
+			{% if wo.order == 0 and not forloop.first %} {% endif %}<span 
+class="word_tooltip" data-tooltip-content="#tooltip_content" woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
 woromanization="{{ wo.romanization }}" iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
 {% if wo.isCompoundword %}
 cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" coworomanization="{{ wo.compoundword.romanization }}" 
@@ -51,34 +56,44 @@ cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.tr
 cowostatus="" cowotranslation="" coworomanization="" 
 {% endif %}
 {% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}
->{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
+>{{ wo.wordtext }}</span>
+		{% endif %}
+	{% endif %}
+{% endfor %}
 {# END -- DISPLAYING THE TEXT #}
  	</div>
 </div>
 
+<input type="hidden" name="created_date" class="datetimeinput form-control" id="id_created_date"
+	value="{{ created_date|date:"Y-m-d H:i:s.u" }}">
 	{% crispy form  form.helper_edit2 %}
+
 </form>
 {% endif %}
-
-	<script>
+	<!--  for Plugin "Jquery validation" -->
+	<script type="text/javascript" src="{% static 'lwt/js/_jquery.validate.min.js' %}" charset="utf-8"></script>
+	<script type="text/javascript" src="{% static 'lwt/js/_jquery.validate2.min.js' %}" charset="utf-8"></script>
+	<!--  for Plugin "tooltip: tooltipster" -->
+	<script type="text/javascript" src="{% static 'lwt/js/tooltipster_js/tooltipster.bundle.min.js' %}"></script>
+	<script type="text/javascript">
 	// override jquery validate plugin defaults
-	$.validator.setDefaults({
-	    highlight: function(element) {
-	        $(element).closest('.form-group').addClass('has-error');
-	    },
-	    unhighlight: function(element) {
-	        $(element).closest('.form-group').removeClass('has-error');
-	    },
-	    errorElement: 'span',
-	    errorClass: 'help-block',
-	    errorPlacement: function(error, element) {
-	        if(element.parent('.input-group').length) {
-	            error.insertAfter(element.parent());
-	        } else {
-	            error.insertAfter(element);
-	        }
-	    }
-	});
+		$.validator.setDefaults({
+			highlight: function(element) {
+				$(element).closest('.form-group').addClass('has-error');
+			},
+			unhighlight: function(element) {
+				$(element).closest('.form-group').removeClass('has-error');
+			},
+			errorElement: 'span',
+			errorClass: 'help-block',
+			errorPlacement: function(error, element) {
+				if(element.parent('.input-group').length) {
+					error.insertAfter(element.parent());
+				} else {
+					error.insertAfter(element);
+				}
+			}
+		});
 	// pattern for text (using jquery.validate plugin and jquery.validate+additional methods)
 	$("form.text_detail").validate({
 		rules: {
@@ -88,17 +103,16 @@ cowostatus="" cowotranslation="" coworomanization=""
 			text: {pattern: gettext('Text should contain characters, not only symbols')}
 		}
 	})
-	</script>
-	<!--  Plugin for tooltip: tooltipster -->
-	    <script>
+	//  Plugin for tooltip: tooltipster 
         $(document).ready(function() {
-        	var mytooltip = $('.mytooltip');
-            mytooltip.tooltipster({
+        	// Word tooltip
+        	var word_tooltip = $('.word_tooltip');
+            word_tooltip.tooltipster({
 				 theme: ['tooltipster-noir', 'tooltipster-noir-customized'],
             	contentCloning: true,
             	trigger: 'hover'
             });
-            mytooltip.tooltipster({
+            word_tooltip.tooltipster({
 				 theme: ['tooltipster-noir', 'tooltipster-noir-customized'],
             	contentCloning: true,
             	trigger: 'click',
@@ -107,19 +121,52 @@ cowostatus="" cowotranslation="" coworomanization=""
             	multiple: true
             });
             
-            mytooltip.each(function(idx, val){
+            word_tooltip.each(function(idx, val){
 				var instances = $.tooltipster.instances(val);
 				// use the instances to make any method calls on the tooltips
 				instances[0].content('click to edit/delete word');
-				var clicktooltip_in = '<a href="">Delete word</a><br><form action="">';
-				clicktooltip_in += 'Edit word: <input type="text" name="edited_word" value=""><br>';
-				clicktooltip_in += '<input type="submit" value="Submit"></form>',
+				var clicktooltip_in = "<a href=\"{% url 'text_detail' %}?edit={{ text_id }}&word_delete="+$(val).attr('woid');
+				clicktooltip_in += "\">Delete word</a><br><form action=\"\">";
+				clicktooltip_in += "Edit word: <input type=\"text\" name=\"word_edit\"\ value=\"\" ";
+				clicktooltip_in += "><br>";
+				clicktooltip_in += "<input type=\"hidden\" name=\"wo_id\"\ value=\"";
+				clicktooltip_in += $(val).attr('woid')+"\">";
+				clicktooltip_in += "<input type=\"submit\" value=\"Submit\"></form>",
 				instances[1].content(clicktooltip_in);
             });
-
-
 			 // WARNING: calling  methods in the usual way only affects the first tooltip that was created on the element
-			 //$('.mytooltip').tooltipster('content', 'New content for my first tooltip') 
+			 //$('.word_tooltip').tooltipster('content', 'New content for my first tooltip') 
+
+        	// NoWord tooltip
+        	var noword_tooltip = $('.noword_tooltip');
+            noword_tooltip.tooltipster({
+				 theme: ['tooltipster-noir', 'tooltipster-noir-customized'],
+            	contentCloning: true,
+            	trigger: 'hover'
+            });
+            noword_tooltip.tooltipster({
+				 theme: ['tooltipster-noir', 'tooltipster-noir-customized'],
+            	contentCloning: true,
+            	trigger: 'click',
+				contentAsHTML: true,
+				interactive:true,
+            	multiple: true
+            });
+            
+            noword_tooltip.each(function(idx, val){
+				var instances = $.tooltipster.instances(val);
+				// use the instances to make any method calls on the tooltips
+				instances[0].content('click to insert a word (or delete space)');
+				var clicktooltip_in = "<a href=\"{% url 'text_detail' %}?edit={{ text_id }}&word_delete="+$(val).attr('woid');
+				clicktooltip_in += "\">Delete space</a><br/>";
+				clicktooltip_in += "<form action=\"\">";
+				clicktooltip_in += "insert a word: <input type=\"text\" name=\"word_insert\"\ value=\"\" ";
+				clicktooltip_in += "><br>";
+				clicktooltip_in += "<input type=\"hidden\" name=\"wo_id\"\ value=\"";
+				clicktooltip_in += $(val).attr('woid')+"\">";
+				clicktooltip_in += "<input type=\"submit\" value=\"Submit\"></form>",
+				instances[1].content(clicktooltip_in);
+            });
         });
     </script>
 	

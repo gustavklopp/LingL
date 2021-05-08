@@ -48,8 +48,6 @@
 	width: 100%
 }
 
-
-
 /* the statuses */
 word_left_todo[wostatus="0"] {
 	/* for display the TO DO with the word count */
@@ -323,6 +321,11 @@ a.headCaret:before {
 
 .tooltipster-sidetip.tooltipster-noir.tooltipster-noir-customized .tooltipster-content {
 	color: grey;
+}
+
+.noword_tooltip:hover, .word_tooltip:hover{
+	border: solid red;
+	border-width: medium;	
 }
 /******************************************************************************
      IN LANGUAGE_DETAIL
