@@ -3,8 +3,6 @@
 {% load i18n %} {# used for internationalization #}
 {% load crispy_forms_tags %}
 
-
-
 {% block stylesheets %}{{ block.super }}
 	<!--  Plugin for tooltip: tooltipster -->
     <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/tooltipster_css/tooltipster.bundle.min.css' %}" />
@@ -164,6 +162,7 @@ cowostatus="" cowotranslation="" coworomanization=""
 				clicktooltip_in += "><br>";
 				clicktooltip_in += "<input type=\"hidden\" name=\"wo_id\"\ value=\"";
 				clicktooltip_in += $(val).attr('woid')+"\">";
+				clicktooltip_in += "<input type=\"hidden\" name=\"edit\"\ value={{ text_id }} >";
 				clicktooltip_in += "<input type=\"submit\" value=\"Submit\"></form>",
 				instances[1].content(clicktooltip_in);
             });

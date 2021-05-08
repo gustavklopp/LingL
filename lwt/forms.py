@@ -2,7 +2,7 @@ from django import forms
 
 from django.urls import reverse
 from django.utils.translation import ugettext as _, get_language_info
-from django.conf.locale import LANG_INFO
+from django.conf.global_settings import LANGUAGES
 from django.conf import settings
 from django.db import transaction
 # Second party:
@@ -193,9 +193,8 @@ def make_languagesform(user_id, dicturi_list=[]):
 
 
 class TextsForm(forms.ModelForm):
-    id = forms.IntegerField()
-    language = forms.ModelChoiceField(Languages.objects.all(),empty_label=_("[Choose...]"),
-                                      required=True)
+#     id = forms.IntegerField()
+    language = forms.ModelChoiceField(queryset=None, required=True)
     owner = forms.ModelChoiceField(MyUser.objects.all(), required=True)
     lastopentime = forms.DateTimeField(required=False)
     title = forms.CharField(max_length=200,required=True)
@@ -208,9 +207,12 @@ class TextsForm(forms.ModelForm):
                                     create_missing=True,
                                     required=False) 
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, user, *args, **kwargs):
         super(TextsForm, self).__init__(*args,**kwargs)
   
+        # the dropdown menu for Languages only shows the languages owned by User
+        self.fields['language'].queryset = Languages.objects.all().filter(owner=user)
+
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal text_detail'
         self.helper.label_class = 'col-md-3'
@@ -369,11 +371,23 @@ class Uploaded_textForm(forms.ModelForm):
 
 ''' Used by Django-allauth: custom forms '''
 class MySignUpForm(SignupForm):
-    try: # Bug? It triggers an error when doing ./manage.py migrate
-        LANG_CHOICES = list(Languages.objects.filter(owner_id=1).values_list('django_code', 'name').order_by('name'))
-        origin_lang_code = forms.ChoiceField(choices=LANG_CHOICES, required=True)
-    except:
-        pass
+#     try: # Bug? It triggers an error when doing ./manage.py migrate
+        # LANG_CHOICES: <class 'list'>: [('zh-cn', 'Chinese'), ('en', 'English'),....
+    # displaying the language I know. we need to localized it, and sort it (because by default,
+    #.. they are sorted by the lang code, which is not what is displayed to the User
+    LOCALIZED_LANGUAGES = [(i[0], get_language_info(i[0])['name_translated']) for i in LANGUAGES]
+    LOCALIZED_LANGUAGES.sort(key=lambda tup: tup[1])
+    origin_lang_code = forms.ChoiceField(choices=LOCALIZED_LANGUAGES, required=True) # the language I know
+
+    # displaying the language I want to learn:
+    # we'll put in database the id and the name (and also in cookie): see in Models.UserAccountAdapter
+    languages_list = list(Languages.objects.filter(owner_id=1).values_list('id', 'name').order_by('name'))
+    LEARNING_LANG_CHOICES = [(id, _(name)) for id, name in languages_list]
+    # LEARNING_LANG_CHOICES has type like: <class 'list'>: 
+    #              [('zh-cn+Chinese', localized('Chinese')), ('en+English', localized('English')),....
+    AdminUser_learning_lang_id = forms.ChoiceField(choices=LEARNING_LANG_CHOICES, required=True) # the language I want to learn
+#     except:
+#         pass
 
     def __init__(self, *args, **kwargs):
         super(MySignUpForm, self).__init__(*args, **kwargs)
@@ -386,6 +400,8 @@ class MySignUpForm(SignupForm):
         self.helper.form_class = 'form-horizontal'
         self.helper.label_class = 'col-md-3'
         self.helper.field_class = 'col-md-3'
+        self.fields['origin_lang_code'].label = _('I know')
+        self.fields['AdminUser_learning_lang_id'].label = _('I want to learn')
         self.helper.add_input(Submit('signup', _('Sign Up'), css_class='btn btn-primary'))
 
 

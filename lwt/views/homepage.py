@@ -45,13 +45,7 @@ def homepage(request):
     else:
         # get the currentlang.
         currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
-        if currentlang_id == '': # first time launching: no Language.
-            currentlang_name = ''
-        else: # Languages exist
-            if int(currentlang_id) == -1: # -1 is the code for no filter 
-                currentlang_name = -1
-            else: # "" is the code for : not yet defined
-                currentlang_name = Languages.objects.filter(owner=request.user).values_list('name',flat=True).get(id=currentlang_id) if currentlang_id else ""
+        currentlang_name = getter_settings_cookie_else_db('currentlang_name', request)
 
     # Last open texts:
     lastopentexts = Texts.objects.filter(owner=request.user, lastopentime__isnull=False).order_by('lastopentime').all()[:5]

@@ -48,7 +48,7 @@ from lwt.constants import STATUS_CHOICES
 
 class MyUser(AbstractUser):
     ''' overrding default User to add complementary data '''
-    # origin lang:
+    # the language that the User already knows: (code is a 2 letters)
     origin_lang_code = models.CharField(max_length=40)
 
         
@@ -401,11 +401,13 @@ class Settings_similar_terms_count(Settings):
     isinteger= models.BooleanField(default=True)
     
     
-# current settings
+# current settings. We'll store them in cookies preferentially but keep them also 
+# in database (if cookies are erased for example, we'll still have these data)
+
+''' the language the User is currently learning'''
 class Settings_currentlang_name(Settings):
     pass
-
-
+''' the language the User is currently learning'''
 class Settings_currentlang_id(Settings):
     isinteger= models.BooleanField(default=True)
 
@@ -488,15 +490,17 @@ class UserAccountAdapter(DefaultAccountAdapter):
         user = super(UserAccountAdapter, self).save_user(request, user, form, commit=commit)
         user.origin_lang_code = form.cleaned_data.get('origin_lang_code')
         user.save()
+
         # create a duplicate of the Admin's language that the User has chosen
-        chosen_lang = Languages.objects.get(django_code=user.origin_lang_code)
-        chosen_lang.pk = None
-        chosen_lang.owner = user
-        chosen_lang.save()
-#         # and set this as the currentlang in database and cookie
-#         chosen_lang = Languages.objects.filter(owner=user).get(django_code=user.origin_lang_code)
-        Settings_currentlang_id.objects.create(owner=user, stvalue=chosen_lang.pk)
-        Settings_currentlang_name.objects.create(owner=user, stvalue=chosen_lang.name)
+        # the Admin 'lingl` owns the basis of the languages
+        AdminUser_learning_lang_id = form.cleaned_data['AdminUser_learning_lang_id']  
+        learning_lang = Languages.objects.get(id=int(AdminUser_learning_lang_id))
+        learning_lang.pk = None
+        learning_lang.owner = user
+        learning_lang.save()
+        # and set this as the currentlang in database (can't put in cookie for the moment because no 'request')
+        Settings_currentlang_id.objects.create(owner=user, stvalue=learning_lang.id)
+        Settings_currentlang_name.objects.create(owner=user, stvalue=learning_lang.name)
         return user    
 
 

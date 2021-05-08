@@ -345,7 +345,7 @@ def text_detail(request):
     # POST method: a new text has been created or a old one is edited
     # Triggered by the "Submit" button at the end of the text_detail page
     if request.method == 'POST':
-        f = TextsForm(request.POST or None)
+        f = TextsForm(request.user, request.POST or None)
         if f.is_valid():
             if 'new' in request.GET.keys():
                 savedtext = f.save()
@@ -358,7 +358,7 @@ def text_detail(request):
                 # the field 'created_date' isn't copied in the model because it's an 'auto_add=True'
                 # ... do it manually:
                 savedtext.created_date = f.data['created_date']
-                text_id = f.data['id'] 
+                text_id = request.GET['edit']
                 savedtext.id = int(text_id) # Without doing this, modelform is creating a new object, strangely...
                 savedtext.save()
 
@@ -393,11 +393,9 @@ def text_detail(request):
         if 'new' in request.GET.keys():
             # must display the form for the first time:
 
-            if int(currentlang_id) != -1:  # Put an initial value in the language dropdown menu:
-                currentlang = Languages.objects.get(id=currentlang_id)
-                f = TextsForm(initial = {'owner': request.user, 'language':currentlang}) # always set the owner as default request.user
-            else:
-                f = TextsForm(initial = {'owner': request.user}) # always set the owner as default request.user
+            currentlang = Languages.objects.get(id=currentlang_id)
+            f = TextsForm(request.user, initial = {'owner': request.user, 'language':currentlang}) 
+
             word_inthistext=None
             # STRING CONSTANTS:
             op = 'new'
@@ -478,7 +476,7 @@ def text_detail(request):
 
         # common for edit/delete a word or display the editable text
         if 'new' not in request.GET.keys(): 
-            f = TextsForm(instance=text)
+            f = TextsForm(request.user, instance=text)
             word_inthistext = Words.objects.filter(text=text).order_by('sentence_id', 'order')
             # STRING CONSTANTS:
             op = 'edit'
@@ -489,7 +487,7 @@ def text_detail(request):
 
         f_uploaded_text = Uploaded_textForm()
         # get the list of languages to display them in the drop-down menu:
-        language_selectoption = Languages.objects.values('name','id').order_by('name')
+        language_selectoption = Languages.objects.filter(owner=request.user).values('name','id').order_by('name')
         return render(request, 'lwt/text_detail.html', {
                             'form':f, 'language_selectoption':language_selectoption,
                             'form_uploaded_text':f_uploaded_text,

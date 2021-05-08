@@ -211,25 +211,28 @@ def fill_language_detail(request):
     js = json.dumps(chosen_lang, cls=DjangoJSONEncoder)
     return HttpResponse(js)
 
-''' load and get the real name for the Fixtures of languages (in lwt/fixtures folder) 
-    get the destination language for the translation
-    we used this to modify the dict1uri and dict2uri with the correct language destination
-    We postulate that the destination language is the one chosen by the user in his profile '''
+''' load and get the real name and the ISO language codes for the Fixtures of languages 
+    (in lwt/fixtures folder) for the destination language for the translation
+                            and for the "origin" language (language User knows)
+    we used this to modify the dict1uri and dict2uri with the correct language destination'''
 def get_language_fixture(request, code_lang):
+    # for the origin lang too (language I know):
     origin_lang_code = request.user.origin_lang_code
-    # then get the language data:
-    chosen_lang = Languages.objects.filter(owner=1, code_639_1=code_lang).values()[0]
-    # and for the origin lang too:
-    origin_lang = Languages.objects.filter(owner=1, code_639_1=origin_lang_code).values()[0]
+    with open('lwt/fixtures/languages_codes.json', 'r') as languages_codes_f:
+        languages_codes_list = json.load(languages_codes_f)
+        for lang in languages_codes_list:
+            if lang['1'] ==  origin_lang_code:
+                origin_lang = lang
+    
+    # for the chosen lang (language I want to learn)
+    learning_lang = Languages.objects.filter(owner=1, code_639_1=code_lang).values()[0]
+
     # then change the placeholder string for the translation:
-    chosen_lang['dicturi'] = re.sub(r'••••', origin_lang['name'], 
-                                        chosen_lang['dicturi'])
-    chosen_lang['dicturi'] = re.sub(r'•••', origin_lang['code_639_2t'], 
-                                        chosen_lang['dicturi'])
-    chosen_lang['dicturi']= re.sub(r'••', origin_lang['code_639_1'], 
-                                        chosen_lang['dicturi'])
-    chosen_lang['googletranslateuri'] = re.sub(r'••', origin_lang['code_639_1'], 
-                                        chosen_lang['googletranslateuri'])
-    return chosen_lang
+    learning_lang['dicturi'] = re.sub(r'••••', origin_lang['name'], learning_lang['dicturi'])
+    learning_lang['dicturi'] = re.sub(r'•••', origin_lang['2T'], learning_lang['dicturi'])
+    learning_lang['dicturi']= re.sub(r'••', origin_lang['1'], learning_lang['dicturi'])
+    learning_lang['googletranslateuri'] = re.sub(r'••', origin_lang['1'], 
+                                                        learning_lang['googletranslateuri'])
+    return learning_lang
     
     
