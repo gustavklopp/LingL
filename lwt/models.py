@@ -32,6 +32,7 @@ from django.db import models
 from django.utils import timezone, timesince
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import AbstractUser
+from django.core import serializers
 # second party
 # third party
 from allauth.account.adapter import DefaultAccountAdapter
@@ -51,6 +52,9 @@ class MyUser(AbstractUser):
     # the language that the User already knows: (code is a 2 letters)
     origin_lang_code = models.CharField(max_length=40)
 
+    def __str__(self, *args, **kwargs):
+#         super(AbstractUser, self).__str__(*args,**kwargs)
+        return self.username 
         
 class BaseModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
@@ -77,7 +81,10 @@ class Extra_field_key(BaseModel):
 
     class Meta:
         db_table = 'extra_field_key'
-        
+
+class LanguagesManager(models.Manager):
+    def get_by_natural_key(self, name, owner):
+        return self.get(name=name, owner=owner)
         
 class Languages(BaseModel):
     name = models.CharField(max_length=40)  
@@ -109,11 +116,18 @@ class Languages(BaseModel):
     # JSON List of string. the language model stores only the keys for the extra_field JSON of Words
     extra_field_key = models.ManyToManyField(Extra_field_key, related_name='languagehavingthisextrafieldkey') 
 
+    objects = LanguagesManager() # use for serialization
+
     def __str__(self):
         return self.name
 
     class Meta:
         db_table = 'languages'
+        unique_together = [['name', 'owner']]
+
+    def natural_key(self):
+        return (self.name, self.owner)
+
 
 class Texttags(BaseModel):
     txtagtext = models.CharField( unique=True, max_length=20)  
@@ -124,7 +138,11 @@ class Texttags(BaseModel):
         
     class Meta:
         db_table = 'texttags'
+
         
+class TextsManager(models.Manager):
+    def get_by_natural_key(self, title, owner):
+        return self.get(title=title, owner=owner)
         
 class Texts(BaseModel):
     ''' to be deleted, you need to delete the textitem and the sentence containing foreignkey to the text before'''
@@ -138,12 +156,18 @@ class Texts(BaseModel):
     texttags = models.ManyToManyField(Texttags,related_name='texthavingthistag') 
     lastopentime = models.DateTimeField(blank=True, null=True)
     archived = models.BooleanField(default=False)
+
+    objects = TextsManager() # use for serialization
     
     def __str__(self):
         return self.title
 
     class Meta:
         db_table = 'texts'
+        unique_together = [['title', 'owner']]
+
+    def natural_key(self):
+        return (self.title, self.owner)
 
 
 class Sentences(BaseModel): # the Text is cut into sentences

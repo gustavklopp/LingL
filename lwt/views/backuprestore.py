@@ -23,6 +23,7 @@ import gzip #it's standard in python
 import io #it's standard in python
 import tempfile #it's standard in python
 # third party
+from yaml import load, Loader, FullLoader
 # local
 from lwt.models import *
 from lwt.forms import *
@@ -104,31 +105,56 @@ def backuprestore(request):
                 delete_uploadedfiles(Restore)
             
             if 'install_demo' in request.POST.values():
-                # make the user the owner of the elements in the fixture
-                fixt = 'lwt/fixtures/lingl_demo_user_1.yaml'
-                user_id = str(request.user.id)
-                fixt_copy = fixt.replace("1", user_id)
-                with open(fixt, "r") as fixt_file:
-                    texts = fixt_file.read()
-                    texts = texts.replace("owner: 1", "owner: "+user_id)
-                with open(fixt_copy, "w") as fixtCopy_file:
-                    fixtCopy_file.write(texts)
-                call_command('loaddata', fixt_copy , app_label='lwt') # load the fixtures
-                os.remove(fixt_copy)
-                # the language chosen initially for the User is in double: remove it
-                # (it was first loaded by 'initial_fixture.yaml')
-                Languages.objects.filter(owner=request.user).order_by('-created_date').first().delete()
+                # First, install the languages (must change the owner):
+                lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES.yaml'
 
-            if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):
-                # set the currentlang if not aloready defined
-                owner = request.user
-                lang = Languages.objects.get(owner=owner, django_code=owner.origin_lang_code)
-                setter_settings_cookie_and_db('currentlang_id', lang.id, request, owner)
+                user_id = str(request.user.id)
+                with open(lang_fixt_path) as lang_fixt_file:
+                    lang_fixt = load(lang_fixt_file, Loader=FullLoader)
+                    # lang_fixt: <class 'list'>: [{'model': 'lwt.languages', 'pk': 1, 'fields': {'created_date': '2020-07-25', 'modified_date': '2020-07-25', 'owner': 1, 'name': 'English',
+#                 fixt_copy = fixt.replace("1", user_id)
+                
+                # then, texttags and wordtags (must change the owner)
+                
+                # then texts: change owner and language, and texttags
+                
+                # the sentences: change owner and language, and text
+                
+                # then grouper_of_same_words: change owner (same id than Words)
+                # then words: change owner and language, and text, sentence, and wordtag
+                
+                # make the user the owner of the elements in the fixture
+#                 fixt = 'lwt/fixtures/lingl_demo_user_1.yaml'
+#                 
+#                 # adapt fixture to set the right user id
+#                 # ... and the right relative pk  (with an offset)
+#                 # pk for user
+#                 user_id = str(request.user.id)
+#                 fixt_copy = fixt.replace("1", user_id)
+#                 # offset calculations
+# 
+#                 with open(fixt, "r") as fixt_file:
+#                     texts = fixt_file.read()
+#                     texts = texts.replace("owner: 1", "owner: "+user_id)
+# 
+#                 with open(fixt_copy, "w") as fixtCopy_file:
+#                     fixtCopy_file.write(texts)
+#                 call_command('loaddata', fixt_copy , app_label='lwt') # load the fixtures
+#                 os.remove(fixt_copy)
+#                 # the language chosen initially for the User is in double: remove it
+#                 # (it was first loaded by 'initial_fixture.yaml')
+#                 Languages.objects.filter(owner=request.user).order_by('-created_date').first().delete()
+
+#             if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):
+#                 # set the currentlang if not aloready defined
+#                 owner = request.user
+#                 lang = Languages.objects.get(owner=owner, django_code=owner.origin_lang_code)
+#                 setter_settings_cookie_and_db('currentlang_id', lang.id, request, owner)
             
-            if set(['install_demo','restore']) & set(request.POST.values()):
-                # set the current user:
-                logout(request)
-                login(request, owner, backend='allauth.account.auth_backends.AuthenticationBackend' )
+#             if set(['install_demo','restore']) & set(request.POST.values()):
+#                 # set the current user:
+#                 logout(request)
+#                 login(request, request.user, backend='allauth.account.auth_backends.AuthenticationBackend' )
 
             return redirect(reverse('homepage'))
     else:
