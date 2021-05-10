@@ -75,7 +75,7 @@ def make_languagesform(user_id, dicturi_list=[]):
 #         with open(languages_fixtures) as lang_json:
 #             lang_json = lang_json.read()
 #         languages_fixtures = json.loads(lang_json)
-        lang_list = Languages.objects.filter(owner__in=[1, user_id])
+        lang_list = Languages.objects.filter(owner_id=1)
         name_lang_list = []
         for lang in lang_list:
             lang_code = lang.django_code

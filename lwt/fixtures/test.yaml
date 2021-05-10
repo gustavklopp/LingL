@@ -1,47 +1,473 @@
-﻿############# USERS 
-- model: "lwt.myuser"
-  pk: 2
+﻿- model: lwt.texttags
   fields:
-     username: "test"
-     # password is 'test'
-     password: "pbkdf2_sha256$10000$vkRy7QauoLLj$ry+3xm3YX+YrSXbri8s3EcXDIrx5ceM+xQjtpLdw2oE="
-     is_superuser: false
-     is_staff: false
-     is_active: true
-     email: gilga@hotmail.fr
-     origin_lang_code: en
-############# LANGUAGES 
-- model: "lwt.languages"
-  pk: 12
+    created_date: 2017-11-12 10:14:32.774000+00:00
+    modified_date: 2017-11-12 10:14:32.774000+00:00
+    owner:
+    - lingl
+    txtagtext: demo
+    txtagcomment: ''
+- model: lwt.texttags
   fields:
-     created_date: "2020-07-25"
-     modified_date: "2020-07-25"
-     owner: 2
-     name: "Portuguese (Portugal)"
-     dict1uri: "http://www.wordreference.com/pten/###"
-     dict2uri: "https://context.reverso.net/translation/portuguese-english/###"
-     googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=pt&tl=en&text=###" 
-     textsize: 150
-     charactersubstitutions: "´=\"|`=\"|’=\"|‘=\"|...=…|..=‥"
-     regexpsplitsentences: ".!?:;"
-     exceptionssplitsentences: "Mr.|Dr.|[A-Z].|Vd.|Vds."
-     regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
-     removespaces: false
-     spliteachchar: false
-     righttoleft: false
-     code_639_1: pt
-     code_639_2t: por
-     code_639_2b: por
-     django_code: pt
-     exporttemplate: "$word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status"
-############# SETTINGS 
-- model: "lwt.settings_currentlang_id"
-  pk: 2
+    created_date: 2017-11-12 10:14:32.978000+00:00
+    modified_date: 2017-11-12 10:14:32.978000+00:00
+    owner:
+    - lingl
+    txtagtext: basic
+    txtagcomment: ''
+- model: lwt.texttags
   fields:
-     stvalue: 12
-     owner_id: 2
-- model: "lwt.settings_currentlang_name"
-  pk: 2
+    created_date: 2017-11-12 10:14:33.293000+00:00
+    modified_date: 2017-11-12 10:14:33.293000+00:00
+    owner:
+    - lingl
+    txtagtext: goethe
+    txtagcomment: ''
+- model: lwt.texttags
   fields:
-     stvalue: Portuguese (Portugal)
-     owner_id: 2
+    created_date: 2017-11-12 10:14:33.508000+00:00
+    modified_date: 2017-11-12 10:14:33.508000+00:00
+    owner:
+    - lingl
+    txtagtext: conversation
+    txtagcomment: ''
+- model: lwt.texttags
+  fields:
+    created_date: 2017-11-12 10:14:33.570000+00:00
+    modified_date: 2017-11-12 10:14:33.570000+00:00
+    owner:
+    - lingl
+    txtagtext: joke
+    txtagcomment: ''
+- model: lwt.texttags
+  fields:
+    created_date: 2017-11-12 10:14:33.631000+00:00
+    modified_date: 2017-11-12 10:14:33.631000+00:00
+    owner:
+    - lingl
+    txtagtext: chinesepod
+    txtagcomment: ''
+- model: lwt.texttags
+  fields:
+    created_date: 2017-11-12 10:14:33.692000+00:00
+    modified_date: 2017-11-12 10:14:33.692000+00:00
+    owner:
+    - lingl
+    txtagtext: literature
+    txtagcomment: ''
+- model: lwt.texttags
+  fields:
+    created_date: 2017-11-12 10:14:33.885000+00:00
+    modified_date: 2017-11-12 10:14:33.885000+00:00
+    owner:
+    - lingl
+    txtagtext: fragment
+    txtagcomment: ''
+- model: lwt.texttags
+  fields:
+    created_date: 2017-11-12 10:14:33.953000+00:00
+    modified_date: 2017-11-12 10:14:33.953000+00:00
+    owner:
+    - lingl
+    txtagtext: annotation
+    txtagcomment: ''
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:14:34.015000+00:00
+    modified_date: 2017-11-12 10:16:35.348000+00:00
+    owner:
+    - lingl
+    language:
+    - French
+    - lingl
+    title: Mon premier don du sang
+    text: "Bonjour Manon.\nBonjour.\nAlors, je crois qu’il y a pas longtemps, là,
+      vous avez fait une bonne action ?\nOui. \nOn peut dire ça comme ça. Qu’est-ce
+      que vous avez fait, alors ?\nAlors, j’ai fait mon premier don du sang. Donc
+      c’est à dire que on va dans une... Un organisme spécialisé vient dans l’IUT,
+      dans notre université pour... pour prendre notre sang pour les malades de l’hôpital
+      qui en ont besoin...\nOui, voilà, en cas d’accident par exemple, etc...\nEn
+      cas d’accident ou en cas d’anémie ...\nOui, oui. D’accord. Et alors, donc, c’était
+      la première fois que vous le faisiez ?\nC’est la première fois et ça m’a marquée
+      parce que j’ai... j’ai très peur des piqures en temps habituel.\nAh bon !\nVoilà.
+      J’en ai... j’en fais très rarement, le plus rarement possible...\nOui ?\n...
+      pour... pour éviter ça au maximum. Et puis...\nOui, et là, c’est pas une petite
+      piqure ! Ça dure un moment, en fait !\nAh non, ça dure quinze – vingt minutes.\nAh,
+      d’accord.\nIls prennent... je sais plus combien de litres de sang. Ah, c’est
+      beaucoup.\nOui, oui. D’accord.\nOuais, ouais, ouais.\nEt donc vous avez franchi
+      le pas.\nVoilà.\nMais pourquoi, alors ?\nParce que je pense que c’est important
+      d’aider les autres, surtout que j’ai appris que j’ai un sang assez rare.\nAh
+      oui ? C’est vrai ?\nOuais.\nPourquoi ? C’est quoi ?\nA négatif.\nAh, d’accord.
+      Oui, oui. Moi, c’est pareil.\nC’est un sang... Ah, c’est vrai ?\nOui, oui.\nAssez
+      rare, donc voilà, les gens, si ils en ont besoin. Et puis si un jour, moi j’en
+      ai besoin, je serai contente que d’autres en donnent. Donc voilà.\nOui, oui.
+      D’accord.\nEn attendant, je fais ça.\nOui, oui, bien sûr. Et alors, comment
+      ça se passe concrètement? Donc vous êtes allée... Donc ils sont venus à l’IUT,
+      là. Ils installent tout bien comme il faut, et alors vous y allez et puis...\nOn
+      y va, ils nous de ... Ils nous posent quelques questions par rapport à notre
+      hygiène de vie évidemment, pour... pour les maladies, tout ça, si on n’a pas
+      eu... été malades, pour les médicaments dans le sang, tout ça. Et puis après,
+      ils vous installent sur une... sur une table, allongé, et ils vous... ils vous
+      piquent et...\nEt on attend.\nEt on attend, 15 ou 20 minutes.\nOui, d’accord.
+      Et le temps n’est pas trop long ? On se sent pas un peu bizarre ou...?\nOn se
+      sent bizarre, mais ils sont vraiment à côté de nous pour... pour justement qu’on...
+      qu’on reste éveillé en quelque sorte, et qu’on reste actif pour pas justement
+      qu’on parte... un peu à...\nOui, à se poser des questions, tout ça, et puis
+      se sentir affaibli ou quelque chose.\nVoilà. Donc ils sont vraiment à côté de
+      nous, à nous parler, à nous faire rigoler pour voir si on est toujours conscient,
+      finalement.\nAh oui, d’accord.\nOui, oui. Voilà.\nOui, oui, oui. Et après, alors,
+      à la fin, qu’est-ce qui se passe ?\nA la fin, ils vous enlèvent la piqure. Et
+      d’ailleurs, c’est là que je me suis évanouie !\nCarrément ?\nOuais.\nAh bon,
+      d’accord !\nOui, oui. Ils ont dû... Ils ont dû me mettre les pieds en l’air.
+      Ils ont... Ils ont bien rigolé parce que justement, ils... ils ont vu que quand
+      je suis partie, justement, c’est quand ils ont enlevé la piqure, je souriais
+      et quand je suis... quand je me suis... quand j’ai repris conscience, ils m’ont
+      dit que c’était la... la première fois qu’ils avaient vu quelqu’un partir...\nEn
+      souriant ?\n...en souriant.\nAh bon, d’accord. Alors vous êtes très spéciale
+      !\nVoilà.\nAh oui ? Et alors, donc... mais vous vous êtes évanouie carrément
+      ?\nAh oui, carrément ! J’ai perdu conscience pendant... bon pas longtemps, hein,
+      peut-être une ou deux minutes, le temps que... que ça revienne. Je pense que
+      c’était un...\nUn étourdissement ?\n... un trop-plein... trop-plein d’émotions
+      en fait.\nAh d’accord !\nD’être contente et à la fois d’avoir eu peur.\nAh bon
+      !\nTout ça, ouais.\nVous êtes à ce point sensible...\nAh oui, oui, vraiment.\n...
+      émotive.\nOuais.\nD’accord. Et alors, qu’est-ce qu’ils ont fait, eux ? Ils vous
+      ont... quoi ? Je sais pas... tapé sur les joues ?\nNon, non, ils ont été très
+      calmes, apparemment, d’après ce que j’ai entendu.\nIl faut placer dans une bonne
+      position, quoi. C’est ça ?\nVoilà, ils ont juste relevé mes pieds. Et ils m’ont...
+      Ils m’ont mis un... un coton imbibé de... de quelque chose. Je sais pas ce que
+      c’était. Ça... ça sentait l’eucalyptus.\nAh oui, oui. Pour un peu vous...\nPour
+      un peu...\n... stimuler.\nOuais, voilà.\nD’accord. Bon bah c’est sympa ! J’espère
+      que tout le monde se... s’évanouit pas après les... les prises de sang comme
+      ça ! Et il y a pas à manger aussi un peu, non ? C’est ça ?\nVoilà, et après
+      ils nous... ils nous donnent ce qu’on veut: un... un gâteau ou un verre de...
+      de soda..\nOuais, ouais, pour reconstituer...\n... un truc bien sucré.\nOuais
+      d’accord, pour se reconstituer les forces.\nPour repartir, voilà.\nD’accord.
+      Bon bah c’est bien, alors, d’avoir fait ça. Est-ce que vous recommencerez, alors
+      ?\nOui, oui. Il faut attendre trois mois. Donc je l’ai fait en février et je
+      compte bien le faire en juin, là, ouais.\nAh bon d’accord. Et alors, vous comptez
+      vous évanouir à nouveau ?\nNon, je vais essayer... je vais essayer de me retenir.\nD’accord.\nJe
+      vais leur expliquer que je suis un peu émotive. Et...\nUn peu, oui. Hm, hm.
+      Mais peut-être que la deuxième fois, comme vous saurez déjà comment ça se passe,
+      ce sera moins...\nOui, je pense.\n... moins stressant.\nJe... je pars avec moins
+      d’appréhension, en tout cas, pour la deuxième fois.\nOui, d’accord. Bon, bah,
+      c’est bien, alors, d’avoir fait ça.\nOui.\nD’accord. Bah très bien pour les...
+      pour les gens à qui ça va servir. Merci Manon."
+    annotatedtext: ''
+    audiouri: http://lwt.sourceforge.net/media/dondusang.mp3
+    sourceuri: http://francebienvenue1.wordpress.com/2011/06/18/generosite/
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - conversation
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:15:54.095000+00:00
+    modified_date: 2017-11-12 10:16:36.338000+00:00
+    owner:
+    - lingl
+    language:
+    - Chinese
+    - lingl
+    title: The Man and the Dog (annotated version)
+    text: 一天，一个男人走在街上。突然，他看见前面有一只黑色的大狗，看起来很凶。男人非常害怕，不敢往前走。狗的旁边站着一个女人，男人问她：你的狗咬人吗？女人说：我的狗不咬人。这时，那只狗咬了男人。他气坏了，大叫：你说你的狗不咬人！女人回答：这不是我的狗。
+    annotatedtext: "4\t一天\t11\tone day\n-1\t，\n6\t一\t9\ta\n8\t个\t12\t(MW)\n12\t男人\t15\tman\n14\t走\t16\twalk\n16\t在\t17\tat\n20\t街上\t20\ton
+      the street\n-1\t。\n24\t突然\t21\tsuddenly\n-1\t，\n26\t他\t184\the\n30\t看见\t185\tcatch
+      sight\n34\t前面\t186\tahead\n36\t有\t187\thave\n38\t一\t9\ta\n40\t只\t188\t(MW)\n44\t黑色\t189\tblack
+      color\n46\t的\t190\t's\n48\t大\t191\tbig\n50\t狗\t192\tdog\n-1\t，\n56\t看起来\t193\tappears\n58\t很\t194\tvery\n60\t凶\t195\tferocious\n-1\t。\n64\t男人\t15\tman\n68\t非常\t196\texceptional\n72\t害怕\t197\tbe
+      afraid\n-1\t，\n74\t不\t198\tnot\n76\t敢\t199\tdare\n80\t往前\t200\tmove ahead\n82\t走\t16\twalk\n-1\t。\n84\t狗\t192\tdog\n86\t的\t190\t's\n90\t旁边\t201\tside\n92\t站\t202\tstand\n94\t着\t203\t(there)\n96\t一\t9\ta\n98\t个\t12\t(MW)\n102\t女人\t204\twoman\n-1\t，\n106\t男人\t15\tman\n108\t问\t205\task\n110\t她\t206\ther\n-1\t：\n114\t你的\t220\tyour\n116\t狗\t192\tdog\n118\t咬\t208\tbite\n120\t人\t14\tperson\n122\t吗\t209\t(QW)\n-1\t？\n126\t女人\t204\twoman\n128\t说\t210\tsay\n-1\t：\n132\t我的\t211\tmy\n134\t狗\t192\tdog\n136\t不\t198\tnot\n138\t咬\t208\tbite\n140\t人\t14\tperson\n-1\t。\n144\t这时\t212\tat
+      this time\n-1\t，\n146\t那\t213\tthat\n148\t只\t188\t(MW)\n150\t狗\t192\tdog\n152\t咬\t208\tbite\n154\t了\t214\tfinish\n158\t男人\t15\tman\n-1\t。\n160\t他\t184\the\n164\t气坏\t215\tfurious\n166\t了\t214\t(change)\n-1\t，\n168\t大\t191\tstrong\n170\t叫\t216\tshout\n-1\t：\n172\t你\t207\tyou\n174\t说\t210\tsay\n178\t你的\t220\tyour\n180\t狗\t192\tdog\n182\t不\t198\tnot\n184\t咬\t208\tbite\n186\t人\t14\tperson\n-1\t！\n190\t女人\t204\twoman\n194\t回答\t217\tanswer\n-1\t：\n196\t这\t218\tthis\n198\t不\t198\tnot\n200\t是\t219\tbe\n204\t我的\t211\tmy\n206\t狗\t192\tdog\n-1\t。"
+    audiouri: http://lwt.sourceforge.net/media/manandthedog.mp3
+    sourceuri: http://chinesepod.com/lessons/the-man-and-the-dog
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - joke
+      - lingl
+    - - chinesepod
+      - lingl
+    - - annotation
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:15:57.698000+00:00
+    modified_date: 2017-11-12 10:16:36.906000+00:00
+    owner:
+    - lingl
+    language:
+    - German
+    - lingl
+    title: Die Leiden des jungen Werther
+    text: 'Wie froh bin ich, daß ich weg bin! Bester Freund, was ist das Herz des
+      Menschen! Dich zu verlassen, den ich so liebe, von dem ich unzertrennlich war,
+      und froh zu sein! Ich weiß, du verzeihst mir''s. Waren nicht meine übrigen Verbindungen
+      recht ausgesucht vom Schicksal, um ein Herz wie das meine zu ängstigen? Die
+      arme Leonore! Und doch war ich unschuldig. Konnt'' ich dafür, daß, während die
+      eigensinnigen Reize ihrer Schwester mir eine angenehme Unterhaltung verschafften,
+      daß eine Leidenschaft in dem armen Herzen sich bildete? Und doch – bin ich ganz
+      unschuldig? Hab'' ich nicht ihre Empfindungen genährt? Hab'' ich mich nicht
+      an den ganz wahren Ausdrücken der Natur, die uns so oft zu lachen machten, so
+      wenig lächerlich sie waren, selbst ergetzt? Hab'' ich nicht – o was ist der
+      Mensch, daß er über sich klagen darf! Ich will, lieber Freund, ich verspreche
+      dir''s, ich will mich bessern, will nicht mehr ein bißchen Übel, das uns das
+      Schicksal vorlegt, wiederkäuen, wie ich''s immer getan habe; ich will das Gegenwärtige
+      genießen, und das Vergangene soll mir vergangen sein. Gewiß, du hast recht,
+      Bester, der Schmerzen wären minder unter den Menschen, wenn sie nicht – Gott
+      weiß, warum sie so gemacht sind! – mit so viel Emsigkeit der Einbildungskraft
+      sich beschäftigten, die Erinnerungen des vergangenen Übels zurückzurufen, eher
+      als eine gleichgültige Gegenwart zu ertragen.
+
+      Du bist so gut, meiner Mutter zu sagen, daß ich ihr Geschäft bestens betreiben
+      und ihr ehstens Nachricht davon geben werde. Ich habe meine Tante gesprochen
+      und bei weitem das böse Weib nicht gefunden, das man bei uns aus ihr macht.
+      Sie ist eine muntere, heftige Frau von dem besten Herzen. Ich erklärte ihr meiner
+      Mutter Beschwerden über den zurückgehaltenen Erbschaftsanteil; sie sagte mir
+      ihre Gründe, Ursachen und die Bedingungen, unter welchen sie bereit wäre, alles
+      herauszugeben, und mehr als wir verlangten – kurz, ich mag jetzt nichts davon
+      schreiben, sage meiner Mutter, es werde alles gut gehen. Und ich habe, mein
+      Lieber, wieder bei diesem kleinen Geschäft gefunden, daß Mißverständnisse und
+      Trägheit vielleicht mehr Irrungen in der Welt machen als List und Bosheit. Wenigstens
+      sind die beiden letzteren gewiß seltener.
+
+      Übrigens befinde ich mich hier gar wohl. Die Einsamkeit ist meinem Herzen köstlicher
+      Balsam in dieser paradiesischen Gegend, und diese Jahreszeit der Jugend wärmt
+      mit aller Fülle mein oft schauderndes Herz. Jeder Baum, jede Hecke ist ein Strauß
+      von Blüten, und man möchte zum Maienkäfer werden, um in dem Meer von Wohlgerüchen
+      herumschweben und alle seine Nahrung darin finden zu können.
+
+      Die Stadt selbst ist unangenehm, dagegen rings umher eine unaussprechliche Schönheit
+      der Natur. Das bewog den verstorbenen Grafen von M., einen Garten auf einem
+      der Hügel anzulegen, die mit der schönsten Mannigfaltigkeit sich kreuzen und
+      die lieblichsten Täler bilden. Der Garten ist einfach, und man fühlt gleich
+      bei dem Eintritte, daß nicht ein wissenschaftlicher Gärtner, sondern ein fühlendes
+      Herz den Plan gezeichnet, das seiner selbst hier genießen wollte. Schon manche
+      Träne hab'' ich dem Abgeschiedenen in dem verfallenen Kabinettchen geweint,
+      das sein Lieblingsplätzchen war und auch meines ist. Bald werde ich Herr vom
+      Garten sein; der Gärtner ist mir zugetan, nur seit den paar Tagen, und er wird
+      sich nicht übel dabei befinden.'
+    annotatedtext: ''
+    audiouri: http://lwt.sourceforge.net/media/werther.mp3
+    sourceuri: http://www.gutenberg.org/ebooks/2407
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - goethe
+      - lingl
+    - - literature
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:16:15.156000+00:00
+    modified_date: 2017-11-12 10:16:38.035000+00:00
+    owner:
+    - lingl
+    language:
+    - Chinese
+    - lingl
+    title: The Man and the Dog
+    text: 一天，一 个 男人 走 在 街上。 突然，他 看见 前面 有 一 只 黑色 的 大 狗，看起来 很 凶。 男人 非常 害怕，不敢 往前 走。 狗
+      的 旁边 站着 一 个 女人，男人 问 她： 你 的 狗 咬 人 吗？ 女人 说： 我 的 狗 不 咬 人。 这时，那 只 狗 咬 了 男人。 他 气坏
+      了，大 叫： 你 说 你 的 狗 不 咬 人！ 女人 回答： 这 不是 我 的 狗。
+    annotatedtext: ''
+    audiouri: http://lwt.sourceforge.net/media/manandthedog.mp3
+    sourceuri: http://chinesepod.com/lessons/the-man-and-the-dog
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - joke
+      - lingl
+    - - chinesepod
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:16:19.175000+00:00
+    modified_date: 2017-11-12 10:16:38.326000+00:00
+    owner:
+    - lingl
+    language:
+    - Japanese
+    - lingl
+    title: Some expressions
+    text: 'はい。いいえ。
+
+      すみません。
+
+      どうも。
+
+      ありがとうございます。
+
+      日本語を話しますか。はい、少し。
+
+      イギリスから来ました。'
+    annotatedtext: ''
+    audiouri: http://lwt.sourceforge.net/media/jap.mp3
+    sourceuri: null
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - basic
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:16:22.217000+00:00
+    modified_date: 2017-11-12 10:16:38.992000+00:00
+    owner:
+    - lingl
+    language:
+    - Korean
+    - lingl
+    title: Test in Korean
+    text: '좋은 아침.
+
+      안녕하세요.
+
+      잘자요.
+
+      잘가요.
+
+      안녕하세요, 잘지냈어요?
+
+      네, 잘지냈어요?
+
+      네 그럼요.
+
+      이름이 뭐에요?
+
+      제 이름은 존이에요, 이름이 뭐에요?
+
+      제 이름은 메리에요.'
+    annotatedtext: ''
+    audiouri: http://lwt.sourceforge.net/media/korean.mp3
+    sourceuri: null
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - basic
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:16:27.962000+00:00
+    modified_date: 2017-11-12 10:16:39.305000+00:00
+    owner:
+    - lingl
+    language:
+    - Thai
+    - lingl
+    title: Hello in Thai
+    text: 'ส วัส ดี ครับ
+
+      ส วัส ดี ค่ะ'
+    annotatedtext: ''
+    audiouri: http://lwt.sourceforge.net/media/thai.mp3
+    sourceuri: null
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - basic
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:16:28.710000+00:00
+    modified_date: 2017-11-12 10:16:40.151000+00:00
+    owner:
+    - lingl
+    language:
+    - Hebrew
+    - lingl
+    title: Greetings
+    text: 'בוקר טוב
+
+      אחר צהריים טובים
+
+      ערב טוב
+
+      לילה טוב
+
+      להתראות'
+    annotatedtext: ''
+    audiouri: http://lwt.sourceforge.net/media/hebrew.mp3
+    sourceuri: null
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - basic
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2017-11-12 10:16:32.098000+00:00
+    modified_date: 2017-11-12 10:16:40.841000+00:00
+    owner:
+    - lingl
+    language:
+    - French
+    - lingl
+    title: Mon premier don du sang (Short & annotated version)
+    text: "Bonjour Manon.\nBonjour.\nAlors, je crois qu’il y a pas longtemps, là,
+      vous avez fait une bonne action ?\nOui. \nOn peut dire ça comme ça. Qu’est-ce
+      que vous avez fait, alors ?\nAlors, j’ai fait mon premier don du sang."
+    annotatedtext: "2\tBonjour\t2\thello\n-1\t \n4\tManon\t1\t*\n-1\t. \n-1\t¶ \n7\tBonjour\t2\thello\n-1\t.
+      \n-1\t¶ \n10\tAlors\t3\twell\n-1\t, \n12\tje\t7\tI\n-1\t \n14\tcrois\t8\tthink\n-1\t
+      \n16\tqu\t6\tthat\n-1\t'\n22\til y a\t4\tthere is\n-1\t \n24\tpas\t170\t(not)\n-1\t
+      \n26\tlongtemps\t171\tlong time\n-1\t, \n28\tlà\t172\tthere\n-1\t, \n30\tvous\t146\tyou\n-1\t
+      \n32\tavez\t150\thave\n-1\t \n34\tfait\t147\tdone\n-1\t \n36\tune\t173\ta\n-1\t
+      \n40\tbonne action\t46\tgood deed\n-1\t ? \n-1\t¶ \n43\tOui\t165\tyes\n-1\t.
+      \n-1\t¶ \n46\tOn\t166\tone\n-1\t \n48\tpeut\t167\tcan\n-1\t \n50\tdire\t26\tsay\n-1\t
+      \n52\tça\t168\tthat\n-1\t \n54\tcomme\t169\tas\n-1\t \n56\tça\t168\tthat\n-1\t.
+      \n64\tQu'est-ce que\t22\twhat\n-1\t \n66\tvous\t146\tyou\n-1\t \n68\tavez\t150\thave\n-1\t
+      \n70\tfait\t147\tdone\n-1\t, \n72\talors\t3\tthen\n-1\t ? \n-1\t¶ \n75\tAlors\t3\twell\n-1\t,
+      \n77\tj\t174\tI\n-1\t'\n79\tai\t149\thave\n-1\t \n81\tfait\t147\tmade\n-1\t
+      \n83\tmon\t151\tmy\n-1\t \n85\tpremier\t175\tfirst\n-1\t \n91\tdon du sang\t33\tblood
+      donation\n-1\t."
+    audiouri: http://lwt.sourceforge.net/media/dondusang_short.mp3
+    sourceuri: http://francebienvenue1.wordpress.com/2011/06/18/generosite/
+    lastopentime: null
+    archived: false
+    texttags:
+    - - demo
+      - lingl
+    - - conversation
+      - lingl
+    - - annotation
+      - lingl
+- model: lwt.texts
+  fields:
+    created_date: 2021-05-09 14:46:20.888730+00:00
+    modified_date: 2021-05-09 14:48:00.138504+00:00
+    owner:
+    - lingl
+    language:
+    - English
+    - lingl
+    title: title2
+    text: "Kausft du ver?  kaufen. Good morning. the morning is good\r\nthis is very
+      good. this is the end of the week.\r\nwhat is going on this morning? Morning
+      is good. Good morning.\r\nthis is the week end. I love this week.  er kauft
+      this week. weekday.\r\nthis is the week end. this is the end. the end of the
+      week.\r\nverkaufen. verkauft?  Do you get up? It goes up. I can´t get it. \r\nI
+      want to up get. can you get up? I get up.\r\nTurn it off please.  Do you have
+      the white paper for Bitcoin? some bitcoins.\r\nI off turn.\r\ncan you turn off.
+      or maybe turn them off. or turn it off.\r\nsie kauft ver. kauft du ver? good
+      morning. the paper is white. this is a paper which is white. this is the white
+      paper. \r\nit´s a coup de force. did you see this coup de force. Quel coup de
+      taureau?"
+    annotatedtext: ''
+    audiouri: ''
+    sourceuri: ''
+    lastopentime: null
+    archived: false
+    texttags: []

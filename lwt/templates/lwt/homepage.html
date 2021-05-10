@@ -9,6 +9,7 @@
 {% endblock banner %}
 
 {% block content %}
+
 {% if text_exist == 0 and language_selectoption|length == 1 %} {# First time user: No texts in the database and only one language #}
 <div class="alert alert-danger" role="alert">
 	{% trans "Hint: The database seems to be empty." %}<br>

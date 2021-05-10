@@ -31,7 +31,7 @@ The original models in lwt:
 from django.db import models
 from django.utils import timezone, timesince
 from django.utils.translation import ugettext as _
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, UserManager
 from django.core import serializers
 # second party
 # third party
@@ -47,15 +47,24 @@ from lwt.constants import STATUS_CHOICES
 #         else:
 #             return super(FilterByUser_Manager, self).get_queryset().filter(owner=owner)
 
+class MyUserManager(models.Manager):
+    def get_by_natural_key(self, username):
+        return self.get(username=username)
+
 class MyUser(AbstractUser):
     ''' overrding default User to add complementary data '''
     # the language that the User already knows: (code is a 2 letters)
     origin_lang_code = models.CharField(max_length=40)
 
-    def __str__(self, *args, **kwargs):
-#         super(AbstractUser, self).__str__(*args,**kwargs)
+    objects = MyUserManager() # use to call the parent foreign key by its name (or title , or etc...)
+
+    def __str__(self):
         return self.username 
-        
+
+    def natural_key(self):
+        return ([self.username])  # I don´t know why but it needs to be put in a list (else, there's an error when loaddata)      
+    
+
 class BaseModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
@@ -74,17 +83,19 @@ class BaseModel(models.Model):
 
 
 class Extra_field_key(BaseModel):
-    title = models.CharField( unique=True, max_length=20)  
+    title = models.CharField(max_length=20)  
 
     def __str__(self):
         return self.title
 
     class Meta:
         db_table = 'extra_field_key'
+        unique_together = [['title', 'owner']]
+
 
 class LanguagesManager(models.Manager):
     def get_by_natural_key(self, name, owner):
-        return self.get(name=name, owner=owner)
+        return self.get(name=name, owner__username=owner)
         
 class Languages(BaseModel):
     name = models.CharField(max_length=40)  
@@ -116,7 +127,7 @@ class Languages(BaseModel):
     # JSON List of string. the language model stores only the keys for the extra_field JSON of Words
     extra_field_key = models.ManyToManyField(Extra_field_key, related_name='languagehavingthisextrafieldkey') 
 
-    objects = LanguagesManager() # use for serialization
+    objects = LanguagesManager() # use to call the parent foreign key by its name (or title , or etc...)
 
     def __str__(self):
         return self.name
@@ -126,23 +137,32 @@ class Languages(BaseModel):
         unique_together = [['name', 'owner']]
 
     def natural_key(self):
-        return (self.name, self.owner)
-
+        return (self.name, self.owner.username)
+        
+class TexttagsManager(models.Manager):
+    def get_by_natural_key(self, txtagtext, owner):
+        return self.get(txtagtext=txtagtext, owner__username=owner)
 
 class Texttags(BaseModel):
-    txtagtext = models.CharField( unique=True, max_length=20)  
+    txtagtext = models.CharField(max_length=20)  
     txtagcomment = models.CharField( max_length=200, default='')  
+
+    objects = TexttagsManager() # use to call the parent foreign key by its name (or title , or etc...)
 
     def __str__(self):
         return self.txtagtext
         
     class Meta:
         db_table = 'texttags'
+        unique_together = [['txtagtext', 'owner']]
 
+    def natural_key(self):
+        return (self.txtagtext, self.owner.username)
         
+
 class TextsManager(models.Manager):
     def get_by_natural_key(self, title, owner):
-        return self.get(title=title, owner=owner)
+        return self.get(title=title, owner__username=owner)
         
 class Texts(BaseModel):
     ''' to be deleted, you need to delete the textitem and the sentence containing foreignkey to the text before'''
@@ -157,7 +177,7 @@ class Texts(BaseModel):
     lastopentime = models.DateTimeField(blank=True, null=True)
     archived = models.BooleanField(default=False)
 
-    objects = TextsManager() # use for serialization
+    objects = TextsManager() # use to call the parent foreign key by its name (or title , or etc...)
     
     def __str__(self):
         return self.title
@@ -167,8 +187,12 @@ class Texts(BaseModel):
         unique_together = [['title', 'owner']]
 
     def natural_key(self):
-        return (self.title, self.owner)
+        return (self.title, self.owner.username)
 
+        
+class SentencesManager(models.Manager):
+    def get_by_natural_key(self, text, order, owner):
+        return self.get(text__title=text, order=order, owner__username=owner)
 
 class Sentences(BaseModel): # the Text is cut into sentences
     language = models.ForeignKey(Languages, on_delete=models.CASCADE)
@@ -176,22 +200,38 @@ class Sentences(BaseModel): # the Text is cut into sentences
     order = models.IntegerField()  # the ordinal number of the sentence in each text
     sentencetext = models.TextField(blank=True, null=True)
 
+    objects = SentencesManager() # use to call the parent foreign key by its name (or title , or etc...)
+
     def __str__(self):
         return self.sentencetext
 
     class Meta:
         db_table = 'sentences'
+        unique_together = [['text', 'order', 'owner']]
 
+    def natural_key(self):
+        return (self.text.title, self.order, self.owner.username)
+
+        
+class WordtagsManager(models.Manager):
+    def get_by_natural_key(self, wotagtext, owner):
+        return self.get(wotagtext=wotagtext, owner__username=owner)
 
 class Wordtags(BaseModel):
-    wotagtext = models.CharField( unique=True, max_length=20)  
+    wotagtext = models.CharField(max_length=20)  
     wotagcomment = models.CharField( max_length=200)  
+
+    objects = WordtagsManager() # use to call the parent foreign key by its name (or title , or etc...)
 
     def __str__(self):
         return self.wotagtext
 
     class Meta:
         db_table = 'wordtags'
+        unique_together = [['wotagtext', 'owner']]
+
+    def natural_key(self):
+        return (self.wotagtext, self.owner.username)
 
 
 class Grouper_of_same_words(BaseModel):
@@ -238,7 +278,11 @@ class Grouper_of_same_words(BaseModel):
     class Meta:
         db_table = 'Grouper_of_same_words'
 
-        
+
+class WordsManager(models.Manager):
+    def get_by_natural_key(self, wordtext, language, owner):
+        return self.get(wordtext=wordtext, language__name=language, owner__username=owner)
+
 class Words(BaseModel):
     #### Foreign keys:
     language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage', on_delete=models.CASCADE )
@@ -276,11 +320,17 @@ class Words(BaseModel):
     state = models.BooleanField(default=False) # used to export2anki checkox
     extra_field = models.TextField(max_length=500, blank=True, null=True) # additional, custom field. stored in json format a dict
 
+    objects = WordsManager() # use to call the parent foreign key by its name (or title , or etc...)
+
     def __str__(self):
         return self.wordtext
     
     class Meta:
         db_table = 'words'        
+#         unique_together = [['wordtext', 'sentence', 'order', 'owner']]
+
+    def natural_key(self):
+        return (self.wordtext, self.language.name, self.owner.username)
 #####################################################
 #             DATABASE 'settings':                  #
 #####################################################

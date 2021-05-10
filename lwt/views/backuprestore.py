@@ -106,44 +106,57 @@ def backuprestore(request):
             
             if 'install_demo' in request.POST.values():
                 # First, install the languages (must change the owner):
-                lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES.yaml'
+                user_username = str(request.user.username)
 
-                user_id = str(request.user.id)
+                # put a temporary name for the already defined language by the User
+                # (else it will create a non unique constraint error when importing the language fixture
+                dest_chosen_lang = Languages.objects.get(owner=request.user)
+                temp_name = dest_chosen_lang.name
+                dest_chosen_lang.name = "{}_{}".format(temp_name, user_username)
+                dest_chosen_lang.save()
+ 
+                lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES.yaml'
+                USER_lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES_{}.yaml'.format(user_username)
+ 
                 with open(lang_fixt_path) as lang_fixt_file:
-                    lang_fixt = load(lang_fixt_file, Loader=FullLoader)
-                    # lang_fixt: <class 'list'>: [{'model': 'lwt.languages', 'pk': 1, 'fields': {'created_date': '2020-07-25', 'modified_date': '2020-07-25', 'owner': 1, 'name': 'English',
-#                 fixt_copy = fixt.replace("1", user_id)
+                    langs = lang_fixt_file.read()
+                    langs = langs.replace("- lingl", "- {}".format(user_username))
+                    with open(USER_lang_fixt_path, "w") as USER_lang_fixt_file:
+                        USER_lang_fixt_file.write(langs)
+                call_command('loaddata', USER_lang_fixt_path , app_label='lwt') # load the fixtures
+                os.remove(USER_lang_fixt_path)
+                 
+                # then, install all the Demo, except the Grouper_of_same_words (we will create them manually):
+                demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo.yaml'
+                USER_demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo_{}.yaml'.format(user_username)
+ 
+                with open(demo_fixt_path) as demo_fixt_file:
+                    demo = demo_fixt_file.read()
+                    demo = demo.replace("- lingl", "- {}".format(user_username))
+                    with open(USER_demo_fixt_path, "w") as USER_demo_fixt_file:
+                        USER_demo_fixt_file.write(demo)
+                call_command('loaddata', USER_demo_fixt_path , app_label='lwt') # load the fixtures
+                os.remove(USER_demo_fixt_path)
                 
-                # then, texttags and wordtags (must change the owner)
+                # then grouper_of_same_words: it's a copy of Words' ids.
+                # create the GOSW...
+                words = Words.objects.filter(owner=request.user)
+                bulk_create_prep = (Grouper_of_same_words(id=wo.id, owner=wo.owner, 
+                                created_date=wo.created_date, modified_date=wo.modified_date) for wo in words)
+                Grouper_of_same_words.objects.bulk_create(bulk_create_prep)
+                # ...then put it as FK in Words
+                bulk_update_prep = [Grouper_of_same_words(id=wo.id, owner=wo.owner, 
+                                created_date=wo.created_date, modified_date=wo.modified_date) for wo in words]
+                for idx, wo in enumerate(words):
+                    wo.grouper_of_same_words = bulk_update_prep[idx]
+                Words.objects.bulk_update(words, ['grouper_of_same_words'])
                 
-                # then texts: change owner and language, and texttags
-                
-                # the sentences: change owner and language, and text
-                
-                # then grouper_of_same_words: change owner (same id than Words)
-                # then words: change owner and language, and text, sentence, and wordtag
-                
-                # make the user the owner of the elements in the fixture
-#                 fixt = 'lwt/fixtures/lingl_demo_user_1.yaml'
-#                 
-#                 # adapt fixture to set the right user id
-#                 # ... and the right relative pk  (with an offset)
-#                 # pk for user
-#                 user_id = str(request.user.id)
-#                 fixt_copy = fixt.replace("1", user_id)
-#                 # offset calculations
-# 
-#                 with open(fixt, "r") as fixt_file:
-#                     texts = fixt_file.read()
-#                     texts = texts.replace("owner: 1", "owner: "+user_id)
-# 
-#                 with open(fixt_copy, "w") as fixtCopy_file:
-#                     fixtCopy_file.write(texts)
-#                 call_command('loaddata', fixt_copy , app_label='lwt') # load the fixtures
-#                 os.remove(fixt_copy)
-#                 # the language chosen initially for the User is in double: remove it
-#                 # (it was first loaded by 'initial_fixture.yaml')
-#                 Languages.objects.filter(owner=request.user).order_by('-created_date').first().delete()
+                # the language chosen initially for the User is in double: remove it
+                # (it was first created when the User is signing up)
+                Languages.objects.filter(Q(owner=request.user)&Q(name=temp_name)).order_by('-created_date').first().delete()
+                # and put again the name of the language, changed at the start to avoid unique constraint error
+                dest_chosen_lang.name = temp_name
+                dest_chosen_lang.save()
 
 #             if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):
 #                 # set the currentlang if not aloready defined
