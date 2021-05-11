@@ -21,6 +21,23 @@ if __name__ != '__main__':
     from lwt.models import *
 
 
+''' Alternative to PostGreSQL 'distinct_on()', which doesn't exist in SQLITE3'''
+def distinct_on(mylist, criteria, case_unsensitive=True):
+    onlyunique_list = []
+    prev_criteria = None
+    if case_unsensitive:
+        prev_criteria = ''
+    for item in mylist:
+        if case_unsensitive:
+            if getattr(item, criteria).lower() != prev_criteria.lower():
+                onlyunique_list.append(item)
+        else:
+            if getattr(item, criteria) != prev_criteria:
+                onlyunique_list.append(item)
+        prev_criteria = getattr(item, criteria)
+    return onlyunique_list
+
+
 '''Create Grouper_of_same_words for this(these) word(s).
    in the table Grouper_of_same_words, create a copy of the Word, with the same owner, created_date, etcc..
    and 'id' than the word'''

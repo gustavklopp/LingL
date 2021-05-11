@@ -86,10 +86,16 @@ def load_texttable(request):
             '"/></a>'
         t_dict['title_tag'] = r
         ##############################display some stats about the Texts: ############################################
-        texttotalword = Words.objects.filter(owner=request.user).filter(text=t).\
-                exclude(Q(isnotword=True)&Q(isCompoundword=False)).count()
+#         texttotalword = Words.objects.filter(owner=request.user).filter(text=t).\
+#                 exclude(Q(isnotword=True)&Q(isCompoundword=False)).count()
+        # don't count duplicate (words written similarly)
+        texttotalword_list = Words.objects.filter(owner=request.user).filter(text=t).\
+                exclude(Q(isnotword=True)&Q(isCompoundword=False)).order_by('wordtext')
+        texttotalword = len(distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
+                
+        # don't count duplicate (words written similarly) (we exclude when no GOSW associated)
         textsavedword = Words.objects.filter(owner=request.user).filter(text=t).filter(status__gt=0).\
-                exclude(Q(isnotword=True)&Q(isCompoundword=False)).count()
+                exclude(Q(isnotword=True)&Q(isCompoundword=False)&Q(grouper_of_same_words=None)).count()
         textsavedexpr = Words.objects.filter(owner=request.user).filter(text=t,isCompoundword=True,status__gt=0).count()
         textunknownword = texttotalword - textsavedword
         if texttotalword != 0:
