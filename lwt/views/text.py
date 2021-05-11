@@ -426,9 +426,11 @@ def text_detail(request):
             wo_wordtext = request.GET['word_insert'] # what word will be inserted
             previous_space = Words.objects.get(id=wo_id)
             text = previous_space.text
+
+            # insert the new word:
             new_word = Words()
-            new_word.id = previous_space.id +1
             new_word.order = previous_space.order +1
+            new_word.textOrder = previous_space.textOrder +1
             # copy all the rests
             new_word.wordtext = wo_wordtext
             new_word.isnotword = False
@@ -438,9 +440,10 @@ def text_detail(request):
             new_word.text = previous_space.text
             new_word.created_date = timezone.now()
 
-            # we insert a space also:
+            # we insert a space also, after the new word:
             new_space = Words()
-            new_space.id = previous_space.id +2
+            new_space.order = previous_space.order +2
+            new_space.textOrder = previous_space.textOrder +2
             new_space.wordtext = previous_space.wordtext
             new_space.isnotword = True
             new_space.owner = previous_space.owner
@@ -449,12 +452,23 @@ def text_detail(request):
             new_space.text = previous_space.text
             new_space.created_date = timezone.now()
 
-            # shift all the ids of the next words by 2 (we begin the shift by the last one)
-            lastword = Words.objects.filter(id__gt=previous_space.id).order_by('-id').first()
-            for id_to_update in range(lastword.id, previous_space.id+2, -1):
-                Words.objects.filter(id=id_to_update).update(id=id_to_update+2)
+            # shift all the order and textOrder fields of the next words by 2 (we begin the shift by the last one)
+            words_to_update = Words.objects.filter(Q(owner=request.user)&\
+                                                   Q(text=new_space.text)&\
+                                                   Q(textOrder__gt=new_space.textOrder)).order_by('-textOrder')
+            for word_to_update in words_to_update:
+                word_to_update.textOrder += 2
+                # if it's in the same sentence, update also the 'order' field
+                if word_to_update.sentence == new_space.sentence:
+                    word_to_update.order += 2
+            Words.objects.bulk_update(words_to_update, ['order','textOrder'])
+
+            # we save only at the end because Unique constraint on 'textOrder' for Words
             new_word.save()
             new_space.save()
+            # create grouper_of_same_words also:
+            create_GOSW_for_words([new_word])
+            create_GOSW_for_words([new_space])
 
         # displaying the editable text
         elif 'edit' in request.GET.keys():
@@ -469,7 +483,7 @@ def text_detail(request):
             text_text = ''.join(list(allwords_in_this_text.values_list('wordtext', flat=True)))
             text.text = text_text
             text.save()
-            # updating the filed 'sentencetext' in Sentence
+            # updating the field 'sentencetext' in Sentence
             allwords_in_this_sentence = allwords_in_this_text.filter(sentence=deleted_or_edited_word.sentence)
             sentence_sentencetext = ''.join(list(allwords_in_this_sentence.values_list('wordtext', flat=True)))
             Sentences.objects.filter(id=deleted_or_edited_word.sentence.id).update(sentencetext=sentence_sentencetext)

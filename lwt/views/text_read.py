@@ -38,18 +38,17 @@ def text_read(request, text_id):
     word_inthistext = Words.objects.filter(text=text).order_by('sentence_id', 'order')
     
     # increasing the Learning status: Each time the file is open/window refreshed, we calculate whether it
-    # was modified more than 12 hours ago. If yes, update +1 for all word/grouperofsameword/similarword
+    # was modified more than **24 hours ago**. If yes, update +1 for all word/grouperofsameword/similarword
     # with the basal status of '1' to +1. Max level is '100'.
-    time_from_modif = timezone.now() - text.modified_date
-#     if time_from_modif > datetime.timedelta(days=1):
-    if time_from_modif > datetime.timedelta(hours=24):
+    time_from_lastopen = timezone.now() - text.lastopentime
+    if time_from_lastopen > datetime.timedelta(hours=24):
         learning_inthistext_groupers = Grouper_of_same_words.objects.filter(
            Q(grouper_of_same_words_for_this_word__text=text )&
            Q(grouper_of_same_words_for_this_word__status__gte=1)).all()
         learning_inthistext_words = Words.objects.filter(grouper_of_same_words__in=learning_inthistext_groupers)
         for wo in learning_inthistext_words:
             wo.status = wo.status + 1 if wo.status + 1 < 100 else 100 # 100 is the status max
-            wo.save()
+        Words.objects.bulk_update(learning_inthistext_words, ['status'])
     
     # calculate the statistic (it's the same stats than in text_list)s
     texttotalword = Words.objects.filter(text=text,isnotword=False).exclude(isCompoundword=True).count()

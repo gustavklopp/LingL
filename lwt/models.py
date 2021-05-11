@@ -280,8 +280,8 @@ class Grouper_of_same_words(BaseModel):
 
 
 class WordsManager(models.Manager):
-    def get_by_natural_key(self, text_order, text, owner):
-        return self.get(text_order=text_order, text__title=text, owner__username=owner)
+    def get_by_natural_key(self, textOrder, text, owner):
+        return self.get(textOrder=textOrder, text__title=text, owner__username=owner)
 
 class Words(BaseModel):
     #### Foreign keys:
@@ -309,7 +309,7 @@ class Words(BaseModel):
 #                        (101, _('Ignored')))
     status = models.IntegerField(choices=STATUS_CHOICES, default=0)  
     order = models.IntegerField(blank=True, null=True)  # where is the word in the sentence
-    text_order = models.IntegerField(blank=True, null=True)  # where is the word in the text
+    textOrder = models.IntegerField(blank=True, null=True)  # where is the word in the text
     wordtext = models.CharField( max_length=250,blank=True, null=True)  
     isnotword = models.BooleanField(default=False)  
     translation = models.CharField( max_length=500, blank=True, null=True)  
@@ -328,10 +328,10 @@ class Words(BaseModel):
     
     class Meta:
         db_table = 'words'        
-        unique_together = [['text_order', 'text', 'owner']]
+#         unique_together = [['textOrder', 'text', 'owner']] <-- Pb when deleting a word when doing bulk_update
 
     def natural_key(self):
-        return (self.text_order, self.text.title, self.owner.username)
+        return (self.textOrder, self.text.title, self.owner.username)
 #####################################################
 #             DATABASE 'settings':                  #
 #####################################################

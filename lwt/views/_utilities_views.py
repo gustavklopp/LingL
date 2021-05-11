@@ -20,6 +20,23 @@ from lwt.constants import MAX_WORDS
 if __name__ != '__main__':
     from lwt.models import *
 
+
+'''Create Grouper_of_same_words for this(these) word(s).
+   in the table Grouper_of_same_words, create a copy of the Word, with the same owner, created_date, etcc..
+   and 'id' than the word'''
+def create_GOSW_for_words(words):
+    # first create the GOSW
+    bulk_create_prep = (Grouper_of_same_words(id=wo.id, owner=wo.owner, 
+                    created_date=wo.created_date, modified_date=wo.modified_date) for wo in words)
+    Grouper_of_same_words.objects.bulk_create(bulk_create_prep)
+    # then update the FK for the words
+    bulk_update_prep = [Grouper_of_same_words(id=wo.id, owner=wo.owner, 
+                    created_date=wo.created_date, modified_date=wo.modified_date) for wo in words]
+    for idx, wo in enumerate(words):
+        wo.grouper_of_same_words = bulk_update_prep[idx]
+    Words.objects.bulk_update(words, ['grouper_of_same_words'])
+    
+    
 ''' get the current database size and put it in cookie (if not found in cookie)'''
 def get_word_database_size(request):
     database_size = getter_settings_cookie('database_size', request)
