@@ -129,6 +129,7 @@ cowostatus="" cowotranslation="" coworomanization=""
 				clicktooltip_in += "><br>";
 				clicktooltip_in += "<input type=\"hidden\" name=\"wo_id\"\ value=\"";
 				clicktooltip_in += $(val).attr('woid')+"\">";
+				clicktooltip_in += "<input type=\"hidden\" name=\"edit\"\ value={{ text_id }}>";
 				clicktooltip_in += "<input type=\"submit\" value=\"Submit\"></form>",
 				instances[1].content(clicktooltip_in);
             });
