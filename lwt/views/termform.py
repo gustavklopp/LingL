@@ -377,7 +377,8 @@ def termform(request):
             sameword_list = []
             sameword_id_list = []
             for sw in samewordtext_query:
-                if sw.grouper_of_same_words != word.grouper_of_same_words:
+                if sw.grouper_of_same_words and \
+                        sw.grouper_of_same_words != word.grouper_of_same_words:
                     # deleting the GOSW for this word
                     Grouper_of_same_words.objects.get(id=sw.grouper_of_same_words.id).delete()
                     # and put the new:

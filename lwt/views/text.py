@@ -9,7 +9,7 @@ from django.db.models.fields import CharField,IntegerField
 from django.templatetags.i18n import language
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # used for pagination (on text_list for ex.)
 from django.urls import reverse
-from django.utils.translation import ugettext as _, ungettext as s_
+from django.utils.translation import ugettext as _, ungettext as s_, ngettext
 from django.contrib.auth.decorators import login_required
 from django.templatetags.static import static # to use the 'static' tag as in the templates
 from django.http import HttpResponse, JsonResponse
@@ -308,15 +308,49 @@ def text_list(request):
     if request.GET.get('del'):
         ids_to_delete = request.GET['del']
         ids_to_delete = json.loads(ids_to_delete)
-        delse_nb = 0
+        # it's possible to delete text but keep the already saved words:
+        delete_saved_words = str_to_bool(request.GET['delete_saved_words'])
+#         delse_nb = 0
         deltx_nb = 0
+        delwo_nb = 0
         for text_id in ids_to_delete:
-            # first delete the se with the foreignkeys
-            delse = Sentences.objects.filter(owner=request.user).filter(text__id=text_id).delete()
-            deltx = Texts.objects.filter(owner=request.user).get(id=text_id).delete() # then delete the text itself
-            delse_nb += delse[0]
-            deltx_nb += deltx[0]
-        messages.add_message(request, messages.SUCCESS, str(deltx_nb) + _(' Text(s) deleted / ') + str(delse_nb) + _(' sentence(s) deleted / '))
+            todelete_text = Texts.objects.filter(owner=request.user).get(id=text_id)
+
+            # delete the words
+            todelete_words = Words.objects.filter(text=todelete_text)
+            toupdate_savedwords = []
+            for todelete_wo in todelete_words:
+                if not delete_saved_words and todelete_wo.status != 0:
+                        customsentence = '' if not todelete_wo.customsentence else todelete_wo.customsentence+' / ' 
+                        customsentence += todelete_wo.sentence.sentencetext
+                        todelete_wo.customsentence = customsentence
+                        toupdate_savedwords.append(todelete_wo)
+                else:
+                    # delete also Grouper_of_same_words associated:
+                    # maybe there isn´t (if we have make this word as a similar word to another)
+                    # Don't use wo.grouper_of_same_word.delete() since we want to keep words in other texts though
+                    gosw_for_this_word = Grouper_of_same_words.objects.filter(id=todelete_wo.id).first()
+                    if gosw_for_this_word:
+                        gosw_for_this_word.delete()
+                        delwo_nb += 1 # else it's not a word but a space ' ', or '?', '!' etc...
+                    todelete_wo.delete()
+            # bulk update:
+            Words.objects.bulk_update(toupdate_savedwords, ['customsentence'])
+
+            # delete the text
+            todelete_text.delete() # then delete the text itself
+            # the sentence will be deleted by cascade so no need to delete them manually
+#             delse = Sentences.objects.filter(owner=request.user).filter(text__id=text_id).delete()
+#             delse_nb += delse[0]
+
+            deltx_nb += len(ids_to_delete)
+        # display messages with the count of deleted text(s) and word(s)
+        success_message = _('Deletion success : ')
+        deltx_message = ngettext('%(count)d text deleted.', '%(count)d texts deleted',
+                                deltx_nb) % {'count': deltx_nb}
+        delwo_message = ngettext('%(count)d unknown word deleted.', '%(count)d unknown words deleted',
+                                delwo_nb) % {'count': delwo_nb}
+        messages.add_message(request, messages.SUCCESS, success_message+deltx_message+' / '+delwo_message)
         #update the cookie for the database_size
         set_word_database_size(request)
 

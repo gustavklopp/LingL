@@ -166,7 +166,8 @@ class TextsManager(models.Manager):
         
 class Texts(BaseModel):
     ''' to be deleted, you need to delete the textitem and the sentence containing foreignkey to the text before'''
-    language = models.ForeignKey(Languages, related_name='texthavingthislanguage', on_delete=models.CASCADE)
+    language = models.ForeignKey(Languages, related_name='texthavingthislanguage', 
+                        on_delete=models.CASCADE) 
     title = models.CharField( max_length=200)  
     text = models.TextField()  
     annotatedtext = models.TextField()  
@@ -196,7 +197,8 @@ class SentencesManager(models.Manager):
 
 class Sentences(BaseModel): # the Text is cut into sentences
     language = models.ForeignKey(Languages, on_delete=models.CASCADE)
-    text = models.ForeignKey(Texts, on_delete=models.CASCADE)
+    text = models.ForeignKey(Texts, 
+                    on_delete=models.CASCADE) #don't automatically delete words when delete a sentence
     order = models.IntegerField()  # the ordinal number of the sentence in each text
     sentencetext = models.TextField(blank=True, null=True)
 
@@ -284,10 +286,12 @@ class WordsManager(models.Manager):
         return self.get(textOrder=textOrder, text__title=text, owner__username=owner)
 
 class Words(BaseModel):
-    #### Foreign keys:
-    language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage', on_delete=models.CASCADE )
+    ####      Foreign keys    ####
+    language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage', 
+                                    on_delete=models.CASCADE )
     text = models.ForeignKey(Texts, on_delete=models.CASCADE,blank=True, null=True, related_name='texthavingthisword')
-    sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, null=True, on_delete=models.CASCADE)
+    sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, 
+                                 null=True, on_delete=models.SET_NULL)
     # compoundword: Several words which together have a meaning in the language:
     # in English: 'turn' and 'off', 'get'and 'up'. or even expression longer
     # we store a ForeignKey on the Words model itself. It takes some extra place in the models but
@@ -299,10 +303,10 @@ class Words(BaseModel):
                        ) # foreignkey to the same table
     grouper_of_same_words = models.ForeignKey(Grouper_of_same_words, null=True, related_name='grouper_of_same_words_for_this_word',
                                               on_delete=models.SET_NULL)
-    # Added by myself: Link to the Tags
+    # Link to the Tags
     wordtags = models.ManyToManyField(Wordtags, related_name='wordtag_with_this_word')
 
-    #### Not foreign keys:
+    ####   Not foreign keys  ####
 #     STATUS_CHOICES = ( (0, _('Unknown')),
 #                        (1, _('Learning')),
 #                        (100, _('Well-known')),

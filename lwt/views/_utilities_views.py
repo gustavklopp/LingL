@@ -230,10 +230,11 @@ def list_filtering( model, request):
     
     return results
 
+'''useful for javascript for example which sends boolean value 'false' and 'true' for checkbox'''
 def str_to_bool(s):
-    if s == 'True':
+    if s == 'True' or s == 'true':
         return True
-    elif s == 'False':
+    elif s == 'False' or s == 'false':
         return False
     else:
         raise ValueError 
