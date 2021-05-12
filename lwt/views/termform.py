@@ -168,11 +168,11 @@ def search_possiblesimilarword(request, word=None):
     # search for the already added similar words by the user
     # search with the 3 first letters of the given word. research is made more accurate with the search 
     # box by the user (use in AJAX).
-    # we exclude: the same word (of course) and the already similar word
+    # we exclude: the same word (of course) (whatever the upper/lowercase) and the already similar word
     if word: # clicking on new word in text_read section
         possiblesimilarword_obj =  Words.objects.\
                         filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=word.wordtext[:3])).\
-                               exclude(wordtext=word.wordtext).\
+                               exclude(wordtext__iexact=word.wordtext).\
                                exclude(status=0).\
                                order_by('grouper_of_same_words_id')
     else: # doing a search in the termform searchbox sent by AJAX
@@ -247,7 +247,7 @@ def search_possiblesimilarCompoundword(request, compoundword_list=None):
     if compoundword_list:
         return possiblesimilarCompoundword_distinctFK
     else:
-        return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarCompundword_distinctFK}))
+        return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarCompoundword_distinctFK}))
 
 ''' helper for termform: superficial copy of a word (or compoundword)'''
 def _copy_word(sourceword, destword):
@@ -366,18 +366,28 @@ def termform(request):
                 status = 101
             wo_id = request.GET['wo_id']
             word = Words.objects.get(id=wo_id)
-            # get the similar words (words that have the same wordtext or that have already been identified as similar)
+            # All similar Words need to be have an updated status also:
+            # - Those are searching by the same wordtext, OR
+            # - Those which have already been defined as similar before
+            #            = i.e they have the same FK Grouper_of_same_words
             grouper_of_same_words = word.grouper_of_same_words
-            samewordtext_query = Words.objects.filter(language=word.language).filter(Q(wordtext=word.wordtext)|\
-                                    Q(grouper_of_same_words=grouper_of_same_words))
+            samewordtext_query = Words.objects.filter(language=word.language).\
+                                        filter(Q(wordtext=word.wordtext)|\
+                                               Q(grouper_of_same_words=grouper_of_same_words))
             sameword_list = []
             sameword_id_list = []
             for sw in samewordtext_query:
+                if sw.grouper_of_same_words != word.grouper_of_same_words:
+                    # deleting the GOSW for this word
+                    Grouper_of_same_words.objects.get(id=sw.grouper_of_same_words.id).delete()
+                    # and put the new:
+                    sw.grouper_of_same_words = grouper_of_same_words
+
                 sw.status = status
-                sw.grouper_of_same_words = grouper_of_same_words
-                sw.save()
                 sameword_list.append(sw)
                 sameword_id_list.append(sw.id)
+            Words.objects.bulk_update(samewordtext_query, ['grouper_of_same_words', 'status'])
+
             samewordtextlength = len(sameword_list)
             html = render_to_string('lwt/term_message.html', {'wordtext':word.wordtext, 
                     'head_message':_('Changing Status of "{}"').format(word.wordtext), 

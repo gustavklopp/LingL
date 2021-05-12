@@ -195,10 +195,10 @@ def NOTUSEDFUNCsearch_possiblesimilarword(request):
                                           'alreadyadded_similarword': list(alreadyadded_similarword)})
     return JsonResponse(search_similarword_json, safe=False)
 
+''' called by AJAX by the form in termform: 
+- a word is considered as similar: copy the data from the word to the similar one (and use a Grouper.
+- undoing this: delete the similar word '''
 def create_or_del_similarword(request):
-    ''' called by AJAX by the form in termform: 
-    - a word is consideted as similar: copy the data from the word to the similar one (and use a Grouper.
-    - undoing this: delete the similar word '''
     op = request.GET['op']
     simwo_id = request.GET['simwo_id']
     wo_id = request.GET['wo_id']

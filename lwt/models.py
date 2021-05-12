@@ -255,12 +255,12 @@ class Grouper_of_same_words(BaseModel):
              Grouper_of_same_words     id            
                                        12           
                                        13           
-                                       14     ==> DELETE IT
+                                     [ 14 ]X    ==> DELETE IT
             ---------------------------------------------------
              Words    FK GOSW          id           wordtext
                         id_12          12           'write'
                         id_13          13           'test'
-       => CHANGE FK    *id_12          14           'wrote'
+       => CHANGE FK   [ id_12 ]        14           'wrote'
 
     When a word A is written the same as a word B:
               - update the FK in word B to point to the Grouper_of_same_words of word A.

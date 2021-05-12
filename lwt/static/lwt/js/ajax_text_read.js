@@ -55,7 +55,6 @@ function _clicked_weblink_radiobutton(dictwebpage_searched_word=null){
 	@return an AJAX obj: allows to abort the previous AJAX if another call arrives */
 function ajax_clicked_word(wo_id, show_compoundword, op, rtl) {
 
-	var finished_code = false;
 	var $ajaxClickedWord = $.ajax({url: '/termform/', type: 'GET',
 			data: {
 					'op' : op, 

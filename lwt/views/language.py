@@ -92,29 +92,32 @@ def language_detail(request):
     #### PROCESSING THE SENT FORM (= clicked on 'save' button)#################
     if request.method == 'POST': 
                 
-        f = make_languagesform(request.user.id)(request.POST or None)
-        if f.is_valid():
-            if 'new' in request.GET.keys(): # saving a New language:
+        if 'new' in request.GET.keys(): # saving a New language:
+            f = make_languagesform(request.user.id)(request.POST or None)
+            if f.is_valid():
                 savedlanguage = f.save()
                 # manually saving the fields because Modelform is not saving (I don't know why...)
                 savedlanguage.__dict__.update(f.cleaned_data)
                 savedlanguage.owner = request.user
                 savedlanguage.save()
                 messages.add_message(request, messages.SUCCESS, _('Language successfully created'))
-            elif 'edit' in request.GET.keys(): # editing an existing language:
+        elif 'edit' in request.GET.keys(): # editing an existing language:
+            existinglanguage = Languages.objects.get(id=request.GET['edit'])
+            f = make_languagesform(request.user.id)(request.POST, instance=existinglanguage)
+            if f.is_valid():
                 savedlanguage = f.save(commit=False)
                 existinglanguage = Languages.objects.get(id=request.GET['edit'])
                 savedlanguage.id = existinglanguage.id #request.GET['edit'] is the id of the existing lang
                 savedlanguage.created_date = existinglanguage.created_date 
                 savedlanguage.save()
                 messages.add_message(request, messages.SUCCESS, _('Language successfully edited'))
-            # and put that inside database and cookie:
-            setter_settings_cookie_and_db('currentlang_id', savedlanguage.id, request)
-            ############## EDIINTG THE JSON EXTRA FIELD in WORDS #########################################
-            # only if there are words already defined of course and if this extra fields has been defined:
-            thislang_words = Words.objects.filter(language=savedlanguage).\
-                                exclude(Q(isnotword=True)&Q(isCompoundword=False)).all()
-            #TODO Extra fields
+        # and put that inside database and cookie:
+        setter_settings_cookie_and_db('currentlang_id', savedlanguage.id, request)
+        ############## EDIINTG THE JSON EXTRA FIELD in WORDS #########################################
+        # only if there are words already defined of course and if this extra fields has been defined:
+        thislang_words = Words.objects.filter(language=savedlanguage).\
+                            exclude(Q(isnotword=True)&Q(isCompoundword=False)).all()
+        #TODO Extra fields
 #             
 #             if thislang_words and thislang_words.first():
 #                 old_extra_field_json = thislang_words.first().extra_field
@@ -157,6 +160,7 @@ def language_detail(request):
 #                             thislang_word.extra_field = yaml.dumps(new_extra_field_list)
 #                             thislang_word.save()
 
+        if f.is_valid():
             return redirect(reverse('language_list'))
         else:
             return render(request, 'lwt/language_detail.html', {'form':f})

@@ -70,11 +70,7 @@ class DropdownToggleWidget(forms.TextInput):
 ''' pre-initializing LanguagesForm with datalist for the DropDownToggle widget '''
 def make_languagesform(user_id, dicturi_list=[]):
     class LanguagesForm(forms.ModelForm):
-        # load and get the real name for the Fixtures of languages (in lwt/fixtures folder)
-#         languages_fixtures = os.path.join(settings.BASE_DIR, 'lwt','fixtures', 'languages_fixtures.json')
-#         with open(languages_fixtures) as lang_json:
-#             lang_json = lang_json.read()
-#         languages_fixtures = json.loads(lang_json)
+
         lang_list = Languages.objects.filter(owner_id=1)
         name_lang_list = []
         for lang in lang_list:

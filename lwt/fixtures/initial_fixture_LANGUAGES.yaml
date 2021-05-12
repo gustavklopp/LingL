@@ -8,6 +8,8 @@
     dicturi: >-
       https://glosbe.com/gapi/translate?from=eng&&dest=•••&format=json, 
       https://en.wiktionary.org/wiki/###
+    dict1uri: "https://en.wiktionary.org/wiki/###"
+    dict2uri: null
     googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=••&text=###"
     textsize: 150
     charactersubstitutions: "´=\"|`=\"|’=\"|‘=\"|...=…|..=‥"

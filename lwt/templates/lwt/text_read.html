@@ -75,14 +75,14 @@ $(document).ready( function() {
 
 <div class="d-flex">
 	<div class="col-md-8">
-	<h4 class="pl-50">{% trans "READING" %}&nbsp;▶ "{{ text.title }}"{% if text.sourceuri %}<a href="{{ text.sourceURI }}" target="_blank"><img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Text Source" %}" alt="Text Source" /></a>{% endif %}
+	<h4 class="pl-50">{% trans "READING" %}&nbsp;[{{ text.language }}]&nbsp;▶ "{{ text.title }}"{% if text.sourceuri %}<a href="{{ text.sourceURI }}" target="_blank"><img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Text Source" %}" alt="Text Source" /></a>{% endif %}
 	</h4>
 	</div>
 	<div class="col-md-1">
 	<a href="{% url 'helppage' %}#keyboard_shortcut" target="_blank"><img src="{% static 'lwt/img/keyboard_mouse-icon50x25.png' %}" title="{% trans "Controls (and Keyboard shortcuts)" %}" alt="Control (and Keyboard shortcuts)" /></a>
 	</div>
 	<div class="col-md-3">
-	{% trans 'TO DO:' %} <span title="To Do" id="word_left_todo" wostatus="0">&nbsp;{{ todo_wordcount }}&nbsp;</span>
+	{% trans 'TO DO:' %} <span title="{% trans 'Number of unknown words (duplicate excluded)' %}" id="word_left_todo" wostatus="0">&nbsp;{{ todo_wordcount }}&nbsp;</span>
 	&nbsp;&nbsp;&nbsp;<button title="{% trans 'Mark all the remaining unknown words in this sentence as known' %}" class="btn btn-primary btn-sm" {% ifequal todo_wordcount 0 %}disabled{% endifequal %} id="iknowall" onclick="iknowall();">{% trans "I KNOW ALL" %}</button>
 	</div>
 </div>
