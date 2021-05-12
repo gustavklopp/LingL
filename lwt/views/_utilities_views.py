@@ -306,7 +306,7 @@ def splitText(request, text):
     ######## PRE-PROCESSING ##############################################################################
     t = text.text
     
-    # reverse the text if righttoleft language (like Hebrew/arab)
+    # reverse the text if righttoleft language (like Hebrew/arab) TODO!
 #     if rtlScript:
 #         word_split_pattern = r'([^'+termchar+']+)' # pattern used to separate Hebrew words with the rest
 #         t_splitted = re.split(word_split_pattern, t)
@@ -378,31 +378,30 @@ def splitText(request, text):
                 Words.objects.create(owner=text.owner,language=text.language, sentence=newsentence,text=text,order=wordidx, \
                              wordtext=lastitem_isnotword, isnotword=True)
     ################## PARSING THE TEXT FOR SIMILAR WORD: #########################################################################
-    # We check whether the word, written similarly, hasn't been defined elsewhere:
-    # we sort the list to accelerate the speed inside the loop:
-    new_words_created_sorted = sorted(new_words_created, key=lambda word: word.wordtext)
-    temp_word = ''
-    for word in new_words_created_sorted:
-        if temp_word != '':
-            if word.wordtext == temp_word.wordtext: # it's the same word than the word before in the list:
-                word.grouper_of_same_words = temp_word.grouper_of_same_words
-                word.status = temp_word.status
-                word.save()
-                temp_word = word
-        else: # word with a different wordtext: we search for other words in other texts:
-            similar_wo = Words.objects.filter(language=text.language).exclude(text=text).filter(wordtext=word.wordtext).first()
-            if similar_wo:
-                word.grouper_of_same_words = similar_wo.grouper_of_same_words
-                word.status = similar_wo.status
-                word.save()
-                temp_word = word
+    GOSW_to_create_for_these_words = []
+    status_need_update_for_these_words = []
+    for new_word_created in new_words_created:
+            samewordtext_query = Words.objects.filter(language=text.language).\
+                                        filter(wordtext__iexact=new_word_created.wordtext)
+            if samewordtext_query:
+                sameword = samewordtext_query.first()     
+                new_word_created.status = sameword.status
+                new_word_created.grouper_of_same_words = sameword.grouper_of_same_words
+                status_need_update_for_these_words.append(new_word_created)
+            else:
+                # this needs its own Grouper_of_same_words
+                GOSW_to_create_for_these_words.append(new_word_created)
+    # Bulk update:
+    Words.objects.bulk_update(status_need_update_for_these_words, ['status'])
+    # create GOSW for the others:
+    create_GOSW_for_words(GOSW_to_create_for_these_words)
 
     ###################### Calculate how many words are for this language: Display a warning if too many words: ####################
     total_words_in_this_lang = Words.objects.filter(owner=request.user, language=text.language).count()
     if total_words_in_this_lang > MAX_WORDS:
         messages.warning(request, _('With this additional text, you\'ve got now ') + \
                         str(total_words_in_this_lang) + _(' words for ') + text.language.name + \
-                        _('. This could slow the program a lot. Please consider archiving some texts.'))
+                        _('. This could slow the program a lot. Please consider deleting some texts.'))
 
 # IS IT USEFUL???
 # def remove_spaces(s,remove):
@@ -413,12 +412,12 @@ def splitText(request, text):
 #         return s
 
 ''' some other cleaning for the splitting in textitems function '''
-def repl_tab_nl(s):
-    s = re.sub(r'[\r\n\t]', r' ', s)
-    s = re.sub(r'\r\n', r' ', s)
-    s = re.sub(r'\s', r' ', s)
-    s = re.sub(r'\s{2,}', r' ', s)
-    return s.strip()
+# def repl_tab_nl(s): NOT USED IN FACT
+#     s = re.sub(r'[\r\n\t]', r' ', s)
+#     s = re.sub(r'\r\n', r' ', s)
+#     s = re.sub(r'\s', r' ', s)
+#     s = re.sub(r'\s{2,}', r' ', s)
+#     return s.strip()
 
 ''' original php function converted in python ''' 
 def isset(variable):

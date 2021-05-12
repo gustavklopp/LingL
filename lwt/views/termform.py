@@ -372,7 +372,7 @@ def termform(request):
             #            = i.e they have the same FK Grouper_of_same_words
             grouper_of_same_words = word.grouper_of_same_words
             samewordtext_query = Words.objects.filter(language=word.language).\
-                                        filter(Q(wordtext=word.wordtext)|\
+                                        filter(Q(wordtext__iexact=word.wordtext)|\
                                                Q(grouper_of_same_words=grouper_of_same_words))
             sameword_list = []
             sameword_id_list = []
