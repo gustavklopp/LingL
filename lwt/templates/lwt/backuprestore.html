@@ -9,7 +9,7 @@
 {% endblock banner %}
 
 {% block content %}
-<form enctype="multipart/form-data" action="{% url 'backuprestore'%}" method="post" onsubmit="return confirm('Are you sure?');">
+<form id="backuprestore_form" enctype="multipart/form-data" action="{% url 'backuprestore'%}" method="post">
 {% csrf_token %}
 <table  class="table table-bordered">
 <tr>
@@ -30,17 +30,17 @@ The data from your account will be exported to a gzipped YAML file.<br />Please 
 All data in your account will be <b>replaced</b> by the data in the specified backup file<br />(gzipped file, created above).<br />
 <!--    <br /><span class="smallgray">Important: If the backup file is too large, the restore may not be possible.<br />Upload limits (in bytes): <b>post_max_size = <?php echo ini_get('post_max_size'); ?> / upload_max_filesize = <?php echo ini_get('upload_max_filesize'); ?></b><br />-->
 <!--If needed, increase in "<?php echo tohtml(php_ini_loaded_file()); ?>" and restart server.<br />&nbsp;</span></p>-->
-{{ form.restore_file }} 
+{{ form.restore_file }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
 <p >&nbsp;<br /><span class="red2">YOU MAY LOSE DATA - BE CAREFUL: &nbsp; &nbsp; &nbsp;</span> 
-<button  class="btn btn-danger" type="submit" name="restore" value="restore">Restore from Backup</button>
+<button  class="btn btn-danger" type="submit" name="restore" value="restore"  onclick="if (confirm('Are you sure?')){ $('#backuprestore_form').submit();} else {return false;}">Restore from Backup</button>
 </td>
 
 <!--  RESTORE FROM OLD LWT -->
 <tr>
-<th>Import<br />from LWT</th>
+<th>Import<br />Personal Saved from LWT</th>
 <td>
 <p >
-The data from the LWT will be added to your account.</p>
+The data from the LWT software will be <b>added</b> to your account (Your own data are kept).</p>
 {{ form.import_oldlwt }} 
 <p class="right">&nbsp;<br /><button class="btn btn-primary" type="submit" name="import_oldlwt" value="import_oldlwt">Import data from LWT</button>
 </td>
@@ -48,12 +48,12 @@ The data from the LWT will be added to your account.</p>
 
 <!--  IMPORT LINGL DEMO -->
 <tr>
-<th >Install<br />LingL Demo</th>
+<th >Install<br />LWT Demo</th>
 <td >
 <p >
-All data in your account will be <b>replaced</b> by the LingL demo dataset.</p>
+The data from the LWT Demo will be <b>added</b> to your account (Your own data are kept)</p>
 <p class="right">&nbsp;<br /> 
-<button class="btn btn-danger" type="submit" name="install_demo" value="install_demo">Install LingL Demo</button>
+<button class="btn btn-primary" type="submit" name="install_demo" value="install_demo">Install LingL Demo</button>
 </td>
 </tr>
 
@@ -63,7 +63,7 @@ All data in your account will be <b>replaced</b> by the LingL demo dataset.</p>
 <td>
 <p><b>Delete</b> your account and all the texts, languages associated with it.</p>
 <p class="right">&nbsp;<br /><span class="red2">YOU LOSE ALL YOUR DATA - BE CAREFUL: &nbsp; &nbsp; &nbsp;</span>
-<button class="btn btn-danger" type="submit" name="empty" value="empty">Delete My Account</button>
+<button class="btn btn-danger" type="submit" name="empty" value="empty"  onclick="if (confirm('Are you sure?')){ $('#backuprestore_form').submit();} else {return false;}">Delete My Account</button>
 </td>
 </tr>
 </table>

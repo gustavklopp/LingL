@@ -88,14 +88,17 @@ def load_texttable(request):
         ##############################display some stats about the Texts: ############################################
 #         texttotalword = Words.objects.filter(owner=request.user).filter(text=t).\
 #                 exclude(Q(isnotword=True)&Q(isCompoundword=False)).count()
-        # don't count duplicate (words written similarly)
-        texttotalword_list = Words.objects.filter(owner=request.user).filter(text=t).\
-                exclude(Q(isnotword=True)&Q(isCompoundword=False)).order_by('wordtext')
+        # Total words in this text: don't count duplicate (words written similarly)
+        texttotalword_list = Words.objects.filter(Q(owner=request.user)&Q(text=t)).\
+                exclude(isnotword=True).order_by('wordtext')
         texttotalword = len(distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
                 
-        # don't count duplicate (words written similarly) (we exclude when no GOSW associated)
-        textsavedword = Words.objects.filter(owner=request.user).filter(text=t).filter(status__gt=0).\
-                exclude(Q(isnotword=True)&Q(isCompoundword=False)&Q(grouper_of_same_words=None)).count()
+        # Already saved words in this text: don't count duplicate (words written similarly) 
+        textsavedword = Grouper_of_same_words.objects.filter(Q(grouper_of_same_words_for_this_word__text=t)&\
+                                                             Q(grouper_of_same_words_for_this_word__status__gt=0)).count()
+#         textsavedword = Words.objects.filter(Q(owner=request.user)&Q(text=t)&Q(status__gt=0)).\
+#                 exclude(Q(isnotword=True)&Q(grouper_of_same_words=None)).count()
+
         textsavedexpr = Words.objects.filter(owner=request.user).filter(text=t,isCompoundword=True,status__gt=0).count()
         textunknownword = texttotalword - textsavedword
         if texttotalword != 0:
@@ -508,7 +511,7 @@ def text_detail(request):
             new_space.save()
             # create grouper_of_same_words also:
             create_GOSW_for_words([new_word])
-            create_GOSW_for_words([new_space])
+#             create_GOSW_for_words([new_space]) the Space DOES NOT need a Grouper_of_same_word
 
         # displaying the editable text
         elif 'edit' in request.GET.keys():

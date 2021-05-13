@@ -282,8 +282,10 @@ class Grouper_of_same_words(BaseModel):
 
 
 class WordsManager(models.Manager):
-    def get_by_natural_key(self, textOrder, text, owner):
-        return self.get(textOrder=textOrder, text__title=text, owner__username=owner)
+#     def get_by_natural_key(self, wordtext, textOrder, text, owner):
+#         return self.get(wordtext=wordtext, textOrder=textOrder, text__title=text, owner__username=owner)
+    def get_by_natural_key(self,  textOrder, text, owner):
+        return self.get( textOrder=textOrder, text__title=text, owner__username=owner)
 
 class Words(BaseModel):
     ####      Foreign keys    ####
@@ -334,8 +336,10 @@ class Words(BaseModel):
         db_table = 'words'        
 #         unique_together = [['textOrder', 'text', 'owner']] <-- Pb when deleting a word when doing bulk_update
 
+#     def natural_key(self):
+#         return (self.wordtext, self.textOrder, self.text.title, self.owner.username)
     def natural_key(self):
-        return (self.textOrder, self.text.title, self.owner.username)
+        return ( self.textOrder, self.text.title, self.owner.username)
 #####################################################
 #             DATABASE 'settings':                  #
 #####################################################
@@ -585,7 +589,7 @@ class UserAccountAdapter(DefaultAccountAdapter):
 
 ''' Used insided Backup & Restore to upload a backup file '''
 class Restore(models.Model):
-
+    owner = models.ForeignKey(MyUser, null=True, on_delete=models.CASCADE) # each user has his own set of the database
     restore_file_name = models.CharField(max_length=255, blank=True)
     restore_file = models.FileField(blank=True)
     import_oldlwt = models.FileField(blank=True)

@@ -35,13 +35,16 @@ from lwt.views._import_oldlwt import *
 
 
 ''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
-def wipeout_database(request):
+def wipeout_database(request, keep_myuser=False):
     for mymodel in apps.get_app_config('lwt').get_models():
-        if mymodel == Restore or mymodel == Uploaded_text: 
-            # don't delete the MyUser, Restore, Uploaded_text models:
+        if mymodel == Uploaded_text: 
+            # don't delete the Uploaded_text models:
             continue
         elif mymodel == MyUser: 
-            mymodel.objects.get(id=request.user.id).delete()
+            if not keep_myuser:
+                mymodel.objects.get(id=request.user.id).delete()
+            else:
+                continue
         else:
             mymodel.objects.filter(owner=request.user).all().delete()
     #update the cookie for the database_size
@@ -49,6 +52,8 @@ def wipeout_database(request):
     # and delete cookies:
     if 'currentlang_id' in request.session.keys(): # if the session has been defined
         del request.session['currentlang_id'] 
+        request.session.modified = True
+    if 'currentlang_name' in request.session.keys(): # if the session has been defined
         del request.session['currentlang_name']
         request.session.modified = True
 
@@ -68,12 +73,18 @@ def backuprestore(request):
             all_qs = []
 
             for mymodel in apps.get_app_config('lwt').get_models():
-                if mymodel == MyUser or mymodel == Restore or mymodel == Uploaded_text: 
-                    # don't delete the MyUser, Restore, Uploaded_text models:
+                if mymodel == MyUser:
+                    all_qs += mymodel.objects.filter(username=request.user.username)
+                elif mymodel == Restore or mymodel == Uploaded_text or \
+                    mymodel == Grouper_of_same_words: 
+                    # don't back up the MyUser, Restore, Uploaded_text models:
                     continue
                 else:
                     all_qs += mymodel.objects.filter(owner=request.user).all()
-            fixture = serialize('yaml', all_qs)
+            fixture = serialize('yaml', all_qs, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+            # Set the FK Grouper_of_same_word to null (we'll relink them when recovering the file)
+            # (it's because we can't use natural FK since GOSW use a id number relationship)
+            fixture = re.sub(r'(grouper_of_same_words: )\d+', r'\1null', fixture)
             now = timezone.now().strftime('%Y-%m-%d') 
             filename = 'lingl_backup_{}.yaml.gz'.format(now)
             out = io.BytesIO()
@@ -87,22 +98,53 @@ def backuprestore(request):
         if 'empty' in request.POST.values():
             wipeout_database(request)
             return redirect(reverse('homepage'))
+
         form = RestoreForm(request.POST, request.FILES)
         if form.is_valid():
             files = form.save()
             # process the uploaded file if it exists:
             if 'restore' in request.POST.values():
-                wipeout_database(request)
+                wipeout_database(request, keep_myuser=True)
                 fp = gunzipper(files.restore_file)
-                call_command('loaddata', fp.name, app_label='lwt') # load the fixtures
+                # Don´t install the User defined in the Restore file and change all the
+                # owner of the Restore file to the current User
+                editedOwner_fp = os.path.join(settings.MEDIA_ROOT, 'editedOwner_{}.yaml'.format(request.user))
+                start_writing = False
+                restore_username = request.user.username # the default value
+                with open(editedOwner_fp, 'w') as edited_f:
+                    for line in fp.file.readlines():
+                        line = line.decode('utf-8') # the line in this file are binary: b'my text...'
+                        # get the username from the restore file ...
+                        if not start_writing:
+                            match = re.search(r'(?<=username: )\w+', line)
+                            if match:
+                                restore_username = match.group()
+                            # all the MyUser section of the restore file is ignored
+                            if line.find('lwt.languages') != -1:
+                                start_writing = True
+                                edited_f.write(line)
+                        else:
+                            # and substitute it with the current User
+                            pattern = r'(^[ -]+- ){}'.format(restore_username)
+                            replacement = r'\1{}'.format(request.user.username)
+                            line = re.sub(pattern, replacement, line)
+                            edited_f.write(line)
+#                     call_command('loaddata', fp.name, app_label='lwt') # load the fixtures
+                    call_command('loaddata', editedOwner_fp, app_label='lwt') # load the fixtures
                 fp.close()
-                delete_uploadedfiles(Restore) # clean it
+                delete_uploadedfiles(files.restore_file.path, request.user) # clean it
+                os.remove(editedOwner_fp)
+
+                # then create grouper_of_same_words: it's a copy of Words' ids.
+                # create the GOSW...
+                words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
+                create_GOSW_for_words(words)
 
             if 'import_oldlwt' in request.POST.values():
                 fp = gunzipper(files.import_oldlwt)
                 import_oldlwt(request.user, fp)
                 fp.close()
-                delete_uploadedfiles(Restore)
+                delete_uploadedfiles(fp.name, request.user)
             
             if 'install_demo' in request.POST.values():
                 # First, install the languages (must change the owner):
@@ -140,16 +182,17 @@ def backuprestore(request):
                 
                 # then grouper_of_same_words: it's a copy of Words' ids.
                 # create the GOSW...
-                words = Words.objects.filter(owner=request.user)
-                bulk_create_prep = (Grouper_of_same_words(id=wo.id, owner=wo.owner, 
-                                created_date=wo.created_date, modified_date=wo.modified_date) for wo in words)
-                Grouper_of_same_words.objects.bulk_create(bulk_create_prep)
-                # ...then put it as FK in Words
-                bulk_update_prep = [Grouper_of_same_words(id=wo.id, owner=wo.owner, 
-                                created_date=wo.created_date, modified_date=wo.modified_date) for wo in words]
-                for idx, wo in enumerate(words):
-                    wo.grouper_of_same_words = bulk_update_prep[idx]
-                Words.objects.bulk_update(words, ['grouper_of_same_words'])
+                words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
+                create_GOSW_for_words(words)
+#                 bulk_create_prep = (Grouper_of_same_words(id=wo.id, owner=wo.owner, 
+#                                 created_date=wo.created_date, modified_date=wo.modified_date) for wo in words)
+#                 Grouper_of_same_words.objects.bulk_create(bulk_create_prep)
+#                 # ...then put it as FK in Words
+#                 bulk_update_prep = [Grouper_of_same_words(id=wo.id, owner=wo.owner, 
+#                                 created_date=wo.created_date, modified_date=wo.modified_date) for wo in words]
+#                 for idx, wo in enumerate(words):
+#                     wo.grouper_of_same_words = bulk_update_prep[idx]
+#                 Words.objects.bulk_update(words, ['grouper_of_same_words'])
                 
                 # the language chosen initially for the User is in double: remove it
                 # (it was first created when the User is signing up)
@@ -164,10 +207,13 @@ def backuprestore(request):
 #                 lang = Languages.objects.get(owner=owner, django_code=owner.origin_lang_code)
 #                 setter_settings_cookie_and_db('currentlang_id', lang.id, request, owner)
             
-#             if set(['install_demo','restore']) & set(request.POST.values()):
+            if 'restore' in request.POST.values():
 #                 # set the current user:
-#                 logout(request)
 #                 login(request, request.user, backend='allauth.account.auth_backends.AuthenticationBackend' )
+                # set arbitrary the currentlang
+                lang = Languages.objects.filter(owner=request.user).first()
+                setter_settings_cookie('currentlang_id', lang.id, request)
+                setter_settings_cookie('currentlang_name', lang.name, request)
 
             return redirect(reverse('homepage'))
     else:

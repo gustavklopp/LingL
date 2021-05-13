@@ -240,13 +240,9 @@ def str_to_bool(s):
         raise ValueError 
 
 ''' clean after uploading the file: remove the file in the dir and the Object'''
-def delete_uploadedfiles(Model_to_delete):
-    for dirpath, subdirs, files in os.walk(settings.MEDIA_ROOT):
-        for file in files:
-            os.remove(os.path.join(dirpath, file))
-    qrs = Model_to_delete.objects.all()
-    for qr in qrs:
-        qr.delete()
+def delete_uploadedfiles(filepath, owner):
+    os.remove(filepath)
+    Restore.objects.filter(owner=owner).delete()
 
 """ Does the language with this ID 'currentlang' exists in db? """
 ''' NOT USED

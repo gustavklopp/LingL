@@ -304,7 +304,7 @@ class RestoreForm(forms.ModelForm):
     
     class Meta:
         model = Restore
-        fields = ['restore_file_name', 'restore_file', 'import_oldlwt']
+        fields = ['owner', 'restore_file_name', 'restore_file', 'import_oldlwt']
         
 
 class Uploaded_textForm(forms.ModelForm):
