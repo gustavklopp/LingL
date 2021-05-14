@@ -20,6 +20,20 @@ from lwt.constants import MAX_WORDS
 if __name__ != '__main__':
     from lwt.models import *
 
+'''convert the placeholder for the link to the online dictionaries
+   for ex.: https://en.pons.com/translate/english-<NAMELC>/### 
+           =>      https://en.pons.com/translate/english-chinese/###'''
+def convert_placeholder_webdictlink(webdictlink, lang_obj):
+        # then change the placeholder string for the translation:
+    if '<NAMELC>' in webdictlink: 
+        modif_webdictlink = re.sub(r'<NAMELC>', lang_obj['name'].lower(), webdictlink)
+    elif '<NAME>' in webdictlink: 
+        modif_webdictlink = re.sub(r'<NAME>', lang_obj['name'], webdictlink)
+    elif '<2TCODE>' in webdictlink: 
+        modif_webdictlink = re.sub(r'<2TCODE>', lang_obj['2T'], webdictlink)
+    elif '<1CODE>' in webdictlink or '<GT>' in webdictlink: 
+        modif_webdictlink = re.sub(r'<1CODE>', lang_obj['1'], webdictlink)
+    return modif_webdictlink
 
 ''' Alternative to PostGreSQL 'distinct_on()', which doesn't exist in SQLITE3'''
 def distinct_on(mylist, criteria, case_unsensitive=True):

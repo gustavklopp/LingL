@@ -32,6 +32,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
+from lwt.views.language import substitute_in_dictURI
 
 
 ''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
@@ -157,24 +158,39 @@ def backuprestore(request):
             # First, install the languages (must change the owner):
             user_username = str(request.user.username)
 
-            # put a temporary name for the already defined language by the User
+            #########################
+            # Rename with a temporary name for the already defined language by the User
+            # (for ex: English ==> English_franck)
             # (else it will create a non unique constraint error when importing the language fixture
             dest_chosen_lang = Languages.objects.get(owner=request.user)
             temp_name = dest_chosen_lang.name
             dest_chosen_lang.name = "{}_{}".format(temp_name, user_username)
             dest_chosen_lang.save()
 
+            # the User is the owner of these languages we'll import
             lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES.yaml'
             USER_lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES_{}.yaml'.format(user_username)
 
             with open(lang_fixt_path) as lang_fixt_file:
                 langs = lang_fixt_file.read()
+                # replace the owner username
                 langs = langs.replace("- lingl", "- {}".format(user_username))
                 with open(USER_lang_fixt_path, "w") as USER_lang_fixt_file:
                     USER_lang_fixt_file.write(langs)
             call_command('loaddata', USER_lang_fixt_path , app_label='lwt') # load the fixtures
             os.remove(USER_lang_fixt_path)
+            
+            #########################
+            # the user languages needs the correct dict URIs with the User's origin lang:
+            for lang in Languages.objects.filter(owner=request.user):
+                lang = substitute_in_dictURI(request, lang, called_by_demo=True)
+                # and put it in dict1uri and dict2uri also
+                dicturi = lang.dicturi.split(',')
+                lang.dict1uri = dicturi[0].strip()
+                lang.dict2uri = dicturi[1].strip()
+                lang.save()
              
+            ##########################
             # then, install all the Demo, except the Grouper_of_same_words (we will create them manually):
             demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo.yaml'
             USER_demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo_{}.yaml'.format(user_username)

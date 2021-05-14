@@ -28,6 +28,7 @@ from lwt.forms import make_languagesform
 # helper functions:
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import get_word_database_size
+from test.test_sys_settrace import called
 
 
 # languages list
@@ -182,7 +183,7 @@ def language_detail(request):
             lang = lang_query.values()[0] # we need a dict for the operation below
             if lang['code_639_1']: # if it's defined of course
                 # we get the fixture to add uris to the dropdown menus if the user wants to change it
-                chosen_lang = get_language_fixture(request, lang['code_639_1'])
+                chosen_lang = substitute_in_dictURI(request, lang['code_639_1'])
                 chosen_lang_datalist = [[i,i] for i in chosen_lang['dicturi'].split(',')]
             else:
                 chosen_lang_datalist = []
@@ -211,15 +212,21 @@ def language_detail(request):
 ''' requested by ajax_fill_language_detail: a code_lang is sent, get all the data for the language '''
 def fill_language_detail(request):
     code_lang = request.GET['code_lang'] #for example: code_lang = 'si'
-    chosen_lang = get_language_fixture(request, code_lang)
+    chosen_lang = substitute_in_dictURI(request, code_lang)
     js = json.dumps(chosen_lang, cls=DjangoJSONEncoder)
     return HttpResponse(js)
 
 ''' load and get the real name and the ISO language codes for the Fixtures of languages 
-    (in lwt/fixtures folder) for the destination language for the translation
+    (in lwt/fixtures folder) for the learning language for the Language User wants to learn
                             and for the "origin" language (language User knows)
-    we used this to modify the dict1uri and dict2uri with the correct language destination'''
-def get_language_fixture(request, code_lang):
+    we used this to modify the dict1uri and dict2uri with the correct language destination
+      Called : - when displaying the admin languages when creating the form for the User
+              - when importing LWT demo
+
+    Ex: http://www.wordreference.com/fr••/###
+           ==> http://www.wordreference.com/fren/###
+    '''
+def substitute_in_dictURI(request, code_learninglang_OR_obj, called_by_demo=False):
     # for the origin lang too (language I know):
     origin_lang_code = request.user.origin_lang_code
     with open('lwt/fixtures/languages_codes.json', 'r') as languages_codes_f:
@@ -227,16 +234,49 @@ def get_language_fixture(request, code_lang):
         for lang in languages_codes_list:
             if lang['1'] ==  origin_lang_code:
                 origin_lang = lang
+                break
     
     # for the chosen lang (language I want to learn)
-    learning_lang = Languages.objects.filter(owner=1, code_639_1=code_lang).values()[0]
+    # the ADMIN has the basic languages (owner=1)
+    if not called_by_demo:
+        learning_lang = Languages.objects.filter(owner=1, code_639_1=code_learninglang_OR_obj).values()[0]
+        googletranslate_dicturi = learning_lang['googletranslateuri']
+    else:
+        learning_lang = code_learninglang_OR_obj
+        googletranslate_dicturi = learning_lang.googletranslateuri
+
+    def _set_attr_OR_key(obj, el, val):
+        if not called_by_demo:
+            obj[el] = val
+            return obj
+        else:
+            setattr(obj, el, val)
+            return obj
+    def _get_attr_OR_key(obj, el):
+        if not called_by_demo:
+            return obj[el]
+        else:
+            return getattr(obj, el)
 
     # then change the placeholder string for the translation:
-    learning_lang['dicturi'] = re.sub(r'••••', origin_lang['name'], learning_lang['dicturi'])
-    learning_lang['dicturi'] = re.sub(r'•••', origin_lang['2T'], learning_lang['dicturi'])
-    learning_lang['dicturi']= re.sub(r'••', origin_lang['1'], learning_lang['dicturi'])
-    learning_lang['googletranslateuri'] = re.sub(r'••', origin_lang['1'], 
-                                                        learning_lang['googletranslateuri'])
+    # there are several links in dicturi, so each of the 'ifs' can be called also
+    if '•LCNAME•' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'•LCNAME•', origin_lang['name'].lower(), _get_attr_OR_key(learning_lang, "dicturi")))
+    if '••••' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'••••', origin_lang['name'], _get_attr_OR_key(learning_lang, "dicturi")))
+    if '•••' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'•••', origin_lang['2T'], _get_attr_OR_key(learning_lang, "dicturi")))
+    if '••' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'••', origin_lang['1'], _get_attr_OR_key(learning_lang, "dicturi")))
+    # always true:
+    learning_lang = _set_attr_OR_key(learning_lang, "googletranslateuri", 
+                        re.sub(r'••', origin_lang['1'], googletranslate_dicturi))
+
     return learning_lang
+
     
     
