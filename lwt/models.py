@@ -47,7 +47,7 @@ from lwt.constants import STATUS_CHOICES
 #         else:
 #             return super(FilterByUser_Manager, self).get_queryset().filter(owner=owner)
 
-class MyUserManager(models.Manager):
+class MyUserManager(models.Manager): # for deserialization
     def get_by_natural_key(self, username):
         return self.get(username=username)
 
@@ -61,7 +61,7 @@ class MyUser(AbstractUser):
     def __str__(self):
         return self.username 
 
-    def natural_key(self):
+    def natural_key(self): # For serialization
         return ([self.username])  # I don´t know why but it needs to be put in a list (else, there's an error when loaddata)      
     
 
@@ -236,6 +236,10 @@ class Wordtags(BaseModel):
         return (self.wotagtext, self.owner.username)
 
 
+class Grouper_of_sameWordsManager(models.Manager):
+    def get_by_natural_key(self, id_string):
+        return self.get(id_string=id_string)
+
 class Grouper_of_same_words(BaseModel):
     ''' - words written similarly in differents sentences, text... AND
         - words written differently, but sharing the same meaning in fact: 
@@ -275,10 +279,20 @@ class Grouper_of_same_words(BaseModel):
     # the problem is if you´ve got another words that you want to make it similar to ´fall´:
     # ´fallen´: will display then ´to fall/ autumn´ in its definition. so we must separate different
     # similar words. Maybe with ´translation´ field? GOSW fall/fallen/fell : FK in fall, transl: ´to lose´
-    translation = models.CharField( max_length=500, blank=True, null=True)  
+    
+    # same than field 'id' but here we keep the 'natural_key' of the word. Used when creating...
+    # ... backup and importing backup
+    id_string = models.CharField( max_length=500, blank=True, null=True
+                                  )
+#                                 ,  unique=True)  
+
+    objects = Grouper_of_sameWordsManager() # use to call the parent foreign key by its name (or title , or etc...)
 
     class Meta:
         db_table = 'Grouper_of_same_words'
+
+    def natural_key(self):
+        return ([self.id_string]) 
 
 
 class WordsManager(models.Manager):
@@ -322,6 +336,8 @@ class Words(BaseModel):
     romanization = models.CharField( max_length=100, blank=True, null=True)  
     customsentence = models.CharField( max_length=1000, blank=True, null=True) 
     wordinside_order = models.TextField(max_length=250,blank=True,null=True) # stored by dumping JSON format into str
+    # same as above but using Natural Key (better than number to import data)
+    wordinside_order_NK = models.TextField(max_length=250,blank=True,null=True)
     isCompoundword = models.BooleanField(default=False)
     show_compoundword = models.BooleanField(default=False) # showing compoundword or single word in text_read
     state = models.BooleanField(default=False) # used to export2anki checkox

@@ -89,13 +89,13 @@ def load_texttable(request):
 #         texttotalword = Words.objects.filter(owner=request.user).filter(text=t).\
 #                 exclude(Q(isnotword=True)&Q(isCompoundword=False)).count()
         # Total words in this text: don't count duplicate (words written similarly)
-        texttotalword_list = Words.objects.filter(Q(owner=request.user)&Q(text=t)).\
-                exclude(isnotword=True).order_by('wordtext')
+        texttotalword_list = Words.objects.filter(text=t).\
+                exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
         texttotalword = len(distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
                 
         # Already saved words in this text: don't count duplicate (words written similarly) 
         textsavedword = Grouper_of_same_words.objects.filter(Q(grouper_of_same_words_for_this_word__text=t)&\
-                                                             Q(grouper_of_same_words_for_this_word__status__gt=0)).count()
+                                                             Q(grouper_of_same_words_for_this_word__status__gt=0)).distinct().count()
 #         textsavedword = Words.objects.filter(Q(owner=request.user)&Q(text=t)&Q(status__gt=0)).\
 #                 exclude(Q(isnotword=True)&Q(grouper_of_same_words=None)).count()
 

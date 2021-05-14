@@ -75,9 +75,10 @@ def backuprestore(request):
             for mymodel in apps.get_app_config('lwt').get_models():
                 if mymodel == MyUser:
                     all_qs += mymodel.objects.filter(username=request.user.username)
-                elif mymodel == Restore or mymodel == Uploaded_text or \
-                    mymodel == Grouper_of_same_words: 
-                    # don't back up the MyUser, Restore, Uploaded_text models:
+#                 elif mymodel == Restore or mymodel == Uploaded_text or \
+#                     mymodel == Grouper_of_same_words: 
+                # don't back up Restore and Uploaded_text models:
+                elif mymodel == Restore or mymodel == Uploaded_text:
                     continue
                 else:
                     all_qs += mymodel.objects.filter(owner=request.user).all()
@@ -85,7 +86,7 @@ def backuprestore(request):
             # Set the FK Grouper_of_same_word to null (we'll relink them when recovering the file)
             # (it's because we can't use natural FK since GOSW use a id number relationship)
             fixture = re.sub(r'(grouper_of_same_words: )\d+', r'\1null', fixture)
-            now = timezone.now().strftime('%Y-%m-%d') 
+            now = timezone.now().strftime('%Y-%m-%d_%Hh%M') 
             filename = 'lingl_backup_{}.yaml.gz'.format(now)
             out = io.BytesIO()
             with gzip.GzipFile(fileobj=out, mode='w') as f:
@@ -99,11 +100,11 @@ def backuprestore(request):
             wipeout_database(request)
             return redirect(reverse('homepage'))
 
-        form = RestoreForm(request.POST, request.FILES)
-        if form.is_valid():
-            files = form.save()
-            # process the uploaded file if it exists:
-            if 'restore' in request.POST.values():
+        if 'restore' in request.POST.values():
+            form = RestoreForm(request.POST, request.FILES)
+            if form.is_valid():
+                files = form.save()
+                # process the uploaded file if it exists:
                 wipeout_database(request, keep_myuser=True)
                 fp = gunzipper(files.restore_file)
                 # Don´t install the User defined in the Restore file and change all the
@@ -137,85 +138,75 @@ def backuprestore(request):
 
                 # then create grouper_of_same_words: it's a copy of Words' ids.
                 # create the GOSW...
-                words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
-                create_GOSW_for_words(words)
+#                 words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
+#                 create_GOSW_for_words(words)
 
-            if 'import_oldlwt' in request.POST.values():
-                fp = gunzipper(files.import_oldlwt)
-                import_oldlwt(request.user, fp)
-                fp.close()
-                delete_uploadedfiles(fp.name, request.user)
+            # set arbitrary the currentlang
+            lang = Languages.objects.filter(owner=request.user).first()
+            setter_settings_cookie('currentlang_id', lang.id, request)
+            setter_settings_cookie('currentlang_name', lang.name, request)
+
+        #TODO! NOT FINISHED
+        if 'import_oldlwt' in request.POST.values():
+            fp = gunzipper(files.import_oldlwt)
+            import_oldlwt(request.user, fp)
+            fp.close()
+            delete_uploadedfiles(fp.name, request.user)
+        
+        if 'install_demo' in request.POST.values():
+            # First, install the languages (must change the owner):
+            user_username = str(request.user.username)
+
+            # put a temporary name for the already defined language by the User
+            # (else it will create a non unique constraint error when importing the language fixture
+            dest_chosen_lang = Languages.objects.get(owner=request.user)
+            temp_name = dest_chosen_lang.name
+            dest_chosen_lang.name = "{}_{}".format(temp_name, user_username)
+            dest_chosen_lang.save()
+
+            lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES.yaml'
+            USER_lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES_{}.yaml'.format(user_username)
+
+            with open(lang_fixt_path) as lang_fixt_file:
+                langs = lang_fixt_file.read()
+                langs = langs.replace("- lingl", "- {}".format(user_username))
+                with open(USER_lang_fixt_path, "w") as USER_lang_fixt_file:
+                    USER_lang_fixt_file.write(langs)
+            call_command('loaddata', USER_lang_fixt_path , app_label='lwt') # load the fixtures
+            os.remove(USER_lang_fixt_path)
+             
+            # then, install all the Demo, except the Grouper_of_same_words (we will create them manually):
+            demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo.yaml'
+            USER_demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo_{}.yaml'.format(user_username)
+
+            with open(demo_fixt_path) as demo_fixt_file:
+                demo = demo_fixt_file.read()
+                demo = demo.replace("- lingl", "- {}".format(user_username))
+                with open(USER_demo_fixt_path, "w") as USER_demo_fixt_file:
+                    USER_demo_fixt_file.write(demo)
+            call_command('loaddata', USER_demo_fixt_path , app_label='lwt') # load the fixtures
+            os.remove(USER_demo_fixt_path)
             
-            if 'install_demo' in request.POST.values():
-                # First, install the languages (must change the owner):
-                user_username = str(request.user.username)
-
-                # put a temporary name for the already defined language by the User
-                # (else it will create a non unique constraint error when importing the language fixture
-                dest_chosen_lang = Languages.objects.get(owner=request.user)
-                temp_name = dest_chosen_lang.name
-                dest_chosen_lang.name = "{}_{}".format(temp_name, user_username)
-                dest_chosen_lang.save()
- 
-                lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES.yaml'
-                USER_lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES_{}.yaml'.format(user_username)
- 
-                with open(lang_fixt_path) as lang_fixt_file:
-                    langs = lang_fixt_file.read()
-                    langs = langs.replace("- lingl", "- {}".format(user_username))
-                    with open(USER_lang_fixt_path, "w") as USER_lang_fixt_file:
-                        USER_lang_fixt_file.write(langs)
-                call_command('loaddata', USER_lang_fixt_path , app_label='lwt') # load the fixtures
-                os.remove(USER_lang_fixt_path)
-                 
-                # then, install all the Demo, except the Grouper_of_same_words (we will create them manually):
-                demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo.yaml'
-                USER_demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo_{}.yaml'.format(user_username)
- 
-                with open(demo_fixt_path) as demo_fixt_file:
-                    demo = demo_fixt_file.read()
-                    demo = demo.replace("- lingl", "- {}".format(user_username))
-                    with open(USER_demo_fixt_path, "w") as USER_demo_fixt_file:
-                        USER_demo_fixt_file.write(demo)
-                call_command('loaddata', USER_demo_fixt_path , app_label='lwt') # load the fixtures
-                os.remove(USER_demo_fixt_path)
-                
-                # then grouper_of_same_words: it's a copy of Words' ids.
-                # create the GOSW...
-                words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
-                create_GOSW_for_words(words)
-#                 bulk_create_prep = (Grouper_of_same_words(id=wo.id, owner=wo.owner, 
-#                                 created_date=wo.created_date, modified_date=wo.modified_date) for wo in words)
-#                 Grouper_of_same_words.objects.bulk_create(bulk_create_prep)
-#                 # ...then put it as FK in Words
-#                 bulk_update_prep = [Grouper_of_same_words(id=wo.id, owner=wo.owner, 
-#                                 created_date=wo.created_date, modified_date=wo.modified_date) for wo in words]
-#                 for idx, wo in enumerate(words):
-#                     wo.grouper_of_same_words = bulk_update_prep[idx]
-#                 Words.objects.bulk_update(words, ['grouper_of_same_words'])
-                
-                # the language chosen initially for the User is in double: remove it
-                # (it was first created when the User is signing up)
-                Languages.objects.filter(Q(owner=request.user)&Q(name=temp_name)).order_by('-created_date').first().delete()
-                # and put again the name of the language, changed at the start to avoid unique constraint error
-                dest_chosen_lang.name = temp_name
-                dest_chosen_lang.save()
+#                 # then grouper_of_same_words: it's a copy of Words' ids.
+#                 # create the GOSW...
+#                 words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
+#                 create_GOSW_for_words(words)
+            
+            # the language chosen initially for the User is in double: remove it
+            # (it was first created when the User is signing up)
+            Languages.objects.filter(Q(owner=request.user)&Q(name=temp_name)).order_by('-created_date').first().delete()
+            # and put again the name of the language, changed at the start to avoid unique constraint error
+            dest_chosen_lang.name = temp_name
+            dest_chosen_lang.save()
 
 #             if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):
 #                 # set the currentlang if not aloready defined
 #                 owner = request.user
 #                 lang = Languages.objects.get(owner=owner, django_code=owner.origin_lang_code)
 #                 setter_settings_cookie_and_db('currentlang_id', lang.id, request, owner)
-            
-            if 'restore' in request.POST.values():
-#                 # set the current user:
-#                 login(request, request.user, backend='allauth.account.auth_backends.AuthenticationBackend' )
-                # set arbitrary the currentlang
-                lang = Languages.objects.filter(owner=request.user).first()
-                setter_settings_cookie('currentlang_id', lang.id, request)
-                setter_settings_cookie('currentlang_name', lang.name, request)
 
-            return redirect(reverse('homepage'))
+        return redirect(reverse('homepage'))
+
     else:
         form = RestoreForm()
             

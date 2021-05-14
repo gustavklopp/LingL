@@ -35,10 +35,10 @@ def converter_bad_url(url):
     else:
         return url
 
+''' data_file: sql file, uncompressed
+    owner: request.user
+    => from the sql file, create all the tables '''
 def import_oldlwt(owner, data_file):
-    ''' data_file: sql file, uncompressed
-        owner: request.user
-        => from the sql file, create all the tables '''
     # dicts where "'old_lwt_id'" :  <Word object in new lwt>
     languages_dict = {}
     texttags_dict = {}
