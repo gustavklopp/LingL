@@ -1,5 +1,6 @@
 from cx_Freeze import setup, Executable
 import os
+from datetime import date
 
 
 cwd = os.getcwd()
@@ -739,8 +740,14 @@ executables = [
     Executable('LingL_app.py', base=base, icon=lingl_image_path, target_name='LingLibre')
 ]
 
+# define the appversion and save it:
+today = date.today().strftime("%Y.%m.%d")
+with open('appversion.txt', 'w') as appversion_f:
+    appversion_f.write(today)
+
+
 setup(name='LingL',
-      version = '0.1',
+      version = today,
       description = 'Learn languages by reading what you want!',
       options = dict(build_exe = buildOptions),
       executables = executables)

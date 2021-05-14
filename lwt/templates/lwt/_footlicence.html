@@ -9,7 +9,7 @@
 <td><p class="small"><a href="http://lwt.sourceforge.net/" target="_blank">LingLibre ("LingL")</a> is free and opensource software released<br />
 under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public Licence </a>.<br />
 {% trans "This is LingL Version" %} {% version_date %}<br />
-<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}</a> {% trans "Size" %}: {% load l10n %}{{ database_size|localize }} {% trans "words in the database" %}<br />
+{% if user.is_authenticated %}<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}</a> {% trans "Size" %}: {% load l10n %}{{ database_size|localize }} {% trans "words in the database" %}<br />{% endif %}
 {% trans "Proudly built with" %} <a href="https://www.djangoproject.com/" target="_blank">{% trans "Django" %}</a> {% trans "version" %} {% version_django %}, {% trans "based on "%}<a href="https://www.python.org/" target="_blank">Python</a> {% version_python %}<br />
 </p>
 </td>
