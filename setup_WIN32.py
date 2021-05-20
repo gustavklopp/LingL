@@ -723,6 +723,7 @@ buildOptions = dict(
             ], 
 #         excludes = ['tkinter',],
         include_files = [
+            'appversion.txt',
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined
 #                 os.path.join('templates','allauth'),
                 ],

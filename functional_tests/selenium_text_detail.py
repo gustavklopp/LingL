@@ -24,7 +24,7 @@ from selenium.webdriver.support import expected_conditions as EC
 #third party
 
 # local
-from lwt.factories import *
+from functional_tests.factories import *
 from lwt.models import MyUser
 from lwt.views._utilities_views import *
 from selenium.webdriver.common import desired_capabilities

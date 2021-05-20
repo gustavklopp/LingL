@@ -1,3 +1,4 @@
+# The code, like <2TCODE>, <1CODE>, etc... can be find here: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
 - model: "lwt.languages"
   fields:
     created_date: "2020-07-25"
@@ -5,10 +6,10 @@
     owner:
     - lingl
     name: "English"
-    dicturi: https://en.pons.com/translate/english-•LCNAME•/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=eng&&dest=•••&format=json, http://www.wordreference.com/en••/###
+    dicturi: "^https://en.pons.com/translate/english-<LCNAME>/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=eng&&dest=<2TCODE>&format=json, http://www.wordreference.com/en<1CODE>/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=••&text=###"
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=<1CODE>&text=###"
     textsize: 150
     charactersubstitutions: "´=\"|`=\"|’=\"|‘=\"|...=…|..=‥"
     regexpsplitsentences: ".!?:;"
@@ -31,10 +32,10 @@
     owner:
     - lingl
     name: French
-    dicturi: https://en.pons.com/translate/french-•LCNAME•/###, https://en.wiktionary.org/wiki/###, http://www.wordreference.com/fr••/###, https://glosbe.com/gapi/translate?from=fra&&dest=•••&format=json      
+    dicturi: "^https://en.pons.com/translate/french-<LCNAME>/###, https://en.wiktionary.org/wiki/###, http://www.wordreference.com/fr<1CODE>/###, https://glosbe.com/gapi/translate?from=fra&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=en&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -57,10 +58,10 @@
     owner:
     - lingl
     name: Italian
-    dicturi: https://en.pons.com/translate/italian-•LCNAME•/###, http://www.wordreference.com/it••/###, https://glosbe.com/gapi/translate?from=ita&&dest=•••&format=json  
+    dicturi: "^https://en.pons.com/translate/italian-<LCNAME>/###, http://www.wordreference.com/it<1CODE>/###, https://glosbe.com/gapi/translate?from=ita&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=it&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=it&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -83,10 +84,10 @@
     owner:
     - lingl
     name: German
-    dicturi: http://de-••.syn.dict.cc/?s=###, http://www.wordreference.com/ge••/###, https://en.pons.com/translate/german-•LCNAME•/###, https://glosbe.com/gapi/translate?from=deu&&dest=•••&format=json
+    dicturi: "http://de-<1CODE>.syn.dict.cc/?s=###, http://www.wordreference.com/ge<1CODE>/###, ^https://en.pons.com/translate/german-<LCNAME>/###, https://glosbe.com/gapi/translate?from=deu&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=ge&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=de&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -109,10 +110,10 @@
     owner:
     - lingl
     name: Portuguese (Portugal)
-    dicturi: http://www.wordreference.com/pt••/###, https://en.pons.com/translate/portuguese-•LCNAME•/###, https://en.wiktionary.org/wiki/###, https://context.reverso.net/translation/portuguese-••••/###, https://www.collinsdictionary.com/dictionary/portuguese-••••/###, https://www.linguee.com/portuguese-••••/search?query=###&source=auto, https://glosbe.com/gapi/translate?from=por&&dest=•••&format=json
+    dicturi: "http://www.wordreference.com/pt<1CODE>/###, ^https://en.pons.com/translate/portuguese-<LCNAME>/###, https://en.wiktionary.org/wiki/###, https://context.reverso.net/translation/portuguese-<LCNAME>/###, https://www.collinsdictionary.com/dictionary/portuguese-<LCNAME>/###, https://www.linguee.com/portuguese-<LCNAME>/search?query=###&source=auto, https://glosbe.com/gapi/translate?from=por&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=pt&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=pt&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -135,11 +136,10 @@
     owner:
     - lingl
     name: Chinese
-    dicturi: http://ce.linedict.com/#/cn••/search?query=###,  https://kanji.koohii.com/study/kanji/###,  http://m.nciku.com/••/entry/?query=###,
-      http://chinesedictionary.mobi/?handler=QueryWorddict&mwdqb=###, https://en.wiktionary.org/wiki/###, https://en.pons.com/translate/chinese-•LCNAME•/###, http://www.wordreference.com/zh••/###
+    dicturi: "http://ce.linedict.com/#/cn<1CODE>/search?query=###, https://kanji.koohii.com/study/kanji/###, http://m.nciku.com/<1CODE>/entry/?query=###, http://chinesedictionary.mobi/?handler=QueryWorddict&mwdqb=###, https://en.wiktionary.org/wiki/###, ^https://en.pons.com/translate/chinese-<LCNAME>/###, http://www.wordreference.com/zh<1CODE>/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=zh&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=zh&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 200
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -162,11 +162,10 @@
     owner:
     - lingl
     name: Japanese
-    dicturi: http://jisho.org/words?•••=&dict=edict&jap=###,  https://kanji.koohii.com/study/kanji/###,  http://jisho.org/kanji/details/###,
-      https://en.wiktionary.org/wiki/###, https://en.pons.com/translate/japanese-•LCNAME•/###, http://www.wordreference.com/ja••/###
+    dicturi: "http://jisho.org/words?<2TCODE>=&dict=edict&jap=###, https://kanji.koohii.com/study/kanji/###, http://jisho.org/kanji/details/###, https://en.wiktionary.org/wiki/###, ^https://en.pons.com/translate/japanese-<LCNAME>/###, http://www.wordreference.com/ja<1CODE>/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=ja&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=ja&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 200
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -189,10 +188,10 @@
     owner:
     - lingl
     name: Korean
-    dicturi: http://dictionary.sensagent.com/###/ko-••,  http://en.wiktionary.org/wiki/###, http://www.wordreference.com/ko••/###
+    dicturi: "http://dictionary.sensagent.com/###/ko-<1CODE>, http://en.wiktionary.org/wiki/###, http://www.wordreference.com/ko<1CODE>/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=ko&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=ko&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -215,10 +214,10 @@
     owner:
     - lingl
     name: Thai
-    dicturi: http://dict.longdo.com/search/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=tha&&dest=•••&format=json
+    dicturi: "http://dict.longdo.com/search/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=tha&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=th&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=th&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 250
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -241,10 +240,10 @@
     owner:
     - lingl
     name: Hebrew
-    dicturi: http://morfix.mako.co.il/default.aspx?q=###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=heb&&dest=•••&format=json
+    dicturi: "http://morfix.mako.co.il/default.aspx?q=###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=heb&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=he&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=he&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -267,10 +266,10 @@
     owner:
     - lingl
     name: Slovenian
-    dicturi:  https://en.pons.com/translate/slovenian-•LCNAME•/###, http://www.wordreference.com/sl••/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=sl&&dest=••&format=json
+    dicturi:  "^https://en.pons.com/translate/slovenian-<LCNAME>/###, http://www.wordreference.com/sl<1CODE>/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=sl&&dest=<1CODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: '*http://translate.google.com/?ie=UTF-8&sl=sl&tl=••&text=###'
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=sl&tl=<1CODE>&text=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥

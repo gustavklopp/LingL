@@ -2,7 +2,7 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-{% block pagetitle %}{% trans "My Language" %} | {{ block.super }}
+{% block pagetitle %}{% trans "My Languages" %} | {{ block.super }}
 {% endblock pagetitle %}
 
 {% block stylesheets %}{{ block.super }}
@@ -39,7 +39,9 @@
 	<th data-field="language" data-sortable="true">Language</th>
 	<th data-field="texts" data-sortable="true">Texts</th>
 	<th data-field="terms" data-sortable="true" data-sorter="numberSorter">Terms</th>
-	<th data-field="export">Export<br />Template?</th>
+	<th data-field="dict1uri">Link to 1st dict</th>
+	<th data-field="dict2uri">Link to 2nd dict</th>
+	<th data-field="googletranslateuri">Link to Google translate</th>
 	</tr>{% endblocktrans %}
 	</thead>
 	<tbody>
@@ -64,7 +66,9 @@
 			<a href="{% url 'text_list' %}?lang={{ a_l.lang.id }}">{{ a_l.lang.texthavingthislanguage.count }}</a>{% endif %}
 		</td>
 		<td >{% if a_l.word_count > 0 %}<a href="{% url 'term_list' %}?lang={{ a_l.lang.id }}">{{ a_l.word_count }}</a>{% else %}0{% endif %}</td>
-		<td >{{ a_l.lang.exporttemplate }}</td>
+		<td >{{ a_l.lang.dict1uri }}</td>
+		<td >{{ a_l.lang.dict2uri }}</td>
+		<td >{{ a_l.lang.googletranslateuri }}</td>
 		</tr>
 	{% endfor %}
 	</tbody>

@@ -27,14 +27,12 @@ RTL = {% if text.language.righttoleft %}true{% else %}false{% endif %};
 TID = {{ text.id }};
 $(document).ready( function() { 
 	$('span[woid]').each(function() { // display the hovering tooltip 
-		var title = $(this).attr('wowordtext');
-		title += create_tooltip_title('word_symbol', $(this).attr('wotranslation'),$(this).attr('woromanization'),
-				$(this).attr('wostatus'));
-		if ($(this).attr('iscompoundword') == 'true' || $(this).attr('iscompoundword') == 'True' ){
-			title += create_tooltip_title('coword_symbol', $(this).attr('cowotranslation'),$(this).attr('coworomanization'),
-					$(this).attr('cowostatus'));
-		}
-		$(this).attr('title', title);
+		
+		update_title($(this), $(this).attr('iscompoundword'), $(this).attr('wowordtext'), 
+				$(this).attr('wotranslation'), $(this).attr('woromanization'), $(this).attr('wostatus'), 
+				$(this).attr('cowordtext'), $(this).attr('cowotranslation'), $(this).attr('coworomanization'), 
+				$(this).attr('cowostatus'), $(this).attr('show_compoundword'));
+
 		});
 
 	$('span[woid]').bind('click', clickword);
@@ -100,9 +98,9 @@ woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotra
 {% else %}
 woromanization=""
 {% endif %} iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
-{% if wo.isCompoundword %} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
+{% if wo.isCompoundword %} cowordtext={{ wo.compoundword.wordtext }} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
 {% else %}
-cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
+cowordtext="" cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
 {% endif %}
 {% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}
 >{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}

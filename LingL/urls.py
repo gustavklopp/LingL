@@ -35,6 +35,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     ##############LOCAL######################################################
     url(r'^$', views.homepage, name='homepage'),
+    url(r'^profile/$', views.profile, name='profile'),
     ###### LANGUAGES ########################################################
     # create a new language or edit, or other options...:
     url(r'^language_detail/$',views.language_detail,name='language_detail'),
@@ -83,6 +84,10 @@ urlpatterns = [
     url(r'^export2anki/$',views.term_list,name='export2anki'),
     url(r'^export2anki_exporter/$',views.export2anki_exporter,name='export2anki_exporter'),
     url(r'^select_rows/$',views.select_rows ,name='select_rows'),
+
+    # Used for selectivebackup:
+    url(r'^selectivebackup/$',views.term_list,name='selectivebackup'),
+    url(r'^selectivebackup_exporter/$',views.selectivebackup_exporter,name='selectivebackup_exporter'),
 
     url(r'^statistics/$',views.statistics,name='statistics'),
     url(r'^statistics/pie_chart/(?P<language_id>\w+)/$', ChartView.from_chart(views.PieChart()), name='pie_chart'),

@@ -14,63 +14,147 @@
 <table  class="table table-bordered">
 <tr>
 <!--  BACKING UP -->
-<th>Backup</th>
+<th>{% trans 'Backup' %}</th>
 <td>
-<p >
-The data from your account will be exported to a gzipped YAML file.<br />Please keep this file in a safe place.<br />If necessary, you can recreate the data via the Restore function below.</p>
-<!--<p>Important: If the backup file is too large, the restore may not be possible (see limits below).</p>-->
-<p >&nbsp;<br /><button class="btn btn-primary" type="submit" name="backingup" value="backingup">Download Backup</button>
+<div class="d-flex">
+	<div class="col-md-6">
+	{% trans 'The data from your account will be exported to a gzipped YAML file.<br />Please keep this file in a safe place.<br />If necessary, you can recreate the data via the Restore function below.' %}</p>
+	<!--<p>Important: If the backup file is too large, the restore may not be possible (see limits below).</p>-->
+	</div>
+	<div class="col-md-2">
+	 <button class="btn btn-primary" type="submit" name="backingup" value="backingup">{% trans 'Download Backup' %}</button>
+	 </div>
+	<div class="col-md-2">
+	 <button class="btn btn-secondary" onclick="location.href='{% url 'selectivebackup' %}';" type="button" name="selectivebackup" value="selectivebackup">{% trans '(optional) Select words to backup' %}</button>
+	</div>
+</div>
 </td>
 </tr>
 <!--  RESTORE FROM BACKUP -->
 <tr>
-<th>Restore</th>
+<th>{% trans 'Restore' %}</th>
 <td>
-<p >
-All data in your account will be <b>replaced</b> by the data in the specified backup file<br />(gzipped file, created above).<br />
+<div class="d-flex">
+	<div class="col-md-9">
+<p>{% trans 'All data from the specified backup file will be added to your account (gzipped file, created above) (Your already present data are kept).' %}</p>
 <!--    <br /><span class="smallgray">Important: If the backup file is too large, the restore may not be possible.<br />Upload limits (in bytes): <b>post_max_size = <?php echo ini_get('post_max_size'); ?> / upload_max_filesize = <?php echo ini_get('upload_max_filesize'); ?></b><br />-->
 <!--If needed, increase in "<?php echo tohtml(php_ini_loaded_file()); ?>" and restart server.<br />&nbsp;</span></p>-->
 {{ form.restore_file }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
-<p >&nbsp;<br /><span class="red2">YOU MAY LOSE DATA - BE CAREFUL: &nbsp; &nbsp; &nbsp;</span> 
-<button  class="btn btn-danger" type="submit" name="restore" value="restore"  onclick="if (confirm('Are you sure?')){ $('#backuprestore_form').submit();} else {return false;}">Restore from Backup</button>
+				<input type="hidden" name="restore_data" id="restore_data" value=""/> 
+	</div>
+	<div class="col-md-3">
+<button  class="btn btn-primary" type="submit" name="restore" value="restore"  onclick="button_restore();return false;">Restore from Backup</button>
+	</div>
+</div>
 </td>
 
-<!--  RESTORE FROM OLD LWT -->
+<!--  RESTORE FROM OTHER SOFTWARES -->
 <tr>
-<th>Import<br />Personal Saved from LWT</th>
+<th>{% trans 'Import Personal Save<br />from Other softwares' %}</th>
 <td>
-<p >
-The data from the LWT software will be <b>added</b> to your account (Your own data are kept).</p>
+<div class="d-flex">
+	<div class="col-md-9">
+<p>{% trans 'The data from other softwares (for ex. from "LWT") will be added to your account (Your own data are kept).' %}</p>
 {{ form.import_oldlwt }} 
-<p class="right">&nbsp;<br /><button class="btn btn-primary" type="submit" name="import_oldlwt" value="import_oldlwt">Import data from LWT</button>
+	</div>
+	<div class="col-md-3">
+<button class="btn btn-primary" type="submit" name="import_oldlwt" value="import_oldlwt">Import data from LWT</button>
+	</div>
+</div>
 </td>
 </tr>
 
 <!--  IMPORT LINGL DEMO -->
 <tr>
-<th >Install<br />LWT Demo</th>
+<th >{% trans 'Install<br />LWT Demo' %}</th>
 <td >
-<p >
-The data from the LWT Demo will be <b>added</b> to your account (Your own data are kept)</p>
-<p class="right">&nbsp;<br /> 
-<button class="btn btn-primary" type="submit" name="install_demo" value="install_demo">Install LingL Demo</button>
+<div class="d-flex">
+	<div class="col-md-9">
+{% trans 'The data from the LWT Demo will be added to your account (Your own data are kept)' %}</p>
+	</div>
+	<div class="col-md-3">
+<button class="btn btn-primary" type="submit" name="install_demo" value="install_demo">{% trans 'Install LingL Demo' %}</button>
+	</div>
+</div>
 </td>
 </tr>
 
 <!--  DELETE ACCOUNT -->
 <tr>
-<th>Delete<br />Your Account</th>
+<th>{% trans 'Delete<br />Your Account' %}</th>
 <td>
-<p><b>Delete</b> your account and all the texts, languages associated with it.</p>
-<p class="right">&nbsp;<br /><span class="red2">YOU LOSE ALL YOUR DATA - BE CAREFUL: &nbsp; &nbsp; &nbsp;</span>
+<div class="d-flex">
+	<div class="col-md-9">
+<p>{% trans '<b>Delete</b> your account and all the texts, languages associated with it.' %}</p>
+<p>{% trans 'YOU LOSE ALL YOUR DATA - BE CAREFUL:' %} &nbsp; &nbsp; &nbsp;</p>
+	</div>
+	<div class="col-md-3">
 <button class="btn btn-danger" type="submit" name="empty" value="empty"  onclick="if (confirm('Are you sure?')){ $('#backuprestore_form').submit();} else {return false;}">Delete My Account</button>
+	</div>
+</div>
 </td>
 </tr>
 </table>
 </form>
-
 {% endblock content %}
 
 {% block footlicence %}
 {% include "lwt/_footlicence.html" %}
 {% endblock footlicence %}
+
+{% block footjavascript %}
+<script type="text/javascript">
+/* disabled the buttons if no files have been chosen */
+function check_empty_file(file_input, file_button){
+	if (file_input[0].files.length == 0){
+		file_button.prop('disabled', true);
+	} else {
+		file_button.prop('disabled', false);
+	}
+}
+
+$(document).ready( function() { 
+	check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
+	check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
+
+    $('#id_restore_file').change(function(e){
+		check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
+		check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
+    });
+	
+});
+
+/* when clicking on restore, display a dialogue window to choose whether or not to
+ * restore the whole file also */
+ function button_restore(e){
+		$('<div></div>').appendTo('body')
+        .html(gettext('Do you want to restore the text(s) inside the backup, or only the words?<br/>(Restoring the text alongside the words takes more size in the database<br/>and isn\'t useful if you don\'t need to read the same text again)'))
+        .dialog({
+            modal: true,
+            title: 'Restoring from Backup', zIndex: 10000, autoOpen: true,
+            width: 'auto', resizable: false,
+            buttons: [{text: gettext("Restore only the Words"),
+					   click: function() {
+						    $('#restore_data').val('word');
+							$('#backuprestore_form').submit();
+							}
+						},
+						{text: gettext("Restore the Words AND the texts"),
+						 click: function() {
+							   $('#restore_data').val('word+text');
+								$('#backuprestore_form').submit();
+								}
+							},
+						{text: gettext("Cancel"),
+						 click: function() {
+							  $( this ).dialog( "close" );}
+						}
+			],
+            close: function (event, ui) {
+                $(this).remove();
+            },
+            position: {my: "center",  at: "center", of: $("body"),within: $("body") }
+        });
+}
+</script>
+{% endblock footjavascript %}

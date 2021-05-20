@@ -29,6 +29,39 @@ from lwt.views._utilities_views import *
 from ast import parse
 
 
+'''use by export2anki_exporter and by selectivebackup_exporter '''
+def select_rows(request):
+    ''' called by ajax to un/select the rows'''
+    op = request.GET['op']
+    check_uncheck = request.GET['check_uncheck']
+    if op == 'all':
+        possible_selected_rows_json = Settings_selected_rows.objects.get(owner=request.user).possible_selected_rows
+        possible_selected_rows_list = json.loads(possible_selected_rows_json)
+        with transaction.atomic(): # because a lot of db query...
+            for id in possible_selected_rows_list:
+                wo = Words.objects.get(id=id)
+                wo.state = True
+                wo.save()
+        total = len(possible_selected_rows_list)
+    elif op == 'none':
+        with transaction.atomic(): # because a lot of db query...
+            for wo in Words.objects.filter(owner=request.user, state=True).all():
+                wo.state = False
+                wo.save()
+        total = 0
+    else:
+        id = int(op)
+        wo = Words.objects.get(id=id)
+        if check_uncheck == 'check':
+            wo.state = True
+        elif check_uncheck == 'uncheck':
+            wo.state = False
+        wo.save()
+        total = Words.objects.filter(owner=request.user, state=True).count()
+        
+    return JsonResponse({'total': total}, safe=False)
+
+
 def termlist_filter(request):
     ''''the checkboxes to filter the terms '''
     limit = -1
@@ -54,6 +87,10 @@ def load_wordtable(request):
         if search != '': # when deleting the previous search, ajax will send the search word ''. consider it like No filter
             all_words = all_words.filter(wordtext=search)
     # func list_filtering is in lwt/views/_utilities_views.py
+
+    if not all_words: # no words to display because database is empty
+        return JsonResponse({'total': 0, 'rows': []}, safe=False)
+
     all_words = list_filtering(all_words, request) 
     
     # save the total list of item (used for export2anki to get the list of possible selected words):
@@ -73,19 +110,24 @@ def load_wordtable(request):
 # 
 #         if lang_id: # by defautl. if the lang has been set in the session, filter on this lang
 #             all_words = all_words.filter(language__id=lang_id)
-    all_words_filtered = all_words[offset_modif:offset_modif + limit_modif]
     data = []
+
+    all_words_filtered = all_words[offset_modif:offset_modif + limit_modif]
 
     ''' create a link inside the bootstrap table: clicking on the word jump to the right place 
     we use 'original_word' only to get the annotation if the sorting is on 'extra_field': indeed,
     we have previously annotated 'original_word' with the key form 'extra_field' and the annotation
     is not passed to 'word' (w.grouper_of_same_words.grouper_of_same_word_having_this_word.all()':
     if we do: getattr(word, sort) with sort is key inside extra_field ==> No field 
+    NOTE: function 'jumpToRow' is defined in term_list.html
     '''
     def linked(word, original_word):
-        st = '<a href="#" onclick="jumpToRow('
+        sentence = word.customsentence if word.customsentence else word.sentence.sentencetext
+        st = '<a href="#" title="(\''+sentence+'\')" onclick="jumpToRow('
         # calculate at which page and row is this word:
-        filter_kw = {'{}__lt'.format(sort) : getattr(original_word, sort)} # we can't do getaatr(word, sort) 
+        # we can't do getattr(word, sort) ????
+#         filter_kw = {'{}__lt'.format(sort) : getattr(original_word, sort)} 
+        filter_kw = {'{}__lt'.format(sort) : getattr(word, sort)} 
         row_id = all_words.filter(**filter_kw).count() # used to get the row in the table
         row_per_page = limit_modif
         page_id = row_id // row_per_page +1
@@ -95,20 +137,21 @@ def load_wordtable(request):
         en = '</a>'
         return st + word.wordtext + en
 
-    for w in all_words_filtered.prefetch_related('wordtags'): # 'prefetch_related': because it's a m2m relationship
+#     for w in all_words_filtered.prefetch_related('wordtags'): # 'prefetch_related': because it's a m2m relationship
+    for w in all_words_filtered: # 'prefetch_related': because it's a m2m relationship
         w_dict = {}
         w_dict['state'] = 'checked' if w.state else '' # checkbox to export to anki
         w_dict['id'] = w.id
         w_dict['status'] = get_name_status(w.status)
         w_dict['language_name'] = w.language.name
-        w_dict['text_title'] = w.text.title
+        w_dict['text_title'] = w.text.title if w.text else ''
         w_dict['sentence'] = w.sentence.sentencetext if w.sentence else ''
         w_dict['customsentence'] = w.customsentence if w.customsentence else ''
         w_dict['wordtext'] = w.wordtext if w.wordtext else ''
         w_dict['translation'] = w.translation if w.translation else ''
         w_dict['romanization'] = w.romanization if w.romanization else ''
         w_dict['wordtags'] = [' '+wt.wotagtext for wt in w.wordtags.all()]
-        if w.wordtext:
+        if w.grouper_of_same_words:
             w_dict['grouper_of_same_words'] = [' '+linked(wo, w) for wo in w.grouper_of_same_words.\
                                                             grouper_of_same_words_for_this_word.all()]
         else:

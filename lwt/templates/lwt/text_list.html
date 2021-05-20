@@ -175,18 +175,18 @@
 		});
 		if (ids_to_delete.length > 0){
 			$('<div></div>').appendTo('body')
-            .html('Confirm Deletion?<br/><input type="checkbox" id="delete_saved_words"/> (optional) delete also text saved words')
+            .html(gettext('Confirm Deletion?<br/><input type="checkbox" id="delete_saved_words"/> (optional) delete also text saved words'))
             .dialog({
                 modal: true,
-                title: 'Deleting text(s)', zIndex: 10000, autoOpen: true,
+                title: gettext('Deleting text(s)'), zIndex: 10000, autoOpen: true,
                 width: 'auto', resizable: false,
-                buttons: [{text: "Yes",
+                buttons: [{text: gettext("Yes"),
 							click: function() {
 					var delete_saved_words = $('#delete_saved_words:checked').length > 0;
 					document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete)+'&delete_saved_words='+delete_saved_words;
 								}
 							},
-							{text: "Cancel",
+							{text: gettext("Cancel"),
 							click: function() {
 								  $( this ).dialog( "close" );}
 							}
@@ -196,7 +196,6 @@
                 },
                 position: {my: "center",  at: "center", of: $("body"),within: $("body") }
             });
-			//document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete);
 		}
 	});
 	</script>

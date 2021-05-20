@@ -1,11 +1,3 @@
-
-# This is an auto-generated Django model module.
-# You'll have to do the following manually to clean this up:
-#   * Rearrange models' order
-#   * Make sure each model has one field with primary_key=True
-#   * Make sure each ForeignKey has `on_delete` set to the desired behavior.
-#   * Remove `managed = False` lines if you wish to allow Django to create, modify, and delete the table
-# Feel free to rename the models, but don't rename db_table values or field names.
 """
 The original models in lwt:
 -archivedtexts
@@ -47,7 +39,7 @@ from lwt.constants import STATUS_CHOICES
 #         else:
 #             return super(FilterByUser_Manager, self).get_queryset().filter(owner=owner)
 
-class MyUserManager(models.Manager): # for deserialization
+class MyUserManager(UserManager): # for deserialization
     def get_by_natural_key(self, username):
         return self.get(username=username)
 
@@ -68,7 +60,7 @@ class MyUser(AbstractUser):
 class BaseModel(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
-    owner = models.ForeignKey(MyUser, null=True, on_delete=models.CASCADE) # each user has his own set of the database
+    owner = models.ForeignKey(MyUser, on_delete=models.CASCADE, null=False) # each user has his own set of the database
 
 #    # You need to redefine save: without it, the password is saved in plain text!
 #     def save(self, commit=True):
@@ -114,7 +106,7 @@ class Languages(BaseModel):
     textsize = models.IntegerField( default=150)  
     charactersubstitutions = models.CharField(max_length=500, default="´='|`='|’='|‘='|...=…|..=‥")  
     regexpsplitsentences = models.CharField(max_length=500, default=".!?:;")  
-    exceptionssplitsentences = models.CharField(max_length=500, default="Mr.|Dr.|[A-Z].|Vd.|Vds.")  
+    exceptionssplitsentences = models.CharField(max_length=500, default="Mr.|Dr.|[A-Z].[A-Z]|Vd.|Vds.")  
     regexpwordcharacters = models.CharField(max_length=500, default="a-zA-ZÀ-ÖØ-öø-ȳ")  
     removespaces = models.BooleanField(default=False)  
     spliteachchar = models.BooleanField(default=False)  
@@ -241,39 +233,31 @@ class Grouper_of_sameWordsManager(models.Manager):
         return self.get(id_string=id_string)
 
 class Grouper_of_same_words(BaseModel):
-    ''' - words written similarly in differents sentences, text... AND
-        - words written differently, but sharing the same meaning in fact: 
-    in English: 'write', 'written', 'wrote' etc... 
+    ''' - words written similarly in differents sentences, text... BUT ALSO
+        - words written differently, because decided by the User to be similar (for ex. because
+        it's a conjugation version of a word like in English: 'write', 'written', 'wrote' etc... )
     
-    Each word has automatically a FK Grouper_of_same_words, whose id is the same as the id of the 
-    word in question. 
+    If detecting, among the saved words, a word (or a compound word) similar to another, we create
+    a FK Grouper_of_same_words, linking to the first occurence of the word in question. 
     for ex:  Grouper_of_same_words     id          
-                                       12         
-                                       13           
-                                       14           
+                                    NOTHING
             ---------------------------------------------------
              Words    FK GOSW          id           wordtext
-                        id_12          12           'write'
-                        id_13          13           'test'
-                        id_14          14           'wrote'
+                        None          12           'write'  (already SAVED WORD)
+                        None          13           'test'   (already SAVED WORD)
+                        None          14           'wrote' ==> NEW SAVED WORD
 
-     =>  After recognizing it´s the same word in fact:
+     =>  After recognizing that it´s the same word in fact:
              Grouper_of_same_words     id            
-                                       12           
-                                       13           
-                                     [ 14 ]X    ==> DELETE IT
-            ---------------------------------------------------
-             Words    FK GOSW          id           wordtext
-                        id_12          12           'write'
-                        id_13          13           'test'
-       => CHANGE FK   [ id_12 ]        14           'wrote'
+                 FK ['write',Lang]     12          'write'  => Create a new FK
+                                       13          'test' 
+                 FK ['write',Lang]     14          'wrote'  => Create a new FK
 
     When a word A is written the same as a word B:
-              - update the FK in word B to point to the Grouper_of_same_words of word A.
-    To Unlink word A and word B:
-            - create a new FK with the same id than B if this GOSW has been deleted
-             - update the FK in word B to point to the Grouper_of_same_words of the same id than B '''
-    id = models.IntegerField(primary_key=True) # not automatic PK because we'll set it to the same as the id for Words
+            - create a new FK pointing to word B
+          - create the FK in word B to point to the same Grouper_of_same_words as that of word A.
+'''
+#     id = models.IntegerField(primary_key=True) # not automatic PK because we'll set it to the same as the id for Words
     # words can be looks similar but in fact have different meaning:
     # say we have: fall: autumn OR to fall. LingL will make all this word as similar: not too problematic
     # the problem is if you´ve got another words that you want to make it similar to ´fall´:
@@ -282,9 +266,7 @@ class Grouper_of_same_words(BaseModel):
     
     # same than field 'id' but here we keep the 'natural_key' of the word. Used when creating...
     # ... backup and importing backup
-    id_string = models.CharField( max_length=500, blank=True, null=True
-                                  )
-#                                 ,  unique=True)  
+    id_string = models.CharField( max_length=500,  unique=True)  
 
     objects = Grouper_of_sameWordsManager() # use to call the parent foreign key by its name (or title , or etc...)
 
@@ -298,8 +280,11 @@ class Grouper_of_same_words(BaseModel):
 class WordsManager(models.Manager):
 #     def get_by_natural_key(self, wordtext, textOrder, text, owner):
 #         return self.get(wordtext=wordtext, textOrder=textOrder, text__title=text, owner__username=owner)
-    def get_by_natural_key(self,  textOrder, text, owner):
-        return self.get( textOrder=textOrder, text__title=text, owner__username=owner)
+    def get_by_natural_key(self,  textOrder_OR_wordtext, text_OR_language, owner):
+        if type(textOrder_OR_wordtext) == int: 
+            return self.get( textOrder=textOrder_OR_wordtext, text__title=text_OR_language, owner__username=owner)
+        else: # Word can exist even when the text has been deleted
+            return self.get( wordtext=textOrder_OR_wordtext, language__name=text_OR_language, owner__username=owner)
 
 class Words(BaseModel):
     ####      Foreign keys    ####
@@ -340,7 +325,7 @@ class Words(BaseModel):
     wordinside_order_NK = models.TextField(max_length=250,blank=True,null=True)
     isCompoundword = models.BooleanField(default=False)
     show_compoundword = models.BooleanField(default=False) # showing compoundword or single word in text_read
-    state = models.BooleanField(default=False) # used to export2anki checkox
+    state = models.BooleanField(default=False) # used to export2anki and selectivebackup checkox
     extra_field = models.TextField(max_length=500, blank=True, null=True) # additional, custom field. stored in json format a dict
 
     objects = WordsManager() # use to call the parent foreign key by its name (or title , or etc...)
@@ -355,7 +340,10 @@ class Words(BaseModel):
 #     def natural_key(self):
 #         return (self.wordtext, self.textOrder, self.text.title, self.owner.username)
     def natural_key(self):
-        return ( self.textOrder, self.text.title, self.owner.username)
+        if self.text: 
+            return ( self.textOrder, self.text.title, self.owner.username)
+        else: # Word can exist even when the text has been deleted:
+            return(self.wordtext, self.language.name, self.owner.username)
 #####################################################
 #             DATABASE 'settings':                  #
 #####################################################
@@ -579,7 +567,70 @@ class Settings_selected_rows(Settings):
 #####################################################
 #             end 'settings':                       #
 #####################################################
-        
+''' load and get the real name and the ISO language codes for the Fixtures of languages 
+    (in lwt/fixtures folder) for the learning language for the Language User wants to learn
+                            and for the "origin" language (language User knows)
+    we used this to modify the dict1uri and dict2uri with the correct language destination
+      Called : - when displaying the admin languages when creating the form for the User
+              - when importing LWT demo
+
+    Ex: http://www.wordreference.com/fr••/###
+           becomes ==> http://www.wordreference.com/fren/###
+    '''
+def substitute_in_dictURI(user, code_learninglang_OR_obj, called_by_Obj=False):
+    import re
+    import json
+    # for the origin lang too (language I know):
+    origin_lang_code = user.origin_lang_code
+    with open('lwt/fixtures/languages_codes.json', 'r') as languages_codes_f:
+        languages_codes_list = json.load(languages_codes_f)
+        for lang in languages_codes_list:
+            if lang['1'] ==  origin_lang_code:
+                origin_lang = lang
+                break
+    
+    # for the chosen lang (language I want to learn)
+    # the ADMIN has the basic languages (owner=1)
+    if not called_by_Obj:
+        learning_lang = Languages.objects.filter(owner=1, code_639_1=code_learninglang_OR_obj).values()[0]
+        googletranslate_dicturi = learning_lang['googletranslateuri']
+    else:
+        learning_lang = code_learninglang_OR_obj
+        googletranslate_dicturi = learning_lang.googletranslateuri
+
+    def _set_attr_OR_key(obj, el, val):
+        if not called_by_Obj:
+            obj[el] = val
+            return obj
+        else:
+            setattr(obj, el, val)
+            return obj
+    def _get_attr_OR_key(obj, el):
+        if not called_by_Obj:
+            return obj[el]
+        else:
+            return getattr(obj, el)
+
+    # then change the placeholder string for the translation:
+    # there are several links in dicturi, so each of the 'ifs' can be called also
+    if '<LCNAME>' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'<LCNAME>', origin_lang['name'].lower(), _get_attr_OR_key(learning_lang, "dicturi")))
+    if '<NAME>' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'<NAME', origin_lang['name'], _get_attr_OR_key(learning_lang, "dicturi")))
+    if '<2TCODE>' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'<2TCODE>', origin_lang['2T'], _get_attr_OR_key(learning_lang, "dicturi")))
+    if '<1CODE' in _get_attr_OR_key(learning_lang, "dicturi"):
+        learning_lang = _set_attr_OR_key(learning_lang, "dicturi", 
+                    re.sub(r'<1CODE>', origin_lang['1'], _get_attr_OR_key(learning_lang, "dicturi")))
+    # always true:
+    learning_lang = _set_attr_OR_key(learning_lang, "googletranslateuri", 
+                        re.sub(r'<1CODE>', origin_lang['1'], googletranslate_dicturi))
+
+    return learning_lang        
+
 """ This is called when saving user via allauth registration.
     We override this to set additional data on user object. """
 class UserAccountAdapter(DefaultAccountAdapter):
@@ -596,6 +647,11 @@ class UserAccountAdapter(DefaultAccountAdapter):
         learning_lang = Languages.objects.get(id=int(AdminUser_learning_lang_id))
         learning_lang.pk = None
         learning_lang.owner = user
+        # set dict1uri and dict2uri 
+        learning_lang = substitute_in_dictURI(user, learning_lang, called_by_Obj=True)
+        dicturi = learning_lang.dicturi.split(',')
+        learning_lang.dict1uri = dicturi[0].strip()
+        learning_lang.dict2uri = dicturi[1].strip()
         learning_lang.save()
         # and set this as the currentlang in database (can't put in cookie for the moment because no 'request')
         Settings_currentlang_id.objects.create(owner=user, stvalue=learning_lang.id)

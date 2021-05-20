@@ -50,23 +50,6 @@ def distinct_on(mylist, criteria, case_unsensitive=True):
                 onlyunique_list.append(item)
         prev_criteria = getattr(item, criteria)
     return onlyunique_list
-
-
-'''Create Grouper_of_same_words for this(these) word(s).
-   in the table Grouper_of_same_words, create a copy of the Word, with the same owner, created_date, etcc..
-   and 'id' than the word'''
-def create_GOSW_for_words(words):
-    # first create the GOSW
-    bulk_create_prep = (Grouper_of_same_words(id=wo.id, owner=wo.owner, 
-                    created_date=wo.created_date, modified_date=wo.modified_date) for wo in words)
-    Grouper_of_same_words.objects.bulk_create(bulk_create_prep)
-    # then update the FK for the words
-    bulk_update_prep = [Grouper_of_same_words(id=wo.id, owner=wo.owner, 
-                    created_date=wo.created_date, modified_date=wo.modified_date) for wo in words]
-    for idx, wo in enumerate(words):
-        wo.grouper_of_same_words = bulk_update_prep[idx]
-    Words.objects.bulk_update(words, ['grouper_of_same_words'])
-    
     
 ''' get the current database size and put it in cookie (if not found in cookie)'''
 def get_word_database_size(request):
@@ -306,7 +289,7 @@ def splitSentence(t, splitSentenceMark):
     
 ''' split the text into sentences.
     and then insert sentences/words in DB '''
-def splitText(request, text):
+def splitText(text):
     removeSpaces = text.language.removespaces # Used for Chinese,Jap where the white spaces are not used.
     splitEachChar = text.language.spliteachchar
     splitSentenceMark = text.language.regexpsplitsentences
@@ -339,8 +322,9 @@ def splitText(request, text):
 
     ################################################
     # Split: insert sentences/textitems entries in DB
+    textOrder = 0
+    new_words_created = []
     for sentID,sentTxt in enumerate(sentences): # Loop on each sentence
-        new_words_created = []
         with transaction.atomic(): # allow bulk transaction
             newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
                                                    sentencetext=sentTxt, order=sentID+1,text=text) # create each sentence
@@ -370,49 +354,38 @@ def splitText(request, text):
 
             for wordidx,word in enumerate(sentList): 
                 if re.search(r'[' + termchar +  ']', word): 
-                    # create a Grouper of same words by default with the same id than the word:
                     wo = Words.objects.create(owner=text.owner,language=text.language, 
-                                              sentence=newsentence,text=text,order=wordidx, \
-                                                wordtext=word, \
+                                              sentence=newsentence,text=text,
+                                              order=wordidx, textOrder=textOrder,
+                                                wordtext=word, 
 #                                               wordtext=remove_spaces(word,removeSpaces), \
                                               isnotword=False)
-                    grouper_of_same_words = Grouper_of_same_words.objects.create(owner=text.owner,id=wo.id)
-                    wo.grouper_of_same_words = grouper_of_same_words
                     wo.save()
                     new_words_created.append(wo)
                 else: # Non-words
-                    Words.objects.create(owner=text.owner,language=text.language, sentence=newsentence,text=text,order=wordidx, \
-                                     wordtext=word, isnotword=True)
-
+                    Words.objects.create(owner=text.owner,language=text.language, sentence=newsentence,
+                                         text=text, order=wordidx, textOrder=textOrder,
+                                         wordtext=word, isnotword=True)
+                textOrder += 1
             # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
             if lastitem_isnotword:
-                Words.objects.create(owner=text.owner,language=text.language, sentence=newsentence,text=text,order=wordidx, \
-                             wordtext=lastitem_isnotword, isnotword=True)
+                Words.objects.create(owner=text.owner,language=text.language, sentence=newsentence,text=text,
+                                 order=wordidx+1, textOrder=textOrder, wordtext=lastitem_isnotword, 
+                                 isnotword=True)
+
     ################## PARSING THE TEXT FOR SIMILAR WORD: #########################################################################
-    GOSW_to_create_for_these_words = []
     status_need_update_for_these_words = []
     for new_word_created in new_words_created:
             samewordtext_query = Words.objects.filter(language=text.language).\
-                                        filter(wordtext__iexact=new_word_created.wordtext)
+                                        filter(Q(wordtext__iexact=new_word_created.wordtext)&\
+                                               Q(status__gt=0))
             if samewordtext_query:
                 sameword = samewordtext_query.first()     
                 new_word_created.status = sameword.status
                 new_word_created.grouper_of_same_words = sameword.grouper_of_same_words
                 status_need_update_for_these_words.append(new_word_created)
-            else:
-                # this needs its own Grouper_of_same_words
-                GOSW_to_create_for_these_words.append(new_word_created)
     # Bulk update:
     Words.objects.bulk_update(status_need_update_for_these_words, ['status'])
-    # create GOSW for the others:
-    create_GOSW_for_words(GOSW_to_create_for_these_words)
-
-    ###################### Calculate how many words are for this language: Display a warning if too many words: ####################
-    total_words_in_this_lang = Words.objects.filter(owner=request.user, language=text.language).count()
-    if total_words_in_this_lang > MAX_WORDS:
-        messages.warning(request, _('With this additional text, you\'ve got now ') + \
-                        str(total_words_in_this_lang) + _(' words for ') + text.language.name + \
-                        _('. This could slow the program a lot. Please consider deleting some texts.'))
 
 # IS IT USEFUL???
 # def remove_spaces(s,remove):

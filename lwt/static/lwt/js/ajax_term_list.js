@@ -16,10 +16,12 @@ function ajax_select_rows(op, check_uncheck){
     				var message = ''; 
     				if (data['total'] == 0){
     					message += gettext('Nothing to export...');
+						$('button[type="submit"]').prop('disabled', true);
     				} else {
     					message += data['total']
     					message += data['total'] == 1? gettext(' word') : gettext(' words');
     					message += ' to export';
+						$('button[type="submit"]').prop('disabled', false);
     				}
     				$('#selected_total').html(message);
     			}

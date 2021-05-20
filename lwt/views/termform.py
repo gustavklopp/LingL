@@ -75,8 +75,7 @@ def _create_curlybrace_sentence(wo, compoundword_list=None, compoundword_id_list
         # TODO looking for similar of compound words???
         if compoundword_list and allword.id in compoundword_id_list: 
             sentenceList.append('**'+allword.wordtext+'**')
-        elif not isinstance(wo, list) and \
-                (allword == wo or allword.grouper_of_same_words==wo.grouper_of_same_words):
+        elif not isinstance(wo, list) and allword.wordtext.lower() == wo.wordtext.lower():
             sentenceList.append('**'+allword.wordtext+'**')
         else:
             sentenceList.append(allword.wordtext)
@@ -251,7 +250,6 @@ def search_possiblesimilarCompoundword(request, compoundword_list=None):
 
 ''' helper for termform: superficial copy of a word (or compoundword)'''
 def _copy_word(sourceword, destword):
-    destword.grouper_of_same_words = sourceword.grouper_of_same_words # give them the same grouper than the original word (useful only for the word with the same wordtext)
     destword.status = sourceword.status
     destword.translation = sourceword.translation
     destword.romanization = sourceword.romanization
@@ -268,6 +266,28 @@ def _copy_word(sourceword, destword):
         destword.wordtags.add(wordtag)
     destword.save()    
     
+'''  All similar Words need to be have an updated status also:
+             - Those are searching by the same wordtext, OR
+             - Those which have already been defined as similar before
+                     = i.e they have the same FK Grouper_of_same_words
+'''
+def get_similar_words_AND_gosw(request, word):
+    grouper_of_same_words = word.grouper_of_same_words
+    if grouper_of_same_words:
+        samewordtext_query = Words.objects.filter(language=word.language).\
+                             filter(Q(wordtext__iexact=word.wordtext)|\
+                                    Q(grouper_of_same_words=grouper_of_same_words))
+    else:
+        samewordtext_query = Words.objects.filter(language=word.language).\
+                                 filter(wordtext__iexact=word.wordtext)
+
+    gosw_to_update = samewordtext_query.exclude(grouper_of_same_words=None).first()
+    # creating a GOSW if needed
+    if not gosw_to_update and samewordtext_query.count() != 1:
+        id_string = json.dumps([word.wordtext, word.language.natural_key()])
+        gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,
+                                                               owner=request.user)
+    return (samewordtext_query, gosw_to_update)
     
 '''    create a http on the topright of text_read with a form to create new term
   called by : - submit button: the AJAX in text_read_clickevent() when clicking on a word
@@ -359,6 +379,9 @@ def termform(request):
                                             }))
         
         if request.GET['op'] == 'update_status': # make the word 'well-known' or 'ignored'
+            sameword_list = []
+            sameword_id_list = []
+
             status_str = request.GET['status'] 
             if status_str == 'wellkwn':
                 status = 100
@@ -366,24 +389,28 @@ def termform(request):
                 status = 101
             wo_id = request.GET['wo_id']
             word = Words.objects.get(id=wo_id)
-            # All similar Words need to be have an updated status also:
-            # - Those are searching by the same wordtext, OR
-            # - Those which have already been defined as similar before
-            #            = i.e they have the same FK Grouper_of_same_words
-            grouper_of_same_words = word.grouper_of_same_words
-            samewordtext_query = Words.objects.filter(language=word.language).\
-                                        filter(Q(wordtext__iexact=word.wordtext)|\
-                                               Q(grouper_of_same_words=grouper_of_same_words))
-            sameword_list = []
-            sameword_id_list = []
-            for sw in samewordtext_query:
-                if sw.grouper_of_same_words and \
-                        sw.grouper_of_same_words != word.grouper_of_same_words:
-                    # deleting the GOSW for this word
-                    Grouper_of_same_words.objects.get(id=sw.grouper_of_same_words.id).delete()
-                    # and put the new:
-                    sw.grouper_of_same_words = grouper_of_same_words
+#             grouper_of_same_words = word.grouper_of_same_words
+#             if grouper_of_same_words:
+#                 samewordtext_query = Words.objects.filter(language=word.language).\
+#                                             filter(Q(wordtext__iexact=word.wordtext)|\
+#                                                    Q(grouper_of_same_words=grouper_of_same_words))
+#             else:
+#                 samewordtext_query = Words.objects.filter(language=word.language).\
+#                                             filter(wordtext__iexact=word.wordtext)
+#                 
+# 
+#             gosw_to_update = samewordtext_query.exclude(grouper_of_same_words=None).first()
+#             # creating a GOSW if needed
+#             if not gosw_to_update and samewordtext_query.count() != 1:
+#                 id_string = json.dumps([word.wordtext, word.language.natural_key()])
+#                 gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,
+#                                                                       owner=request.user)
 
+
+            samewordtext_query, gosw_to_update = get_similar_words_AND_gosw(request, word)
+            for sw in samewordtext_query:
+                if gosw_to_update:
+                    sw.grouper_of_same_words = gosw_to_update
                 sw.status = status
                 sameword_list.append(sw)
                 sameword_id_list.append(sw.id)
@@ -395,19 +422,21 @@ def termform(request):
                     'content_message':_('status updated, now : "')+get_statuses()[status]['name']+'"',
                      'sameword_list':sameword_list, 'samewordtextlength':samewordtextlength }
                                     )
-            # NOT SURE WHAT IS DOING:
+            # used for the hovertooltip 
             if word.isCompoundword:
+                cowordtext = word.compoundword.wordtext
                 cowostatus = word.compoundword.status
                 cowotranslation = word.compoundword.translation
                 coworomanization = word.compoundword.romanization
             else:
-                cowostatus = cowotranslation = coworomanization = ''
+                cowordtext = cowostatus = cowotranslation = coworomanization = ''
             return HttpResponse(json.dumps({'html': html, 
                                             'wo_id_to_update_in_ajax':sameword_id_list,
                                             'wowordtext':word.wordtext, 'wostatus':status,
                                             'iscompoundword': word.isCompoundword,
                                             'woromanization':word.romanization,
                                             'wotranslation':word.translation,
+                                            'cowordtext': cowordtext,
                                             'cowostatus':cowostatus,
                                             'cowotranslation':cowotranslation,
                                             'coworomanization':coworomanization
@@ -420,42 +449,45 @@ def termform(request):
     if request.method == 'POST': 
         
         sameword_id_list = []
-        samecompoundword_id_list = [] 
         sameword_list = []
+        samecompoundword_id_list = [] 
 
         # Case of Posting a similar word:
         if request.POST['op'] == 'similar':
             wo_id = request.POST['wo_id']
             simwo_id = request.POST['simwo_id']
 
-            word = Words.objects.get(id=wo_id)
+            alreadysavedword = Words.objects.get(id=wo_id)
             simword = Words.objects.get(id=simwo_id)
+            simwordtext = simword.wordtext
 
-            # copying all from word --> similar word
-            _copy_word(word, simword)
-            
-            # deleting the foreign key Grouper_of_same_words to which simword was pointing to
-            Grouper_of_same_words.objects.get(id=simwo_id).delete()
+            # create a gosw if needed:
+            gosw = alreadysavedword.grouper_of_same_words
+            if not gosw:
+                id_string = json.dumps([alreadysavedword.wordtext, alreadysavedword.language.natural_key()])
+                gosw = Grouper_of_same_words.objects.create(id_string=id_string,
+                                                                       owner=request.user)
+                alreadysavedword.grouper_of_same_words = gosw
 
             sameword_id_list = [simwo_id] # we update the word (the correct color)
+
             # and update also all the words written similarly than this similar word (you follow? :) 
-            samewordtext_query = Words.objects.filter(Q(language=word.language) & \
-                                                      Q(wordtext=simword.wordtext)).\
-                                           exclude(id=simwo_id)
+            samewordtext_query = Words.objects.filter(language=alreadysavedword.language).\
+                                 filter(wordtext__iexact=simwordtext)
             for sw in samewordtext_query:
-                _copy_word(simword, sw)
+                _copy_word(alreadysavedword, sw)
+                sw.grouper_of_same_word = gosw
                 # used in the AJAX to change in realtime the words 
                 sameword_id_list.append(sw.id)
 
             # Bunch of values more used when creating new word...
             cowo_id_to_update_in_ajax = [] # no need to update other word
-            sameword_list = [word] # not sure what this is used for....??? I think it´s only to display
+            sameword_list = [alreadysavedword] # not sure what this is used for....??? I think it´s only to display
                                     #...the wordtext in fact
             message_wordtext = simword.wordtext
             iscompoundword = False
-            cowostatus = ''
-            coworomanization = ''
-            cowotranslation = ''
+            cowordtext = cowostatus = coworomanization = cowotranslation = ''
+            word = alreadysavedword # this is the name used later...
 
         else:
         # Case of Posting a new/edit word:
@@ -478,26 +510,19 @@ def termform(request):
                 if f.is_valid():
                     compoundword_prototype = f.save(commit=False) 
                     # it's a compound word, so put additional data in word:
-                    compoundword = Words()
-                    compoundword.owner = compoundword_prototype.owner
-                    compoundword.status = compoundword_prototype.status
-                    compoundword.translation = compoundword_prototype.translation
-                    compoundword.romanization = compoundword_prototype.romanization
-                    compoundword.customsentence = compoundword_prototype.customsentence
-                    compoundword.sentence = compoundword_prototype.sentence
-                    compoundword.text = compoundword_prototype.text
-                    compoundword.state = compoundword_prototype.state
-                    compoundword.language = compoundword_prototype.language
+                    compoundword = compoundword_prototype
+                    compoundword.pk = None
                     
                     compoundword.wordinside_order = json.dumps(compoundword_id_list, separators=(',',':'))
                     compoundword.isCompoundword = True
-                    compoundword.isnotword = True
+                    compoundword.isnotword = True #### IMPORTANT!!!!
                     compoundword.save() # you need to save to have a PK (= an id)
 
                     message_wordtext = [] # used to display the word which haa been updated
 
-                    compoundword_wordtext_list = []
                     compoundword_obj_list = []
+                    
+                    compoundword_wordtext_list = []
                     # and make the words inside the compoundword detectable as such:
                     for idx in compoundword_id_list:
                         wordinside = Words.objects.get(id=idx)
@@ -506,17 +531,19 @@ def termform(request):
                         wordinside.show_compoundword = True # user can switch that in the clicked tooltip for example
                         wordinside.save()
                         compoundword_obj_list.append(wordinside)
-                        message_wordtext.append(wordinside.wordtext)
                         compoundword_wordtext_list.append(wordinside.wordtext)
+                        message_wordtext.append(wordinside.wordtext)
                         samecompoundword_id_list.append(wordinside.id)
 
                     compoundword.wordtext = '+'.join(compoundword_wordtext_list)
+                    wordinside_order_NK = [[wo.wordtext, wo.language.natural_key()]
+                                           for wo in compoundword_obj_list]
+                    compoundword.wordinside_order_NK = json.dumps(wordinside_order_NK)
                     message_wordtext = compoundword.wordtext
+                    cowordtext = compoundword.wordtext
                     
-                    # give it a grouper_of_same_word FK with the same id:
-                    grouper_of_same_words = Grouper_of_same_words.objects.create(id=compoundword.id)
-                    compoundword.grouper_of_same_words = grouper_of_same_words
                     compoundword.save()
+                    firstword = compoundword_obj_list[0]
                     
                     if redefine_only_this_word: #TODO
                         pass
@@ -525,25 +552,34 @@ def termform(request):
                         # First, we get the list of sentences where the wordtexts of the compoundword
                         # ...appear simultaneously
                         # I do that to avoid a search in all the sentences: too costy!
-                        filter_Q_wordtext = Q(sentencetext__icontains=compoundword_wordtext_list[0])
+                        filter_Q_sentencetext = Q(sentencetext__icontains=compoundword_wordtext_list[0])
+                        filter_Q_wordtext = Q(wordtext__iexact=compoundword_wordtext_list[0])
                         for compoundword_wordtext in compoundword_wordtext_list[1:]:
                             args = {'sentencetext__icontains':compoundword_wordtext}
-                            filter_Q_wordtext &= Q(**args)
+                            filter_Q_sentencetext &= Q(**args)
+                            args = {'wordtext__iexact':compoundword_wordtext}
+                            filter_Q_wordtext |= Q(**args)
                         sentencesWithSimilarCompoundword = Sentences.objects.\
-                                        filter(Q(language=compoundword_obj_list[0].language)&\
-                                                filter_Q_wordtext).\
-                                        exclude(id=compoundword_obj_list[0].sentence_id)
+                                        filter(Q(language=firstword.language)&\
+                                                filter_Q_sentencetext).\
+                                        exclude(id=firstword.sentence_id)
 
 
                         # then we get the Word which correspond to this sentence and which are similar
                         for foundsentence in sentencesWithSimilarCompoundword:
-                            for compoundword_el in compoundword_obj_list:
-                                compoundword_sim_el = Words.objects.filter(Q(language=compoundword_el.language)&\
-                                                        Q(sentence=foundsentence)&\
-                                                        Q(wordtext=compoundword_el.wordtext)).first()
+                                
+#                             # we create a GOSW (a grouper of same COMPOUND WORD in fact):
+#                             id_string = json.dumps([compoundword.wordtext, compoundword.language.natural_key()])
+#                             gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,
+#                                                                                    owner=request.user)
 
-                                _copy_word(compoundword_el, compoundword_sim_el)
-                                samecompoundword_id_list.append(compoundword_sim_el.id)
+                            cowo_sim_words = Words.objects.filter(
+                                                    Q(language=compoundword.language)&\
+                                                    Q(sentence=foundsentence)&\
+                                                    filter_Q_wordtext)
+                            for cowo_sim_el in cowo_sim_words:
+                                _copy_word(firstword, cowo_sim_el)
+                                samecompoundword_id_list.append(cowo_sim_el.id)
 
                     word = firstword # used for the hovering tooltip title
                     iscompoundword = True
@@ -576,11 +612,12 @@ def termform(request):
                     else: # we update by default all the words considered 'similar' by the system 
                         # i.e: word that are written similarly 
                         # get the similar words (words that have the same wordtext or that have already been identified as similar)
-                        grouper_of_same_words = word.grouper_of_same_words
                         # and update all the other similar words:
-                        samewordtext_query = Words.objects.filter(language=word.language).filter(Q(wordtext=word.wordtext)|\
-                                                Q(grouper_of_same_words=grouper_of_same_words)).exclude(id=wo_id)
+                        samewordtext_query, gosw_to_update = get_similar_words_AND_gosw(request, word)
+
                         for sw in samewordtext_query:
+                            if gosw_to_update:
+                                sw.grouper_of_same_words = gosw_to_update
                             _copy_word(word, sw)
                             # used in the AJAX to change in realtime the words 
                             sameword_id_list.append(sw.id)
@@ -588,9 +625,7 @@ def termform(request):
                     message_wordtext = word.wordtext
 
                     iscompoundword = False
-                    cowostatus = ''
-                    coworomanization = ''
-                    cowotranslation = ''
+                    cowordtext =  cowostatus =  coworomanization =  cowotranslation = ''
 
         # display the success message
         if request.POST['op'] == 'new':
@@ -608,6 +643,7 @@ def termform(request):
         wostatus = word.status
         wotranslation = word.translation
         woromanization = word.romanization
+        show_compoundword = word.show_compoundword
 
         html = render_to_string('lwt/term_message.html', 
                             {'message_wordtext':message_wordtext, 'head_message':head_message, 
@@ -615,10 +651,11 @@ def termform(request):
                              'sameword_list': sameword_list,'samewordtextlength':samewordtextlength})
         return HttpResponse(json.dumps({'html':html, 'iscompoundword':iscompoundword, 
             'wowordtext':wowordtext, 'wostatus':wostatus, 'woromanization':woromanization, 
-            'wotranslation':wotranslation, 'cowostatus':cowostatus, 
+            'wotranslation':wotranslation, 'cowordtext': cowordtext, 'cowostatus':cowostatus, 
             'coworomanization':coworomanization, 'cowotranslation':cowotranslation, 
             'wo_id_to_update_in_ajax':sameword_id_list,
             'cowo_id_to_update_in_ajax': samecompoundword_id_list,
+            'show_compoundword': show_compoundword
                                         }))
 
 '''called by lwt/ajax_termform.js/ajax_submit_termformSearchbox

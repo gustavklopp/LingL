@@ -32,40 +32,11 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
+from lwt.views.term_list import select_rows
 
-def select_rows(request):
-    ''' called by ajax to un/select the rows'''
-    op = request.GET['op']
-    check_uncheck = request.GET['check_uncheck']
-    if op == 'all':
-        possible_selected_rows_json = Settings_selected_rows.objects.get(owner=request.user).possible_selected_rows
-        possible_selected_rows_list = json.loads(possible_selected_rows_json)
-        with transaction.atomic(): # because a lot of db query...
-            for id in possible_selected_rows_list:
-                wo = Words.objects.get(id=id)
-                wo.state = True
-                wo.save()
-        total = len(possible_selected_rows_list)
-    elif op == 'none':
-        with transaction.atomic(): # because a lot of db query...
-            for wo in Words.objects.filter(owner=request.user, state=True).all():
-                wo.state = False
-                wo.save()
-        total = 0
-    else:
-        id = int(op)
-        wo = Words.objects.get(id=id)
-        if check_uncheck == 'check':
-            wo.state = True
-        elif check_uncheck == 'uncheck':
-            wo.state = False
-        wo.save()
-        total = Words.objects.filter(owner=request.user, state=True).count()
-        
-    return JsonResponse({'total': total}, safe=False)
 
+''' download the txt file with anki formated words'''
 def export2anki_exporter(request):
-    ''' download the txt file with anki formated words'''
     anki_words = Words.objects.filter(owner=request.user, state=True).order_by('language').all()
     language = anki_words.first().language
     anki = ''

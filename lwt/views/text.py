@@ -27,7 +27,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._utilities_views import get_word_database_size
-from _ast import Or
+
 
 ''' called by ajax (built-in function) inside bootstrap-table #text_table to fill the table'''
 def load_texttable(request):
@@ -37,6 +37,10 @@ def load_texttable(request):
         search = request.GET['search']
         if search != '': # when deleting the previous search, ajax will send the search word ''. consider it like No filter
             all_texts = all_texts.filter(title=search)
+
+    if not all_texts: # directly return if no texts to load!
+            return JsonResponse({'total': 0, 'rows': []}, safe=False)
+
     # then apply the filtering (it sets also the cookie). Func list_filtering is in lwt/views/_utilities_views.py
     all_texts = list_filtering(all_texts, request) 
     
@@ -86,18 +90,19 @@ def load_texttable(request):
             '"/></a>'
         t_dict['title_tag'] = r
         ##############################display some stats about the Texts: ############################################
-#         texttotalword = Words.objects.filter(owner=request.user).filter(text=t).\
-#                 exclude(Q(isnotword=True)&Q(isCompoundword=False)).count()
         # Total words in this text: don't count duplicate (words written similarly)
         texttotalword_list = Words.objects.filter(text=t).\
                 exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
         texttotalword = len(distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
                 
         # Already saved words in this text: don't count duplicate (words written similarly) 
-        textsavedword = Grouper_of_same_words.objects.filter(Q(grouper_of_same_words_for_this_word__text=t)&\
-                                                             Q(grouper_of_same_words_for_this_word__status__gt=0)).distinct().count()
-#         textsavedword = Words.objects.filter(Q(owner=request.user)&Q(text=t)&Q(status__gt=0)).\
-#                 exclude(Q(isnotword=True)&Q(grouper_of_same_words=None)).count()
+        textsavedword = 0
+        textsavedword += Words.objects.filter(Q(text=t)&Q(status__gt=0)&\
+                                                Q(grouper_of_same_words=None)).count()
+        gosw_textsavedwords = Words.objects.filter(Q(text=t)&Q(status__gt=0)).\
+                                    exclude(grouper_of_same_words=None).order_by('grouper_of_same_words')
+        distinct_gosw_textsavedwords = distinct_on(gosw_textsavedwords, 'grouper_of_same_words', case_unsensitive=False)
+        textsavedword += len(distinct_gosw_textsavedwords)
 
         textsavedexpr = Words.objects.filter(owner=request.user).filter(text=t,isCompoundword=True,status__gt=0).count()
         textunknownword = texttotalword - textsavedword
@@ -331,12 +336,25 @@ def text_list(request):
                 else:
                     # delete also Grouper_of_same_words associated:
                     # maybe there isn´t (if we have make this word as a similar word to another)
-                    # Don't use wo.grouper_of_same_word.delete() since we want to keep words in other texts though
-                    gosw_for_this_word = Grouper_of_same_words.objects.filter(id=todelete_wo.id).first()
-                    if gosw_for_this_word:
-                        gosw_for_this_word.delete()
-                        delwo_nb += 1 # else it's not a word but a space ' ', or '?', '!' etc...
+                    # we want to keep words in other texts though
+                    # get the grouper_of_same_words (GOSW) for this word, and if the GOSW has itself...
+                    # no other Words for which it is the FK: delete it:
+                    todeletewo_gosw = todelete_wo.grouper_of_same_words
+                    if todeletewo_gosw: # word has gosw, we must process it
+                        count_words_for_this_gosw = Words.objects.filter(grouper_of_same_words=todeletewo_gosw).count()
+                        if count_words_for_this_gosw == 1:
+                            todelete_wo.grouper_of_same_words.delete()
+                        else:
+                            todelete_wo.grouper_of_same_words = None
+                    if not todelete_wo.isnotword:
+                        delwo_nb += 1
                     todelete_wo.delete()
+
+#                     gosw_for_this_word = Grouper_of_same_words.objects.filter(id=todelete_wo.id).first()
+#                     if gosw_for_this_word:
+#                         gosw_for_this_word.delete()
+#                         delwo_nb += 1 # else it's not a word but a space ' ', or '?', '!' etc...
+#                     todelete_wo.delete()
             # bulk update:
             Words.objects.bulk_update(toupdate_savedwords, ['customsentence'])
 
@@ -394,7 +412,15 @@ def text_detail(request):
                 savedtext = f.save()
                 # Process the file :
                 # split the text into sentences and into words and put it in Unknownwords
-                splitText(request, savedtext) #  in _utilities_views
+                splitText(savedtext) #  in _utilities_views
+                ###################### Calculate how many words are for this language: Display a warning if too many words: ####################
+                total_words_in_this_lang = Words.objects.filter(owner=request.user, 
+                                                                language=savedtext.language).count()
+                if total_words_in_this_lang > MAX_WORDS:
+                    messages.add_message(request, messages.WARNING, 
+                            _('With this additional text, you\'ve got now ') + str(total_words_in_this_lang) +\
+                             _(' words for ') + savedtext.language.name + \
+                            _('. This could slow the program a lot. Please consider deleting some texts.'))
 
             else:
                 savedtext = f.save(commit=False)
@@ -419,11 +445,12 @@ def text_detail(request):
             return redirect(reverse('text_list'))
 
         else: # errors processing
+            f = TextsForm(request.user, request.POST)
             if 'new' in request.GET.keys():
                 messages.add_message(request, messages.ERROR, _('There was an error in adding this text.'))
             else:
                 messages.add_message(request, messages.ERROR, _('There was an error in modifying this text.'))
-            return render(request, 'lwt/text_detail.html', {'form':f})
+            return render(request, 'lwt/text_list.html')
 
     # Displaying the form to Create a new text, or Delete/Edit a word or Insert a Word:
     # (for the edit part: triggered by the submit in the tooltip)
@@ -509,9 +536,6 @@ def text_detail(request):
             # we save only at the end because Unique constraint on 'textOrder' for Words
             new_word.save()
             new_space.save()
-            # create grouper_of_same_words also:
-            create_GOSW_for_words([new_word])
-#             create_GOSW_for_words([new_space]) the Space DOES NOT need a Grouper_of_same_word
 
         # displaying the editable text
         elif 'edit' in request.GET.keys():
@@ -568,12 +592,12 @@ def uploaded_text(request):
             try:
                 with open(files.uploaded_text.path, 'r') as f:
                     text = f.read() 
-                delete_uploadedfiles(Uploaded_text)
+                delete_uploadedfiles(files.uploaded_text.path, request.user)
                 return HttpResponse(json.dumps({'title':title, 'text':text}))
             except UnicodeDecodeError as e: # the file contains not unicode characters
-                delete_uploadedfiles(Uploaded_text)
+                delete_uploadedfiles(files.uploaded_text.path, request.user)
                 return HttpResponse(json.dumps({'error':'{} ("{}")'.format(_('Check coding of this text!'), e)}))
         else:
-            delete_uploadedfiles(Uploaded_text)
+            delete_uploadedfiles(files.uploaded_text.path, request.user)
             return HttpResponse(json.dumps({'error':form.errors}))
 

@@ -3,7 +3,7 @@
 {% load i18n %} {# used for internationalization #}
 {% load mathfilters %}
 
-{% block title %}{% trans "Keyboard shortcuts" %}{% endblock title %}
+{% block pagetitle %}{% trans "Keyboard shortcuts" %} | {{ block.super }}{% endblock pagetitle %}
 
 {% block banner %}
 {% include "lwt/_banner.html" %}
@@ -124,16 +124,14 @@
 <p><em>LingL</em> provides a few choice of dictionary links which could work for your language (like Wiktionary, Google etc...)
 but you can provide your own link to your prefered dictionary.</p>
 <p>The easiest way is to look at this predefined dictionary links to use a example. But here how it works:</p>
-<p>The link should have this format:</p>
-<ul><li>.....###... : '###' will be processed as the searched word. </li>
-	<li>(optional) use '••' (or '•••') in the link to specified the destination code language. 
-	<em>LingL</em> will replace it with correct code of the language (for ex. 'en' or 'eng')
-	that you've chosen in your profile. The code can be 2 letters (use '••') or 3 letters 
-	(use '•••') depending on the dictionary website.
-	<li><em>Warning!</em> Some dictionary webpage prevent the opening of their website on <em>LingL</em> (or any other third party websites) (for ex. Google translate).
+<p>Try to do a simple search for a word on the online dictionary that you want:</p>
+<p>The URL of the word 'test' for example may look like: "https://en.pons.com/translate/english-french/test"</p>
+<ul><li>Replace 'test' with '###' : '###' will be processed as the searched word. so, for example: write: <span class="font-weight-bold">https://en.pons.com/translate/french-english/###</span></li>
+	<li><span class="font-weight-bold">Warning!</span> Some dictionary webpage prevent the opening of their website on <em>LingL</em> (or any other third party websites) (for ex. Google translate).
+	<p>When trying to look out a word, you will see an error message like: <span class="bg-warning"> a security error prevented the resource from being loaded. </span></p>
 	<p><em>LingL</em> has 2 ways to counteract this:</p>
-		<ul><li>Make the website opening in a new window: To have it, prepend the link with the '*' character. For ex.: write *https://..</li>
-			<li><p>Scrape the website from its content: To have it prepend the link with the '^' character. For ex.: write ^https://</p>
+		<ul><li>Make the website opening in a new window: To have it, prepend the link with the '*' character. For ex.: write <span class="font-weight-bold">*https://en.pons.com/translate/french-english/###</span></li>
+			<li><p>Scrape the website from its content: To have it prepend the link with the '^' character. For ex.: write <span class="font-weight-bold">^https://translate.google.com/?sl=fr&tl=en&text=test&op=translate</span></p>
 		<p>The first solution may make the website faster than the second one but with the disadvantage of a new window. 
 		The scraped website may also lead to wrong layout of the original dictionary website.</p></li></ul>
 		</li>

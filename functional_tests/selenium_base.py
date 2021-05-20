@@ -24,7 +24,7 @@ from selenium.webdriver.support import expected_conditions as EC
 #third party
 
 # local
-from lwt.factories import *
+from functional_tests.factories import *
 from lwt.models import MyUser
 from lwt.views._utilities_views import *
 from selenium.webdriver.common import desired_capabilities
@@ -37,28 +37,67 @@ class Base(StaticLiveServerTestCase):
 #         cls.selenium.quit()
 #         super(Base, cls).tearDownClass()
 
-    @classmethod
-    def find(cls, findhow, findwhere): # wait until and find
-        cls.wait_until(findhow, findwhere)
-        return cls.selenium.find_element(findhow, findwhere)
+#     @classmethod
+#     def find(cls, findhow, findwhere): # wait until and find
+#         cls.wait_until_appear(findhow, findwhere)
+#         return cls.selenium.find_element(findhow, findwhere)
+# 
+#     @classmethod
+#     def finds(cls, findhow, findwhere): # wait until and find
+#         cls.wait_until_appear(findhow, findwhere)
+#         return cls.selenium.find_elements(findhow, findwhere)
+# 
+#     @classmethod
+#     def wait_until_appear(cls, findhow, findwhere):
+#         WebDriverWait(cls.selenium, 30).until(
+#             EC.presence_of_element_located((findhow,findwhere))
+#             )
+# 
+#     @classmethod
+#     def wait_until_disappear(cls, findhow, findwhere):
+#         WebDriverWait(cls.selenium, 30).until(
+#             EC.invisibility_of_element_located((findhow,findwhere))
+#             )
+# 
+#     @classmethod
+#     def wait_until_clickable(cls, element_selector):
+#         WebDriverWait(cls.selenium, 30).until(
+#             EC.element_to_be_clickable(element_selector)
+#             )
+# 
+#     @classmethod
+#     def wait_until_text_appear(cls, element_selector, text):
+#         WebDriverWait(cls.selenium, 30).until(
+#             EC.text_to_be_present_in_element(element_selector, text)
+#             )
 
-    @classmethod
-    def finds(cls, findhow, findwhere): # wait until and find
-        cls.wait_until(findhow, findwhere)
-        return cls.selenium.find_elements(findhow, findwhere)
+    def find(self, findhow, findwhere): # wait until and find
+        self.wait_until_appear(findhow, findwhere)
+        return self.selenium.find_element(findhow, findwhere)
 
-    @classmethod
-    def wait_until(cls, findhow, findwhere):
-        WebDriverWait(cls.selenium, 30).until(
+    def finds(self, findhow, findwhere): # wait until and find
+        self.wait_until_appear(findhow, findwhere)
+        return self.selenium.find_elements(findhow, findwhere)
+
+    def wait_until_appear(self, findhow, findwhere):
+        WebDriverWait(self.selenium, 30).until(
             EC.presence_of_element_located((findhow,findwhere))
             )
 
-    @classmethod
-    def wait_until_clickable(cls, element):
-        WebDriverWait(cls.selenium, 30).until(
-            EC.element_to_be_clickable((element))
+    def wait_until_disappear(self, findhow, findwhere):
+        WebDriverWait(self.selenium, 30).until(
+            EC.invisibility_of_element_located((findhow,findwhere))
             )
 
+    def wait_until_clickable(self, element_selector):
+        WebDriverWait(self.selenium, 30).until(
+            EC.element_to_be_clickable(element_selector)
+            )
+
+    def wait_until_text_appear(self, element_selector, text):
+        WebDriverWait(self.selenium, 30).until(
+            EC.text_to_be_present_in_element(element_selector, text)
+            )
 class BasePage(Base):
 
     @classmethod
@@ -109,9 +148,6 @@ class BasePage_loggedin(Base):
 #         cls.selenium.refresh()
 #         cls.selenium.get('{}'.format(cls.live_server_url))
 #         response = cls.client.get('{}/language_detail?new=0'.format(cls.live_server_url))
-
-                
-
 
 
 class BasePage_no_js(Base): # same than above but disable Javascript

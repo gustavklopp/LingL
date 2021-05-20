@@ -6,14 +6,14 @@ import re
 def corpus_text(language, nb_of_lines):
     ''' Use for Testing '''
     ''' generator of a set of (nb_of_lines) sentences in the language chosen,
-    from a random text (inside 'lwt/corpus/(language))'''
+    from a random text (inside 'functional_tests/corpus/(language))'''
 
     nb_of_lines -= 1 # because the first line is not counted in our loop
     # choose a file:
-    corpus_loc = os.path.join('lwt','corpus', language)
+    corpus_loc = os.path.join('functional_tests','corpus', language)
     all_texts = os.listdir(corpus_loc)
     title = random.choice(all_texts)
-    fullpath_text = os.path.join('lwt','corpus',language,title)
+    fullpath_text = os.path.join('functional_tests','corpus',language,title)
 
     # choose a position in the text:
     with open(fullpath_text, encoding='utf8') as f:

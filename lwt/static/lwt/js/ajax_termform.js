@@ -26,6 +26,7 @@ function ajax_submit_word(event, op, wo_id, language_id, simwo_id=null){
 		data_to_go['status'] = $("input[name=status]:checked").val();
 		data_to_go['romanization'] = $("input[name=romanization]").val();
 		data_to_go['wordtags'] = $("input[name=wordtags]").val();
+		//NOTE: compoundword_id_list cariable is directly embedded in 'termform_new_or_edit.html'
 		// extra_field:
 		var extra_field = '[';
 		$("#div_id_extra_field input").each(function(idx, el){
@@ -88,6 +89,36 @@ function toggle_makeit_similarword(e, simwo_id, wo_id){
 		$(e).addClass('chosen_similarword');
 		$('select[name="chosen_similarword"]').append($('<option>', {value : simwo_id, selected: true})); // put it inside the selectmultiple checkbox
 		}
+}
+
+
+/* helper func for ajax_clicked_word and ajax_ctrlclicked_compoundword 
+    Display the list of possible similar words:    */
+function _display_possiblesimilarword(data, wo_id){
+	var possiblesimilarword = data['possiblesimilarword'];
+
+	// display the possible similar words
+	r = '<p>'+ gettext('Possible similar words ?')+'<br>';
+	if ($.isEmptyObject(possiblesimilarword)){
+		r += gettext('No similar words found.');
+	} else {
+		r += '<ul class="fa-ul">';
+		$.each(possiblesimilarword, function(key, val){
+			r += '<li ';
+			r += '> <span simwo_id="'+val.id+'" href="#" data=toggle="tooltip" class="possible_similarword" ';
+			r += ' wostatus='+ val.status +
+				' onClick="ajax_submit_word(event, \'similar\','+val.id+', null, '+wo_id+');return false;"'+
+				' title="'+gettext('Click if you want to consider this as the same word in fact (i.e = &#39similar&#39 word)')+'">'+
+				'<i class="fa fa-plus-circle" aria-hidden="true"></i> '+
+				val.wordtext +'</span>';
+			if (val.translation){ r += ' (= '+val.translation+')'; }
+			r += ' ['+gettext('in : ')+'"'+val.customsentence+'"]'+
+				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('Number keyboard shortcut')+'">['+(key+1)+']</span></li>';
+		});
+		r += '</ul>';
+	}
+	r += '</p>';
+	return r;
 }
 
 /* clicking on 'go' in the termform searchbox (to search other word) */

@@ -2,8 +2,9 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-{% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Words" %}{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
-
+{% block pagetitle %}{% if request.path == '/export2anki/' %}{% trans "Export to Anki" %}
+			{% elif request.path == '/selectivebackup/' %}{% trans "Selective Backup" %}
+			{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
 {% endblock pagetitle %}
 
 {% block stylesheets %}{{ block.super }}
@@ -108,15 +109,16 @@
 {# DISPLAYING THE WORDS #}
 		{#  ADDING THE TOOLBAR #}
 	<div id="wordtable_toolbar" >
+
 {# EXPORTING TO ANKI #}
 {% if request.path == '/export2anki/' %}
-<form class="form-inline" enctype="multipart/form-data" action="{% url 'export2anki_exporter'%}" method="post" onsubmit="return confirm('Are you sure?');">
+<form class="form-inline" enctype="multipart/form-data" action="{% url 'export2anki_exporter'%}" method="post" >
 {% csrf_token %}
 <button class="btn btn-primary" type="submit" name="export2anki" 
-value="export2anki">{% trans 'Export selected words to Anki' %}</button>
+value="export2anki" disabled>{% trans 'Export selected words to Anki' %}</button>
 <button id="checkAll" class="btn btn-default">{% trans 'Check All' %}</button>
 <button id="uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
-<span class="alert alert-warning" id="selected_total">{% if total_to_export == 0 %}
+&nbsp;&nbsp;<span class="alert alert-warning" id="selected_total">{% if total_to_export == 0 %}
 						{% trans 'Nothing to export...' %}{% else %}
 						{% blocktrans count counter=total_to_export %}
 						1 word to export
@@ -125,8 +127,38 @@ value="export2anki">{% trans 'Export selected words to Anki' %}</button>
 						{% endblocktrans %}
 						{% endif %}
 </form>
+{# end EXPORTING TO ANKI #}
+
+{# EXPORTING TO SELECTIVEBACKUP #}
+{% elif request.path == '/selectivebackup/' %}
+<form class="form-inline" enctype="multipart/form-data" action="{% url 'selectivebackup_exporter'%}" method="post" >
+{% csrf_token %}
+<button class="btn btn-primary" type="submit" name="selectivebackup" 
+value="selectivebackup" disabled>{% trans 'Backup selected words' %}</button>
+<button id="checkAll" class="btn btn-default">{% trans 'Check All' %}</button>
+<button id="uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
+&nbsp;&nbsp;<span class="alert alert-warning" id="selected_total">{% if total_to_export == 0 %}
+						{% trans 'Nothing to backup...' %}{% else %}
+						{% blocktrans count counter=total_to_export %}
+						1 word to backup
+						{% plural %}
+						{{ counter }} words to backup
+						{% endblocktrans %}
+						{% endif %}
+</form>
+{# end EXPORTING TO SELECTIVEBACKUP #}
+{% else %}
+{#  TOOLBAR FOR term_list #}
+<div id="wordtable_toolbar" class="btn-group">
+	<button id="delete" type="button" class="btn btn-default">
+		<i class="fa fa-trash" aria-hidden="true"></i>
+	</button>
+<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Text " %}...</a> 
+</div>
+{# end TOOLBAR #}
 {% endif %}
 	</div>
+
 <table id="word_table" data-toggle="table" data-sort-name="modified_date" data-sort-order="asc"
 							data-search="true"
 							data-pagination="true" data-side-pagination="server" 
@@ -136,9 +168,7 @@ value="export2anki">{% trans 'Export selected words to Anki' %}</button>
 		{# DISPLAYING THE HEADERS #}
 	<thead>
 	<tr>
-{% if request.path == '/export2anki/' %}
 	<th data-field="state" data-checkbox="true"></th>
-{% endif %}
 	{% blocktrans %}
 	<th data-field="id" data-sortable="true" data-sorter="numberSorter">id</th>
 	<th data-field="status" data-sortable="true" data-sorter="numberSorter">status</th>
@@ -177,6 +207,7 @@ value="export2anki">{% trans 'Export selected words to Anki' %}</button>
 	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table_filter-extension.js' %}"></script>
 		<script type="text/javascript">
+	
  	/* functions to order the numbers inside the bootstrap-table */
 	var word_table = $('#word_table');
 
@@ -201,16 +232,11 @@ value="export2anki">{% trans 'Export selected words to Anki' %}</button>
 		/* to jump to the given row inside the bootstrap table */
 		word_table.bootstrapTable('selectPage', page_id);
 		// scroll to the row in the page
-		/*
-		var index = row_id;
-		var top = 0;
-		$('#word_table').find('tbody tr').each(function (i) {
-			if (i < index) {
-				top += $(this).height();
-			}
-		});
-		$('#word_table').bootstrapTable('scrollTo', top);
-		*/
+		var rows = $('#word_table').find('tbody tr');
+		var wanted_row = $(rows[row_id]);
+		$([document.documentElement, document.body]).animate({
+			scrollTop: wanted_row.offset().top
+		}, 800);
 	}
 
     $(function () {

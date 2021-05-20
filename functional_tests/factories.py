@@ -5,9 +5,8 @@ import factory
 import factory.fuzzy
 # local
 from lwt.models import *
-from lwt.corpus_text import *
+from functional_tests.corpus_text import *
 from django.templatetags.i18n import language
-
 
 
 class UserFactory(factory.django.DjangoModelFactory):

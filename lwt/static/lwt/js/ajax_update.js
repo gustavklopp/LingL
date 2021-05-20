@@ -2,26 +2,33 @@
 function update_data_of_wo_cowo_and_sims(data, op){
 	// update parameters of the word/simword and the counter at the top
 	$.each(data['wo_id_to_update_in_ajax'], function(idx, val){
+			// specific to words
 			update_status(val, op, data['wostatus']);
 			update_translation(val, op, data['wotranslation']);
 			update_romanization(val, op, data['woromanization']);
-			update_title(val, op, data['iscompoundword'], data['wowordtext'], 
-								  data['wotranslation'], data['woromanization'], data['wostatus'],
-								  data['cowotranslation'], data['coworomanization'], data['cowostatus'])
+
+			update_title(val,  data['iscompoundword'], data['wowordtext'], 
+					   data['wotranslation'], data['woromanization'], data['wostatus'],
+					   data['cowordtext'], data['cowotranslation'], data['coworomanization'], data['cowostatus'],
+					   data['show_compoundword']);
 		});
 	// compoundword:
 	$.each(data['cowo_id_to_update_in_ajax'], function(idx, val){
+			// specific to compound words
 			update_iscompoundword(val, op);
 			update_show_compoundword(val, op);
-			update_costatus(val, op, data['wostatus']);
-			update_cotranslation(val, op, data['wotranslation']);
-			update_coromanization(val, op, data['woromanization']);
+			update_cowordtext(val, data['cowordtext']);
+			update_costatus(val, op, data['cowostatus']);
+			update_cotranslation(val, op, data['cowotranslation']);
+			update_coromanization(val, op, data['coworomanization']);
 			if (op == 'del'){ // the cowo in the cowo_id list, if with the op 'del' are evidently to be delete.
 				data['iscompoundword'] = 'False';
 			}
-			update_title(val, op, data['iscompoundword'], data['wowordtext'], 
-								  data['wotranslation'], data['woromanization'], data['wostatus'],
-								  data['cowotranslation'], data['coworomanization'], data['cowostatus']);
+
+			update_title(val, data['iscompoundword'], data['wowordtext'], 
+						data['wotranslation'], data['woromanization'], data['wostatus'],
+						data['cowordtext'], data['cowotranslation'], data['coworomanization'], data['cowostatus'],
+						data['show_compoundword']);
 		});
 }
 
@@ -51,9 +58,10 @@ function ajax_update_status(event, wo_id, status) {
 				$.each(data['wo_id_to_update_in_ajax'], function(idx, val){ // val=wo_id
 						update_status(val, '', data['wostatus']);
 						//update the title in word also
-						update_title(val, '', data['iscompoundword'], data['wowordtext'], 
-								  data['wotranslation'], data['woromanization'], data['wostatus'],
-								  data['cowotranslation'], data['coworomanization'], data['cowostatus'])
+						update_title(val, data['iscompoundword'], 
+					   	  data['wowordtext'], data['wotranslation'], data['woromanization'], data['wostatus'],
+						  data['cowordtext'], data['cowotranslation'], data['coworomanization'], data['cowostatus'],
+						  data['show_compoundword'])
 						});
 			},
 			error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
@@ -111,6 +119,11 @@ function update_show_compoundword(wo_id, op){
 				}
 }
 
+/* update cowordtext of the word in question:*/
+function update_cowordtext(wo_id, cowordtext){
+				$('span[woid='+wo_id+']').attr('cowordtext', cowordtext);
+}
+
 /* update status of the word in question:*/
 function update_costatus(wo_id, op, wostatus){
 				if (op == 'edit' || op == 'similar'){
@@ -137,15 +150,36 @@ function update_coromanization(wo_id, op, woromanization){
 	$('span[woid='+wo_id+']').attr('coworomanization',woromanization);
 }
 
-/* update the title */
-function update_title(wo_id, op, iscompoundword, wowordtext, wotranslation, woromanization, wostatus, 
-															 cowotranslation, coworomanization, cowostatus){
-	var title = wowordtext;
-	title += create_tooltip_title('word_symbol', wotranslation, woromanization, wostatus);
-	if (iscompoundword == 'true' || iscompoundword == 'True' || iscompoundword == true){
-		title += create_tooltip_title('coword_symbol', cowotranslation, coworomanization, cowostatus);
+/* the Python True is not recognized as 'true' by Javascript */
+
+function _is_true(variable){
+	if (variable == 'True' || variable == 'true' || variable == true){
+		return true
+	} else {
+		return false
 	}
-	$('span[woid='+wo_id+']').attr('title', title);
+}
+/* update the title */
+function update_title(this_OR_wo_id, iscompoundword, wowordtext, wotranslation, woromanization, wostatus, 
+						cowordtext, cowotranslation, coworomanization, cowostatus, show_compoundword){
+	var wo_title = wowordtext;
+	var co_title = cowordtext;
+	if (!(this_OR_wo_id instanceof jQuery)){
+		var $this = $('span[woid='+this_OR_wo_id+']')	
+	} else {
+		var $this = this_OR_wo_id;
+	}
+	wo_title += create_tooltip_title('word_symbol', wotranslation, woromanization, wostatus);
+	if (_is_true(iscompoundword)){
+		co_title += create_tooltip_title('coword_symbol', cowotranslation, coworomanization, cowostatus);
+	}
+	if (_is_true(show_compoundword)){
+		$this.attr('title', co_title);
+		$this.attr('title2', wo_title);
+	} else {
+		$this.attr('title', wo_title);
+		$this.attr('title2', co_title);
+	}
 }
 
 /* called by update_status (for Cliked tooltip)

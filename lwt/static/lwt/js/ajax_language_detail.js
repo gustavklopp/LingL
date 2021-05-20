@@ -7,7 +7,10 @@ function convert_true_to_True(val){
 	}
 }
 
-/* from the language code, get the data for the given language */
+/* on Text Detail Form: clicking on the select arrow button on the right: 
+	it displays a list of Predefined Language.
+   Choosing one of them (i.e: get their language code), it automatically fills in all the field
+   in the Language Edit form for the given language */
 function ajax_fill_language_detail(code_lang){
 	$.ajax({url: '/fill_language_detail/', type: 'GET',
 			type: 'GET',
@@ -23,8 +26,10 @@ function ajax_fill_language_detail(code_lang){
 				var dicturi_list = data['dicturi'].split(',');
 				$.each(dicturi_list, function(index, value){
 					if (index == 0){ //default inside the input
-						$('input#id_dict1uri').val(value); 
-						$('input#id_dict2uri').val(value); 
+						$('input#id_dict1uri').val(value.trim()); 
+					}
+					if (index == 1){ //default inside the input
+						$('input#id_dict2uri').val(value.trim()); 
 					}
 					$('div#list__dict1uri').append('<a class="dropdown-item" href="#" data-value="'+value+'">'+value+'</a>'); 
 					$('div#list__dict2uri').append('<a class="dropdown-item"  href="#" data-value="'+value+'">'+value+'</a>'); 
@@ -33,6 +38,8 @@ function ajax_fill_language_detail(code_lang){
 					$('#input-group-append_list__dict1uri ').removeClass('hidden'); 
 					$('#input-group-append_list__dict2uri ').removeClass('hidden'); 
 				}
+				// put also dicturi inside the hidden field dicturi 
+				$('input#id_dicturi').val(data['dicturi']);
 
 				// bind them to a click 
 			  $("#list__dict1uri.dropdown-menu a").bind('click', function(event) {

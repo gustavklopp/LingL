@@ -17,6 +17,8 @@ django-crispy-forms = "*"
 django-tags-input = "*"
 cx-freeze = "*"
 waitress = "*"
+selenium = "*"
+factory-boy = "*"
 
 [dev-packages]
 

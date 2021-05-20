@@ -245,11 +245,11 @@ class TextsForm(forms.ModelForm):
 
     def clean(self):
         super(TextsForm, self).clean()
-        data = self.cleaned_data
-        if re.search(r'^[-!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/0-9 ]*$', data['text']):
-            message = _('Text should contain characters, not only symbols')
-            self.add_error('text', forms.ValidationError(message))
-        return data
+#         data = self.cleaned_data
+#         if re.search(r'^[-!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/0-9 ]*$', data['text']):
+#             message = _('Text should contain characters, not only symbols')
+#             self.add_error('text', forms.ValidationError(message))
+#         return data
  
     class Meta:
         model = Texts
@@ -428,4 +428,30 @@ class MyLogInForm(LoginForm):
         # END NOT WORKING #
             )
         
+class ProfileForm(forms.ModelForm):
+    try:
+        # displaying the language I know. we need to localized it, and sort it (because by default,
+        #.. they are sorted by the lang code, which is not what is displayed to the User
+        LOCALIZED_LANGUAGES = [(i[0], get_language_info(i[0])['name_translated']) for i in LANGUAGES]
+        LOCALIZED_LANGUAGES.sort(key=lambda tup: tup[1])
+        origin_lang_code = forms.ChoiceField(choices=LOCALIZED_LANGUAGES, required=True) # the language I know
+    except:
+        pass
+
+    username = forms.CharField(widget=forms.TextInput(attrs={'readonly':'readonly'}))
+    date_joined = forms.DateTimeField(widget=forms.TextInput(attrs={'readonly':'readonly'}))
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileForm, self).__init__(*args,**kwargs)
+
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal text_detail'
+        self.helper.label_class = 'col-md-3' 
+        self.helper.error_text_inline = True
+        self.fields['origin_lang_code'].label = _('I know')
+        self.helper.add_input(Submit('signup', _('Save Profile'), css_class='btn btn-primary'))
+
+    class Meta:
+        model = MyUser
+        fields = ('username','email', 'date_joined', 'origin_lang_code')
         

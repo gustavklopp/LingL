@@ -24,7 +24,7 @@ from selenium.webdriver.support import expected_conditions as EC
 #third party
 
 # local
-from lwt.factories import *
+from functional_tests.factories import *
 from lwt.models import Texts
 from lwt.views._utilities_views import *
 from selenium.webdriver.common import desired_capabilities
@@ -42,7 +42,11 @@ class Text_list(BasePage):
         cls.find(By.NAME, 'login').send_keys(cls.user_1.username)
         cls.find(By.NAME, 'password').send_keys(cls.pwd)
         cls.find(By.CSS_SELECTOR, "button[type='submit']").click()
-    
+ 
+    def tearDown(self):
+        self.selenium.quit()
+        super(Text_list, self).tearDown()
+   
     def test_delete_a_text(self):  
         # create one text
         for i in range(2): # creating several texts
@@ -50,7 +54,7 @@ class Text_list(BasePage):
             select = Select(self.find(By.NAME,'language'))
             select.select_by_visible_text('German')
             title = self.find(By.NAME, 'title')
-            title.send_keys('An Example of Title')
+            title.send_keys('An Example of Title_{}'.format(str(i)))
             text = self.find(By.NAME,'text')
             text.send_keys('This is the content of this text.')
             save = self.find(By.NAME, 'save')
@@ -59,20 +63,21 @@ class Text_list(BasePage):
         #         text_1 = TextsFactory(owner=self.user_1)
         #         self.selenium.get('{}/text_list'.format(self.live_server_url))
         # than delete one of them:
-        element = self.find(By.CSS_SELECTOR, 'input[name="btSelectItem"][data-index="0"]')
-        self.wait_until_clickable(element)
-        element.click()
-        self.find(By.ID, 'delete').click()
+        delCheckbox_css = (By.CSS_SELECTOR, 'input[name="btSelectItem"][data-index="0"]') 
+#         self.wait_until_clickable(delCheckbox_css)
+        self.find(*delCheckbox_css).click()
+
+        self.find(By.CSS_SELECTOR, 'button[id="delete"]').click()
         
-#         wait = WebDriverWait(self.selenium, 10)
-        self.selenium.wait_until(EC.staleness_of(element))
-        self.assertTrue('{}/text_list/'.format(self.live_server_url).startswith(self.selenium.current_url))
+        delCheckbox2_css = (By.CSS_SELECTOR, 'input[id="delete_saved_words"]') 
+#         self.wait_until_clickable(delCheckbox2_css)
+        self.find(*delCheckbox2_css).click()
+        buttonYes_selector = (By.XPATH, "//button[contains(text(),'Yes')]")
+        self.find(*buttonYes_selector).click()
+        
+        title_td_selector = (By.XPATH, "//td[contains(text(),'An Example of Title_0')]")
+        self.wait_until_disappear(*title_td_selector)
+        self.assertTrue(self.selenium.find_elements(*title_td_selector) == [])
 
-#         self.assertFalse(Texts.objects.all().exists())
-#         for i in range(2):
-#             self.find(By.CSS_SELECTOR, 'input[name="btSelectItem"][data-index="{}"]'.format(i)).click()
-#             self.find(By.ID, 'delete').click()
-#             self.assertTrue('{}/text_list/'.format(self.live_server_url).startswith(self.selenium.current_url))
-#         self.assertFalse(Texts.objects.all().exists())
-
+ 
 

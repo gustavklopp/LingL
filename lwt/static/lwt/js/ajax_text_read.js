@@ -2,35 +2,6 @@
         the main bottom-left section in text_read.html 
  it comprises also all clicking on the links inside the tooltip on text_read trigger these AJAX function: */
 
-/* helper func for ajax_clicked_word and ajax_ctrlclicked_compoundword 
-    Display the list of possible similar words:    */
-function _display_possiblesimilarword(data, wo_id){
-	var possiblesimilarword = data['possiblesimilarword'];
-
-	// display the possible similar words
-	r = '<p>'+ gettext('Possible similar words ?')+'<br>';
-	if ($.isEmptyObject(possiblesimilarword)){
-		r += gettext('No similar words found.');
-	} else {
-		r += '<ul class="fa-ul">';
-		$.each(possiblesimilarword, function(key, val){
-			r += '<li ';
-			r += '> <span simwo_id="'+val.id+'" href="#" data=toggle="tooltip" class="possible_similarword" ';
-			r += ' wostatus='+ val.status +
-				' onClick="ajax_submit_word(event, \'similar\','+val.id+', null, '+wo_id+');return false;"'+
-				' title="'+gettext('Click if you want to consider this as the same word in fact (i.e = &#39similar&#39 word)')+'">'+
-				'<i class="fa fa-plus-circle" aria-hidden="true"></i> '+
-				val.wordtext +'</span>';
-			if (val.translation){ r += ' (= '+val.translation+')'; }
-			r += ' ['+gettext('in : ')+'"'+val.customsentence+'"]'+
-				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('Number keyboard shortcut')+'">['+(key+1)+']</span></li>';
-		});
-		r += '</ul>';
-	}
-	r += '</p>';
-	return r;
-}
-
 /* helper func for ajax_clicked_word. also called by inline func in the termform searchbox button */
 function _clicked_weblink_radiobutton(dictwebpage_searched_word=null){
 	var wblnk_input =$('#wblnk_search input[name=wblnk]:checked'); 
@@ -246,9 +217,10 @@ function iknowall(event, wo_id){
 				$.each(data['wo_id_to_update_in_ajax'], function(idx, val){ // val=wo_id
 						update_status(val, '', data['wostatus']);
 						//update the title in word also
-						update_title(val, '', data['iscompoundword'], data['wowordtext'], 
-								  data['wotranslation'], data['woromanization'], data['wostatus'],
-								  data['cowotranslation'], data['coworomanization'], data['cowostatus'])
+						update_title(val, data['iscompoundword'], data['wowordtext'], 
+						  data['wotranslation'], data['woromanization'], data['wostatus'],
+						  data['cowordtext'],data['cowotranslation'], data['coworomanization'], data['cowostatus'],
+						  data['show_compoundword']);
 					});
 				// and move to the next sentence if it's not the last known
 				if(data['firstWord_of_nextSentence']){

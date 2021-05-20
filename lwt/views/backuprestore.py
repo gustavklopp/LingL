@@ -32,7 +32,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
-from lwt.views.language import substitute_in_dictURI
+from tkinter.constants import CURRENT
 
 
 ''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
@@ -84,9 +84,9 @@ def backuprestore(request):
                 else:
                     all_qs += mymodel.objects.filter(owner=request.user).all()
             fixture = serialize('yaml', all_qs, use_natural_foreign_keys=True, use_natural_primary_keys=True)
-            # Set the FK Grouper_of_same_word to null (we'll relink them when recovering the file)
-            # (it's because we can't use natural FK since GOSW use a id number relationship)
-            fixture = re.sub(r'(grouper_of_same_words: )\d+', r'\1null', fixture)
+#             # Set the FK Grouper_of_same_word to null (we'll relink them when recovering the file)
+#             # (it's because we can't use natural FK since GOSW use a id number relationship)
+#             fixture = re.sub(r'(grouper_of_same_words: )\d+', r'\1null', fixture)
             now = timezone.now().strftime('%Y-%m-%d_%Hh%M') 
             filename = 'lingl_backup_{}.yaml.gz'.format(now)
             out = io.BytesIO()
@@ -101,46 +101,71 @@ def backuprestore(request):
             wipeout_database(request)
             return redirect(reverse('homepage'))
 
-        if 'restore' in request.POST.values():
+        if 'restore_data' in request.POST.keys():
+            need_text = True if request.POST['restore_data'] == 'word+text' else False
             form = RestoreForm(request.POST, request.FILES)
             if form.is_valid():
                 files = form.save()
                 # process the uploaded file if it exists:
-                wipeout_database(request, keep_myuser=True)
+#                 wipeout_database(request, keep_myuser=True)
                 fp = gunzipper(files.restore_file)
                 # Don´t install the User defined in the Restore file and change all the
                 # owner of the Restore file to the current User
                 editedOwner_fp = os.path.join(settings.MEDIA_ROOT, 'editedOwner_{}.yaml'.format(request.user))
-                start_writing = False
+                current_section = ''
+                writing = True
                 restore_username = request.user.username # the default value
                 with open(editedOwner_fp, 'w') as edited_f:
                     for line in fp.file.readlines():
                         line = line.decode('utf-8') # the line in this file are binary: b'my text...'
+
+                        current_section_match = re.search(r'(?<=lwt\.)\w+', line)
+                        if current_section_match:
+                            current_section = current_section_match.group()
+
                         # get the username from the restore file ...
-                        if not start_writing:
+                        if current_section == 'myuser':
                             match = re.search(r'(?<=username: )\w+', line)
                             if match:
                                 restore_username = match.group()
-                            # all the MyUser section of the restore file is ignored
-                            if line.find('lwt.languages') != -1:
-                                start_writing = True
-                                edited_f.write(line)
                         else:
-                            # and substitute it with the current User
+                            # and substitute the username found in the restore file by the current User
                             pattern = r'(^[ -]+- ){}'.format(restore_username)
                             replacement = r'\1{}'.format(request.user.username)
                             line = re.sub(pattern, replacement, line)
-                            edited_f.write(line)
-#                     call_command('loaddata', fp.name, app_label='lwt') # load the fixtures
-                    call_command('loaddata', editedOwner_fp, app_label='lwt') # load the fixtures
+
+                            if not need_text:
+                                # don't write Texts and Sentences if not chosen:
+                                if current_section == 'texts' or current_section == 'sentences':
+                                    continue
+                                if current_section == 'words':
+                                    # set to null the fields in Words for 'text' and 'sentence'
+                                    match = re.search(r'^    text:', line)
+                                    if match:
+                                        writing = False
+                                        writing_counter = 0
+                                    if not writing:
+                                        writing_counter += 1
+                                        if writing_counter == 8:
+                                            writing = True
+                                            edited_f.write('    text: null\n')
+                                            edited_f.write('    sentence: null\n')
+                                    else:
+                                        # set to null the fields in Words for 'order' and 'textOrder'
+                                        line = re.sub(r'(^    order: )\d+', r'\1null' , line)
+                                        line = re.sub(r'(^    textOrder: )\d+', r'\1null' , line)
+                                        edited_f.write(line)
+
+                                else:
+                                    edited_f.write(line)
+                                    
+                                    
+                            else:
+                                edited_f.write(line)
+                call_command('loaddata', editedOwner_fp, app_label='lwt') # load the fixtures
                 fp.close()
                 delete_uploadedfiles(files.restore_file.path, request.user) # clean it
                 os.remove(editedOwner_fp)
-
-                # then create grouper_of_same_words: it's a copy of Words' ids.
-                # create the GOSW...
-#                 words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
-#                 create_GOSW_for_words(words)
 
             # set arbitrary the currentlang
             lang = Languages.objects.filter(owner=request.user).first()
@@ -183,7 +208,7 @@ def backuprestore(request):
             #########################
             # the user languages needs the correct dict URIs with the User's origin lang:
             for lang in Languages.objects.filter(owner=request.user):
-                lang = substitute_in_dictURI(request, lang, called_by_demo=True)
+                lang = substitute_in_dictURI(request.user, lang, called_by_Obj=True)
                 # and put it in dict1uri and dict2uri also
                 dicturi = lang.dicturi.split(',')
                 lang.dict1uri = dicturi[0].strip()
@@ -203,17 +228,17 @@ def backuprestore(request):
             call_command('loaddata', USER_demo_fixt_path , app_label='lwt') # load the fixtures
             os.remove(USER_demo_fixt_path)
             
-#                 # then grouper_of_same_words: it's a copy of Words' ids.
-#                 # create the GOSW...
-#                 words = Words.objects.filter(Q(owner=request.user)&Q(isnotword=False))
-#                 create_GOSW_for_words(words)
-            
             # the language chosen initially for the User is in double: remove it
             # (it was first created when the User is signing up)
             Languages.objects.filter(Q(owner=request.user)&Q(name=temp_name)).order_by('-created_date').first().delete()
             # and put again the name of the language, changed at the start to avoid unique constraint error
             dest_chosen_lang.name = temp_name
             dest_chosen_lang.save()
+            
+            # don't know why but I need to re-login...
+            logout(request)
+            myuser = MyUser.objects.get(username=user_username)
+            login(request, myuser, backend='allauth.account.auth_backends.AuthenticationBackend' )
 
 #             if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):
 #                 # set the currentlang if not aloready defined

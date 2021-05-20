@@ -24,7 +24,11 @@
 {% if op == 'new' %}
 	<h4>{% trans "New Text : Upload your text file -or- Fill the form " %} </h4>
 
-	{% crispy form_uploaded_text %}
+	<form id="uploaded_textform">
+	{% csrf_token %}
+	{{ form_uploaded_text.uploaded_text|as_crispy_field }}
+	</form>
+		
 	{% crispy form %}
 
 {% elif op == 'edit' %}
