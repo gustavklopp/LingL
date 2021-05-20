@@ -1,0 +1,31 @@
+{% extends "lwt/__baseSkeleton.html" %}
+{% load static %}
+{% load i18n %} {# used for internationalization #}
+{% load jchart %}
+
+{% block pagetitle %}{% trans "Profile" %} | {{ block.super }}
+
+{% endblock pagetitle %}
+
+{% block stylesheets %}{{ block.super }}
+{% endblock stylesheets %}
+
+{% block banner %}
+{% include "lwt/_banner.html" %}
+{% endblock banner %}
+
+{% block content %}
+<h2><img src="{% static 'lwt/img/icn/user.png' %}" alt="user" /> {% trans "Profile:" %}</h2>
+
+<h4>{% trans 'Personal information' %}</h4>
+{% load crispy_forms_tags %}
+{% crispy form %}
+
+{% endblock content %}
+{% block footlicence %}
+{% include "lwt/_footlicence.html" %}
+{% endblock footlicence %}
+
+
+{% block footjavascript %}
+{% endblock footjavascript %}
