@@ -530,39 +530,43 @@ class Settings_currentwordstatus(Settings):
 class Settings_currentwordsort(Settings):
     pass
 
-
+''' used in text_list to filter the texts (and terms) to display'''
 class Settings_currentfilter_lang(Settings):
-    ''' used in text_list to filter the texts (and terms) to display'''
     language = models.OneToOneField(Languages, related_name='filterlangforthislanguage',
                                      on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 
+''' used in text_list to filter the texts to display'''
 class Settings_currentfilter_texttag(Settings):
-    ''' used in text_list to filter the texts to display'''
     texttag = models.OneToOneField(Texttags, related_name='filtertagforthistexttag',
                                     on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 
+''' used in text_list to filter the terms to display'''
 class Settings_currentfilter_text(Settings):
-    ''' used in text_list to filter the terms to display'''
     text = models.OneToOneField(Texts, related_name='filtertextforthistext',
                                  on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 
+''' used in text_list to filter the terms to display'''
 class Settings_currentfilter_word(Settings):
-    ''' used in text_list to filter the terms to display'''
     word = models.OneToOneField(Words, related_name='filterwordforthisword',
                                  on_delete=models.CASCADE)
     is_strong = models.BooleanField(default=True)
 
 
+''' used when clicking on check/uncheck all in term_list (or export2anki or selectivebackup)
+    it stores all the words which are in table (in all the pages)'''
 class Settings_selected_rows(Settings):
-    ''' used in export2anki to get the list of selected rows'''
     possible_selected_rows = models.TextField()
-    selected_rows = models.TextField(default='[]') # not used. I used the 'state' inside Words in fact.
+
+''' used when clicking on check/uncheck all in term_list (or export2anki or selectivebackup)
+    it stores the current number of selected rows (in all the pages)'''
+class Settings_selected_rows_nb(Settings):
+    currently_selected_rows_nb = models.IntegerField(default=0)
 
 #####################################################
 #             end 'settings':                       #

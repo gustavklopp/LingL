@@ -5,7 +5,7 @@
 /* called by updating the hovering tooltip. 
 either for a word => presymbol: ▶   
 either for a compountword => presymbol: • */
-function create_tooltip_title(chosen_symbol, trans,roman,status) {
+function create_tooltip_title(chosen_symbol, trans, roman, status) {
 	var ret = '\x0d'; // line return
 	var r = '';
 	var symbol;

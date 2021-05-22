@@ -113,7 +113,7 @@ function textareaKeydown(event) {
 // Keyboard shortcuts for test portion:
 // TODO: test not yet implemented
 // Keyboard shortcuts. in Text_read. 
-
+/* NOT USED IN FACT
 function text_read_keydownevent(e) {
 
 	if (e.which == 27) {  // esc = reset all
@@ -238,7 +238,7 @@ function text_read_keydownevent(e) {
 
 	return true;
 }
-
+*/
 function do_ajax_save_setting(k, v) {
 	$.post('ajax_save_setting.php', { k: k, v: v } );
 }

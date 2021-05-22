@@ -1,5 +1,6 @@
+/* used for the word_table in term_list: check/uncheck the row 
+   it set the 'state' field for the Word in the database. It will be used later when exporting the data */
 function ajax_select_rows(op, check_uncheck){
-	/* used for export2anki: check/uncheck the row */
         	$.ajax({url: '/select_rows/', 
     			type: 'GET',
     			dataType: 'json',
@@ -16,10 +17,12 @@ function ajax_select_rows(op, check_uncheck){
     				var message = ''; 
     				if (data['total'] == 0){
     					message += gettext('Nothing to export...');
+						$('button[type="submit"]').prop('disabled', true);
     				} else {
     					message += data['total']
     					message += data['total'] == 1? gettext(' word') : gettext(' words');
     					message += ' to export';
+						$('button[type="submit"]').prop('disabled', false);
     				}
     				$('#selected_total').html(message);
     			}

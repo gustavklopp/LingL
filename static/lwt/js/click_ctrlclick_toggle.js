@@ -26,7 +26,7 @@ function click_ctrlclick_toggle(el, event, op=null) {
 
 	var toggle_show_compoundword = '';
 	
-	if (event instanceof $.Event){ // function is called by clicking on a word
+//	if (event instanceof $.Event){ // function is called by clicking on a word
 		var click = event;
 
 		if (click.ctrlKey){ // function is called by control+clicking on a word
@@ -35,7 +35,6 @@ function click_ctrlclick_toggle(el, event, op=null) {
 			ajax_ctrlclicked_compoundword(compoundword_id_list, 'new', RTL); // display the termform
 			return false; // don't continue after it: Don't open a tooltip 
 			} 
-	}
 
 	var show_compoundword = $el.attr('show_compoundword');
 	if (show_compoundword == 'true' || show_compoundword == 'True'){

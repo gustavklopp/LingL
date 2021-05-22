@@ -108,67 +108,85 @@
 <div class="row">
 {# DISPLAYING THE WORDS #}
 		{#  ADDING THE TOOLBAR #}
+
+{# EXPORTING TO ANKI or BACKING UP #}
+
 	<div id="wordtable_toolbar" >
+	<form class="form-inline" enctype="multipart/form-data" action=
+	{% if request.path == '/export2anki/' %}"{% url 'export2anki_exporter'%}"
+	{% elif request.path == '/selectivebackup/' %}"{% url 'selectivebackup_exporter'%}"
+	{% else %}{% url 'term_list' %}
+	{% endif %} method="post" >
+	{% csrf_token %}
+	{% if request.path == '/export2anki/' %}
+		<button class="btn btn-primary" type="submit" name="export2anki" 
+			{% if words_with_state_True == 0 %}disabled{% endif %}>
+			{% trans 'Export selected words to Anki' %}</button>
+	{% elif request.path == '/selectivebackup/' %}
+		<button class="btn btn-primary" type="submit" name="selectivebackup"
+			{% if words_with_state_True == 0 %}disabled{% endif %}>
+			{% trans 'Backup selected words' %}</button>
+	{% else %}
+		<button id="delete" type="submit" class="btn btn-default" 
+			{% if words_with_state_True == 0 %}disabled{% endif %}>
+			<i class="fa fa-trash" aria-hidden="true"></i>
+		</button>
+	{% endif %}
 
-{# EXPORTING TO ANKI #}
-{% if request.path == '/export2anki/' %}
-<form class="form-inline" enctype="multipart/form-data" action="{% url 'export2anki_exporter'%}" method="post" >
-{% csrf_token %}
-<button class="btn btn-primary" type="submit" name="export2anki" 
-value="export2anki" disabled>{% trans 'Export selected words to Anki' %}</button>
-<button id="checkAll" class="btn btn-default">{% trans 'Check All' %}</button>
-<button id="uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
-&nbsp;&nbsp;<span class="alert alert-warning" id="selected_total">{% if total_to_export == 0 %}
-						{% trans 'Nothing to export...' %}{% else %}
-						{% blocktrans count counter=total_to_export %}
-						1 word to export
-						{% plural %}
-						{{ counter }} words to export
-						{% endblocktrans %}
-						{% endif %}
-</form>
-{# end EXPORTING TO ANKI #}
-
-{# EXPORTING TO SELECTIVEBACKUP #}
-{% elif request.path == '/selectivebackup/' %}
-<form class="form-inline" enctype="multipart/form-data" action="{% url 'selectivebackup_exporter'%}" method="post" >
-{% csrf_token %}
-<button class="btn btn-primary" type="submit" name="selectivebackup" 
-value="selectivebackup" disabled>{% trans 'Backup selected words' %}</button>
-<button id="checkAll" class="btn btn-default">{% trans 'Check All' %}</button>
-<button id="uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
-&nbsp;&nbsp;<span class="alert alert-warning" id="selected_total">{% if total_to_export == 0 %}
-						{% trans 'Nothing to backup...' %}{% else %}
-						{% blocktrans count counter=total_to_export %}
-						1 word to backup
-						{% plural %}
-						{{ counter }} words to backup
-						{% endblocktrans %}
-						{% endif %}
-</form>
-{# end EXPORTING TO SELECTIVEBACKUP #}
-{% else %}
-{#  TOOLBAR FOR term_list #}
-<div id="wordtable_toolbar" class="btn-group">
-	<button id="delete" type="button" class="btn btn-default">
-		<i class="fa fa-trash" aria-hidden="true"></i>
-	</button>
-<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Text " %}...</a> 
-</div>
-{# end TOOLBAR #}
-{% endif %}
+	<button id="ajax_checkAll" class="btn btn-default">{% trans 'Check All' %}</button>
+	<button id="ajax_uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
+	&nbsp;&nbsp;<span class="alert alert-warning" id="selected_total">
+	{% if request.path == '/export2anki/' %}
+		{% if words_with_state_True == 0 %}
+			{% trans 'Nothing to export...' %}
+		{% else %}
+			{% blocktrans count counter=words_with_state_True %}
+			1 word to export
+			{% plural %}
+			{{ counter }} words to export
+			{% endblocktrans %}
+		{% endif %}
+	{% elif request.path == '/selectivebackup/' %}
+		{% if words_with_state_True == 0 %}
+			{% trans 'Nothing to backup...' %}
+		{% else %}
+			{% blocktrans count counter=words_with_state_True %}
+			1 word to backup
+			{% plural %}
+			{{ counter }} words to backup
+			{% endblocktrans %}
+		{% endif %}
+	{% else %}
+		{% if words_with_state_True == 0 %}
+			{% trans 'Nothing to delete...' %}
+		{% else %}
+			{% blocktrans count counter=words_with_state_True %}
+			1 word to delete
+			{% plural %}
+			{{ counter }} words to delete
+			{% endblocktrans %}
+		{% endif %}
+	{% endif %}
+	</span>
+	</form>
+	{% if request.path == '/export2anki/' and request.path == '/selectivebackup/' %}
+		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Term " %}...</a> 
+	{% endif %}
 	</div>
-
-<table id="word_table" data-toggle="table" data-sort-name="modified_date" data-sort-order="asc"
+	{# end TOOLBAR #}
+	
+<table id="word_table" data-toggle="table" data-sort-name="created_date" data-sort-order="asc"
 							data-search="true"
 							data-pagination="true" data-side-pagination="server" 
 							data-url="{% url 'load_wordtable' %}"
 							data-row-style="rowStyle"
-							data-toolbar="#wordtable_toolbar">
-		{# DISPLAYING THE HEADERS #}
+							data-toolbar="#wordtable_toolbar"
+						    >
+	{# DISPLAYING THE HEADERS #}
 	<thead>
 	<tr>
-	<th data-field="state" data-checkbox="true"></th>
+	<!--  <th data-field="state" data-checkbox="true"></th>-->
+	<th data-field="state" data-checkbox="true">
 	{% blocktrans %}
 	<th data-field="id" data-sortable="true" data-sorter="numberSorter">id</th>
 	<th data-field="status" data-sortable="true" data-sorter="numberSorter">status</th>
@@ -195,6 +213,7 @@ value="selectivebackup" disabled>{% trans 'Backup selected words' %}</button>
 	</tr>
 	</thead>
 </table>
+
 </div>
 {% endblock content %}
 
@@ -206,58 +225,121 @@ value="selectivebackup" disabled>{% trans 'Backup selected words' %}</button>
 {% block footjavascript %}
 	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table_filter-extension.js' %}"></script>
-		<script type="text/javascript">
+	<script type="text/javascript" src="{% static 'lwt/js/lodash_javascript_library.js' %}"></script>
+	<script type="text/javascript">
 	
- 	/* functions to order the numbers inside the bootstrap-table */
-	var word_table = $('#word_table');
+/* functions to sort the numbers inside the bootstrap-table */
+var word_table = $('#word_table');
 
-	function numberSorter(a, b) {
-		var a_search = parseInt(a.match(/">(\d+)/)[1]);
-		var b_search = b.match(/">(\d+)/)[1];
-	    if (!a_search) return -1 * getOrder();
-	    if (!b_search) return 1 * getOrder();
-	    if (a_search < b_search) return -1;
-	    if (a_search > b_search) return 1;
-	    return 0;
-	}
-	function dateSorter(a, b) {
-		var a_search = a.match(/\"hidden\">(\d+)/)? parseInt(a.match(/\"hidden\">(\d+)/)[1]): 0;
-		var b_search = b.match(/\"hidden\">(\d+)/)? parseInt(b.match(/\"hidden\">(\d+)/)[1]): 0
-	    if (a_search < b_search) return -1;
-	    if (a_search > b_search) return 1;
-	    return 0;
-	}
-	
-	function jumpToRow(page_id, row_id){
-		/* to jump to the given row inside the bootstrap table */
-		word_table.bootstrapTable('selectPage', page_id);
-		// scroll to the row in the page
-		var rows = $('#word_table').find('tbody tr');
-		var wanted_row = $(rows[row_id]);
-		$([document.documentElement, document.body]).animate({
-			scrollTop: wanted_row.offset().top
-		}, 800);
-	}
 
-    $(function () {
-    	/* check/unckeck all the items */
-        $('#checkAll').click(function (event) {
-			ajax_select_rows('all', 'check');
-			event.preventDefault(); // do not submit the form
-        });
-        $('#uncheckAll').click(function (event) {
-			ajax_select_rows('none', 'uncheck');
-			event.preventDefault(); // do not submit the form
-        });
-        word_table.on('check.bs.table', function(e, row){
-        	ajax_select_rows(row['id'], 'check');
-        });
-        word_table.on('uncheck.bs.table', function(e, row){
-        	ajax_select_rows(row['id'], 'uncheck');
-        });
-    });
+function numberSorter(a, b) {
+	var a_search = parseInt(a.match(/">(\d+)/)[1]);
+	var b_search = b.match(/">(\d+)/)[1];
+	if (!a_search) return -1 * getOrder();
+	if (!b_search) return 1 * getOrder();
+	if (a_search < b_search) return -1;
+	if (a_search > b_search) return 1;
+	return 0;
+}
+function dateSorter(a, b) {
+	var a_search = a.match(/\"hidden\">(\d+)/)? parseInt(a.match(/\"hidden\">(\d+)/)[1]): 0;
+	var b_search = b.match(/\"hidden\">(\d+)/)? parseInt(b.match(/\"hidden\">(\d+)/)[1]): 0
+	if (a_search < b_search) return -1;
+	if (a_search > b_search) return 1;
+	return 0;
+}
+
+/* to jump to the given row inside the bootstrap table */
+function jumpToRow(page_id, row_id){
+	word_table.bootstrapTable('selectPage', page_id);
+	// scroll to the row in the page
+	var rows = $('#word_table').find('tbody tr');
+	var wanted_row = $(rows[row_id]);
+	$([document.documentElement, document.body]).animate({
+		scrollTop: wanted_row.offset().top
+	}, 800);
+}
+
+/* check/unckeck all the items */
+$(function () {
+	/* check/unckeck all the items */
+	$('#ajax_checkAll').click(function (event) {
+		ajax_select_rows('all', 'check');
+		event.preventDefault(); // do not submit the form
+	});
+	$('#ajax_uncheckAll').click(function (event) {
+		ajax_select_rows('none', 'uncheck');
+		event.preventDefault(); // do not submit the form
+	});
+	word_table.on('check.bs.table', function(e, row){
+		ajax_select_rows(row['id'], 'check');
+	});
+	word_table.on('uncheck.bs.table', function(e, row){
+		ajax_select_rows(row['id'], 'uncheck');
+	});
+});
        
+/* the button 'delete' then sends the ids by simple GET function */
+/*
+$("button#delete").click(function(){
+	var rows = $('#word_table').bootstrapTable('getSelections');
+	//alert(JSON.parse(JSON.stringify($('word_table').bootstrapTable('getSelections'))));
+	//var data = JSON.stringify($('word_table').bootstrapTable('getSelections'));
+	//var obj = JSON.parse(data);
+	//var test = $('word_table');
+	//console.log(obj[0].name);
+	ids_to_delete = [];
+   $.each(rows, function(index, row) {
+			 ids_to_delete.push(row.id); //remove the element of the array at the position 'index'
+	   });
+	if (ids_to_delete.length > 0){
+		if (word_need_text_deletion){
 
+			$('<div></div>').appendTo('body')
+		   .html(gettext('We can\'t delete Words which are linked to a text.<br/>You need first to delete the text in which this word is.'))
+		   .dialog({
+			   modal: true,
+			   title: gettext('Deletion not possible'), zIndex: 10000, autoOpen: true,
+			   width: 'auto', resizable: false,
+			   buttons: [
+							{text: gettext("Ok"),
+							click: function() {
+								  $( this ).dialog( "close" );}
+							}
+				],
+			   close: function (event, ui) {
+				   $(this).remove();
+			   },
+			   //position: {my: "center",  at: "center", of: $("body"),within: $("body") }
+		   }) // end of dialog box
+				
+		} else {
+			$('<div></div>').appendTo('body')
+		   .html(gettext('Confirm Deletion?<br/>Number of words to delete : ')+ids_to_delete.length.toString())
+		   .dialog({
+			   modal: true,
+			   title: gettext('Deleting word(s)'), zIndex: 10000, autoOpen: true,
+			   width: 'auto', resizable: false,
+			   buttons: [{text: gettext("Yes"),
+							click: function() {
+					document.location = '{% url 'term_list' %}?del='+JSON.stringify(ids_to_delete);
+								}
+							},
+							{text: gettext("Cancel"),
+							click: function() {
+								  $( this ).dialog( "close" );}
+							}
+				],
+			   close: function (event, ui) {
+				   $(this).remove();
+			   },
+			   // bug with position and Jquery 3 apparently...
+			  //position: {my: "center",  at: "center", of: $("body"),within: $("body") }
+		   }); // end of dialog box
+		} // end of 'if (word_need_text_deletion)...'
+	} // end of 'if (ids_to_delete)...'
+});
+*/
 	</script>
 	<script type="text/javascript" src="{% static 'lwt/js/ajax_term_list.js' %}"></script>
 {% endblock footjavascript %}

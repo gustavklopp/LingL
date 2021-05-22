@@ -3,6 +3,7 @@ function ajax_uploaded_text(){
 	 upload a text file */
 	var form = $("#uploaded_textform")
 	var data_to_go = new FormData(form[0]);
+//	var token =  form.find('input[name=csrfmiddlewaretoken]').val(); // Indispensable. Get the csrf already defined in the form
 	var token =  form.find('input[name=csrfmiddlewaretoken]').val(); // Indispensable. Get the csrf already defined in the form
 	data_to_go.append('csrfmiddlewaretoken', token);
 	$.ajax({

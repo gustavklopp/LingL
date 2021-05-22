@@ -1,32 +1,66 @@
+/* used for the word_table in term_list: check/uncheck the row 
+   it set the 'state' field for the Word in the database. It will be used later when exporting the data */
 function ajax_select_rows(op, check_uncheck){
-	/* used for export2anki: check/uncheck the row */
-        	$.ajax({url: '/select_rows/', 
-    			type: 'GET',
-    			dataType: 'json',
-    			data: 
-    				{ 
-    					'op': op, 'check_uncheck': check_uncheck
-    				},
-    			success: function(data){ 
-    				if (op == 'all'){
-						word_table.bootstrapTable('checkAll');
-    				} else if (op == 'none'){
-						word_table.bootstrapTable('uncheckAll');
-    				}
-    				var message = ''; 
-    				if (data['total'] == 0){
-    					message += gettext('Nothing to export...');
-						$('button[type="submit"]').prop('disabled', true);
-    				} else {
-    					message += data['total']
-    					message += data['total'] == 1? gettext(' word') : gettext(' words');
-    					message += ' to export';
-						$('button[type="submit"]').prop('disabled', false);
-    				}
-    				$('#selected_total').html(message);
-    			}
-    	});
-	}
+	$.ajax({url: '/select_rows/', 
+		type: 'GET',
+		dataType: 'json',
+		data: 
+			{ 
+				'op': op, 'check_uncheck': check_uncheck
+			},
+		success: function(data){ 
+			if (op == 'all'){
+				word_table.bootstrapTable('checkAll');
+			} else if (op == 'none'){
+				word_table.bootstrapTable('uncheckAll');
+			}
+			var message = ''; 
+			// adapt according to the caller
+			var pathname = window.location.pathname;
+			if (pathname.search('term_list') != -1){
+				var called_site = 'term_list';
+			} else if (pathname.search('export2anki') != -1){
+				var called_site = 'export2anki';
+			} else if (pathname.search('selectivebackup') != -1){
+				var called_site = 'selectivebackup';
+			}
+					
+			if (data['total'] == 0){
+				switch (called_site) {
+					case 'term_list':
+						message += gettext('Nothing to delete...'); break;
+					case 'export2anki':
+						message += gettext('Nothing to export...'); break;
+					case 'selectivebackup':
+						message += gettext('Nothing to backup...'); break;
+				}
+				$('button[type="submit"]').prop('disabled', true);
+				$('button#delete').prop('disabled', true);
+			} else {
+				message += data['total'];
+				message += data['total'] == 1? gettext(' word') : gettext(' words');
+				switch (called_site) {
+					case 'term_list':
+						message += gettext(' to delete'); break;
+					case 'export2anki':
+						message += gettext(' to export'); break;
+					case 'selectivebackup':
+						message += gettext(' to backup'); break;
+				}
+				$('button[type="submit"]').prop('disabled', false);
+				$('button#delete').prop('disabled', false);
+			}
+			$('#selected_total').html(message);
+			
+			// you can't delete words still linked to text
+			if ('called_site' == 'term_list' && data['warning_deletion'] >0){
+				word_table.bootstrapTable('uncheckAll');
+				var warning_deletion_message = gettext('Words which are still linked to a text can\'t be deleted.<br/>You need first to delete the text linked to those words<br>before you can delete those words.')
+				alert(warning_deletion_message);
+			}
+		}
+	});
+}
 	
 function termlist_filter() {
 	/* dynamic filtering when check/unckeck the ckeckbox */

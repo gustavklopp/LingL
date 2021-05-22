@@ -32,7 +32,6 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
-from lwt.views.term_list import select_rows
 
 
 ''' download the txt file with anki formated words'''

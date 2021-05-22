@@ -167,7 +167,7 @@
 	$("button#delete").click(function(){
 		 /* ajax function to delete the text(s) inside the bootstrap-table */
 		var check = $("tr.selected");
-		console.log(check);
+		//console.log(check);
 		ids_to_delete = [];
 		$.each(check, function(){
 			var text_id =$(this).find('td.hidden').text();
@@ -194,7 +194,7 @@
                 close: function (event, ui) {
                     $(this).remove();
                 },
-                position: {my: "center",  at: "center", of: $("body"),within: $("body") }
+               // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
             });
 		}
 	});
