@@ -120,8 +120,13 @@ def load_texttable(request):
         if textsavedword > 0:
             r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[1,100,101]'
             r += '">'+ str(textsavedword)+ '</a>' 
-            r += ' (<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[1,100,101]&word_compoundword=compoundword'
-            r += '">' + str(textsavedexpr) +'</a>)'
+            r += ' ('
+            if textsavedexpr != 0:
+                r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[1,100,101]&word_compoundword=compoundword">'
+            r += str(textsavedexpr)
+            if textsavedexpr != 0:
+                r += '</a>'
+            r += ')'
         else:
             r += '0'
         r += '</span>'
@@ -209,15 +214,16 @@ def text_list(request):
     #... create a zipped list of texttag with its associated languages found inside:
     # e.g: [{'tag': <Texttags: a>, 'hidden': False, 'lang': [11]},
     #       {'tag': <Texttags: annotation>, 'hidden': True, 'lang': [6, 2]}, ...}]
-    texttags_list = []
+#     texttags_list = []
     texttags_list_empty = True
     for texttag in texttags:
-        # get the languages which are found associated to this texttag
+        #get the languages which are found associated to this texttag
         texttag_lang = Texts.objects.filter(texttags=texttag).values_list('language_id', flat=True).all()
         if set(texttag_lang).isdisjoint(set(lang_Ids_list)): # some languages are common
-            texttags_list.append({'tag':texttag, 'bold': False, 'lang': list(texttag_lang)})
+            continue
+#         texttags_list.append({'tag':texttag, 'bold': False, 'lang': list(texttag_lang)})
         else:
-            texttags_list.append({'tag':texttag, 'bold': True, 'lang': list(texttag_lang)})
+#             texttags_list.append({'tag':texttag, 'bold': True, 'lang': list(texttag_lang)})
             texttags_list_empty = False
     # list of all texts having the selected texttags (whatever language or time)
     texttag_textIds_boldlist = []
@@ -247,9 +253,9 @@ def text_list(request):
     else:
         time_filter = [json.loads(tf) for tf in json.loads(time_filter_json)]
         
-    # create a zipped list of texttag with its associated languages found inside:
-    time_list = []
-    time_list_empty = True # everything is hidden
+#     # create a zipped list of texttag with its associated languages found inside:
+#     time_list = []
+#     time_list_empty = True # everything is hidden
 
     # get all texts (whatever languages or texttag) with this time
     time_textIds_boldlist = []
@@ -257,14 +263,14 @@ def text_list(request):
 
     for pt in possible_time:
         week = pt['week']
-        if week[1] == -1: # it's older than 6 months. We put also texts never opened before
+        if week[1] == -1: # Special case for when older than 6 months. We put also texts never opened before
             length_of_time = timedelta(weeks=week[0])
             cutout_date = now - length_of_time
-            time_text_ids = list(Texts.objects.filter(owner=request.user).\
-                        filter(Q(lastopentime__lte=cutout_date)|\
-                                Q(lastopentime__isnull=True)&\
-                                Q(language_id__in=lang_Ids_list)).\
-                              values_list('id', flat=True))
+#             time_text_ids = list(Texts.objects.filter(owner=request.user).\
+#                         filter(Q(lastopentime__lte=cutout_date)|\
+#                                 Q(lastopentime__isnull=True)&\
+#                                 Q(language_id__in=lang_Ids_list)).\
+#                               values_list('id', flat=True))
             # get all texts (whatever languages and texttags) with this time
             txts = list(Texts.objects.filter(Q(owner=request.user)&\
                                              Q(lastopentime__lte=cutout_date)|\
@@ -282,9 +288,9 @@ def text_list(request):
             ancient_length_of_time = timedelta(weeks=week[1])
             ancient_cutout_date = now - ancient_length_of_time
             ancient_time_Q_filter = Q(lastopentime__gt=ancient_cutout_date)
-            time_text_ids = list(Texts.objects.filter(owner=request.user).\
-                                 filter(recent_time_Q_filter&ancient_time_Q_filter).\
-                                values_list('id', flat=True))
+#             time_text_ids = list(Texts.objects.filter(owner=request.user).\
+#                                  filter(recent_time_Q_filter&ancient_time_Q_filter).\
+#                                 values_list('id', flat=True))
             # get all texts (whatever languages and texttags) with this time
             txts = list(Texts.objects.filter(owner=request.user).\
                                       filter(recent_time_Q_filter&ancient_time_Q_filter).\
@@ -293,12 +299,12 @@ def text_list(request):
             time_textIds_boldlist.append({'time':pt, 'txt_set':txts, 
                                           'txt_set_json':json.dumps(txts), 'bold':False})
 
-        if time_text_ids: # no languages selected has this time frame
-            dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': False}
-        else:
-            time_list_empty = False
-            dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': True}
-        time_list.append(dic)
+#         if time_text_ids: # no languages selected has this time frame
+#             dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': False}
+#         else:
+#             time_list_empty = False
+#             dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': True}
+#         time_list.append(dic)
 
     
     # which items of each checkbox forms (language, texttags, time) should be displayed in bold?
@@ -307,8 +313,12 @@ def text_list(request):
                                  or set(texttag['txt_set']).isdisjoint(time_textIds_set)) else True
         texttag_textIds_boldlist[idx]['bold'] = iscommonwith
     for idx, time in enumerate(time_textIds_boldlist):
-        iscommonwith = False if (set(time['txt_set']).isdisjoint(lang_textIds_set) \
-                                 or set(time['txt_set']).isdisjoint(texttag_textIds_set)) else True
+        if texttags_list_empty: # no texttags. the texttag_textIds_set is {}
+                                # so iscommonwith is always False if we don't do this condition
+            iscommonwith = False if (set(time['txt_set']).isdisjoint(lang_textIds_set)) else True
+        else: 
+            iscommonwith = False if (set(time['txt_set']).isdisjoint(lang_textIds_set) \
+                                     or set(time['txt_set']).isdisjoint(texttag_textIds_set)) else True
         time_textIds_boldlist[idx]['bold'] = iscommonwith
     
 
@@ -389,8 +399,9 @@ def text_list(request):
                     'languages':languages, 
                     'lang_filter':lang_Ids_list, 'texttag_filter':texttag_filter, 
                     'time_filter':time_filter, 
-                    'texttags_list': texttags_list, 'texttags_list_empty':texttags_list_empty,
-                    'time_list': time_list, 'time_list_empty':time_list_empty,
+#                     'texttags_list': texttags_list, 
+#                     'texttags_list_empty':texttags_list_empty,
+#                     'time_list': time_list, 'time_list_empty':time_list_empty,
                     'lang_textIds_list':lang_textIds_list,
                     'texttag_textIds_boldlist':texttag_textIds_boldlist,
                     'time_textIds_boldlist':time_textIds_boldlist,

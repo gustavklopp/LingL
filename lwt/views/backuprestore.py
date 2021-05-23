@@ -101,7 +101,7 @@ def backuprestore(request):
             wipeout_database(request)
             return redirect(reverse('homepage'))
 
-        if 'restore_data' in request.POST.keys():
+        if 'restore_data' in request.POST.keys() and request.POST['restore_data'] != '':
             need_text = True if request.POST['restore_data'] == 'word+text' else False
             form = RestoreForm(request.POST, request.FILES)
             if form.is_valid():
@@ -164,7 +164,8 @@ def backuprestore(request):
                                 edited_f.write(line)
                 call_command('loaddata', editedOwner_fp, app_label='lwt') # load the fixtures
                 fp.close()
-                delete_uploadedfiles(files.restore_file.path, request.user) # clean it
+                # clean it
+                delete_uploadedfiles(files.restore_file.path, request.user) 
                 os.remove(editedOwner_fp)
 
             # set arbitrary the currentlang
@@ -173,11 +174,17 @@ def backuprestore(request):
             setter_settings_cookie('currentlang_name', lang.name, request)
 
         #TODO! NOT FINISHED
-        if 'import_oldlwt' in request.POST.values():
-            fp = gunzipper(files.import_oldlwt)
-            import_oldlwt(request.user, fp)
-            fp.close()
-            delete_uploadedfiles(fp.name, request.user)
+        if 'import_oldlwt' in request.POST.values() and request.POST['import_oldlwt'] != '':
+            form = RestoreForm(request.POST, request.FILES)
+            if form.is_valid():
+                files = form.save()
+                # process the uploaded file if it exists:
+#                 wipeout_database(request, keep_myuser=True)
+                fp = gunzipper(files.import_oldlwt)
+                import_oldlwt(request.user, fp)
+                fp.close()
+                # clean it
+                delete_uploadedfiles(files.import_oldlwt.path, request.user) # clean it
         
         if 'install_demo' in request.POST.values():
             # First, install the languages (must change the owner):

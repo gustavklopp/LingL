@@ -21,7 +21,7 @@
 {# FILTERING THE TEXTS #}
 <div class="row filtering_word">
 
-	<div class="col-md-3">
+	<div class="col-md">
 {# filter on language #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
 <ul id="ul_language" class="collapse show">
@@ -48,7 +48,7 @@
 	</div>
 
 {# filter on text #}
-	<div class="col-md-3">
+	<div class="col-md">
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_text">{% trans 'Texts ' %} :</a>
 <ul id="ul_text" class="collapse show">
 	<form id="filtertextform" method="POST" action="{% url 'text_list' %}">
@@ -66,7 +66,7 @@
 	</div>
 
 {# filter on status #}
-	<div class="col-md-3">
+	<div class="col-md">
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_status">{% trans 'Statuses' %} :</a>
 <ul id="ul_status" class="collapse show">
 	<form id="filterstatusform" method="POST" action="{% url 'text_list' %}">
@@ -83,7 +83,7 @@
 	</div>
 
 {# filter on wordtag #}
-	<div class="col-md-3">
+	<div class="col-md">
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_wordtag">{% trans 'Tags' %} :</a>
 <ul id="ul_wordtag" class="collapse show">
 	<form id="filterwordtagform" method="POST" action="{% url 'term_list' %}">
@@ -102,7 +102,23 @@
 </ul>
 	</div>
 
-</div>
+{# filter on compoundword #}
+	<div class="col-md">
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_wordtag">{% trans 'Compound Words' %} :</a>
+<ul id="ul_compoundword" class="collapse show">
+	<form id="filtercompoundwordform" method="POST" action="{% url 'term_list' %}">
+	{% csrf_token %}
+		<span><input type="checkbox" checked onclick="termlist_filter();" 
+				value="cw_display_word" class="unstyled"> {% trans 'display words' %}
+		<br></span>
+		<span><input type="checkbox" checked onclick="termlist_filter();" 
+				value="cw_display_coword" class="unstyled"> {% trans 'display compound words' %}
+		<br></span>
+	</form>
+</ul>
+	</div>
+
+</div> <!-- End of row filtering_word -->
 
 
 <div class="row">
@@ -135,8 +151,9 @@
 
 	<button id="ajax_checkAll" class="btn btn-default">{% trans 'Check All' %}</button>
 	<button id="ajax_uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
-	&nbsp;&nbsp;<span class="alert alert-warning" id="selected_total">
+	&nbsp;&nbsp;
 	{% if request.path == '/export2anki/' %}
+		<span class="alert alert-warning" id="selected_total">
 		{% if words_with_state_True == 0 %}
 			{% trans 'Nothing to export...' %}
 		{% else %}
@@ -146,7 +163,9 @@
 			{{ counter }} words to export
 			{% endblocktrans %}
 		{% endif %}
+		</span>
 	{% elif request.path == '/selectivebackup/' %}
+		<span class="alert alert-warning" id="selected_total">
 		{% if words_with_state_True == 0 %}
 			{% trans 'Nothing to backup...' %}
 		{% else %}
@@ -156,18 +175,16 @@
 			{{ counter }} words to backup
 			{% endblocktrans %}
 		{% endif %}
+		</span>
 	{% else %}
-		{% if words_with_state_True == 0 %}
-			{% trans 'Nothing to delete...' %}
-		{% else %}
+		<span class="alert alert-warning" id="selected_total" {% if words_with_state_True == 0 %}hidden{% endif %}>
 			{% blocktrans count counter=words_with_state_True %}
 			1 word to delete
 			{% plural %}
 			{{ counter }} words to delete
 			{% endblocktrans %}
-		{% endif %}
+		</span>
 	{% endif %}
-	</span>
 	</form>
 	{% if request.path == '/export2anki/' and request.path == '/selectivebackup/' %}
 		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Term " %}...</a> 
@@ -260,7 +277,7 @@ function jumpToRow(page_id, row_id){
 	}, 800);
 }
 
-/* check/unckeck all the items */
+/* check/unckeck the items */
 $(function () {
 	/* check/unckeck all the items */
 	$('#ajax_checkAll').click(function (event) {
@@ -276,6 +293,27 @@ $(function () {
 	});
 	word_table.on('uncheck.bs.table', function(e, row){
 		ajax_select_rows(row['id'], 'uncheck');
+	});
+	word_table.on('check-all.bs.table', function(e, row){ //it's the checkbox in the header
+		var rows = $("#word_table").bootstrapTable('getSelections');
+		var rows_ids = [];
+		$.each(rows, function(idx, val){
+			rows_ids.push(val.id);
+		});
+		ajax_select_rows(JSON.stringify(rows_ids), 'check');
+	});
+	word_table.on('uncheck-all.bs.table', function(e, row){ //it's the checkbox in the header
+		// prevent calls word_table.bootstrapTable('uncheckAll') by ajax_select_rows
+		// ...to calls this again (see line near 'if (called_site == 'term_list' && data['warning_deletion'] >0)...'
+		var rows = $("#word_table").bootstrapTable('getSelections');
+		if (rows.length != 0){		
+			var rows = $("#word_table").bootstrapTable('getData');
+			var rows_ids = [];
+			$.each(rows, function(idx, val){
+				rows_ids.push(val.id);
+			});
+			ajax_select_rows(JSON.stringify(rows_ids), 'uncheck');
+		}
 	});
 });
        

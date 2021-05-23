@@ -53,7 +53,7 @@
 	{% for tt_ls in texttag_textIds_boldlist %} {# loop on a zipped(tag, languages contained in this tag) #}
 		<span texttag="{{ tt_ls.texttag.id }}" language="{{ tt_ls.texttag.lang }}">	
 		<input data-textids="{{ tt_ls.txt_set_json }}"  type="checkbox" 
-		{% if texttag_filter|length == 0 %}checked{% endif %} 
+		{% if tt_ls.texttag.id in texttag_filter %}checked{% endif %} 
 		onclick="textlist_filter();" value="{{ tt_ls.texttag.id }}" class="unstyled">
 		<span class="checkboxitem-{% if tt_ls.bold %}bold{% else %}normal{% endif %}">{{ tt_ls.texttag.txtagtext }}</span>
 		<br></span>

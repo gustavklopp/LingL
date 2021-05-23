@@ -9,12 +9,12 @@
 <td><p class="small"><a href="https://github.com/gustavklopp/LingL" target="_blank">LingLibre ("LingL")</a> is free and opensource software released<br />
 under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public Licence </a>.<br />
 {% trans "This is LingL Version" %} {% version_date %}<br />
-{% if user.is_authenticated %}<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}
+{% if user.is_authenticated and request.path != '/accounts/logout/' %}<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}
 </a> 
 {% trans "Size" %}: <span class="{% if database_size == 0 %}bg-light{% endif %}
 				{% if database_size > 0 %}bg-success{% endif %}
-				{% if database_size > 2000 %}bg-warning{% endif %}
-				{% if database_size > 4000 %}bg-danger{% endif %}
+				{% if database_size > 4000 %}bg-warning{% endif %}
+				{% if database_size > 8000 %}bg-danger{% endif %}
 				">&nbsp;{% load l10n %}
 		{% if database_size == 0 %}
 			{% trans 'Empty' %}

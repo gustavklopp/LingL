@@ -183,6 +183,7 @@ def list_filtering( model, request):
             text_filter_json = request.POST['text_filter']
             status_filter_json = request.POST['status_filter']
             wordtag_filter_json = request.POST['wordtag_filter']
+            compoundword_filter_json = request.POST['compoundword_filter']
     # only getting the filter
     else: 
         lang_filter_json = getter_settings_cookie('lang_filter', request)
@@ -193,6 +194,7 @@ def list_filtering( model, request):
             text_filter_json = getter_settings_cookie('text_filter', request)
             status_filter_json = getter_settings_cookie('status_filter', request)
             wordtag_filter_json = getter_settings_cookie('wordtag_filter', request)
+            compoundword_filter_json = getter_settings_cookie('compoundword_filter', request)
     # put this inside cookies (the func setter_settings_cookie is in lwt/views/_setting_cookie_db.py):
     setter_settings_cookie('lang_filter', lang_filter_json, request)
     if isinstance(model.first(), Texts): # texts table is filtered
@@ -203,6 +205,7 @@ def list_filtering( model, request):
         setter_settings_cookie('status_filter', status_filter_json,
                                                             request)
         setter_settings_cookie('wordtag_filter', wordtag_filter_json, request)
+        setter_settings_cookie('compoundword_filter', compoundword_filter_json, request)
     # Create the filters for lang
     filter_Q_lang = create_filter('language_id', lang_filter_json)
     if isinstance(model.first(), Texts): # texts table is filtered
@@ -212,6 +215,22 @@ def list_filtering( model, request):
         filter_Q_text = create_filter('text_id', text_filter_json) 
         filter_Q_status = create_filter('status', status_filter_json)
         filter_Q_wordtag = create_filter('wordtags', wordtag_filter_json)
+        # special case for filtering on compoundword or not:
+        filter_Q_compoundword = Q()
+        if compoundword_filter_json:
+            compoundword_filter = json.loads(compoundword_filter_json)
+            for idx, filter in enumerate(compoundword_filter):
+                if idx == 0:
+                    if filter == 'cw_display_word':
+                        filter_Q_compoundword = Q(isCompoundword=False)
+                    elif filter == 'cw_display_coword':
+                        filter_Q_compoundword = Q(isCompoundword=True)
+                else:
+                    if filter == 'cw_display_word':
+                        filter_Q_compoundword |= Q(isCompoundword=False)
+                    elif filter == 'cw_display_coword':
+                        filter_Q_compoundword |= Q(isCompoundword=True)
+                    
     # And finally filter the models:
     if isinstance(model.first(), Texts): # texts table is filtered
         results = model.filter(filter_Q_lang).\
@@ -223,7 +242,8 @@ def list_filtering( model, request):
         results = model.filter(filter_Q_lang).\
                         filter(filter_Q_status).\
                         filter(filter_Q_wordtag).\
-                        filter(filter_Q_text)
+                        filter(filter_Q_text).\
+                        filter(filter_Q_compoundword)
     
     return results
 

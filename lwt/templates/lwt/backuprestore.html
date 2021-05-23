@@ -43,7 +43,8 @@
 				<input type="hidden" name="restore_data" id="restore_data" value=""/> 
 	</div>
 	<div class="col-md-3">
-<button  class="btn btn-primary" type="submit" name="restore" value="restore"  onclick="button_restore();return false;">Restore from Backup</button>
+<button id="restore_button" class="btn btn-primary" type="button" name="restore" value="restore"  
+		>Restore from Backup</button>
 	</div>
 </div>
 </td>
@@ -55,7 +56,7 @@
 <div class="d-flex">
 	<div class="col-md-9">
 <p>{% trans 'The data from other softwares (for ex. from "LWT") will be added to your account (Your own data are kept).' %}</p>
-{{ form.import_oldlwt }} 
+{{ form.import_oldlwt }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
 	</div>
 	<div class="col-md-3">
 <button class="btn btn-primary" type="submit" name="import_oldlwt" value="import_oldlwt">Import data from LWT</button>
@@ -105,7 +106,7 @@
 {% block footjavascript %}
 <script type="text/javascript">
 /* disabled the buttons if no files have been chosen */
-function check_empty_file(file_input, file_button){
+function _check_empty_file(file_input, file_button){
 	if (file_input[0].files.length == 0){
 		file_button.prop('disabled', true);
 	} else {
@@ -114,21 +115,25 @@ function check_empty_file(file_input, file_button){
 }
 
 $(document).ready( function() { 
-	check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
-	check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
+	// check when loading the page
+	_check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
+	_check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
 
+	// and trigger the event when choosing a file
     $('#id_restore_file').change(function(e){
-		check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
-		check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
+		_check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
+    });
+    $('#id_import_oldlwt').change(function(e){
+		_check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
     });
 	
-});
 
 /* when clicking on restore, display a dialogue window to choose whether or not to
- * restore the whole file also */
- function button_restore(e){
+ * restore the Texts also */
+ $("#restore_button").click(function (e){
+		e.preventDefault();
 		$('<div></div>').appendTo('body')
-        .html(gettext('Do you want to restore the text(s) inside the backup, or only the words?<br/>(Restoring the text alongside the words takes more size in the database<br/>and isn\'t useful if you don\'t need to read the same text again)'))
+        .html(gettext('Do you want to restore <b>also the text(s)</b> inside the backup, or <b>only the words</b>?<br/>(Restoring the text alongside the words takes more size in the database<br/>and isn\'t useful if you don\'t need to read the same text again)'))
         .dialog({
             modal: true,
             title: 'Restoring from Backup', zIndex: 10000, autoOpen: true,
@@ -155,6 +160,7 @@ $(document).ready( function() {
             },
            // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
         });
-}
+	});
+});
 </script>
 {% endblock footjavascript %}

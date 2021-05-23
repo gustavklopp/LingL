@@ -57,25 +57,27 @@ def select_rows(request):
         currently_selected_rows_nb = 0
     # toggle one checkbox of one row (checking or unchecking it)
     else:
-        id = int(op)
-        wo = Words.objects.get(id=id)
+        ids = json.loads(op)
+        ids = [ids] if not isinstance(ids, list) else ids # it can be a single id or a list of ids
+        wos = Words.objects.filter(id__in=ids) #... and id__in : it needs a type list 
         
         # and increase or decrease the total number of selected words (we need to know its amount before)
         # ...and also the current state of the word
         currently_selected_rows_nb = list(Settings_selected_rows_nb.objects.filter(
             owner=request.user).values_list('currently_selected_rows_nb', flat=True))[0]
 
-        if check_uncheck == 'check':
-            # we can't check a word for deletion if it's still linked to a text 
-            if not wo.text: 
-                wo.state = True
-                currently_selected_rows_nb += 1
-            else:
-                warning_deletion += 1
-        elif check_uncheck == 'uncheck':
-            wo.state = False
-            currently_selected_rows_nb -= 1
-        wo.save()
+        for wo in wos:
+            if check_uncheck == 'check':
+                # we can't check a word for deletion if it's still linked to a text 
+                if not wo.text: 
+                    wo.state = True
+                    currently_selected_rows_nb += 1
+                else:
+                    warning_deletion += 1
+            elif check_uncheck == 'uncheck':
+                wo.state = False
+                currently_selected_rows_nb -= 1
+        Words.objects.bulk_update(wos, ['state'])
         
     # update the total number of selected words
     Settings_selected_rows_nb.objects.filter(
@@ -150,7 +152,7 @@ def load_wordtable(request):
     if we do: getattr(word, sort) with sort is key inside extra_field ==> No field 
     NOTE: function 'jumpToRow' is defined in term_list.html
     '''
-    def linked(word, original_word):
+    def _linked(word, original_word):
         sentence = word.customsentence if word.customsentence else word.sentence.sentencetext
         st = '<a href="#" title="(\''+sentence+'\')" onclick="jumpToRow('
         # calculate at which page and row is this word:
@@ -189,7 +191,7 @@ def load_wordtable(request):
         w_dict['status'] = get_name_status(w.status)
         w_dict['language_name'] = w.language.name
         w_dict['text_title'] = w.text.title if w.text else ''
-        sentence = w.sentence if w.sentence else ''
+        sentence = w.sentence.sentencetext if w.sentence else ''
         w_dict['sentence'] = _truncate(sentence)
         customsentence = w.customsentence if w.customsentence else ''
         w_dict['customsentence'] = _truncate(customsentence)
@@ -198,12 +200,12 @@ def load_wordtable(request):
         w_dict['romanization'] = w.romanization if w.romanization else ''
         w_dict['wordtags'] = [' '+wt.wotagtext for wt in w.wordtags.all()]
         if w.grouper_of_same_words:
-            w_dict['grouper_of_same_words'] = [' '+linked(wo, w) for wo in w.grouper_of_same_words.\
+            w_dict['grouper_of_same_words'] = [' '+_linked(wo, w) for wo in w.grouper_of_same_words.\
                                                             grouper_of_same_words_for_this_word.all()]
         else:
             w_dict['grouper_of_same_words'] = ''
         if w.compoundword:
-            w_dict['compoundword'] = [' '+linked(wo, w) for wo in w.compoundword.\
+            w_dict['compoundword'] = [' '+_linked(wo, w) for wo in w.compoundword.\
                                                             compoundwordhavingthiswordinside.all()]
         else:
             w_dict['compoundword'] = ''
@@ -312,23 +314,20 @@ def term_list(request):
             wordtags_list.append({'tag':wordtag, 'hidden': False, 'lang': list(wordtag_lang)})
             wordtags_list_empty = False
 
+    ################## COMPOUNDWORD FILTERING ######################################################################################
+    compoundword_filter_json = getter_settings_cookie('compoundword_filter', request)
+    compoundword_filter = [] if not compoundword_filter_json else json.loads(compoundword_filter_json)
+    compoundwords = Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=True)).count()
+    if compoundwords == 0:
+        compoundword_list_empty = True
+
+    ####################################################################################################
     # get the list of languages to display them in the drop-down menu:
     languages = Languages.objects.filter(owner=request.user).all().order_by('name')
     # the checked checkboxes infulence the list of texts and statuses to display.
 
     texts = Texts.objects.filter(owner=request.user).order_by('language').all()
     statuses = STATUS_CHOICES
-
-# What was used for????
-#     page_id = 1
-#     row_id_inthepage = 1
-#     if request.method == 'GET':
-#         if 'id' in request.GET.keys(): # WHEN IS it the case???
-#             wo_id = int(request.GET['id'])
-# #             order, sort, sort_modif, offset, offset_modif, limit, limit_modif, all_words = requesting_get_by_table(request)
-#             all_words = Words.objects.exclude(Q(isnotword=True)&Q(isCompoundword=False)).\
-#                             filter(owner=request.user)
-
 
     # Manage extra field:
     extra_field_json = Words.objects.filter(owner=request.user).values_list('extra_field', flat=True).first()

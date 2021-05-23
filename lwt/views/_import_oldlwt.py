@@ -15,10 +15,10 @@ from lwt.views._utilities_views import splitText
 
 data_file = 'lwt/insert_old_lwt/lwt-backup-2017-10-06-08-45-34.sql'
 
+''' helper function for import_oldlwt. 
+the glosbe api url is outdated: it was of the form: "glosbe_api.php?from=de&dest=en&phrase=###"
+when it should be: "https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format=json" '''
 def converter_bad_url(url):
-    ''' helper function for import_oldlwt. 
-    the glosbe api url is outdated: it was of the form: "glosbe_api.php?from=de&dest=en&phrase=###"
-    when it should be: "https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format=json" '''
     if 'glosbe' in url:
         from_639_1 = re.search(r'(?<=from=).{2}', url).group()
         dest_639_1 = re.search(r'(?<=dest=).{2}', url).group()
@@ -171,8 +171,8 @@ def import_oldlwt(owner, data_file):
                     # updates for Compoundword ForeignKey OR for independend word
                     word.status = convert_old_status(int(el[4]))
                     word.translation = el[5]
-                    word.romanization = el[6]
-                    word.customsentence = el[7]
+                    word.romanization = None if el[6] == 'NULL' else el[6]
+                    word.customsentence = el[7].replace('{','**').replace('}','**')
                 if isCompoundword and not isnotword:
                     word.show_compoundword = True # I arbitrarily chose to default them to show the compound word
                 word.save()
@@ -195,6 +195,7 @@ def import_oldlwt(owner, data_file):
             # it IS a compound word
             if len(compoundword_wordtext_list) > 1: 
                 wordinside_order_list = []
+                wordinside_obj_order_list = []
                 for idx,compoundword_wordtext in enumerate(compoundword_wordtext_list):
                     sentencetext = el[7].replace('{','') # used after to get the word (and only this one)
                     sentencetext = sentencetext.replace('}','')
@@ -210,34 +211,41 @@ def import_oldlwt(owner, data_file):
                     for compoundwo in words: # update all occurences of the same word
                         update_word(compoundwo, isnotword=False, isCompoundword=True, old_lwt_id=el[0])
                         wordinside_order_list.append(compoundwo.id)
+                        wordinside_obj_order_list.append(compoundwo)
+
+                wordtext = '+'.join(compoundword_wordtext_list)
+                wordinside_order_NK = [[wo.wordtext, wo.language.natural_key()]
+                                       for wo in wordinside_obj_order_list]
+                wordinside_order_NK = json.dumps(wordinside_order_NK)
                 # and create the ForeignKey compoundword:
                 if not artificially_created_by_lwt: # the word exists in the text
                     compoundword = Words.objects.create(owner = owner,
                                         language = firstword.language,
+                                        wordtext = wordtext,
                                          sentence = firstword.sentence,
                                          text = firstword.text,
                                          wordinside_order = json.dumps(wordinside_order_list, separators=(',',':')),
+                                         wordinside_order_NK = wordinside_order_NK
                                          )
-                    # give it a grouper_of_same_word FK with the same id:
-                    grouper_of_same_words = Grouper_of_same_words.objects.create(id=compoundword.id)
-                    compoundword.grouper_of_same_words = grouper_of_same_words
-                    compoundword.save()
+#                     # give it a grouper_of_same_word FK with the same id:
+#                     grouper_of_same_words = Grouper_of_same_words.objects.create(id=compoundword.id)
+#                     compoundword.grouper_of_same_words = grouper_of_same_words
+#                     compoundword.save()
 
                     update_word(compoundword, isCompoundword=True, isnotword=True, old_lwt_id=None)
                     # and insert word_inside_order json format for each word inside as long as the ForeignKey:
-                    for wordinside_id in wordinside_order_list:
-                        wordinside = Words.objects.get(id=wordinside_id)
+                    for wordinside in wordinside_obj_order_list:
                         wordinside.compoundword = compoundword
                         wordinside.show_compoundword = True
-                        wordinside.save()
+                    Words.objects.bulk_update(wordinside_obj_order_list, ['compoundword','show_compoundword'])
                     # and add to the list of known words (it will be a special case, to be processed after
                     old_lwt_id=el[0]
                     knownwords_dict.setdefault(old_lwt_id, []).extend([compoundword])
                     
             # it's not a compound word
             elif len(compoundword_wordtext_list) == 1: 
-                    # get all the words writteh similarly:
-                    # it's case insensitive because that's the way in the lwt databse: all the word (even not the
+                    # get all the words written similarly:
+                    # it's case insensitive because that's the way in the lwt database: all the word (even not the
                     # LC, have the first char in lowercase!
                     words = Words.objects.filter(language_id=language.id, wordtext__iexact=wordtext).\
                                                         order_by('id')
@@ -245,15 +253,20 @@ def import_oldlwt(owner, data_file):
                         artificially_created_by_lwt = True 
                     elif not artificially_created_by_lwt: # the word exists in the text
                         if len(words) > 1: # several words written similarly
-                            if words[0].grouper_of_same_words.id != words[0].id: # it was already defined elsewhere
-                                pass
-                            elif words[0].grouper_of_same_words.id == words[0].id:
-                                grouper_of_same_words = Grouper_of_same_words(id=words[0].id)
-                                for idx, wo in enumerate(words): # put the same value in all these same words
-                                    update_word(wo, isCompoundword=False, isnotword=False, 
-                                                    old_lwt_id=el[0])
-                                    wo.grouper_of_same_words = grouper_of_same_words
-                        if len(words) == 1: # word is alone written like this
+                            id_string = json.dumps([words.first().wordtext, words.first().language.natural_key()])
+                            gosw = Grouper_of_same_words.objects.create(id_string=id_string,
+                                                                                   owner=owner)
+                            for wo in words:
+                                wo.grouper_of_same_words = gosw
+#                             if words[0].grouper_of_same_words.id != words[0].id: # it was already defined elsewhere
+#                                 pass
+#                             elif words[0].grouper_of_same_words.id == words[0].id:
+#                                 grouper_of_same_words = Grouper_of_same_words(id=words[0].id)
+#                                 for idx, wo in enumerate(words): # put the same value in all these same words
+                                update_word(wo, isCompoundword=False, isnotword=False, 
+                                                old_lwt_id=el[0])
+#                                     wo.grouper_of_same_words = grouper_of_same_words
+                        elif len(words) == 1: # word is alone written like this
                             update_word(words[0], isCompoundword=False, isnotword=False, old_lwt_id=el[0])
             
         # adding wordtags to the words:

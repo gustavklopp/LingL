@@ -36,7 +36,7 @@ function textlist_filter() {
 
 	// get what are the checkbox checked for: tags
 	var chosen_tag = [];
-	$.each($("#filtertagform").find("span").find("input"), function(){
+	$.each(filtertagform.find("span").find("input"), function(){
 		if ($(this).is(':checked')){
 			chosen_tag.push($(this).val());
 		}
@@ -50,7 +50,7 @@ function textlist_filter() {
 
 	// get what are the checkbox checked for: time
 	var chosen_time = [];
-	$.each($("#timeform").find("span").find("input"), function(){
+	$.each(timeform.find("span").find("input"), function(){
 		if ($(this).is(':checked')){
 			chosen_time.push($(this).val());
 		}
@@ -94,6 +94,7 @@ function textlist_filter() {
 		success: function(data){ 
 			text_table.bootstrapTable('load', data); 
 			text_table.bootstrapTable('selectPage', 1); // go to first page
+			
 		},
 		error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
 		}
