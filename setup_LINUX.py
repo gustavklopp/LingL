@@ -3,6 +3,11 @@ import os
 from datetime import date
 
 
+# first creating the database and populate it
+os.system('python manage.py migrate')
+os.system('python manage.py loaddata  initial_fixture_USER.yaml')
+os.system('python manage.py loaddata  initial_fixture_LANGUAGES.yaml')
+
 cwd = os.getcwd()
 lingl_image_path = os.path.join(cwd,'lwt','static','lwt','img','site_icon_16x16.png')
 # Dependencies are automatically detected, but it might need

@@ -9,7 +9,11 @@ This was inspired by other site/projects like the opensource Lwt, the closed sou
 
 ## 1. How to use it:
 
-### 1.1 Use the executable (Standalone application):
+- [video channel about using LingLibre](https://tube.tchncs.de/video-channels/linglibre/videos)
+
+## 2. How to install it:
+
+### 2.1 Use the executable (Standalone application):
 
 Available for Linux/Windows/Max:
 
@@ -19,7 +23,7 @@ the executable is `Linglibre`.
 
 After launching the app, you will need to create an account (this way, the app allows multi-accounts).
 
-### 1.2. Use the built-in server inside Django:
+### 2.2. Use the built-in server inside Django:
 
 It will need `python >=3.8` and `Django >= 3.2`
 
@@ -32,8 +36,8 @@ move inside the LingL folder (where `manage.py` is) and:
 	
 ```
 python manage.py migrate
-python manage.py loaddata ./lwt/fixtures/initial_fixture_USER.yaml
-python manage.py loaddata ./lwt/fixtures/initial_fixture_LANGUAGES.yaml
+python manage.py loaddata initial_fixture_USER.yaml
+python manage.py loaddata initial_fixture_LANGUAGES.yaml
 python manage.py runserver
 ```
 then open your browser to <http://127.0.0.1:8000>
@@ -41,10 +45,39 @@ then open your browser to <http://127.0.0.1:8000>
 After launching the app, you will need to create an account (this way, the app allows multi-accounts).
 There's also a `superuser` account for Django admin use: it's : username: `lingl` / password: `lingl`.
 
-### 1.3. (future) Use the online website:
+### 2.3. (future) Use the online website:
 Maybe later if people interested.
 
-## 2. Developers:
+## 3. Upgrading:
+
+Future versions are regularly provided. 
+
+### 3.1 for the standalone version:
+
+   1. *(optional)* First, backup (if you want to keep your previous data that you've created): in the menu, choose 'Backup/Restore/Delete your account' then click on 'Backup' (you can choose to backup everything or choose which words to backup).
+
+   2. *(optional)* Delete the old version folder. `LingLibre` doesn't install anything on your system in fact.
+
+   3. Download the latest versions (see the [Releases](https://github.com/gustavklopp/LingL/releases) section) which fits your systems.
+
+   4. Launch this new version (after uncompressing it wherever you want) by clicking on the executable `LingLibre`.
+
+   5. *(optional)* Restoring the backup created in step '1'. Create an account (whatever name you want, you're not forced to use the same than in the old version). and in the 'Backup/Restore/Delete your account', click on 'Restore' and choose the backup file that you've got in the step '1'.
+
+### 3.2 for the Django server version:
+   
+   1. *(optional)* same backup step 1 as the 'standalone version'.
+
+   2. Delete the database in 'lwt' folder named "LingL_database.sqlite3".
+
+   3. `git pull` or download the source code. The database needs to be recreated with the same steps you've done at first (`./manage.py migrate` and loading the fixtures).
+   
+   4. launch the server (`./manage.py runserver`)
+
+   5. *(optional)* same restore step 5 as the 'standalone version'.
+
+
+## 4. Developers:
 
 * Building:
 
@@ -64,9 +97,14 @@ The build results (with the `LingLibre` executable) will be in the `build` folde
 * Running tests:
 
 you need to have `selenium` and `factory-boy` installed (`pip install selenium` and `pip install factory-boy`).
-  1. test for "Reading a text":
+  1. test for "Creating and Reading a text":
 
 ```
 ./manage.py test functional_tests.selenium_text_read.Text_read
+```
+  2. test for "Creating and Modifying Language":
+
+```
+./manage.py test functional_tests.selenium_language_detail.Language_detail
 ```
 

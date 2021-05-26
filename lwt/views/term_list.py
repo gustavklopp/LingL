@@ -317,9 +317,14 @@ def term_list(request):
     ################## COMPOUNDWORD FILTERING ######################################################################################
     compoundword_filter_json = getter_settings_cookie('compoundword_filter', request)
     compoundword_filter = [] if not compoundword_filter_json else json.loads(compoundword_filter_json)
-    compoundwords = Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=True)).count()
-    if compoundwords == 0:
-        compoundword_list_empty = True
+    compoundword_filter = [str_to_bool(i) for i in compoundword_filter]
+    isCompoundword_textIds = Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=True)).values_list(
+                                                    'id', flat=True)
+    isnotCompoundword_textIds = Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=False)).values_list(
+                                                    'id', flat=True)
+
+    compoundword_textIds_boldlist = [ {'isCompoundword':False, 'txt_set':json.dumps(isnotCompoundword_textIds)},
+                                    {'isCompoundword':True, 'txt_set':json.dumps(isCompoundword_textIds)}]
 
     ####################################################################################################
     # get the list of languages to display them in the drop-down menu:
@@ -340,11 +345,15 @@ def term_list(request):
     database_size = get_word_database_size(request)
 
     return render(request, 'lwt/term_list.html',
-                   {
-                    'languages':languages, 'texts':texts,'statuses':statuses,
+                   {'languages':languages, 'texts':texts,'statuses':statuses,
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
-                    'lang_filter': lang_filter, 'text_filter': text_filter, 'status_filter': status_filter,
+
+                    'lang_filter': lang_filter, 
+                    'text_filter': text_filter, 
+                    'status_filter': status_filter,
                     'wordtag_filter': wordtag_filter, 'wordtags_list':wordtags_list, 'wordtags_list_empty':wordtags_list_empty,
+                    'compounword_filter':compoundword_filter, 'compoundword_textIds_boldlist':compoundword_textIds_boldlist,
+
                     'noback':noback,
                     'words_with_state_True':words_with_state_True,
                     'extra_field': extra_field,

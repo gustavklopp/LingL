@@ -108,12 +108,12 @@
 <ul id="ul_compoundword" class="collapse show">
 	<form id="filtercompoundwordform" method="POST" action="{% url 'term_list' %}">
 	{% csrf_token %}
+	{% for ti_ls in compoundword_textIds_boldlist %}
 		<span><input type="checkbox" checked onclick="termlist_filter();" 
-				value="cw_display_word" class="unstyled"> {% trans 'display words' %}
-		<br></span>
-		<span><input type="checkbox" checked onclick="termlist_filter();" 
-				value="cw_display_coword" class="unstyled"> {% trans 'display compound words' %}
-		<br></span>
+				value="{% if ti_ls.isCompoundword %}True{% else %}False{% endif %}" 
+				class="unstyled"> {% if ti_ls.isCompoundword %}{% trans 'display compound words' %}{% else %}
+																{% trans 'display words' %}{% endif %}<br></span>
+	{% endfor %}
 	</form>
 </ul>
 	</div>

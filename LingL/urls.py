@@ -60,7 +60,7 @@ urlpatterns = [
     url(r'^termform/(?P<message_key>\w+)/(?P<message_val>\w+)/$',views.termform,name='termform'),
     url(r'^termform/$',views.termform,name='termform'),
 #     url(r'termform_new_or_edit/$',views.termform_new_or_edit,name='termform_new_or_edit'),
-    url(r'^show_sentence/$',views.show_sentence,name='show_sentence'),
+#     url(r'^show_sentence/$',views.show_sentence,name='show_sentence'),
     # searching for similar word and then create the link with the original word
     url(r'^search_possiblesimilarword/$',views.search_possiblesimilarword,name='search_possiblesimilarword'),
     url(r'^search_possiblesimilarCompoundword/$',views.search_possiblesimilarCompoundword,name='search_possiblesimilarCompoundword'),

@@ -1,0 +1,11 @@
+﻿############# ADMIN User
+- model: "lwt.myuser"
+  pk: 1
+  fields:
+     username: "lingl"
+     # password is 'lingl'
+     password: "pbkdf2_sha256$260000$9BrZ6kd6IVOLAbnMEq9ub6$GUTUfijCB3CWEpCTxqlkMCi5vcQZHlUjeOT/5g73otE="
+     is_superuser: true
+     is_staff: true
+     is_active: true
+     origin_lang_code: en

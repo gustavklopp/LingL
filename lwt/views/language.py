@@ -31,7 +31,7 @@ from lwt.views._utilities_views import get_word_database_size
 from test.test_sys_settrace import called
 
 
-# languages list
+# display a table containing all the languages of the User
 @login_required
 def language_list(request):
     # make the language currentlanguage.

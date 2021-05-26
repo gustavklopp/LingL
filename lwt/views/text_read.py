@@ -32,8 +32,13 @@ from lwt.views.termform import *
 @nolang_redirect
 def text_read(request, text_id):
     text = Texts.objects.get(id=text_id)
+    
+    # case where we're opening an archived text. We need to splitText before:
+    if text.archived:
+        splitText(text)
+
     # Saving the timestamp for text opening: used in text list
-    Texts.objects.filter(id=text_id).update(lastopentime= timezone.now())
+    Texts.objects.filter(id=text_id).update(archived=False, lastopentime= timezone.now())
 
     word_inthistext = Words.objects.filter(text=text).order_by('sentence_id', 'order')
     
@@ -140,8 +145,9 @@ def dictwebpage(request):
             return HttpResponse(json.dumps(html_str)) 
         return HttpResponse(json.dumps(finalurl)) 
 
-def show_sentence(request):
-    ''' called by AJAX by the form in text_read: shows a list of sentences where the term appears '''
+''' NOT USED FINALLY '''
+''' called by AJAX by the form in text_read: shows a list of sentences where the term appears '''
+def NOTUSEDFUNCTIONshow_sentence(request):
     wo_ids = request.GET['wo_ids']
     wo_ids = json.loads(wo_ids)
     wo_wordtexts = []
@@ -151,17 +157,18 @@ def show_sentence(request):
         word = Words.objects.get(id=wo_id)
         wordtext = word.wordtext
         wo_wordtexts.append(wordtext)
-        sentences_with_the_same_wordtext = sentences_with_the_same_wordtext.filter(language=word.language).\
+        sentences_with_the_same_wordtext = sentences_with_the_same_wordtext.\
+                    filter(language=word.language).\
                     filter(sentence_having_this_word__wordtext=wordtext)
     display_sentences_with_the_same_wordtext = []
-    # display the little '{' '}' around the words
+    # display the little '**' '**' around the words
     for sentence_with_the_same_wordtext in sentences_with_the_same_wordtext: # loop over the sentences
         # get all the words inside this sentence:
         words_in_this_sentence = Words.objects.filter(sentence=sentence_with_the_same_wordtext).all().order_by('order')
         sentenceList = []
-        for wo in words_in_this_sentence: #  loop inside the sentence: replace the 'word' by '{word}' (that's cooler!)
+        for wo in words_in_this_sentence: #  loop inside the sentence: replace the 'word' by '**word**' (that's cooler!)
             if wo.wordtext in wo_wordtexts:
-                sentenceList.append('{'+wo.wordtext+'}')
+                sentenceList.append('**'+wo.wordtext+'**')
             else:
                 sentenceList.append(wo.wordtext)
         display_sentences_with_the_same_wordtext.append(''.join(sentenceList))
@@ -172,7 +179,7 @@ def show_sentence(request):
     return JsonResponse(sentences_json, safe=False)
 
 ''' search_possiblesimilarword NOT USED FINALLY (it was called by AJAX)'''
-def NOTUSEDFUNCsearch_possiblesimilarword(request): 
+def NOTUSEDFUNCTIONsearch_possiblesimilarword(request): 
     ''' called by AJAX by the form in text_read: shows a list of words, similar to the given word ''' 
     wo_id = request.GET['wo_id']
     word = Words.objects.get(id=wo_id)

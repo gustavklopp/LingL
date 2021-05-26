@@ -25,11 +25,12 @@ from django.utils import timezone, timesince
 from django.utils.translation import ugettext as _
 from django.contrib.auth.models import AbstractUser, UserManager
 from django.core import serializers
+from django.templatetags.static import static # to use the 'static' tag as in the templates
 # second party
 # third party
 from allauth.account.adapter import DefaultAccountAdapter
 # local
-from lwt.constants import STATUS_CHOICES
+from lwt.constants import STATUS_CHOICES, LANGUAGES_CODE
 
 # class FilterByUser_Manager(models.Manager):
 # 
@@ -572,7 +573,7 @@ class Settings_selected_rows_nb(Settings):
 #             end 'settings':                       #
 #####################################################
 ''' load and get the real name and the ISO language codes for the Fixtures of languages 
-    (in lwt/fixtures folder) for the learning language for the Language User wants to learn
+    (in lwt.constants.py) for the learning language for the Language User wants to learn
                             and for the "origin" language (language User knows)
     we used this to modify the dict1uri and dict2uri with the correct language destination
       Called : - when displaying the admin languages when creating the form for the User
@@ -583,15 +584,13 @@ class Settings_selected_rows_nb(Settings):
     '''
 def substitute_in_dictURI(user, code_learninglang_OR_obj, called_by_Obj=False):
     import re
-    import json
+#     import json
     # for the origin lang too (language I know):
     origin_lang_code = user.origin_lang_code
-    with open('lwt/fixtures/languages_codes.json', 'r') as languages_codes_f:
-        languages_codes_list = json.load(languages_codes_f)
-        for lang in languages_codes_list:
-            if lang['1'] ==  origin_lang_code:
-                origin_lang = lang
-                break
+    for lang in LANGUAGES_CODE:
+        if lang['1'] ==  origin_lang_code:
+            origin_lang = lang
+            break
     
     # for the chosen lang (language I want to learn)
     # the ADMIN has the basic languages (owner=1)

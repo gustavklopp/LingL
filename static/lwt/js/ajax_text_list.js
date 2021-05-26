@@ -17,6 +17,7 @@ function textlist_filter() {
 	var filterlangform = $('#filterlangform');
 	var filtertagform = $('#filtertagform');
 	var timeform = $('#timeform');
+	var filterarchivedform = $('#archivedform');
 
 	// get what are the checkbox checked for: language
 	// and also get the texts Ids for the chosen langs:
@@ -36,7 +37,7 @@ function textlist_filter() {
 
 	// get what are the checkbox checked for: tags
 	var chosen_tag = [];
-	$.each($("#filtertagform").find("span").find("input"), function(){
+	$.each(filtertagform.find("span").find("input"), function(){
 		if ($(this).is(':checked')){
 			chosen_tag.push($(this).val());
 		}
@@ -50,7 +51,7 @@ function textlist_filter() {
 
 	// get what are the checkbox checked for: time
 	var chosen_time = [];
-	$.each($("#timeform").find("span").find("input"), function(){
+	$.each(timeform.find("span").find("input"), function(){
 		if ($(this).is(':checked')){
 			chosen_time.push($(this).val());
 		}
@@ -68,10 +69,25 @@ function textlist_filter() {
 		$('#no_timefilter').text('');
 	}
 
+	// get what are the checkbox checked for: Archived
+	var chosen_archived = [];
+	$.each(filterarchivedform.find("span").find("input"), function(){
+		if ($(this).is(':checked')){
+			chosen_archived.push($(this).val());
+		}
+		var archived_textIds = $(this).data('textids');
+		if (isdisjoint(chosenlang_textIds, archived_textIds)){
+			$(this).next().attr('class', 'checkboxitem-normal');
+		} else {
+			$(this).next().attr('class', 'checkboxitem-bold');
+		}
+	});
+
 	// stringify them
 	var chosen_lang_json = JSON.stringify(chosen_lang);
 	var chosen_tag_json = JSON.stringify(chosen_tag);
 	var chosen_time_json = JSON.stringify(chosen_time);
+	var chosen_archived_json = JSON.stringify(chosen_archived);
 	// get the options for the rows per page
 	var text_table = $('#text_table');
 	var options = text_table.bootstrapTable('getOptions'); // get the number of rows per page
@@ -82,6 +98,7 @@ function textlist_filter() {
 	data_to_go.append('lang_filter', chosen_lang_json);
 	data_to_go.append('tag_filter', chosen_tag_json);
 	data_to_go.append('time_filter', chosen_time_json);
+	data_to_go.append('archived_filter', chosen_archived_json);
 	data_to_go.append('limit', options['pageSize']);
 	data_to_go.append('csrfmiddlewaretoken', token);
 	// and send it!
@@ -94,6 +111,7 @@ function textlist_filter() {
 		success: function(data){ 
 			text_table.bootstrapTable('load', data); 
 			text_table.bootstrapTable('selectPage', 1); // go to first page
+			
 		},
 		error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
 		}

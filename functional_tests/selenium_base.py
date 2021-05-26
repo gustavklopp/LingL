@@ -98,6 +98,11 @@ class Base(StaticLiveServerTestCase):
         WebDriverWait(self.selenium, 30).until(
             EC.text_to_be_present_in_element(element_selector, text)
             )
+
+    def wait_until_bool(self, element_selector, text):
+        WebDriverWait(self.selenium, 30).until(
+            EC.text_to_be_present_in_element(element_selector, text)
+            )
 class BasePage(Base):
 
     @classmethod

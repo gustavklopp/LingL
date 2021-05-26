@@ -1,0 +1,287 @@
+# The code, like <2TCODE>, <1CODE>, etc... can be find here: https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes
+- model: "lwt.languages"
+  fields:
+    created_date: "2020-07-25"
+    modified_date: "2020-07-25"
+    owner:
+    - lingl
+    name: "English"
+    dicturi: "^https://en.pons.com/translate/english-<LCNAME>/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=eng&&dest=<2TCODE>&format=json, http://www.wordreference.com/en<1CODE>/###"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=<1CODE>&text=###"
+    textsize: 150
+    charactersubstitutions: "´=\"|`=\"|’=\"|‘=\"|...=…|..=‥"
+    regexpsplitsentences: ".!?:;"
+    exceptionssplitsentences: "Mr.|Dr.|[A-Z].|Vd.|Vds."
+    regexpwordcharacters: "a-zA-ZÀ-ÖØ-öø-ȳ"
+    removespaces: false
+    spliteachchar: false
+    has_romanization: false
+    righttoleft: false
+    code_639_1: en
+    code_639_2t: eng
+    code_639_2b: eng
+    django_code: en
+# "for ex: English => French   \"https://glosbe.com/gapi/translate?from=eng&dest=fra&format=json\""
+    exporttemplate: "$word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status"
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: French
+    dicturi: "^https://en.pons.com/translate/french-<LCNAME>/###, https://en.wiktionary.org/wiki/###, http://www.wordreference.com/fr<1CODE>/###, https://glosbe.com/gapi/translate?from=fra&&dest=<2TCODE>&format=json"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: a-zA-ZÀ-ÖØ-öø-ȳ
+    removespaces: false
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: false
+    code_639_1: fr
+    code_639_2t: fra
+    code_639_2b: fre
+    django_code: fr
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Italian
+    dicturi: "^https://en.pons.com/translate/italian-<LCNAME>/###, http://www.wordreference.com/it<1CODE>/###, https://glosbe.com/gapi/translate?from=ita&&dest=<2TCODE>&format=json"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=it&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: a-zA-ZÀ-ÖØ-öø-ȳ
+    removespaces: false
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: false
+    code_639_1: it
+    code_639_2t: ita
+    code_639_2b: ita
+    django_code: it
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: German
+    dicturi: "http://de-<1CODE>.syn.dict.cc/?s=###, http://www.wordreference.com/ge<1CODE>/###, ^https://en.pons.com/translate/german-<LCNAME>/###, https://glosbe.com/gapi/translate?from=deu&&dest=<2TCODE>&format=json"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=de&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: a-zA-ZäöüÄÖÜß
+    removespaces: false
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: false
+    code_639_1: de
+    code_639_2t: deu
+    code_639_2b: ger
+    django_code: de
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Portuguese (Portugal)
+    dicturi: "http://www.wordreference.com/pt<1CODE>/###, ^https://en.pons.com/translate/portuguese-<LCNAME>/###, https://en.wiktionary.org/wiki/###, https://context.reverso.net/translation/portuguese-<LCNAME>/###, https://www.collinsdictionary.com/dictionary/portuguese-<LCNAME>/###, https://www.linguee.com/portuguese-<LCNAME>/search?query=###&source=auto, https://glosbe.com/gapi/translate?from=por&&dest=<2TCODE>&format=json"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=pt&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: a-zA-ZÀ-ÖØ-öø-ȳ
+    removespaces: false
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: false
+    code_639_1: pt
+    code_639_2t: por
+    code_639_2b: por
+    django_code: pt
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Chinese
+    dicturi: "http://ce.linedict.com/#/cn<1CODE>/search?query=###, https://kanji.koohii.com/study/kanji/###, http://m.nciku.com/<1CODE>/entry/?query=###, http://chinesedictionary.mobi/?handler=QueryWorddict&mwdqb=###, https://en.wiktionary.org/wiki/###, ^https://en.pons.com/translate/chinese-<LCNAME>/###, http://www.wordreference.com/zh<1CODE>/###"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=zh&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 200
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;。！？：；
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: 一-龥
+    removespaces: true
+    spliteachchar: true
+    righttoleft: false
+    has_romanization: true
+    code_639_1: zh
+    code_639_2t: zho
+    code_639_2b: chi
+    django_code: zh-cn
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Japanese
+    dicturi: "http://jisho.org/words?<2TCODE>=&dict=edict&jap=###, https://kanji.koohii.com/study/kanji/###, http://jisho.org/kanji/details/###, https://en.wiktionary.org/wiki/###, ^https://en.pons.com/translate/japanese-<LCNAME>/###, http://www.wordreference.com/ja<1CODE>/###"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=ja&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 200
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;。！？：；
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: 一-龥ぁ-ヾ
+    removespaces: true
+    spliteachchar: true
+    righttoleft: false
+    has_romanization: true
+    code_639_1: ja
+    code_639_2t: jap
+    code_639_2b: jap
+    django_code: ja
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Korean
+    dicturi: "http://dictionary.sensagent.com/###/ko-<1CODE>, http://en.wiktionary.org/wiki/###, http://www.wordreference.com/ko<1CODE>/###"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=ko&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;。！？：；
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: 가-힣ᄀ-ᇂ
+    removespaces: false
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: true
+    code_639_1: ko
+    code_639_2t: kor
+    code_639_2b: kor
+    django_code: ko
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Thai
+    dicturi: "http://dict.longdo.com/search/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=tha&&dest=<2TCODE>&format=json"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=th&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 250
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: ก-๛
+    removespaces: true
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: false
+    code_639_1: th
+    code_639_2t: tha
+    code_639_2b: tha
+    django_code: th
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Hebrew
+    dicturi: "http://morfix.mako.co.il/default.aspx?q=###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=heb&&dest=<2TCODE>&format=json"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=he&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: ֐-׿
+    removespaces: false
+    spliteachchar: false
+    righttoleft: true
+    has_romanization: true
+    code_639_1: he
+    code_639_2t: heb
+    code_639_2b: heb
+    django_code: he
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Slovenian
+    dicturi:  "^https://en.pons.com/translate/slovenian-<LCNAME>/###, http://www.wordreference.com/sl<1CODE>/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=sl&&dest=<1CODE>&format=json"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=sl&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: a-zA-ZÀ-ÖØ-öø-ȳ
+    removespaces: false
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: false
+    code_639_1: sl
+    code_639_2t: slo
+    code_639_2b: slo
+    django_code: sl
+    extra_field_key: []

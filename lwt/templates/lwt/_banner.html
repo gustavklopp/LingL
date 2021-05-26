@@ -1,19 +1,28 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 {% load appversion %}{# custom tag which allows to display Django and my app version #}
-{% load djangoversion %}
-{% load pythonversion %}     	
+
+<div class="d-flex">
+
+<div class="p-2">
 <img class="lwtlogo" src="{% static 'lwt/img/site-icon_64x64.png' %}"  title="LingL" alt="LingL" />
+</div>
 
-<span>
+<div class="p-2">
 {% include 'lwt/_menu.html' %}
-</span>
+</div>
 
-<span>
+<div class="p-2">
 {% if request.user.is_authenticated %}{% trans 'Welcome, ' %}'<a title="{% trans 'Edit profile' %}" href="{% url 'profile' %}?id={{ request.user.id }}">{{ request.user.username }}</a>' 
 <a name="logout" title="{% trans 'logging out' %}" href="/accounts/logout/"><img src="{% static 'lwt/img/icn/logout.png' %}" alt="logout" /> {% trans 'Logout' %}</a>
 {% else %}<a href="/accounts/login">Login</a>{% endif %}
-</span>
+</div>
+
+<div class="ml-auto small">{% version_date as version %}
+{% blocktrans %}This is LingL <span class="font-weight-bold">Version {{ version }}</span>&nbsp;&nbsp;{% endblocktrans %}
+</div>
+
+</div>
 
 <script type="text/javascript">
 if (! areCookiesEnabled()) document.write('<p class="red">*** Cookies are not enabled! Please enable! ***</p>');

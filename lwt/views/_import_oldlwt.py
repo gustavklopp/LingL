@@ -6,12 +6,14 @@ to not clog the database with words with no reference to text, no id
                                 * I didn't search for 'compound word' in other sentences. It's a 
 too heavy memory search. 
 '''
+from django.templatetags.static import static # to use the 'static' tag as in the templates
 # second party
 import re
 import json
 # local import
 from lwt.models import *
 from lwt.views._utilities_views import splitText
+from lwt.constants import  LANGUAGES_CODE
 
 data_file = 'lwt/insert_old_lwt/lwt-backup-2017-10-06-08-45-34.sql'
 
@@ -23,10 +25,7 @@ def converter_bad_url(url):
         from_639_1 = re.search(r'(?<=from=).{2}', url).group()
         dest_639_1 = re.search(r'(?<=dest=).{2}', url).group()
         # the code lang was '639_1' (2 letters) form => it's now '639_2t' (3 letters)
-        with open('lwt/fixtures/languages_codes.json') as lang_codes_files:
-            lang_codes_json = lang_codes_files.read()
-        languages_codes = json.loads(lang_codes_json)
-        for lang in languages_codes: 
+        for lang in LANGUAGES_CODE: 
             if '1' in lang.keys() and lang['1'] == from_639_1:
                 from_639_2t = lang['2T']
             if '1' in lang.keys() and lang['1'] == dest_639_1:
@@ -35,17 +34,16 @@ def converter_bad_url(url):
     else:
         return url
 
-''' data_file: sql file, uncompressed
-    owner: request.user
-    => from the sql file, create all the tables '''
+''' @data_file: sql file, uncompressed
+    @owner: request.user
+    @return: None => from the sql file, create all the tables '''
 def import_oldlwt(owner, data_file):
     # dicts where "'old_lwt_id'" :  <Word object in new lwt>
     languages_dict = {}
     texttags_dict = {}
     texts_dict = {}
     wordtags_dict = {}
-    words_dict = {}
-    knownwords_dict = {} # in this dict, there can be several <Words> for each key
+    wordtag_word_dict = {} # in this dict, there can be several <Words> for each key
     for line in data_file.readlines():
         line = line.decode()
         # cleaning:
@@ -95,15 +93,14 @@ def import_oldlwt(owner, data_file):
                                      )
             texttags_dict[el[0]] = texttag
 
-        # Inserting into Texts
+        # Inserting into Texts. Texts are archived by default
         insertinto_str = 'INSERT INTO texts VALUES('
         if line.startswith(insertinto_str):
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
             el = [e.strip('\'') for e in el] # there's "'field'" for each field. remove the extra ''
-            text = Texts.objects.create(
-                                            owner = owner,
+            text = Texts.objects.create(     owner = owner,
                                              language  = languages_dict[el[1]],
                                              title = el[2],
                                              text = el[3],
@@ -111,10 +108,11 @@ def import_oldlwt(owner, data_file):
                                              audiouri = el[5],
                                              sourceuri = el[6],
                                         #     texttags = models.ManyToManyField(Texttags,related_name='texthavingthistag') 
+                                             archived = True
                                      )
             texts_dict[el[0]] = text
             # create the sentence, and words based upon this text 
-            splitText(text)
+#             splitText(text)
             
         # adding texttags to the texts:
         insertinto_str = 'INSERT INTO texttags VALUES('
@@ -153,8 +151,8 @@ def import_oldlwt(owner, data_file):
             language = languages_dict[el[1]]
             wordtext = el[2]
             
+            ''' we don't use the same numbers for the status than in the old lwt:'''
             def convert_old_status(old_status):
-                # we don't use the same numbers for the status than in the old lwt:
                 if old_status >= 1 and old_status <= 5:
                     new_status = 1 # learning
                 elif old_status == 99:
@@ -163,8 +161,8 @@ def import_oldlwt(owner, data_file):
                     new_status = 101 # ignored
                 return new_status
 
+            ''' and update the fields:'''
             def update_word(word, isCompoundword, isnotword, old_lwt_id=None):
-                # and update the fields:
                 word.isCompoundword = isCompoundword
                 word.isnotword = isnotword
                 if not isCompoundword or (isCompoundword and isnotword):
@@ -178,14 +176,15 @@ def import_oldlwt(owner, data_file):
                 word.save()
                 if not isCompoundword:
                     # for each old lwt id, we associate one or more word in the new lwt
-                    knownwords_dict.setdefault(old_lwt_id, []).extend([word])
+                    wordtag_word_dict.setdefault(old_lwt_id, []).extend([word])
+
             # Special case: Compound words:
             # if Chinese/japanse: the word is more than one char
             # else: the word is compound of more than 1 word, separated by space
             # First, get the number of component inside:
             if language.spliteachchar: # Japanese/Chinese
                 compoundword_wordtext_list = wordtext
-            elif not language.spliteachchar: # non Janpanese/Chinese
+            elif not language.spliteachchar: # non Japanese/Chinese
                 word_match_pattern = r'['+language.regexpwordcharacters+']+' # 'qu\'est-ce que' => 'qu','est','ce'.'que'
                 compoundword_wordtext_list = re.findall(word_match_pattern, wordtext)
 
@@ -223,7 +222,8 @@ def import_oldlwt(owner, data_file):
                                         language = firstword.language,
                                         wordtext = wordtext,
                                          sentence = firstword.sentence,
-                                         text = firstword.text,
+#                                          text = firstword.text,
+                                        text = None,
                                          wordinside_order = json.dumps(wordinside_order_list, separators=(',',':')),
                                          wordinside_order_NK = wordinside_order_NK
                                          )
@@ -240,7 +240,7 @@ def import_oldlwt(owner, data_file):
                     Words.objects.bulk_update(wordinside_obj_order_list, ['compoundword','show_compoundword'])
                     # and add to the list of known words (it will be a special case, to be processed after
                     old_lwt_id=el[0]
-                    knownwords_dict.setdefault(old_lwt_id, []).extend([compoundword])
+                    wordtag_word_dict.setdefault(old_lwt_id, []).extend([compoundword])
                     
             # it's not a compound word
             elif len(compoundword_wordtext_list) == 1: 
@@ -249,7 +249,7 @@ def import_oldlwt(owner, data_file):
                     # LC, have the first char in lowercase!
                     words = Words.objects.filter(language_id=language.id, wordtext__iexact=wordtext).\
                                                         order_by('id')
-                    if not words: # the word has not existence in the text
+                    if not words: # the word has not similar known words
                         artificially_created_by_lwt = True 
                     elif not artificially_created_by_lwt: # the word exists in the text
                         if len(words) > 1: # several words written similarly
@@ -278,7 +278,7 @@ def import_oldlwt(owner, data_file):
             el = [e.strip('\'') for e in el] # there's "'field'" for each field. remove the extra ''
             wtwoid = el[0]
             wttgid = el[1]
-            for wo in knownwords_dict[wtwoid]:
+            for wo in wordtag_word_dict[wtwoid]:
                 wo.wordtags.add(wordtags_dict[wttgid ])
                 wo.save()
             

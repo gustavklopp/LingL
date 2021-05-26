@@ -139,7 +139,7 @@ class Text_read(Base):
 #                          msg="Tooltip doesn't disappear when mouse over the right handle")
 # 
         elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="1"')
-        self.assertEqual(len(elements), 3, msg="New text got the already saved words")
+        self.assertEqual(len(elements), 3, msg="New text don't get the already saved words")
         self.assertEqual(elements[0].text, 'MMM')
         
     def test_submit_similar_word(self):

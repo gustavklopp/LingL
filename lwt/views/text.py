@@ -68,10 +68,14 @@ def load_texttable(request):
         t_dict = {}
         t_dict['id'] = t.id
         ##############################
-        t_dict['read'] = '<a href="'+ reverse('text_read',args=[t.id]) + '"><img src="' + \
-            static('lwt/img/icn/book-open-bookmark.png') + '" title="'+ _('Read') + '" alt="'+_('Read')+'" /></a>'
+        if not t.archived:
+            onclick_r = 'document.location = \''+reverse('text_read',args=[t.id]) +'\';'
+        else:
+            onclick_r = 'warning_read(\''+reverse('text_read',args=[t.id]) +'\');'
+        t_dict['read'] = '<img onclick="'+onclick_r+'" src="' + \
+            static('lwt/img/icn/book-open-bookmark.png') + '" title="'+ _('Read text') + '" alt="'+_('Read')+'" />'
         t_dict['edit'] = '<a href="'+ reverse('text_detail') + '?edit='+str(t.id) + '"><img src="' + \
-            static('lwt/img/icn/document--pencil.png') + '" title="'+ _('edit') + '" alt="'+_('edit')+'" /></a>'
+            static('lwt/img/icn/document--pencil.png') + '" title="'+ _('edit text') + '" alt="'+_('edit')+'" /></a>'
         ##############################
         t_dict['language'] = t.language.name
         ##############################
@@ -89,58 +93,65 @@ def load_texttable(request):
             static('lwt/img/icn/chain.png')+'" title="'+_("Link to Text Source")+'" alt="'+_("Link to Text Source")+\
             '"/></a>'
         t_dict['title_tag'] = r
-        ##############################display some stats about the Texts: ############################################
-        # Total words in this text: don't count duplicate (words written similarly)
-        texttotalword_list = Words.objects.filter(text=t).\
-                exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
-        texttotalword = len(distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
-                
-        # Already saved words in this text: don't count duplicate (words written similarly) 
-        textsavedword = 0
-        textsavedword += Words.objects.filter(Q(text=t)&Q(status__gt=0)&\
-                                                Q(grouper_of_same_words=None)).count()
-        gosw_textsavedwords = Words.objects.filter(Q(text=t)&Q(status__gt=0)).\
-                                    exclude(grouper_of_same_words=None).order_by('grouper_of_same_words')
-        distinct_gosw_textsavedwords = distinct_on(gosw_textsavedwords, 'grouper_of_same_words', case_unsensitive=False)
-        textsavedword += len(distinct_gosw_textsavedwords)
+        if not t.archived:
+            ##############################display some stats about the Texts: ############################################
+            # Total words in this text: don't count duplicate (words written similarly)
+            texttotalword_list = Words.objects.filter(text=t).\
+                    exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
+            texttotalword = len(distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
+                    
+            # Already saved words in this text: don't count duplicate (words written similarly) 
+            textsavedword = 0
+            textsavedword += Words.objects.filter(Q(text=t)&Q(status__gt=0)&\
+                                                    Q(grouper_of_same_words=None)).count()
+            gosw_textsavedwords = Words.objects.filter(Q(text=t)&Q(status__gt=0)).\
+                                        exclude(grouper_of_same_words=None).order_by('grouper_of_same_words')
+            distinct_gosw_textsavedwords = distinct_on(gosw_textsavedwords, 'grouper_of_same_words', case_unsensitive=False)
+            textsavedword += len(distinct_gosw_textsavedwords)
 
-        textsavedexpr = Words.objects.filter(owner=request.user).filter(text=t,isCompoundword=True,status__gt=0).count()
-        textunknownword = texttotalword - textsavedword
-        if texttotalword != 0:
-            textunknownwordpercent = 100 * textunknownword//texttotalword
-        else: 
-            textunknownwordpercent = 0
-        ############################## Total words
-        r = '<span title="'+_("Total")+ '">'
-        r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) 
-        r += '">'+ str(texttotalword)+ '</a></span>'
-        t_dict['total_words'] = r
-        ############################## Saved words
-        r = '<span title="'+ _("Saved")+'" class="status4">'
-        if textsavedword > 0:
-            r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[1,100,101]'
-            r += '">'+ str(textsavedword)+ '</a>' 
-            r += ' ('
-            if textsavedexpr != 0:
-                r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[1,100,101]&word_compoundword=compoundword">'
-            r += str(textsavedexpr)
-            if textsavedexpr != 0:
-                r += '</a>'
-            r += ')'
-        else:
-            r += '0'
-        r += '</span>'
-        t_dict['saved_words'] = r
-        ############################## Unknown Words
-        r = '<span title="'+_("Unknown")+'" class="status0">'
-        r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[0]'\
-        '">'+ str(textunknownword)+ '</a></span>'
-        t_dict['unknown_words'] = r
-        ############################## Uknown words percent
-        r = '<span title="'+_("Unknown (%)")+'" class="status0">'
-        r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=0'\
-        '">'+ str(textunknownwordpercent)+ '%</a></span>'
-        t_dict['unknown_words_pc'] = r
+            textsavedexpr = Words.objects.filter(owner=request.user).filter(text=t,isCompoundword=True,status__gt=0).count()
+            textunknownword = texttotalword - textsavedword
+            if texttotalword != 0:
+                textunknownwordpercent = 100 * textunknownword//texttotalword
+            else: 
+                textunknownwordpercent = 0
+            ############################## Total words
+            r = '<span title="'+_("Total")+ '">'
+            r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) 
+            r += '">'+ str(texttotalword)+ '</a></span>'
+            t_dict['total_words'] = r
+            ############################## Saved words
+            r = '<span title="'+ _("Saved")+'" class="status4">'
+            if textsavedword > 0:
+                r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[1,100,101]'
+                r += '">'+ str(textsavedword)+ '</a>' 
+                r += ' ('
+                if textsavedexpr != 0:
+                    r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[1,100,101]&word_compoundword=compoundword">'
+                r += str(textsavedexpr)
+                if textsavedexpr != 0:
+                    r += '</a>'
+                r += ')'
+            else:
+                r += '0'
+            r += '</span>'
+            t_dict['saved_words'] = r
+            ############################## Unknown Words
+            r = '<span title="'+_("Unknown")+'" class="status0">'
+            r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=[0]'\
+            '">'+ str(textunknownword)+ '</a></span>'
+            t_dict['unknown_words'] = r
+            ############################## Uknown words percent
+            r = '<span title="'+_("Unknown (%)")+'" class="status0">'
+            r += '<a href="'+reverse('term_list')+'?text='+ str(t.id) + '&status=0'\
+            '">'+ str(textunknownwordpercent)+ '%</a></span>'
+            t_dict['unknown_words_pc'] = r
+        else: # text is archived:
+            r = '<span title="'+_('text is archived. Calculation not possible.')+'">&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp;&nbsp;</span>'
+            t_dict['total_words'] = r
+            t_dict['saved_words'] = r
+            t_dict['unknown_words'] = r
+            t_dict['unknown_words_pc'] = r
             
         ##############################
         if t.lastopentime:
@@ -150,6 +161,8 @@ def load_texttable(request):
             r = _('never') 
         t_dict['lastopentime'] = r
         ##############################
+        r = '<img onclick="document.location = \''+reverse('text_list')+'?unarchive='+str(t.id)+'\';" title="'+_('text was archived. Click to Un-archive')+'" src="'+static('lwt/img/icn/archived.png')+'" />'
+        t_dict['archived'] = r if t.archived else '' 
 
         data.append(t_dict)
             
@@ -211,19 +224,13 @@ def text_list(request):
     texttags = Texttags.objects.filter(owner=request.user).all().order_by('txtagtext')
     # We don´t display texttag for which there is no texts associated with
     # ... this is determined by the checkbox of language above
-    #... create a zipped list of texttag with its associated languages found inside:
-    # e.g: [{'tag': <Texttags: a>, 'hidden': False, 'lang': [11]},
-    #       {'tag': <Texttags: annotation>, 'hidden': True, 'lang': [6, 2]}, ...}]
-#     texttags_list = []
     texttags_list_empty = True
     for texttag in texttags:
         #get the languages which are found associated to this texttag
         texttag_lang = Texts.objects.filter(texttags=texttag).values_list('language_id', flat=True).all()
         if set(texttag_lang).isdisjoint(set(lang_Ids_list)): # some languages are common
             continue
-#         texttags_list.append({'tag':texttag, 'bold': False, 'lang': list(texttag_lang)})
         else:
-#             texttags_list.append({'tag':texttag, 'bold': True, 'lang': list(texttag_lang)})
             texttags_list_empty = False
     # list of all texts having the selected texttags (whatever language or time)
     texttag_textIds_boldlist = []
@@ -253,10 +260,6 @@ def text_list(request):
     else:
         time_filter = [json.loads(tf) for tf in json.loads(time_filter_json)]
         
-#     # create a zipped list of texttag with its associated languages found inside:
-#     time_list = []
-#     time_list_empty = True # everything is hidden
-
     # get all texts (whatever languages or texttag) with this time
     time_textIds_boldlist = []
     time_textIds_set = set()
@@ -266,11 +269,7 @@ def text_list(request):
         if week[1] == -1: # Special case for when older than 6 months. We put also texts never opened before
             length_of_time = timedelta(weeks=week[0])
             cutout_date = now - length_of_time
-#             time_text_ids = list(Texts.objects.filter(owner=request.user).\
-#                         filter(Q(lastopentime__lte=cutout_date)|\
-#                                 Q(lastopentime__isnull=True)&\
-#                                 Q(language_id__in=lang_Ids_list)).\
-#                               values_list('id', flat=True))
+
             # get all texts (whatever languages and texttags) with this time
             txts = list(Texts.objects.filter(Q(owner=request.user)&\
                                              Q(lastopentime__lte=cutout_date)|\
@@ -288,9 +287,7 @@ def text_list(request):
             ancient_length_of_time = timedelta(weeks=week[1])
             ancient_cutout_date = now - ancient_length_of_time
             ancient_time_Q_filter = Q(lastopentime__gt=ancient_cutout_date)
-#             time_text_ids = list(Texts.objects.filter(owner=request.user).\
-#                                  filter(recent_time_Q_filter&ancient_time_Q_filter).\
-#                                 values_list('id', flat=True))
+
             # get all texts (whatever languages and texttags) with this time
             txts = list(Texts.objects.filter(owner=request.user).\
                                       filter(recent_time_Q_filter&ancient_time_Q_filter).\
@@ -298,14 +295,6 @@ def text_list(request):
             time_textIds_set |= set(txts)
             time_textIds_boldlist.append({'time':pt, 'txt_set':txts, 
                                           'txt_set_json':json.dumps(txts), 'bold':False})
-
-#         if time_text_ids: # no languages selected has this time frame
-#             dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': False}
-#         else:
-#             time_list_empty = False
-#             dic = {'pt': pt, 'text_ids':time_text_ids, 'bold': True}
-#         time_list.append(dic)
-
     
     # which items of each checkbox forms (language, texttags, time) should be displayed in bold?
     for idx, texttag in enumerate(texttag_textIds_boldlist):
@@ -320,70 +309,135 @@ def text_list(request):
             iscommonwith = False if (set(time['txt_set']).isdisjoint(lang_textIds_set) \
                                      or set(time['txt_set']).isdisjoint(texttag_textIds_set)) else True
         time_textIds_boldlist[idx]['bold'] = iscommonwith
-    
 
-    ##################################### Deleting a file #############################################################
-    if request.GET.get('del'):
-        ids_to_delete = request.GET['del']
-        ids_to_delete = json.loads(ids_to_delete)
-        # it's possible to delete text but keep the already saved words:
-        delete_saved_words = str_to_bool(request.GET['delete_saved_words'])
+    ############## cookie for ARCHIVED FILTER###############################################################
+    archived_filter_json = getter_settings_cookie('archived_filter', request)
+    archived_filter = [] if not archived_filter_json else json.loads(archived_filter_json)
+    archived_filter = [str_to_bool(i) for i in archived_filter]
+    archived_textIds = list(Texts.objects.filter(Q(owner=request.user)&Q(archived=True)).values_list('id', flat=True))
+    notarchived_textIds = list(Texts.objects.filter(Q(owner=request.user)&Q(archived=False)).values_list('id', flat=True))
+    # display in bold or not
+    nonarchived_iscommonwith = not lang_textIds_set.isdisjoint(set(notarchived_textIds))
+    archived_iscommonwith = not lang_textIds_set.isdisjoint(set(archived_textIds))
+
+    archived_textIds_boldlist = [  {'archived':False, 'txt_set':json.dumps(notarchived_textIds), 
+                                        'bold':nonarchived_iscommonwith},
+                                   {'archived':True, 'txt_set':json.dumps(archived_textIds), 
+                                        'bold':archived_iscommonwith} ]
+
+    ################################ Deleting or Archiving a text #####################################
+    if 'del' in request.GET.keys() or 'archive' in request.GET.keys():
+        if 'del' in request.GET.keys():
+            op = 'deleting'
+            ids_to_del_OR_archive = request.GET['del']
+            # it's possible to delete text but keep the already saved words:
+            delete_saved_words = str_to_bool(request.GET['delete_saved_words'])
+        else:
+            op = 'archiving'
+            ids_to_del_OR_archive = request.GET['archive']
+        ids_to_del_OR_archive = json.loads(ids_to_del_OR_archive)
+
 #         delse_nb = 0
-        deltx_nb = 0
+        delORarchivetxt_nb = 0
         delwo_nb = 0
-        for text_id in ids_to_delete:
-            todelete_text = Texts.objects.filter(owner=request.user).get(id=text_id)
+        
 
-            # delete the words
-            todelete_words = Words.objects.filter(text=todelete_text)
-            toupdate_savedwords = []
-            for todelete_wo in todelete_words:
-                if not delete_saved_words and todelete_wo.status != 0:
-                        customsentence = '' if not todelete_wo.customsentence else todelete_wo.customsentence+' / ' 
-                        customsentence += todelete_wo.sentence.sentencetext
-                        todelete_wo.customsentence = customsentence
-                        toupdate_savedwords.append(todelete_wo)
+        for text_id in ids_to_del_OR_archive:
+            ### FASTER ######    
+            # words unknown are deleted, whatever the case
+            delwo_nb += Words.objects.filter(Q(text_id=text_id)&Q(status=0)).delete()[0]
+            
+            # and for words with status != 0:
+            todel_OR_toarchive_words = Words.objects.filter(text_id=text_id).order_by(
+                                                            'grouper_of_same_words','wordtext')
+            toupdate_savedwords = [] # used for bulk_update
+            prev_wordtext = ''
+            prev_gosw = None
+            for todel_OR_toarchive_wo in todel_OR_toarchive_words:
+                # don't keep same saved words written similarly
+                if todel_OR_toarchive_wo.wordtext.lower() == prev_wordtext and \
+                            todel_OR_toarchive_wo.grouper_of_same_words == prev_gosw:
+                    delwo_nb += todel_OR_toarchive_wo.delete()[0]
+                    continue
+                else:
+                    prev_wordtext = todel_OR_toarchive_wo.wordtext.lower()
+                    prev_gosw = todel_OR_toarchive_wo.grouper_of_same_words
+
+                # if status == 0 -> we delete the words whatever the case.
+                # else:   - if it's archiving:  we keep the saved words
+                #         - or: if it's deleting: we keep the saved words if the option 'delete_saved_words'...
+                #                           was not checked
+                if op == 'archiving' or ( op == 'deleting' and not delete_saved_words ):
+                        # create a customsentence if not existing
+                        customsentence = '' if not todel_OR_toarchive_wo.customsentence else \
+                                                   todel_OR_toarchive_wo.customsentence+' / ' 
+                        customsentence += todel_OR_toarchive_wo.sentence.sentencetext
+                        todel_OR_toarchive_wo.customsentence = customsentence
+                        toupdate_savedwords.append(todel_OR_toarchive_wo)
                 else:
                     # delete also Grouper_of_same_words associated:
                     # maybe there isn´t (if we have make this word as a similar word to another)
                     # we want to keep words in other texts though
                     # get the grouper_of_same_words (GOSW) for this word, and if the GOSW has itself...
                     # no other Words for which it is the FK: delete it:
-                    todeletewo_gosw = todelete_wo.grouper_of_same_words
-                    if todeletewo_gosw: # word has gosw, we must process it
-                        count_words_for_this_gosw = Words.objects.filter(grouper_of_same_words=todeletewo_gosw).count()
+                    todelORtoarchivewo_gosw = todel_OR_toarchive_wo.grouper_of_same_words
+                    if todelORtoarchivewo_gosw: # word has gosw, we must process it
+                        count_words_for_this_gosw = Words.objects.filter(grouper_of_same_words=todelORtoarchivewo_gosw).count()
                         if count_words_for_this_gosw == 1:
-                            todelete_wo.grouper_of_same_words.delete()
+                            todel_OR_toarchive_wo.grouper_of_same_words.delete()
                         else:
-                            todelete_wo.grouper_of_same_words = None
-                    if not todelete_wo.isnotword:
+                            todel_OR_toarchive_wo.grouper_of_same_words = None
+                    if not todel_OR_toarchive_wo.isnotword:
                         delwo_nb += 1
-                    todelete_wo.delete()
+                    todel_OR_toarchive_wo.delete()
 
-#                     gosw_for_this_word = Grouper_of_same_words.objects.filter(id=todelete_wo.id).first()
+#                     gosw_for_this_word = Grouper_of_same_words.objects.filter(id=todel_OR_toarchive_wo.id).first()
 #                     if gosw_for_this_word:
 #                         gosw_for_this_word.delete()
 #                         delwo_nb += 1 # else it's not a word but a space ' ', or '?', '!' etc...
-#                     todelete_wo.delete()
+#                     todel_OR_toarchive_wo.delete()
             # bulk update:
             Words.objects.bulk_update(toupdate_savedwords, ['customsentence'])
 
-            # delete the text
-            todelete_text.delete() # then delete the text itself
-            # the sentence will be deleted by cascade so no need to delete them manually
+            # all sentences need to be deleted and in Words: set order and textOrder to Null
+            Sentences.objects.filter(text_id=text_id).delete()
+            Words.objects.filter(owner=request.user).filter(text_id=text_id).update(order=None) 
+            Words.objects.filter(owner=request.user).filter(text_id=text_id).update(textOrder=None)
+
+            if op == 'deleting':
+                # delete the text
+                Texts.objects.filter(owner=request.user).filter(id=text_id).delete()  # then delete the text itself
+                # the sentence will be deleted by cascade so no need to delete them manually
+            else:
+                Texts.objects.filter(owner=request.user).filter(id=text_id).update(archived=True)  # then archive the text itself
+                todel_OR_toarchive_words.update(text=None) # unlink the text to the word
+
+
 #             delse = Sentences.objects.filter(owner=request.user).filter(text__id=text_id).delete()
 #             delse_nb += delse[0]
 
-            deltx_nb += len(ids_to_delete)
+            delORarchivetxt_nb += len(ids_to_del_OR_archive)
         # display messages with the count of deleted text(s) and word(s)
-        success_message = _('Deletion success : ')
-        deltx_message = ngettext('%(count)d text deleted.', '%(count)d texts deleted',
-                                deltx_nb) % {'count': deltx_nb}
-        delwo_message = ngettext('%(count)d unknown word deleted.', '%(count)d unknown words deleted',
+        success_message = _('Deletion success : ') if op == 'deleting' else _('Archiving success : ')
+        if op == 'deleting':
+            delORarchivetx_message = ngettext('%(count)d text deleted.', '%(count)d texts deleted',
+                                    delORarchivetxt_nb) % {'count': delORarchivetxt_nb}
+        else:
+            delORarchivetx_message = ngettext('%(count)d text archived.', '%(count)d texts archived',
+                                    delORarchivetxt_nb) % {'count': delORarchivetxt_nb}
+        delORarchivewo_message = ngettext('Database has been freed with %(count)d word.', 'Database has been freed with %(count)d words.',
                                 delwo_nb) % {'count': delwo_nb}
-        messages.add_message(request, messages.SUCCESS, success_message+deltx_message+' / '+delwo_message)
+        messages.add_message(request, messages.SUCCESS, success_message+delORarchivetx_message+' / '+delORarchivewo_message)
         #update the cookie for the database_size
         set_word_database_size(request)
+
+    ############################## Deleting or Archiving a text #####################################
+    if 'unarchive' in request.GET.keys():
+        text = Texts.objects.get(id=request.GET['unarchive'])
+        splitText(text)
+        text.archived = False
+        text.save()
+        messages.add_message(request, messages.SUCCESS, _('Un-Archiving successfully completed'))
 
     ##################################### Set currentlang #############################################################
     if request.GET.get('currentlang_id'):
@@ -395,19 +449,14 @@ def text_list(request):
     database_size = get_word_database_size(request)
 
     return render (request, 'lwt/text_list.html',
-                   {
-                    'languages':languages, 
-                    'lang_filter':lang_Ids_list, 'texttag_filter':texttag_filter, 
-                    'time_filter':time_filter, 
-#                     'texttags_list': texttags_list, 
-#                     'texttags_list_empty':texttags_list_empty,
-#                     'time_list': time_list, 'time_list_empty':time_list_empty,
-                    'lang_textIds_list':lang_textIds_list,
-                    'texttag_textIds_boldlist':texttag_textIds_boldlist,
-                    'time_textIds_boldlist':time_textIds_boldlist,
-                    'timezone_now': now,
+                   {'lang_filter':lang_Ids_list,'lang_textIds_list':lang_textIds_list, 
+                    'time_filter':time_filter,'time_textIds_boldlist':time_textIds_boldlist, 
+                    'texttag_filter':texttag_filter, 'texttag_textIds_boldlist':texttag_textIds_boldlist,
+                    'archived_filter':archived_filter, 'archived_textIds_boldlist':archived_textIds_boldlist,
+                    
+                    'languages':languages, 'timezone_now': now,
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
-                     'database_size':database_size})
+                    'database_size':database_size})
 
 ''' Editing a single text, or Creating a new text'''
 @login_required
@@ -578,8 +627,13 @@ def text_detail(request):
 
 
         f_uploaded_text = Uploaded_textForm()
+
+        # get the current database size:
+        database_size = get_word_database_size(request)
+
         # get the list of languages to display them in the drop-down menu:
         language_selectoption = Languages.objects.filter(owner=request.user).values('name','id').order_by('name')
+
         return render(request, 'lwt/text_detail.html', {
                             'form':f, 'language_selectoption':language_selectoption,
                             'form_uploaded_text':f_uploaded_text,
@@ -588,7 +642,8 @@ def text_detail(request):
                             'word_inthistext':word_inthistext,
                             # STRING CONSTANTS:
                             'op':op, 'text_title':text_title, 'text_id': text_id,
-                            'created_date':created_date
+                            'created_date':created_date,
+                            'database_size':database_size
                                                      })
         
 ''' called by ajax in text_detail.html to uploade a text file, process it 

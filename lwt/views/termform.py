@@ -160,8 +160,9 @@ def new_or_edit_word(op, compoundword_id_list=None, wo_id=None):
 '''in topright of text_read, display a list of possible similar words
    the search can be refined with a user-filled searchbox (called by AJAX)
    helper fun for termform()
-   called by: - clicking on new word in text_read section
-              - by doing a search in the termform searchbox          
+   @called by: - clicking on new word in text_read section 
+              - by doing a search in the termform searchbox ('word' is sent by request.GET)
+   @return: list of possible similar words
    '''
 def search_possiblesimilarword(request, word=None):
     # search for the already added similar words by the user
@@ -170,21 +171,21 @@ def search_possiblesimilarword(request, word=None):
     # we exclude: the same word (of course) (whatever the upper/lowercase) and the already similar word
     if word: # clicking on new word in text_read section
         possiblesimilarword_obj =  Words.objects.\
-                        filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=word.wordtext[:3])).\
-                               exclude(wordtext__iexact=word.wordtext).\
-                               exclude(status=0).\
-                               order_by('grouper_of_same_words_id')
+                filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=word.wordtext[:3])).\
+                       exclude(wordtext__iexact=word.wordtext).\
+                       exclude(status=0).\
+                       order_by('grouper_of_same_words_id')
     else: # doing a search in the termform searchbox sent by AJAX
         searchboxtext = request.GET['searchboxtext']
         language_id = request.GET['language_id']
         possiblesimilarword_obj =  Words.objects.\
-                        filter(Q(language__id=language_id)&Q(wordtext__istartswith=searchboxtext[:3])).\
-                               exclude(status=0).\
-                               order_by('grouper_of_same_words_id')
+                filter(Q(language__id=language_id)&Q(wordtext__istartswith=searchboxtext[:3])).\
+                       exclude(status=0).\
+                       order_by('grouper_of_same_words_id')
 
-    possiblesimilarword = possiblesimilarword_obj.values('id','sentence','customsentence','translation','text__title',
-                                                'wordtext','grouper_of_same_words_id')
-    # If other words have the same FK Grouper_of_same_words, remove them
+    possiblesimilarword = possiblesimilarword_obj.values('id','sentence','customsentence',
+                            'translation','text__title', 'wordtext','grouper_of_same_words_id')
+    # If other words have the same FK Grouper_of_same_words, remove them from the list
     possiblesimilarword_distinctFK = [] 
     prev_FK_GOSW_id = -1 # previous foreign key of grouper_of_same_words
     for idx, simword in enumerate(possiblesimilarword):
@@ -203,8 +204,9 @@ def search_possiblesimilarword(request, word=None):
 ''' same as above but for compound words
    the search can be refined with a user-filled searchbox (called by AJAX)
    helper fun for termform()
-   called by: - clicking on new word in text_read section
-              - by doing a search in the termform searchbox          '''
+   @called by: - clicking on new word in text_read section
+              - by doing a search in the termform searchbox          
+   @return: list of possible similar words '''
 def search_possiblesimilarCompoundword(request, compoundword_list=None):
     # search for the already added similar words by the user
     # For ex: ver+kaufen will search for a compoundword containing ´ver´ and ´kau´ (in any order)
@@ -216,7 +218,7 @@ def search_possiblesimilarCompoundword(request, compoundword_list=None):
         secondsearch_el = compoundword_list[1].wordtext
 
         possiblesimilarCompoundword =  Words.objects.values('id','sentence','customsentence','translation',
-                                                            'text__title','wordtext','grouper_of_same_words_id').\
+                                            'text__title','wordtext','grouper_of_same_words_id').\
                             filter(Q(language__id=compoundword_list[0].language.id)&\
                                    Q(wordtext__icontains=firstsearch_el[:3])&\
                                    Q(wordtext__icontains=secondsearch_el[:3])).\
@@ -228,7 +230,7 @@ def search_possiblesimilarCompoundword(request, compoundword_list=None):
         language_id = request.GET['language_id']
 
         possiblesimilarCompoundword =  Words.objects.values('id','sentence','customsentence','translation',
-                                                            'text__title','wordtext','grouper_of_same_words_id').\
+                                            'text__title','wordtext','grouper_of_same_words_id').\
                             filter(Q(language__id=language_id)&\
                                    Q(wordtext__icontains=firstsearch_el[:3])&\
                                    Q(wordtext__icontains=secondsearch_el[:3])).\
@@ -249,7 +251,7 @@ def search_possiblesimilarCompoundword(request, compoundword_list=None):
         return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarCompoundword_distinctFK}))
 
 ''' helper for termform: superficial copy of a word (or compoundword)'''
-def _copy_word(sourceword, destword):
+def _copy_word(sourceword, destword, save=True):
     destword.status = sourceword.status
     destword.translation = sourceword.translation
     destword.romanization = sourceword.romanization
@@ -264,7 +266,8 @@ def _copy_word(sourceword, destword):
     wordtags_with_this_word = Wordtags.objects.filter(wordtag_with_this_word=sourceword)
     for wordtag in wordtags_with_this_word:
         destword.wordtags.add(wordtag)
-    destword.save()    
+    if save:
+        destword.save()    
     
 '''  All similar Words need to be have an updated status also:
              - Those are searching by the same wordtext, OR
@@ -475,8 +478,9 @@ def termform(request):
             samewordtext_query = Words.objects.filter(language=alreadysavedword.language).\
                                  filter(wordtext__iexact=simwordtext)
             for sw in samewordtext_query:
-                _copy_word(alreadysavedword, sw)
-                sw.grouper_of_same_word = gosw
+                _copy_word(alreadysavedword, sw, save=False)
+                sw.grouper_of_same_words = gosw
+                sw.save()
                 # used in the AJAX to change in realtime the words 
                 sameword_id_list.append(sw.id)
 

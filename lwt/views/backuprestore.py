@@ -17,6 +17,7 @@ from django.http.response import HttpResponseRedirect
 from django.http import HttpResponse
 from django.conf import settings
 from django.apps import apps
+from django.templatetags.static import static # to use the 'static' tag as in the templates
 # second party
 import os
 import gzip #it's standard in python
@@ -200,8 +201,8 @@ def backuprestore(request):
             dest_chosen_lang.save()
 
             # the User is the owner of these languages we'll import
-            lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES.yaml'
-            USER_lang_fixt_path = 'lwt/fixtures/initial_fixture_LANGUAGES_{}.yaml'.format(user_username)
+            lang_fixt_path = os.path.join(settings.BASE_DIR, 'lwt','fixtures','initial_fixture_LANGUAGES.yaml')
+            USER_lang_fixt_path = lang_fixt_path.replace('.yaml','_{}.yaml'.format(user_username))
 
             with open(lang_fixt_path) as lang_fixt_file:
                 langs = lang_fixt_file.read()
@@ -224,8 +225,8 @@ def backuprestore(request):
              
             ##########################
             # then, install all the Demo, except the Grouper_of_same_words (we will create them manually):
-            demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo.yaml'
-            USER_demo_fixt_path = 'lwt/fixtures/oldlwt_fixture_demo_{}.yaml'.format(user_username)
+            demo_fixt_path = os.path.join(settings.BASE_DIR, 'lwt','fixtures', 'oldlwt_fixture_demo.yaml')
+            USER_demo_fixt_path = demo_fixt_path.replace('.yaml','_{}.yaml'.format(user_username))
 
             with open(demo_fixt_path) as demo_fixt_file:
                 demo = demo_fixt_file.read()

@@ -141,13 +141,16 @@ def create_filter(filter_type, filter_list_json):
         if filter_type == 'lastopentime' and not filter_list:
             filter_args = {'lastopentime': timezone.now() + timedelta(days=1)} #1 day in the future
             return Q(**filter_args)
-        for idx, filter_id in enumerate(filter_list):
+        for idx, filter_val in enumerate(filter_list):
             # special case for latopentime filter
             if filter_type == 'lastopentime':
-                filter_args = time_filter_args(filter_id)
+                filter_args = time_filter_args(filter_val)
             else:
-                filter_id = int(filter_id)
-                filter_args = {filter_type: filter_id}
+                if filter_type == 'archived' or filter_type == 'compoundword':
+                    filter_val = str_to_bool(filter_val)
+                else:
+                    filter_val = int(filter_val)
+                filter_args = {filter_type: filter_val}
             
             if idx == 0:
                 filter_Q = Q(**filter_args)
@@ -179,6 +182,7 @@ def list_filtering( model, request):
         if isinstance(model.first(), Texts): # texts table is filtered
             tag_filter_json = request.POST['tag_filter']
             time_filter_json = request.POST['time_filter']
+            archived_filter_json = request.POST['archived_filter']
         if isinstance(model.first(), Words): # words table is filtered 
             text_filter_json = request.POST['text_filter']
             status_filter_json = request.POST['status_filter']
@@ -190,6 +194,7 @@ def list_filtering( model, request):
         if isinstance(model.first(), Texts):
             tag_filter_json = getter_settings_cookie('tag_filter', request)
             time_filter_json = getter_settings_cookie('time_filter', request)
+            archived_filter_json = getter_settings_cookie('archived_filter', request)
         if isinstance(model.first(), Words):
             text_filter_json = getter_settings_cookie('text_filter', request)
             status_filter_json = getter_settings_cookie('status_filter', request)
@@ -200,10 +205,10 @@ def list_filtering( model, request):
     if isinstance(model.first(), Texts): # texts table is filtered
         if tag_filter_json: setter_settings_cookie('tag_filter', tag_filter_json, request)
         if time_filter_json: setter_settings_cookie('time_filter', time_filter_json, request)
+        if archived_filter_json: setter_settings_cookie('archived_filter', archived_filter_json, request)
     if isinstance(model.first(), Words): # words table is filtered
         setter_settings_cookie('text_filter', text_filter_json, request)
-        setter_settings_cookie('status_filter', status_filter_json,
-                                                            request)
+        setter_settings_cookie('status_filter', status_filter_json, request)
         setter_settings_cookie('wordtag_filter', wordtag_filter_json, request)
         setter_settings_cookie('compoundword_filter', compoundword_filter_json, request)
     # Create the filters for lang
@@ -211,31 +216,35 @@ def list_filtering( model, request):
     if isinstance(model.first(), Texts): # texts table is filtered
         filter_Q_tag = create_filter('texttags__id', tag_filter_json)
         filter_Q_time = create_filter('lastopentime', time_filter_json)
+        filter_Q_archived = create_filter('archived', archived_filter_json)
     if isinstance(model.first(), Words): # words table is filtered
         filter_Q_text = create_filter('text_id', text_filter_json) 
         filter_Q_status = create_filter('status', status_filter_json)
         filter_Q_wordtag = create_filter('wordtags', wordtag_filter_json)
+        filter_Q_compoundword = create_filter('compounword', compoundword_filter_json)
         # special case for filtering on compoundword or not:
-        filter_Q_compoundword = Q()
-        if compoundword_filter_json:
-            compoundword_filter = json.loads(compoundword_filter_json)
-            for idx, filter in enumerate(compoundword_filter):
-                if idx == 0:
-                    if filter == 'cw_display_word':
-                        filter_Q_compoundword = Q(isCompoundword=False)
-                    elif filter == 'cw_display_coword':
-                        filter_Q_compoundword = Q(isCompoundword=True)
-                else:
-                    if filter == 'cw_display_word':
-                        filter_Q_compoundword |= Q(isCompoundword=False)
-                    elif filter == 'cw_display_coword':
-                        filter_Q_compoundword |= Q(isCompoundword=True)
+        # special case for filtering on compoundword or not:
+#         filter_Q_compoundword = Q()
+#         if compoundword_filter_json:
+#             compoundword_filter = json.loads(compoundword_filter_json)
+#             for idx, filter in enumerate(compoundword_filter):
+#                 if idx == 0:
+#                     if filter == 'cw_display_word':
+#                         filter_Q_compoundword = Q(isCompoundword=False)
+#                     elif filter == 'cw_display_coword':
+#                         filter_Q_compoundword = Q(isCompoundword=True)
+#                 else:
+#                     if filter == 'cw_display_word':
+#                         filter_Q_compoundword |= Q(isCompoundword=False)
+#                     elif filter == 'cw_display_coword':
+#                         filter_Q_compoundword |= Q(isCompoundword=True)
                     
     # And finally filter the models:
     if isinstance(model.first(), Texts): # texts table is filtered
         results = model.filter(filter_Q_lang).\
                         filter(filter_Q_time).\
                         filter(filter_Q_tag).\
+                        filter(filter_Q_archived).\
                         distinct() # because many2many, a text can have 2 tags. don't count 2 times so...
 #                         filter(filter_Q_tag).\
     if isinstance(model.first(), Words): # words table is filtered
@@ -340,72 +349,121 @@ def splitText(text):
 
     sentences = splitSentence(t, splitSentenceMark)
 
-    ################################################
-    # Split: insert sentences/textitems entries in DB
+    ######################## Splitting and insert sentences/Words in the database ######################
     textOrder = 0
     new_words_created = []
+    filter_Q_nks = None # because bulk_create doesn't return the ID!!!
     for sentID,sentTxt in enumerate(sentences): # Loop on each sentence
-        with transaction.atomic(): # allow bulk transaction
-            newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
-                                                   sentencetext=sentTxt, order=sentID+1,text=text) # create each sentence
-            # splitting the words inside the sentence:
-            word_split_pattern = r'([^'+termchar+']+)' # non character are used as the end of word
+        newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
+                                               sentencetext=sentTxt, order=sentID+1,text=text) # create each sentence
+        # splitting the words inside the sentence:
+        word_split_pattern = r'([^'+termchar+']+)' # non character are used as the end of word
 
-            sentList = re.split(word_split_pattern, sentTxt) # ['This',' ','is',' ','good','.',' ']
-            sentList = [i for i in sentList if i] # remove the empty item created by re.split
-            # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
-            if len(sentList) > 1 and not re.match(r'[^\W\d_]', sentList[-1]):
-                lastitem_isnotword = sentList.pop() 
-            else:
-                lastitem_isnotword = False
-                
-            # split each character of each 'word' if it's Japanese/Chinese:
-            if splitEachChar: # do we make each character a word? (used in Chinese,Jap)
-                temp_sentList = []
-                for wordidx,word in enumerate(sentList): 
-                    if re.search(r'[' + termchar +  ']', word): # match only word
-                        # this regex pattern matches only Japanese/Chinese word.
-                        splitEachChar_List = re.split(r'(['+termchar+'])', word)
-                        splitEachChar_List = [i for i in splitEachChar_List if i] # remove the empty item created by re.split
-                        temp_sentList.extend(splitEachChar_List)
-                    else: # the element doesn't contain any Jap/Chinese character. not to spit in character
-                        temp_sentList.append(word)
-                sentList = temp_sentList
-
+        sentList = re.split(word_split_pattern, sentTxt) # ['This',' ','is',' ','good','.',' ']
+        sentList = [i for i in sentList if i] # remove the empty item created by re.split
+        # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
+        if len(sentList) > 1 and not re.match(r'[^\W\d_]', sentList[-1]):
+            lastitem_isnotword = sentList.pop() 
+        else:
+            lastitem_isnotword = False
+            
+        # split each character of each 'word' if it's Japanese/Chinese..
+        if splitEachChar: # ..where each character is a word 
+            temp_sentList = []
             for wordidx,word in enumerate(sentList): 
-                if re.search(r'[' + termchar +  ']', word): 
-                    wo = Words.objects.create(owner=text.owner,language=text.language, 
-                                              sentence=newsentence,text=text,
-                                              order=wordidx, textOrder=textOrder,
-                                                wordtext=word, 
-#                                               wordtext=remove_spaces(word,removeSpaces), \
-                                              isnotword=False)
-                    wo.save()
-                    new_words_created.append(wo)
-                else: # Non-words
-                    Words.objects.create(owner=text.owner,language=text.language, sentence=newsentence,
-                                         text=text, order=wordidx, textOrder=textOrder,
-                                         wordtext=word, isnotword=True)
-                textOrder += 1
-            # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
-            if lastitem_isnotword:
-                Words.objects.create(owner=text.owner,language=text.language, sentence=newsentence,text=text,
-                                 order=wordidx+1, textOrder=textOrder, wordtext=lastitem_isnotword, 
-                                 isnotword=True)
+                if re.search(r'[' + termchar +  ']', word): # match only word
+                    # this regex pattern matches only Japanese/Chinese word.
+                    splitEachChar_List = re.split(r'(['+termchar+'])', word)
+                    splitEachChar_List = [i for i in splitEachChar_List if i] # remove the empty item created by re.split
+                    temp_sentList.extend(splitEachChar_List)
+                else: # the element doesn't contain any Jap/Chinese character. not to spit in character
+                    temp_sentList.append(word)
+            sentList = temp_sentList
 
-    ################## PARSING THE TEXT FOR SIMILAR WORD: #########################################################################
-    status_need_update_for_these_words = []
+        for wordidx,word in enumerate(sentList): 
+            if re.search(r'[' + termchar +  ']', word): 
+                wo = Words(owner=text.owner,language=text.language, 
+                                          sentence=newsentence,text=text,
+                                          order=wordidx, textOrder=textOrder,
+                                            wordtext=word, 
+#                                               wordtext=remove_spaces(word,removeSpaces), \
+                                          isnotword=False)
+                new_words_created.append(wo)
+                # used later to search the word which will be created 
+                filter_Q_nk = Q(wordtext=wo.wordtext)&Q(text=wo.text)&\
+                               Q(owner=wo.owner)
+                if not filter_Q_nks:
+                    filter_Q_nks = filter_Q_nk
+                else:
+                    filter_Q_nks |= filter_Q_nk
+            else: # Non-words
+                wo = Words(owner=text.owner,language=text.language, sentence=newsentence,
+                                     text=text, order=wordidx, textOrder=textOrder,
+                                     wordtext=word, isnotword=True)
+                new_words_created.append(wo)
+            textOrder += 1
+        # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
+        if lastitem_isnotword:
+            wo = Words(owner=text.owner,language=text.language, sentence=newsentence,text=text,
+                             order=wordidx+1, textOrder=textOrder, wordtext=lastitem_isnotword, 
+                             isnotword=True)
+            new_words_created.append(wo)
+    # bulk create words (we can't bulk create sentence since they are used as FK)
+    Words.objects.bulk_create(new_words_created)
+        
+    new_words_created = Words.objects.filter(filter_Q_nks)
+
+    ################## SEARCHING THE TEXT FOR SIMILAR WORD: ######################################################
+    words_found_similar_to_update = []
     for new_word_created in new_words_created:
-            samewordtext_query = Words.objects.filter(language=text.language).\
-                                        filter(Q(wordtext__iexact=new_word_created.wordtext)&\
-                                               Q(status__gt=0))
-            if samewordtext_query:
-                sameword = samewordtext_query.first()     
-                new_word_created.status = sameword.status
-                new_word_created.grouper_of_same_words = sameword.grouper_of_same_words
-                status_need_update_for_these_words.append(new_word_created)
+        # the word which have a gosw is the model (else, whatever the word)
+        samewordtext_query = Words.objects.filter(language=text.language).\
+                filter(Q(wordtext__iexact=new_word_created.wordtext)&\
+                       Q(status__gt=0)).order_by('grouper_of_same_words')
+        if samewordtext_query:
+            model_word = samewordtext_query.first() #it's used as a model    
+            gosw_to_update = model_word.grouper_of_same_words
+            # creating a GOSW if needed
+            if not gosw_to_update:
+                id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
+                gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,
+                                                                       owner=text.owner)
+            new_word_created.status = model_word.status
+            new_word_created.grouper_of_same_words = model_word.grouper_of_same_words
+            new_word_created.translation = model_word.translation
+            new_word_created.romanization = model_word.romanization
+            new_word_created.customsentence = model_word.customsentence
+            words_found_similar_to_update.append(new_word_created)
     # Bulk update:
-    Words.objects.bulk_update(status_need_update_for_these_words, ['status'])
+    Words.objects.bulk_update(words_found_similar_to_update, ['grouper_of_same_words','status',
+                                                              'translation','romanization',
+                                                              'customsentence'])
+    ################## SEARCHING COMPOUND WORDS: ######################################################
+    # loop through all the already known compound words:
+    sim_cowo_to_update = []
+    for cowo in Words.objects.filter(Q(owner=text.owner)&Q(language=text.language)&\
+                                    Q(isCompoundword=True)&Q(isnotword=True)):
+        # search sentences containing the compound words
+        cowo_wordtext_ls = cowo.wordtext.split('+')
+        for idx, cowo_wordtext in enumerate(cowo_wordtext_ls):
+            if idx == 0:
+                filter_Q_cowo_wordtext = Q(sentencetext__icontains=cowo_wordtext)
+            else:
+                filter_Q_cowo_wordtext &= Q(sentencetext__icontains=cowo_wordtext)
+        cowo_wordtext_sentences = Sentences.objects.filter(text=text).\
+                                                    filter(filter_Q_cowo_wordtext)
+        # mark the words found in these sentences as compound words:
+        # I take the first word written similarly in the sentence.
+        # (Maybe need to refine it later???)
+        for cowo_wordtext_sentence in cowo_wordtext_sentences:
+            for cowo_wordtext in cowo_wordtext_ls:
+                sim_cowo = Words.objects.filter(Q(sentence=cowo_wordtext_sentence)&\
+                                                Q(wordtext=cowo_wordtext)).first()
+                sim_cowo.compoundword = cowo
+                sim_cowo.show_compoundword = True
+                sim_cowo_to_update.append(sim_cowo)
+    Words.objects.bulk_update(sim_cowo_to_update, ['compoundword','show_compoundword'])
+
 
 # IS IT USEFUL???
 # def remove_spaces(s,remove):

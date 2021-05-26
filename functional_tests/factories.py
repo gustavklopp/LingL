@@ -24,6 +24,7 @@ class LanguagesFactory(factory.django.DjangoModelFactory):
     
     owner = factory.SubFactory(UserFactory)
     name = factory.fuzzy.FuzzyText()
+    dict1uri = 'LINKDICT1URI'
 #     dict1uri = "https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format=json"
 #     # for ex: English => French   default="https://glosbe.com/gapi/translate?from=eng&dest=fra&format=json")  
 #     dict2uri = "https://en.wiktionary.org/wiki/###"
@@ -37,7 +38,7 @@ class GermanLanguagesFactory(LanguagesFactory):
     name = 'German'
     dict1uri = 'https://glosbe.com/gapi/translate?from=deu&&dest=eng&&format=json'
 #     # for ex: English => French   default="https://glosbe.com/gapi/translate?from=eng&dest=fra&format=json")  
-#     dict2uri = "https://en.wiktionary.org/wiki/###"
+    dict2uri = "https://en.wiktionary.org/wiki/###"
     googletranslateuri = "*http://translate.google.com/?ie=UTF-8&sl=de&tl=en&text=###"
 
     
@@ -49,7 +50,7 @@ class EnglishLanguagesFactory(LanguagesFactory):
     name = 'English'
     dict1uri = "http://www.wordreference.com/enfr/###"
 #     # for ex: English => French   default="https://glosbe.com/gapi/translate?from=eng&dest=fra&format=json")  
-#     dict2uri = "https://en.wiktionary.org/wiki/###"
+    dict2uri = "https://en.wiktionary.org/wiki/###"
     googletranslateuri = "*http://translate.google.com/?ie=UTF-8&sl=en&tl=fr&text=###"
     
     
