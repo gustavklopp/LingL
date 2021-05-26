@@ -299,6 +299,8 @@ class Words(BaseModel):
     # we store a ForeignKey on the Words model itself. It takes some extra place in the models but
     # usually User won't create a lot of them...
     # for example: 'white' 'paper' is different from 'paper' 'white'. so store the order of the words
+    # a compoundword 'il+y+a':                  isCompoundword=True  isnotword=True
+    #  words inside compound word 'il','y','a': isCompoundword=True  isnotword=False
     compoundword = models.ForeignKey('self', blank=True, null=True, \
                        related_name='compoundwordhavingthiswordinside',\
                        on_delete=models.SET_NULL

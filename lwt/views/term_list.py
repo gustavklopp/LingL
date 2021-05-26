@@ -318,13 +318,14 @@ def term_list(request):
     compoundword_filter_json = getter_settings_cookie('compoundword_filter', request)
     compoundword_filter = [] if not compoundword_filter_json else json.loads(compoundword_filter_json)
     compoundword_filter = [str_to_bool(i) for i in compoundword_filter]
-    isCompoundword_textIds = Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=True)).values_list(
-                                                    'id', flat=True)
-    isnotCompoundword_textIds = Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=False)).values_list(
-                                                    'id', flat=True)
+    isCompoundword_textIds = list(Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=True)).values_list(
+                                                    'id', flat=True))
+    isnotCompoundword_textIds = list(Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=False)).values_list(
+                                                    'id', flat=True))
 
-    compoundword_textIds_boldlist = [ {'isCompoundword':False, 'txt_set':json.dumps(isnotCompoundword_textIds)},
-                                    {'isCompoundword':True, 'txt_set':json.dumps(isCompoundword_textIds)}]
+    compoundword_textIds_boldlist = [ {'isCompoundword':False, 
+                                       'txt_set':json.dumps(isnotCompoundword_textIds)},
+                    {'isCompoundword':True, 'txt_set':json.dumps(isCompoundword_textIds)}]
 
     ####################################################################################################
     # get the list of languages to display them in the drop-down menu:

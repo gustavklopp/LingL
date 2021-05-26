@@ -352,7 +352,7 @@ def splitText(text):
     ######################## Splitting and insert sentences/Words in the database ######################
     textOrder = 0
     new_words_created = []
-    filter_Q_nks = None # because bulk_create doesn't return the ID!!!
+    isWord_created_nb = 0 # because bulk_create doesn't return the ID!!!
     for sentID,sentTxt in enumerate(sentences): # Loop on each sentence
         newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
                                                sentencetext=sentTxt, order=sentID+1,text=text) # create each sentence
@@ -392,10 +392,7 @@ def splitText(text):
                 # used later to search the word which will be created 
                 filter_Q_nk = Q(wordtext=wo.wordtext)&Q(text=wo.text)&\
                                Q(owner=wo.owner)
-                if not filter_Q_nks:
-                    filter_Q_nks = filter_Q_nk
-                else:
-                    filter_Q_nks |= filter_Q_nk
+                isWord_created_nb += 1
             else: # Non-words
                 wo = Words(owner=text.owner,language=text.language, sentence=newsentence,
                                      text=text, order=wordidx, textOrder=textOrder,
@@ -411,33 +408,44 @@ def splitText(text):
     # bulk create words (we can't bulk create sentence since they are used as FK)
     Words.objects.bulk_create(new_words_created)
         
-    new_words_created = Words.objects.filter(filter_Q_nks)
+    new_words_created = Words.objects.filter(Q(isnotword=False)&Q(owner=text.owner)).\
+                                order_by('-created_date')[:isWord_created_nb]
 
     ################## SEARCHING THE TEXT FOR SIMILAR WORD: ######################################################
     words_found_similar_to_update = []
+    modelwords_to_update = []
     for new_word_created in new_words_created:
-        # the word which have a gosw is the model (else, whatever the word)
-        samewordtext_query = Words.objects.filter(language=text.language).\
-                filter(Q(wordtext__iexact=new_word_created.wordtext)&\
-                       Q(status__gt=0)).order_by('grouper_of_same_words')
-        if samewordtext_query:
-            model_word = samewordtext_query.first() #it's used as a model    
-            gosw_to_update = model_word.grouper_of_same_words
-            # creating a GOSW if needed
-            if not gosw_to_update:
-                id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
-                gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,
-                                                                       owner=text.owner)
-            new_word_created.status = model_word.status
-            new_word_created.grouper_of_same_words = model_word.grouper_of_same_words
-            new_word_created.translation = model_word.translation
-            new_word_created.romanization = model_word.romanization
-            new_word_created.customsentence = model_word.customsentence
-            words_found_similar_to_update.append(new_word_created)
+        # don't process 2 times the same word already processed
+        if new_word_created not in words_found_similar_to_update:
+            # the word which have a gosw is the model (else, whatever the word)
+            samewordtext_query = Words.objects.filter(language=text.language).\
+                    filter(wordtext__iexact=new_word_created.wordtext).\
+                    order_by('-status')
+            # the words found similar must have at least one of them which is a known word
+            if samewordtext_query and samewordtext_query.first().status > 0:
+                model_word = samewordtext_query.first() #it's used as a model    
+                gosw_to_update = model_word.grouper_of_same_words
+                # creating a GOSW if needed
+                if not gosw_to_update:
+                    id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
+                    gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,
+                                                                           owner=text.owner)
+                    model_word.grouper_of_same_words = gosw_to_update
+                    modelwords_to_update.append(model_word)
+                # and update all those words:
+                for sameword in samewordtext_query:
+                    if sameword in new_words_created:
+                        sameword.status = model_word.status
+                        sameword.grouper_of_same_words = gosw_to_update
+                        sameword.translation = model_word.translation
+                        sameword.romanization = model_word.romanization
+                        sameword.customsentence = model_word.customsentence
+                        words_found_similar_to_update.append(sameword)
     # Bulk update:
     Words.objects.bulk_update(words_found_similar_to_update, ['grouper_of_same_words','status',
                                                               'translation','romanization',
                                                               'customsentence'])
+    Words.objects.bulk_update(modelwords_to_update, ['grouper_of_same_words'])
     ################## SEARCHING COMPOUND WORDS: ######################################################
     # loop through all the already known compound words:
     sim_cowo_to_update = []
@@ -455,14 +463,29 @@ def splitText(text):
         # mark the words found in these sentences as compound words:
         # I take the first word written similarly in the sentence.
         # (Maybe need to refine it later???)
+
+
         for cowo_wordtext_sentence in cowo_wordtext_sentences:
+            notsure_sim_cowo_to_update = []
+            bad_sentence = False 
+            # the query can find sentences which don't contain the word
+            #..in fact: Since the query search for string, not object, it doesn't distinguish
+            #.. sentences containing 'do' and 'adorable' when seaarching
+            #.. for the wordtext 'do' for example.
             for cowo_wordtext in cowo_wordtext_ls:
                 sim_cowo = Words.objects.filter(Q(sentence=cowo_wordtext_sentence)&\
                                                 Q(wordtext=cowo_wordtext)).first()
+                if not sim_cowo: # the sentence doesn't contain any word with the wordtext
+                    bad_sentence = True
+                    break
+                sim_cowo.isCompoundword = True
                 sim_cowo.compoundword = cowo
                 sim_cowo.show_compoundword = True
-                sim_cowo_to_update.append(sim_cowo)
-    Words.objects.bulk_update(sim_cowo_to_update, ['compoundword','show_compoundword'])
+                notsure_sim_cowo_to_update.append(sim_cowo)
+            if not bad_sentence:
+                sim_cowo_to_update.extend(notsure_sim_cowo_to_update)
+    Words.objects.bulk_update(sim_cowo_to_update, ['isCompoundword','compoundword',
+                                                   'show_compoundword'])
 
 
 # IS IT USEFUL???
