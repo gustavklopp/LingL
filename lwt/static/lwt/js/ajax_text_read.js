@@ -154,7 +154,7 @@ function ajax_del_singleword(wo_id) {
  @issentence: it´s the id of the word. put ´´ in fact if it´s not a sentence. */
 function ajax_dictwebpage(WBLINK, phrase, issentence) {
 
-		// case 1: it's a dict API: AJAX fetches the JSON on the wwww,
+		// case 1 (OUTDATED): it's a dict API: AJAX fetches the JSON on the wwww,
 		// (in fact, API on Glosbe doesn't work anymore...)
 		if (WBLINK.indexOf('glosbe.com/gapi') != -1){
 			$.ajax({url: WBLINK, type: 'GET',
@@ -177,19 +177,31 @@ function ajax_dictwebpage(WBLINK, phrase, issentence) {
 					data: {'word': phrase, 'wbl': WBLINK, 'issentence': issentence},
 					// and the view sends backs a JSON containing the string URL. <iframe> displays it then.
 					success: function(data){
-							// frame embedding blocked, open new tab with the url given
+							// Case where Opening in a new window with the url given
 							if (data.charAt(0) == '*'){ 
 								var params = 'width='+window.innerWidth/2+', height='+window.innerHeight*0.7+', ';
 								params += 'top='+window.innerHeight/2+', left='+window.innerWidth/2+', ';
 								params += ' scrollbars=yes, menubar=no, resizable=yes, status=no';
 								window.open(data.slice(1),'dictwin', params);
-							// iframe embedding blocked, scraping of the url. Note: 'sandbox' allows to deactivate link inside iframe
+							// Case where Not using iframe but scraping of the url. Note: 'sandbox' allows to deactivate link inside iframe
 							} else if (data.charAt(0) == '^'){ 
 								var html_str = data.slice(1);
 								$('#bottomright.text_read').html('<span class="iframe_container"><iframe class="text_read nolink_iframe" id="dictwebpage" src="about:blank" srcdoc="'+data.slice(1)+'"></iframe></span>');
-							// open the webpage dict in an iframe with the url given
+							// Case where opening the webpage dict in an iframe with the url given
 							} else {
 								$('#bottomright.text_read').html('<iframe class="text_read" id="dictwebpage" src="'+data+'"></iframe>');
+								// check that crossdomain is authorized in iframe:
+								// NOT WORKING
+								//var iframe = document.getElementsByTagName('iframe')[0];
+								//var doc = iframe.contentDocument || iframe.contentWindow.document;
+								//var booltest = Boolean(document.getElementsByTagName('iframe')[0].contentDocument);
+								/*
+								var m = '<p>'+gettext("This dictionary website forbids fetching its data from third parties.")+'</p>';
+								m += '<p>'+gettext("You should edit your language and change the URL.")+'</p>';
+								m += '<p>'+gettext("For example you could try to insert a '^' before the URL to make LingLibre try scraping the website.")+'</p>';
+								m += '<p>'+gettext("(see the Help page for more info.)")+'</p>';
+								$('#bottomright.text_read').html('<iframe class="text_read" id="dictwebpage" src="about:blank" srcdoc="'+m+'"></iframe>');
+								*/
 							}
 							
 							

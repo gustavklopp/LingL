@@ -14,26 +14,37 @@ from django.utils.lorem_ipsum import sentence
 
 data_file = 'lwt/insert_old_lwt/lwt-backup-2017-10-06-08-45-34.sql'
 
-''' helper function for import_oldlwt. 
-the glosbe api url is outdated: it was of the form: "glosbe_api.php?from=de&dest=en&phrase=###"
-when it should be: "https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format=json" '''
-def converter_bad_url(url):
+''' helper function for import_oldlwt. the DICTURI are malformed, need to convert them 
+and (But the glosbe api doesn't work anymore in fact) the glosbe api url is outdated: 
+it was of the form: "glosbe_api.php?from=de&dest=en&phrase=###"
+when it should be: "https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format=json"
+@url              the url extracted from the SQL save 
+@name             the name of the language. Used because we try to get the good language code
+@origin_lang_code it's the code '1' in constants.LANGUAGES_CODE
+ '''
+def converter_bad_url(url, name, origin_lang_code):
     if 'glosbe' in url:
         from_639_1 = re.search(r'(?<=from=).{2}', url).group()
         dest_639_1 = re.search(r'(?<=dest=).{2}', url).group()
         # the code lang was '639_1' (2 letters) form => it's now '639_2t' (3 letters)
         for lang in LANGUAGES_CODE: 
-            if '1' in lang.keys() and lang['1'] == from_639_1:
+            if lang['1'] == from_639_1:
                 from_639_2t = lang['2T']
-            if '1' in lang.keys() and lang['1'] == dest_639_1:
+            if lang['1'] == dest_639_1:
                 dest_639_2t = lang['2T']
         return "https://glosbe.com/gapi/translate?from="+from_639_2t+"&&dest="+dest_639_2t+"&&format=json"
+    elif 'www.dict.cc' in url:
+        lang_code1 = 'XX'
+        for lang in LANGUAGES_CODE:
+            if lang['name'] == name:
+                lang_code1 =  lang['1']
+        return 'http://'+lang_code1+'-'+origin_lang_code+'.syn.dict.cc/?s=###'
     else:
         return url
 
 ''' @data_file: sql file, uncompressed
-    @owner: request.user
-    @return: None => from the sql file, create all the tables '''
+@owner: request.user
+@return: None => from the sql file, create all the tables '''
 def import_oldlwt(owner, data_file):
     # dicts where "'old_lwt_id'" :  <Word object in new lwt>
     languages_dict = {}
@@ -65,9 +76,9 @@ def import_oldlwt(owner, data_file):
                 language = Languages.objects.create(
                                                 owner = owner,
                                                  name = el[1],
-                                                 dict1uri = converter_bad_url(el[2]),
-                                                 dict2uri = converter_bad_url(el[3]),
-                                                 googletranslateuri = converter_bad_url(el[4]),
+                                                 dict1uri = converter_bad_url(el[2], el[1], owner.origin_lang_code),
+                                                 dict2uri = converter_bad_url(el[3], el[1], owner.origin_lang_code),
+                                                 googletranslateuri = converter_bad_url(el[4], el[1], owner.origin_lang_code),
     #                                              exporttemplate = el[5],
                                                  textsize = el[6],
                                                  charactersubstitutions = el[7],

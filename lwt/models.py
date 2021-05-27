@@ -44,9 +44,12 @@ class MyUserManager(UserManager): # for deserialization
     def get_by_natural_key(self, username):
         return self.get(username=username)
 
+''' overrding default User to add complementary data '''
 class MyUser(AbstractUser):
-    ''' overrding default User to add complementary data '''
     # the language that the User already knows: (code is a 2 letters)
+    # this 2 letter code is obtained from constants.LANGUAGES_CODE['1'] 
+    # (NB: it's NOT LANGUAGES_CODE['django_code'] since it could be a problem when creating
+    # dicturi (for example with Chinese since Django_code is 'zh-hans')
     origin_lang_code = models.CharField(max_length=40)
 
     objects = MyUserManager() # use to call the parent foreign key by its name (or title , or etc...)
@@ -667,7 +670,7 @@ class UserAccountAdapter(DefaultAccountAdapter):
 ''' Used insided Backup & Restore to upload a backup file '''
 class Restore(models.Model):
     owner = models.ForeignKey(MyUser, null=True, on_delete=models.CASCADE) # each user has his own set of the database
-    restore_file_name = models.CharField(max_length=255, blank=True)
+    restore_file_name = models.CharField(max_length=255, blank=True) # IS it useful?
     restore_file = models.FileField(blank=True)
     import_oldlwt = models.FileField(blank=True)
 #     restore_oldlwt_file = models.FileField()

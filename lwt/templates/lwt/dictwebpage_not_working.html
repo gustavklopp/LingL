@@ -1,0 +1,9 @@
+{% load static %}
+{% load i18n %} {# used for internationalization #}
+
+{% url 'language_list' as url_language_list %}
+{% static 'lwt/img/icn/exclamation-red.png' as static_exclamation-red %}
+{% blocktrans %}
+<p><img src="{{ static_exclamation-red }}" alt="exclamation-red" /> The website of this dictionary seems not reachable.</p>
+<p>Edit your language and check that the URL provided for the dictionary lookup is the right one.</p>
+{% endblocktrans %}

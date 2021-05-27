@@ -27,6 +27,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._utilities_views import get_word_database_size
+from lwt.constants import MAX_WORDS_DANGER
 
 
 ''' called by ajax (built-in function) inside bootstrap-table #text_table to fill the table'''
@@ -161,7 +162,7 @@ def load_texttable(request):
             r = _('never') 
         t_dict['lastopentime'] = r
         ##############################
-        r = '<img onclick="document.location = \''+reverse('text_list')+'?unarchive='+str(t.id)+'\';" title="'+_('text was archived. Click to Un-archive')+'" src="'+static('lwt/img/icn/archived.png')+'" />'
+        r = '<img onclick="document.location = \''+reverse('text_list')+'?unarchive='+str(t.id)+'\';" title="'+_('text was archived. Click to Un-archive')+'" src="'+static('lwt/img/icn/fa-file-archive-o_colored.png')+'" />'
         t_dict['archived'] = r if t.archived else '' 
 
         data.append(t_dict)
@@ -474,13 +475,12 @@ def text_detail(request):
                 # split the text into sentences and into words and put it in Unknownwords
                 splitText(savedtext) #  in _utilities_views
                 ###################### Calculate how many words are for this language: Display a warning if too many words: ####################
-                total_words_in_this_lang = Words.objects.filter(owner=request.user, 
-                                                                language=savedtext.language).count()
-                if total_words_in_this_lang > MAX_WORDS:
+                total_words = Words.objects.filter(owner=request.user).count()
+                if total_words > MAX_WORDS_DANGER:
                     messages.add_message(request, messages.WARNING, 
-                            _('With this additional text, you\'ve got now ') + str(total_words_in_this_lang) +\
+                            _('With this additional text, you\'ve got now ') + str(total_words) +\
                              _(' words for ') + savedtext.language.name + \
-                            _('. This could slow the program a lot. Please consider deleting some texts.'))
+                            _('. This could slow the program a lot. Please consider archiving or deleting some texts.'))
 
             else:
                 savedtext = f.save(commit=False)

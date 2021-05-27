@@ -62,7 +62,7 @@ Future versions are regularly provided.
 
    4. Launch this new version (after uncompressing it wherever you want) by clicking on the executable `LingLibre`.
 
-   5. *(optional)* Restoring the backup created in step '1'. Create an account (whatever name you want, you're not forced to use the same than in the old version). and in the 'Backup/Restore/Delete your account', click on 'Restore' and choose the backup file that you've got in the step '1'.
+   5. *(optional)* Restore the backup created in step '1': Create an account (whatever name you want, you're not forced to use the same than in the old version). and in the 'Backup/Restore/Delete your account', click on 'Restore' and choose the backup file that you've got in the step '1'.
 
 ### 3.2 for the Django server version:
    

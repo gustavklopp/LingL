@@ -9,15 +9,15 @@
 under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public Licence </a>.<br />
 {% if user.is_authenticated and request.path != '/accounts/logout/' %}<a href="https://en.wikipedia.org/wiki/Database" target="_blank">{% trans "Database"%}
 </a> 
-{% trans "Size" %}: <span class="{% if database_size == 0 %}bg-light{% endif %}
-				{% if database_size > 0 %}bg-success{% endif %}
-				{% if database_size > 4000 %}bg-warning{% endif %}
-				{% if database_size > 8000 %}bg-danger{% endif %}
+{% trans "Size" %}: <span class="{% if database_size.database_health == 'HEALTHY' %}bg-light{% endif %}
+				{% if database_size.database_health == 'NOTICE' %}bg-success{% endif %}
+				{% if database_size.database_health == 'WARNING' %}bg-warning{% endif %}
+				{% if database_size.database_health == 'DANGER' %}bg-danger{% endif %}
 				">&nbsp;{% load l10n %}
-		{% if database_size == 0 %}
+		{% if database_size.database_size == 0 %}
 			{% trans 'Empty' %}
 		{% else %}
-			{% blocktranslate count counter=database_size %}
+			{% blocktranslate count counter=database_size.database_size %}
 			1 word
 			{% plural %}
 			{{ counter }} words

@@ -2,7 +2,7 @@ from django import forms
 
 from django.urls import reverse
 from django.utils.translation import ugettext as _, get_language_info
-from django.conf.global_settings import LANGUAGES
+# from django.conf.global_settings import LANGUAGES
 from django.conf import settings
 from django.db import transaction
 # Second party:
@@ -21,6 +21,7 @@ from allauth.account.adapter import get_adapter
 from splitjson import fields as json_fields, widgets as json_widgets
 # local
 from lwt.models import Languages, Texts, Extra_field_key, MyUser, Texttags, Words, Wordtags, Restore, Uploaded_text
+from lwt.constants import LANGUAGES_CODE
 
 
 # class TexttagForm(forms.Form):
@@ -304,7 +305,12 @@ class RestoreForm(forms.ModelForm):
     
     class Meta:
         model = Restore
+        # is the field 'restore_file_name' useful??
         fields = ['owner', 'restore_file_name', 'restore_file', 'import_oldlwt']
+        widgets = {
+            'restore_file': forms.FileInput(attrs={'accept': '.yaml'}),
+            'import_oldlwt': forms.FileInput(attrs={'accept': '.sql.gz'})
+            }
         
 
 class Uploaded_textForm(forms.ModelForm):
@@ -371,7 +377,7 @@ class MySignUpForm(SignupForm):
         # LANG_CHOICES: <class 'list'>: [('zh-cn', 'Chinese'), ('en', 'English'),....
         # displaying the language I know. we need to localized it, and sort it (because by default,
         #.. they are sorted by the lang code, which is not what is displayed to the User
-        LOCALIZED_LANGUAGES = [(i[0], get_language_info(i[0])['name_translated']) for i in LANGUAGES]
+        LOCALIZED_LANGUAGES = [(i['1'], get_language_info(i['django_code'])['name_translated']) for i in LANGUAGES_CODE]
         LOCALIZED_LANGUAGES.sort(key=lambda tup: tup[1])
         origin_lang_code = forms.ChoiceField(choices=LOCALIZED_LANGUAGES, required=True) # the language I know
 
@@ -432,7 +438,7 @@ class ProfileForm(forms.ModelForm):
     try:
         # displaying the language I know. we need to localized it, and sort it (because by default,
         #.. they are sorted by the lang code, which is not what is displayed to the User
-        LOCALIZED_LANGUAGES = [(i[0], get_language_info(i[0])['name_translated']) for i in LANGUAGES]
+        LOCALIZED_LANGUAGES = [(i['1'], get_language_info(i['django_code'])['name_translated']) for i in LANGUAGES_CODE]
         LOCALIZED_LANGUAGES.sort(key=lambda tup: tup[1])
         origin_lang_code = forms.ChoiceField(choices=LOCALIZED_LANGUAGES, required=True) # the language I know
     except:

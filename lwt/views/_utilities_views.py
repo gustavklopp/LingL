@@ -16,7 +16,7 @@ import urllib
 from datetime import timedelta
 # local
 from lwt.views._setting_cookie_db import *
-from lwt.constants import MAX_WORDS
+from lwt.constants import MAX_WORDS_DANGER, MAX_WORDS_NOTICE, MAX_WORDS_WARNING
 if __name__ != '__main__':
     from lwt.models import *
 
@@ -57,7 +57,14 @@ def get_word_database_size(request):
     if not database_size:
         database_size = Words.objects.filter(owner=request.user).count()
         setter_settings_cookie('database_size', database_size, request)
-    return database_size
+    database_health = 'HEALTHY' # display a message in the footer of each page
+    if database_size > MAX_WORDS_NOTICE:
+        database_health = 'NOTICE'
+    if database_size > MAX_WORDS_WARNING:
+        database_health = 'WARNING'
+    if database_size > MAX_WORDS_DANGER:
+        database_health = 'DANGER'
+    return {'database_size':database_size, 'database_health':database_health}
 
 ''' the Words model has changed, update the count of database_size'''
 def set_word_database_size(request):

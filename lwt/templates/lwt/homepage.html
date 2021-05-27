@@ -11,66 +11,67 @@
 {% block content %}
 
 {% if text_exist == 0 and language_selectoption|length == 1 %} {# First time user: No texts in the database and only one language #}
-<div class="alert alert-danger" role="alert">
-	{% trans "Hint: The database seems to be empty." %}<br>
-	   {# Install the demo database if the website is on localhost #}
-{% ifequal request.get_host|slice:":9" "127.0.0.1" %}
-	{% trans "You may install the LingL demo database," %}<br>
-	<form action="{% url 'backuprestore'%}" method="post">
-	{% csrf_token %}
-	<button class="btn btn-danger" type="submit" name="install_demo" value="install_demo">Install Demo Database</button>
-	</form>
-	{% trans "or" %}<br>
-{% endifequal %}
-	<a href="{% url 'text_detail' %}?new=0">{% trans "create your first text." %}</a>
-</div>
+	<div class="alert alert-danger" role="alert">
+		{% trans "Hint: The database seems to be empty." %}<br>
+		   {# Install the demo database if the website is on localhost #}
+	{% ifequal request.get_host|slice:":9" "127.0.0.1" %}
+		{% trans "You may install the LingL demo database," %}<br>
+		<form action="{% url 'backuprestore'%}" method="post">
+		{% csrf_token %}
+		<button class="btn btn-danger" type="submit" name="install_demo" value="install_demo">Install Demo Database</button>
+		</form>
+		{% trans "or" %}<br>
+	{% endifequal %}
+		<a href="{% url 'text_detail' %}?new=0">{% trans "create your first text." %}</a>
+	</div>
 {% else %}
-
 	<ul>{# the drop-down menu for the language selection #}{# setLang is in pgm.js: TODO #}
-	
 	<li>{% trans "Language" %}: 
- <select id="filterlang" onchange="if (this.value) {url =  '{% url 'homepage' %}?setcurrentlang=' + value; window.location.href=url;}">
-<optgroup label="[{% trans "Select" %}...]">
-		<option value="-1" {% if currentlang_id == -1 %}selected="selected"{% endif %}>[{% trans "Filter Off" %}]</option>
-	{% for lang in language_selectoption %}
-		<option value="{{ lang.id }}" {% if lang.id == currentlang_id %}selected="selected"{% endif %}>{{ lang.name }}</option>
-	{% endfor %}
-</optgroup>
-</select>
+	 <select id="filterlang" onchange="if (this.value) {url =  '{% url 'homepage' %}?setcurrentlang=' + value; window.location.href=url;}">
+	<optgroup label="[{% trans "Select" %}...]">
+			<option value="-1" {% if currentlang_id == -1 %}selected="selected"{% endif %}>[{% trans "Filter Off" %}]</option>
+		{% for lang in language_selectoption %}
+			<option value="{{ lang.id }}" {% if lang.id == currentlang_id %}selected="selected"{% endif %}>{{ lang.name }}</option>
+		{% endfor %}
+	</optgroup>
+	</select>
 	</li>
 	</ul>
-		
-		{# Display a shortcut to access the last open texts #}
+	{# Display a shortcut to access the last open texts #}
 	{% if lastopentexts %} {# the last opened texts #}
-				{% trans "My last open Texts" %}:
-				<ul>
-				{% for lastopentext in lastopentexts %}
-				<li> <i>{{ lastopentext }}</i>
-				<br>
-				<a href="{% url 'text_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" title="Read" alt="Read" />&nbsp;{% trans "Read" %}</a>
+		<div class="card bg-light mb-2" style="max-width: 36rem;">
+		  <div class="card-body">
+			{% trans "Last open Texts" %}:
+					<ul>
+					{% for lastopentext in lastopentexts %}
+					<li> <i>{{ lastopentext }}</i>
+					<br>
+					<a href="{% url 'text_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" title="Read" alt="Read" />&nbsp;{% trans "Read" %}</a>
 
-				</li>
-				{% endfor %}
-				</ul>
+					</li>
+					{% endfor %}
+					</ul>
+		  </div>
+		</div>
 	{% endif %}
 {% endif %}
 
 <ul>
-<li><a href="{% url 'text_list' %}?page=1">{% trans "My Texts" %}</a> (-> <a href="{% url 'text_detail' %}?new=0">{% trans "New Text" %}</a>)</li> 
+<li><a href="{% url 'text_list' %}?page=1"><img src="{% static "lwt/img/icn/texts.png" %}" alt="texts" />&nbsp;{% trans "My Texts" %}</a> (-> <a href="{% url 'text_detail' %}?new=0">{% trans "New Text" %}</a>)</li> 
 	<br><br></li>
 	{% if currentlang_name == "" %}
 <li><a href="{% url 'language_detail' %}?new=0">{% trans "Create New Language" %}</a>
 	{% else %}
-<li><a href="{% url 'language_list' %}">{% trans "My Languages" %}</a> (-> <a href="{% url 'language_detail' %}?new=0">{% trans "New Language" %}</a>)
+<li><a href="{% url 'language_list' %}"><img src="{% static "lwt/img/icn/languages.png" %}" alt="languages" />&nbsp;{% trans "My Languages" %}</a> (-> <a href="{% url 'language_detail' %}?new=0">{% trans "New Language" %}</a>)
 	{% endif %}
 	<br><br></li>
-<li><a href="{% url 'term_list' %}">{% trans "My Terms (Words and Expressions)" %}</a></li>
+<li><a href="{% url 'term_list' %}"><img src="{% static "lwt/img/icn/terms.png" %}" alt="terms" />&nbsp;{% trans "My Terms (Words and Expressions)" %}</a></li>
 	<br><br></li>
-<li><a href="{% url 'statistics' %}">{% trans "My Statistics" %}</a>
+<li><a href="{% url 'statistics' %}"><img src="{% static "lwt/img/icn/statistics.png" %}" alt="statistics" />&nbsp;{% trans "My Statistics" %}</a>
 	<br><br></li>
-<li><a href="{% url 'export2anki' %}">{% trans "Exporting to Anki" %} <img src="{% static 'lwt/img/anki_16x16.ico'%}" /></a> 
+<li><a href="{% url 'export2anki' %}"><img src="{% static 'lwt/img/anki_16x16.ico'%}" alt="anki" />&nbsp;{% trans "Exporting to Anki" %} </a> 
 	<br><br></li>
-<li><a href="{% url 'backuprestore' %}">{% trans "Backup/Restore/Delete your account" %}</a>
+<li><a href="{% url 'backuprestore' %}"><img src="{% static 'lwt/img/icn/arrow-repeat.png'%}" alt="backup" />&nbsp;{% trans "Backup/Restore/Delete your account" %}</a>
 	<br><br></li>
 </ul>
 {% endblock content %}

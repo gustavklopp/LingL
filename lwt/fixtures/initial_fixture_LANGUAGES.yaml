@@ -188,7 +188,7 @@
     owner:
     - lingl
     name: Korean
-    dicturi: "http://dictionary.sensagent.com/###/ko-<1CODE>, http://en.wiktionary.org/wiki/###, http://www.wordreference.com/ko<1CODE>/###"
+    dicturi: "http://dictionary.sensagent.com/###/ko-<1CODE>, http://en.wiktionary.org/wiki/###, http://www.wordreference.com/ko<1CODE>/###, https://dict.naver.com/<1CODE>kodict/#/search?query=###"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=ko&tl=<1CODE>&text=###"
@@ -284,4 +284,30 @@
     code_639_2t: slo
     code_639_2b: slo
     django_code: sl
+    extra_field_key: []
+- model: lwt.languages
+  fields:
+    created_date: 2020-07-25 00:00:00+00:00
+    modified_date: 2020-07-25 00:00:00+00:00
+    owner:
+    - lingl
+    name: Swedish
+    dicturi:  "^https://en.pons.com/translate/swedish-<LCNAME>/###, http://folkets-lexikon.csc.kth.se/folkets/#lookup&###, http://tyda.se/search/###, https://en.wiktionary.org/wiki/###"
+    dict1uri: null
+    dict2uri: null
+    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=sv&tl=<1CODE>&text=###"
+    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    textsize: 150
+    charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
+    regexpsplitsentences: .!?:;
+    exceptionssplitsentences: Mr.|Dr.|[A-Z].|Vd.|Vds.
+    regexpwordcharacters: a-zA-ZÀ-ÖØ-öø-ȳ
+    removespaces: false
+    spliteachchar: false
+    righttoleft: false
+    has_romanization: false
+    code_639_1: sw
+    code_639_2t: swe
+    code_639_2b: swe
+    django_code: sw
     extra_field_key: []

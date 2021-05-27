@@ -40,7 +40,7 @@ urlpatterns = [
     # create a new language or edit, or other options...:
     url(r'^language_detail/$',views.language_detail,name='language_detail'),
     # List of all languages. It is the target page after saving a new language/edit an exsting one also:
-    url(r'^language_list/$',views.language_list,name='language_list'),
+    url(r'^language_list/$',views.language_list, name='language_list'),
     url(r'^fill_language_detail/$',views.fill_language_detail,name='fill_language_detail'),
 
     ###### TEXTS ############################################################

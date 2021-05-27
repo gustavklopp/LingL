@@ -106,13 +106,13 @@ def _remove_scriptTag(soup):
 #             link.extract()
     return soup
 
-''' create dictionary webpage.
+''' create dictionary webpage in the bottom right on text_read.html.
 Adapted from: makeOpenDictStrJS(createTheDictLink($wb1,$word)) '''
 def dictwebpage(request):
-    # case 1:  It needs to fetch an API. AJAX has fetched the JSON on the wwww, then 
+    # case 1:  (OUTDATED since Glosbe doesn't work anymore) It needs to fetch an API. 
+    # AJAX has fetched the JSON on the wwww, then 
     # the JSON obj from the www is sent to the view dictwebpage which processes it and 
     # and sends back html.
-    # NOTE: Glosbe API has been shut down... unfortunately.
     if 'json_obj' in request.GET.keys():
         parsed_json_obj = json.loads(request.GET['json_obj'])
         return render(request, 'lwt/_glosbe_api.html', {'result': parsed_json_obj}) 
@@ -131,19 +131,25 @@ def dictwebpage(request):
 
         # case where we can't put the url in an iframe src. we must request the entire html webpage
         # and will display it in the iframe srcdoc 
-        if finalurl[0] == '^': 
-            content = requests.get(finalurl[1:]).content
-            soup = BeautifulSoup(content, 'html.parser')
-            soup = _remove_scriptTag(soup)
-            links = soup.findAll('link')
-            link_str = ''
-            for link in links:
-                link_str += str(link)
-            body = soup.find('body')
-            body_str = str(_clean_body(body, finalurl))
-            html_str = '^' + escape(link_str + body_str)
-            return HttpResponse(json.dumps(html_str)) 
-        return HttpResponse(json.dumps(finalurl)) 
+
+        if finalurl[0] == '^': # case where we open into the frame
+            try: # check that the URL is working. else display a well-formed error 
+                content = requests.get(finalurl[1:]).content
+                soup = BeautifulSoup(content, 'html.parser')
+                soup = _remove_scriptTag(soup)
+                links = soup.findAll('link')
+                link_str = ''
+                for link in links:
+                    link_str += str(link)
+                body = soup.find('body')
+                body_str = str(_clean_body(body, finalurl))
+                html_str = '^' + escape(link_str + body_str)
+                return HttpResponse(json.dumps(html_str))
+            except:
+                body_str = render_to_string('lwt/dictwebpage_not_working.html') 
+                html_str = '^' + escape(body_str)
+                return HttpResponse(json.dumps(html_str))
+        return HttpResponse(json.dumps(finalurl)) # case where we open into a new window
 
 ''' NOT USED FINALLY '''
 ''' called by AJAX by the form in text_read: shows a list of sentences where the term appears '''
