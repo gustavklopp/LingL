@@ -10,7 +10,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.fields import CharField,IntegerField
 from django.templatetags.i18n import language
 from django.urls import reverse
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext as _, ngettext
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.http.response import HttpResponseRedirect
@@ -18,6 +18,7 @@ from django.http import HttpResponse
 from django.conf import settings
 from django.apps import apps
 from django.templatetags.static import static # to use the 'static' tag as in the templates
+from django.contrib import messages
 # second party
 import os
 import gzip #it's standard in python
@@ -34,6 +35,7 @@ from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
 from tkinter.constants import CURRENT
+from MySQLdb._mysql import result
 
 
 ''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
@@ -100,6 +102,7 @@ def backuprestore(request):
         # Empty the database:
         if 'empty' in request.POST.values():
             wipeout_database(request)
+            messages.add_message(request, messages.SUCCESS, _('Account successfully deleted.'))
             return redirect(reverse('homepage'))
 
         if 'restore_data' in request.POST.keys() and request.POST['restore_data'] != '':
@@ -169,12 +172,13 @@ def backuprestore(request):
                 delete_uploadedfiles(files.restore_file.path, request.user) 
                 os.remove(editedOwner_fp)
 
+                messages.add_message(request, messages.SUCCESS, _('Import of backup file successful.'))
+
             # set arbitrary the currentlang
             lang = Languages.objects.filter(owner=request.user).first()
             setter_settings_cookie('currentlang_id', lang.id, request)
             setter_settings_cookie('currentlang_name', lang.name, request)
 
-        #TODO! NOT FINISHED
         if 'import_oldlwt' in request.POST.values() and request.POST['import_oldlwt'] != '':
             form = RestoreForm(request.POST, request.FILES)
             if form.is_valid():
@@ -182,10 +186,19 @@ def backuprestore(request):
                 # process the uploaded file if it exists:
 #                 wipeout_database(request, keep_myuser=True)
                 fp = gunzipper(files.import_oldlwt)
-                import_oldlwt(request.user, fp)
+                result_nb = import_oldlwt(request.user, fp)
                 fp.close()
                 # clean it
                 delete_uploadedfiles(files.import_oldlwt.path, request.user) # clean it
+
+                m = _('Successful import of old lwt : ')
+                m += ngettext('%(count)d language, ', '%(count)d languages, ',
+                                result_nb['createdLanguage_nb']) % {'count': result_nb['createdLanguage_nb']}                    
+                m += ngettext('%(count)d text, ', '%(count)d texts, ',
+                                result_nb['createdText_nb']) % {'count': result_nb['createdText_nb']}                    
+                m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
+                                result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
+                messages.add_message(request, messages.SUCCESS, m)
         
         if 'install_demo' in request.POST.values():
             # First, install the languages (must change the owner):
@@ -248,6 +261,8 @@ def backuprestore(request):
             myuser = MyUser.objects.get(username=user_username)
             login(request, myuser, backend='allauth.account.auth_backends.AuthenticationBackend' )
 
+            messages.add_message(request, messages.SUCCESS, _('Demo successfully installed.'))
+            
 #             if set(['import_oldlwt','install_demo','restore']) & set(request.POST.values()):
 #                 # set the currentlang if not aloready defined
 #                 owner = request.user

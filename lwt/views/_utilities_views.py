@@ -351,8 +351,8 @@ def splitText(text):
 #         t = t.strip()
 
     if noSentenceEnd != '': # 'M.John' must not be cut into 2 sentences. replace the dot with an 'hyphenation point'
-        noSentenceEnd = noSentenceEnd.replace('.', '\.') #because regex takes the '.' for a special char...
-        t = re.sub(r'(' + noSentenceEnd+ ')', lambda a: (a.group(1)[:-1])+r'‧', t)
+        noSentenceEnd = noSentenceEnd.replace('.', '\.') #because the string '\.' were escaped to '.' we need to rescaped them...       t = re.sub(noSentenceEnd , r'‧', t)
+        t = re.sub(noSentenceEnd , r'‧', t)
 
     sentences = splitSentence(t, splitSentenceMark)
 

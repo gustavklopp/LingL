@@ -3,6 +3,9 @@ import os
 from datetime import date
 
 
+# delete the previous database:
+os.remove('lwt/LingL_database.sqlite3')
+
 # first creating the database and populate it
 os.system('python manage.py migrate')
 os.system('python manage.py loaddata  initial_fixture_USER.yaml')

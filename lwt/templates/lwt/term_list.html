@@ -153,7 +153,7 @@
 	<button id="ajax_uncheckAll" class="btn btn-default">{% trans 'Uncheck All' %}</button>
 	&nbsp;&nbsp;
 	{% if request.path == '/export2anki/' %}
-		<span class="alert alert-warning" id="selected_total">
+		<span class="alert alert-warning notfading" id="selected_total">
 		{% if words_with_state_True == 0 %}
 			{% trans 'Nothing to export...' %}
 		{% else %}
@@ -165,7 +165,7 @@
 		{% endif %}
 		</span>
 	{% elif request.path == '/selectivebackup/' %}
-		<span class="alert alert-warning" id="selected_total">
+		<span class="alert alert-warning notfading" id="selected_total">
 		{% if words_with_state_True == 0 %}
 			{% trans 'Nothing to backup...' %}
 		{% else %}
@@ -177,7 +177,7 @@
 		{% endif %}
 		</span>
 	{% else %}
-		<span class="alert alert-warning" id="selected_total" {% if words_with_state_True == 0 %}hidden{% endif %}>
+		<span class="alert alert-warning nofading" id="selected_total" {% if words_with_state_True == 0 %}hidden{% endif %}>
 			{% blocktrans count counter=words_with_state_True %}
 			1 word to delete
 			{% plural %}

@@ -18,8 +18,6 @@
 
 {% block content %}
 
-<div class="row">
-<div class="col-md-6">
 <h3 id="keyboard_shortcut">{% trans "Keyboard shortcuts when reading a text" %}</h3>
 <h5>{% trans "When the text is in focus (normal start) :" %}</h5>
 <table class="table shortcut_table">
@@ -98,9 +96,7 @@
     </tr>
   </tbody>
 </table>
-</div>
 
-<div class="col-md-6">
 <h3 id="mouse_control">{% trans "Mouse controls" %}</h3>
 <table class="table mousecontrol_table">
   <tbody>
@@ -114,11 +110,7 @@
     </tr>
   </tbody>
 </table>
-</div>
-</div>
 
-<div class="row">
-<div class="col-md-12">
 <h3 id="dicturi">{% trans "Creating your own dictionary link:" %}</h3>
 {% blocktrans %}
 <p><em>LingL</em> provides a few choice of dictionary links which could work for your language (like Wiktionary, Google etc...)
@@ -137,7 +129,6 @@ but you can provide your own link to your prefered dictionary.</p>
 		</li>
 </ul>
 {% endblocktrans %}
-</div></div>
 {% endblock content %}
 
 {% block footlicence %}

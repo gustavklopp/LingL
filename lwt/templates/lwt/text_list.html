@@ -112,7 +112,7 @@
 		<button id="archive" type="button" class="btn btn-default" title="{% trans 'archive the selected text(s)' %}">
 			<i class="fa fa-file-archive-o" aria-hidden="true"></i>
 		</button>
-		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0" title="{% trans "create a new text" %}" ><img src="{% static 'lwt/img/icn/plus-button.png' %}" alt="New" /> {% trans "New Text " %}...</a> 
+		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0" title="{% trans "create a new text" %}" ><img src="{% static 'lwt/img/icn/new-text.png' %}" alt="New" /> {% trans "New Text " %}...</a> 
 	</div>
     {# Note: the body of the text_table is loaded tx to the 'load_texttable' func, found in `text.py` #}	
 	<table id="text_table" data-toggle="table" data-sort-name="title" data-sort-order="asc"
@@ -136,14 +136,12 @@
 	{% endif %}
 	{% endif %}
 	<th data-field="title_tag" data-sortable="true">{% trans 'Title [Tags] / Audio:' %}&nbsp;<img src="{% static 'lwt/img/icn/speaker-volume.png' %}" title="{% trans "With Audio" %}" alt="With Audio" />{% trans ', Src.Link:' %}&nbsp;<img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Source Link available" %}" alt="Source Link available" /></th>
-	{% blocktrans %}
-	<th data-field="total_words" data-sortable="true" data-sorter="numberSorter">Tot.<br />Wo.</th>
-	<th data-field="saved_words" data-sortable="true" data-sorter="numberSorter">Saved<br />Wo (incl.Ex)</th>
-	<th data-field="unknown_words" data-sortable="true" data-sorter="numberSorter">Unkn.<br />Words</th>
-	<th data-field="unknown_words_pc" data-sortable="true" data-sorter="numberSorter">Unkn.<br />(%)</th>
-	<th data-field="lastopentime" data-sortable="true" data-sorter="dateSorter">Last<br />open</th>
-	<th data-field="archived" data-sortable="true">Arch.</th>
-	{% endblocktrans %}
+	<th title="{% trans 'Total number of words (no duplicate words)' %}" data-field="total_words" data-sortable="true" data-sorter="numberSorter">{% trans 'Tot.<br />Wo.' %}</th>
+	<th title="{% trans 'Total number of saved words (no duplicate words) (& of Compound words)' %}" data-field="saved_words" data-sortable="true" data-sorter="numberSorter">{% trans 'Saved<br />Wo (& Expr.)' %}</th>
+	<th title="{% trans 'Total number of unknown words (no duplicate words)' %}" data-field="unknown_words" data-sortable="true" data-sorter="numberSorter">{% trans 'Unkn.<br />Words' %}</th>
+	<th title="{% trans '% of unknown words (no duplicate words)' %}" data-field="unknown_words_pc" data-sortable="true" data-sorter="numberSorter">{% trans 'Unkn.<br />(%)' %}</th>
+	<th title="{% trans 'When the text was open for the last time' %}" data-field="lastopentime" data-sortable="true" data-sorter="dateSorter">{% trans 'Last<br />open' %}</th>
+	<th title="{% trans 'Is the text archived?' %}" data-field="archived" data-sortable="true">Arch.</th>
 	</tr>
 	</thead>
 	</table>

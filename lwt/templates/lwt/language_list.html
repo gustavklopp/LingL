@@ -18,10 +18,10 @@
 
 		{#  ADDING THE TOOLBAR #}
 	<div id="langtable_toolbar" class="btn-group">
-		<button id="delete" type="button" class="btn btn-default">
+		<button id="delete" type="button" class="btn btn-default" title="{% trans 'delete the selected language(s)' %}">
 			<i class="fa fa-trash" aria-hidden="true"></i>
 		</button>
-		<a class="btn btn-default" role="button" href="{% url 'language_detail' %}?new=0"><img src="{% static 'lwt/img/icn/plus-button.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Language " %}...</a> 
+		<a class="btn btn-default" role="button" href="{% url 'language_detail' %}?new=0"><img src="{% static 'lwt/img/icn/new-language.png' %}" title="{% trans "New" %}" alt="New" /> {% trans "New Language " %}...</a> 
 	</div>
 
 	<table id="lang_table" data-toggle="table" data-sort-name="language" data-sort-order="asc"

@@ -1,4 +1,3 @@
-
 # django:
 from django.shortcuts import render, redirect
 from django.template import context
@@ -24,6 +23,8 @@ from lwt.views._nolang_redirect_decorator import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 
+
+'''provide a different colors for each categories'''
 def get_spaced_colors(n):
     max_value = 16581375 #255**3
     interval = int(max_value / n)
@@ -75,24 +76,25 @@ class LineChart(Chart):
     def get_datasets(self, language_id):
         if language_id == 'total':
             languages = Languages.objects.all().order_by('name')
-            words = Words.objects.exclude(Q(isnotword=True)&Q(isCompoundword=False)).\
-                            all().order_by('created_date')
+            words = Words.objects.exclude(status=0).\
+                            all().order_by('modified_date')
             datasets = []
             colors = get_spaced_colors(languages.count())
-            first_time_all = words.first().created_date
+            first_time_all = words.first().modified_date
             self.labels = []
             for idx, language in enumerate(languages):
                 data = []
-                count = 0
                 first_time = first_time_all
-                while (first_time < timezone.now()):
+                while (True):
                     last_time = first_time + timedelta(weeks=1)
                     time_words_count = words.filter(language=language).\
-                            filter(created_date__gte=first_time).filter(created_date__lt=last_time).count()
+                            filter(Q(modified_date__gte=first_time)&Q(modified_date__lt=last_time)).count()
                     data.append(time_words_count)
                     if idx == 0:
                         self.labels.append(first_time.strftime('%y-%m-%d'))
-                    first_time = first_time + timedelta(weeks=1)
+                    first_time = last_time
+                    if first_time > timezone.now():
+                        break
                 datasets.append(DataSet(
                                         type='bar', 
                                         color=colors[idx],
@@ -104,18 +106,20 @@ class LineChart(Chart):
             return datasets
         else:
             language = Languages.objects.get(id=language_id)
-            words = Words.objects.exclude(Q(isnotword=True)&Q(isCompoundword=False)).\
-                                filter(language=language).all().order_by('created_date')
+            words = Words.objects.exclude(status=0).\
+                                filter(language=language).all().order_by('modified_date')
             data = []
             self.labels = []
-            first_time = words.first().created_date
-            count = 0
-            while (first_time < timezone.now()):
+            first_time = words.first().modified_date
+            while (True):
                 last_time = first_time + timedelta(weeks=1)
-                time_words_count = words.filter(created_date__gte=first_time).filter(created_date__lt=last_time).count()
+                time_words_count = words.filter(Q(modified_date__gte=first_time)&\
+                                                Q(modified_date__lt=last_time)).count()
                 data.append(time_words_count)
                 self.labels.append(first_time.strftime('%y-%m-%d'))
-                first_time = first_time + timedelta(weeks=1)
+                first_time = last_time
+                if first_time > timezone.now():
+                    break
             return [DataSet(
                             type='bar',
                             label=_('number of words created for ') + language.name,
@@ -130,7 +134,7 @@ def statistics(request):
     ######################################## Get Settings ##################################################################
     # get currentlang_id from cookie, else from database
     currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
-        # get the list of languages for filtering:
+    # get the list of languages for filtering:
     filterlangs = Languages.objects.filter(owner=request.user).all().order_by('name')
         
     # get the current database size:

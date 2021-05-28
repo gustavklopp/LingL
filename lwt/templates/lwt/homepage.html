@@ -11,7 +11,7 @@
 {% block content %}
 
 {% if text_exist == 0 and language_selectoption|length == 1 %} {# First time user: No texts in the database and only one language #}
-	<div class="alert alert-danger" role="alert">
+	<div class="alert alert-danger notfading" role="alert">
 		{% trans "Hint: The database seems to be empty." %}<br>
 		   {# Install the demo database if the website is on localhost #}
 	{% ifequal request.get_host|slice:":9" "127.0.0.1" %}
@@ -26,10 +26,9 @@
 	</div>
 {% else %}
 	<ul>{# the drop-down menu for the language selection #}{# setLang is in pgm.js: TODO #}
-	<li>{% trans "Language" %}: 
+	<li>{% trans "Currently learning" %}: 
 	 <select id="filterlang" onchange="if (this.value) {url =  '{% url 'homepage' %}?setcurrentlang=' + value; window.location.href=url;}">
 	<optgroup label="[{% trans "Select" %}...]">
-			<option value="-1" {% if currentlang_id == -1 %}selected="selected"{% endif %}>[{% trans "Filter Off" %}]</option>
 		{% for lang in language_selectoption %}
 			<option value="{{ lang.id }}" {% if lang.id == currentlang_id %}selected="selected"{% endif %}>{{ lang.name }}</option>
 		{% endfor %}
@@ -57,12 +56,12 @@
 {% endif %}
 
 <ul>
-<li><a href="{% url 'text_list' %}?page=1"><img src="{% static "lwt/img/icn/texts.png" %}" alt="texts" />&nbsp;{% trans "My Texts" %}</a> (-> <a href="{% url 'text_detail' %}?new=0">{% trans "New Text" %}</a>)</li> 
+<li><a href="{% url 'text_list' %}?page=1"><img src="{% static "lwt/img/icn/texts.png" %}" alt="texts" />&nbsp;{% trans "My Texts" %}</a> (-> <a href="{% url 'text_detail' %}?new=0"><img src="{% static "lwt/img/icn/new-text.png" %}" alt="new-text" />&nbsp;{% trans "New Text" %}</a>)</li> 
 	<br><br></li>
 	{% if currentlang_name == "" %}
 <li><a href="{% url 'language_detail' %}?new=0">{% trans "Create New Language" %}</a>
 	{% else %}
-<li><a href="{% url 'language_list' %}"><img src="{% static "lwt/img/icn/languages.png" %}" alt="languages" />&nbsp;{% trans "My Languages" %}</a> (-> <a href="{% url 'language_detail' %}?new=0">{% trans "New Language" %}</a>)
+<li><a href="{% url 'language_list' %}"><img src="{% static "lwt/img/icn/languages.png" %}" alt="languages" />&nbsp;{% trans "My Languages" %}</a> (-> <a href="{% url 'language_detail' %}?new=0"><img src="{% static "lwt/img/icn/new-language.png" %}" alt="new-language" />&nbsp;{% trans "New Language" %}</a>)
 	{% endif %}
 	<br><br></li>
 <li><a href="{% url 'term_list' %}"><img src="{% static "lwt/img/icn/terms.png" %}" alt="terms" />&nbsp;{% trans "My Terms (Words and Expressions)" %}</a></li>

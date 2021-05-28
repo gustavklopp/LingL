@@ -31,6 +31,12 @@ $(document).ready(function(e) {
 			prev_unknown_word = prev_unknown_word.prev()
 		}
 	}
+	// auto scroll to this word:
+	$('#bottomleft').animate({
+		scrollTop: (sel_word.offset().top - $( window ).height()*1/3)
+	}, 800);
+	
+	
 	sel_word.addClass('clicked'); 
 	// set the focus when clicking back into the text zone
 	/* NOT USED finally
@@ -60,6 +66,15 @@ function _move_next_word(sel_word, e){
 			next_word = next_word.next()
 		}
 	}
+
+	// auto scroll when moving with the keyboard arrow -> :
+	var scrollY = sel_word.offset().top - $( window ).height()*1/3;
+	if (sel_word.offset().top > $( window ).height()*2/3){
+		$('#bottomleft').animate({
+			scrollTop:  '+='+scrollY.toString()+'px'
+		}, 800);
+	}
+
 	sel_word.addClass('clicked'); //select the next word
 	click_ctrlclick_toggle(sel_word, e); // creating: clicktooltip and the right panel (bottom & top)
 }

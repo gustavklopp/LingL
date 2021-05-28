@@ -161,7 +161,7 @@ class Text_read(Base):
         self.assertEqual(self.selenium.find_element(*tooltip_righthandle_selector).text, '', 
                          msg="Tooltip doesn't disappear when mouse over the right handle")
  
-
+        # submit the word 'aimer'
         words = self.finds(By.XPATH, "//span[contains(text(),'aimer')]")
         words[0].click()
         textarea = self.find(By.ID, 'id_translation')
@@ -171,7 +171,7 @@ class Text_read(Base):
 
         self.wait_until_text_appear((By.XPATH, '//div[@id="topright"]'), 'OK: Term saved.')
         
-        # then click on another word in text_read
+        # then click on another word: 'aimerais' in text_read
         words = self.finds(By.XPATH, "//span[contains(text(),'aimerais')]")
         words[0].click()
         # click on the similar word (word already saved)
@@ -201,6 +201,12 @@ class Text_read(Base):
         self.assertEqual(len(totalsavedwords), 4)
         newsavedwords = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')
         self.assertEqual(len(newsavedwords), 2, )
+
+        # clicking on word 'aimeront' should make only one similar word to appear:
+        words = self.finds(By.XPATH, "//span[contains(text(),'aimeront')]")
+        words[0].click()
+        similarwords = self.finds(By.XPATH, '//span[@class="possible_similarword"]')
+        self.assertEqual(len(similarwords), 1)
 
     def test_saving_one_compoundword(self):
 #         language_2 = EnglishLanguagesFactory(owner=self.user_1)

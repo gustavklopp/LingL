@@ -77,19 +77,24 @@
 	{% endblock footlicence %}
 
 {# script for Bootstrap #}
-	<script type="text/javascript" src="{% static 'lwt/js/__popper.min.js' %}"></script>
-			<!-- Latest compiled and minified JavaScript for Bootstrap -->
-			<script src="{% static 'lwt/js/bootstrap4.0.min.js' %}"></script>
-			<!--  enable tooltip Bootstrap -->
-<script>
-			$(document).ready(function () {
-				  $("body").tooltip({   
-				    selector: "[data-toggle='tooltip']",
-				    container: "body",
-				    delay: {'show': 1000},
-				  });
-				});
-			</script>
+<script type="text/javascript" src="{% static 'lwt/js/__popper.min.js' %}"></script>
+<!-- Latest compiled and minified JavaScript for Bootstrap -->
+<script src="{% static 'lwt/js/bootstrap4.0.min.js' %}"></script>
+	<script>
+	$(document).ready(function () {
+		/* enable tooltip Bootstrap */
+		  $("body").tooltip({   
+			selector: "[data-toggle='tooltip']",
+			container: "body",
+			delay: {'show': 1000},
+		  });
+		});
+
+		/* display the messages for 3 secs and fade them */
+		$(".alert-success").fadeTo(4000, 500).slideUp(500, function() {
+		  $(".alert-success").slideUp(500);
+		});
+	</script>
 {% block footjavascript %}
 {% endblock footjavascript %}
     </body>

@@ -9,7 +9,7 @@ from django.db.models.fields import CharField,IntegerField
 from django.templatetags.i18n import language
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger # used for pagination (on text_list for ex.)
 from django.urls import reverse
-from django.utils.translation import ugettext as _, ungettext as s_, ngettext
+from django.utils.translation import ugettext as _, ngettext
 from django.contrib.auth.decorators import login_required
 from django.templatetags.static import static # to use the 'static' tag as in the templates
 from django.http import HttpResponse, JsonResponse
@@ -69,11 +69,11 @@ def load_texttable(request):
         t_dict = {}
         t_dict['id'] = t.id
         ##############################
-        if not t.archived:
+        if not t.archived: # display a choice popup if trying to read an archived text
             onclick_r = 'document.location = \''+reverse('text_read',args=[t.id]) +'\';'
         else:
             onclick_r = 'warning_read(\''+reverse('text_read',args=[t.id]) +'\');'
-        t_dict['read'] = '<img onclick="'+onclick_r+'" src="' + \
+        t_dict['read'] = '<img class="btn" onclick="'+onclick_r+'" src="' + \
             static('lwt/img/icn/book-open-bookmark.png') + '" title="'+ _('Read text') + '" alt="'+_('Read')+'" />'
         t_dict['edit'] = '<a href="'+ reverse('text_detail') + '?edit='+str(t.id) + '"><img src="' + \
             static('lwt/img/icn/document--pencil.png') + '" title="'+ _('edit text') + '" alt="'+_('edit')+'" /></a>'
@@ -95,22 +95,20 @@ def load_texttable(request):
             '"/></a>'
         t_dict['title_tag'] = r
         if not t.archived:
-            ##############################display some stats about the Texts: ############################################
+            ##########################################################################
+            #        display some stats about the Texts:                             #
+            ##########################################################################
             # Total words in this text: don't count duplicate (words written similarly)
             texttotalword_list = Words.objects.filter(text=t).\
                     exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
-            texttotalword = len(distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
+            texttotalword_list = (distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
+            texttotalword = len(texttotalword_list)
                     
             # Already saved words in this text: don't count duplicate (words written similarly) 
-            textsavedword = 0
-            textsavedword += Words.objects.filter(Q(text=t)&Q(status__gt=0)&\
-                                                    Q(grouper_of_same_words=None)).count()
-            gosw_textsavedwords = Words.objects.filter(Q(text=t)&Q(status__gt=0)).\
-                                        exclude(grouper_of_same_words=None).order_by('grouper_of_same_words')
-            distinct_gosw_textsavedwords = distinct_on(gosw_textsavedwords, 'grouper_of_same_words', case_unsensitive=False)
-            textsavedword += len(distinct_gosw_textsavedwords)
+            textsavedword = len([wo for wo in texttotalword_list if wo.status != 0])
 
-            textsavedexpr = Words.objects.filter(owner=request.user).filter(text=t,isCompoundword=True,status__gt=0).count()
+            textsavedexpr = Words.objects.filter(owner=request.user).\
+                                filter(text=t, isCompoundword=True, status__gt=0).count()
             textunknownword = texttotalword - textsavedword
             if texttotalword != 0:
                 textunknownwordpercent = 100 * textunknownword//texttotalword
@@ -162,7 +160,7 @@ def load_texttable(request):
             r = _('never') 
         t_dict['lastopentime'] = r
         ##############################
-        r = '<img onclick="document.location = \''+reverse('text_list')+'?unarchive='+str(t.id)+'\';" title="'+_('text was archived. Click to Un-archive')+'" src="'+static('lwt/img/icn/fa-file-archive-o_colored.png')+'" />'
+        r = '<img onclick="document.location = \''+reverse('text_list')+'?unarchive='+str(t.id)+'\';" title="'+_('text was archived. Click to Un-archive')+'" src="'+static('lwt/img/icn/fa-file-archive-o_colored2.png')+'" />'
         t_dict['archived'] = r if t.archived else '' 
 
         data.append(t_dict)
