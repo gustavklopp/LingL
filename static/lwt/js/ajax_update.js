@@ -198,28 +198,22 @@ function update_workcount(){
 		counts[wordtext_list[i]] = 1 + (counts[wordtext_list[i]] || 0);
 	} 
 	// sum up all these different occurences
-	var work_left_todo = Object.keys(counts).length;
-/*
-	var work_left_todo = 0;
-	var status0_words = $('span[woid][iscompoundword="False"][wostatus=0]');
-	var prev_wowordtext = '';
-	status0_words.each(function(idx, val){
-		if ($(val).attr('wowordtext') != prev_wowordtext){
-			prev_wowordtext = $(val).attr('wowordtext');	
-			work_left_todo++;
-		}
-	});
-	*/
-	/* counting without discrimnate the duplicates	
-	var work_left_todo = $('span[woid][iscompoundword="False"][wostatus=0]').length; */
-	$('#word_left_todo').html('&nbsp;'+work_left_todo.toString()+'&nbsp;');
+	var todo_wordcount = Object.keys(counts).length;
+
+	// and in percent:
+	var texttotalword = $('#todo_wordcount_pc').data('texttotalword');
+	var todo_wordcount_pc = Math.round( todo_wordcount*100/texttotalword );
+
+	// displaying it
+	$('#todo_wordcount').html('&nbsp;'+todo_wordcount.toString()+'&nbsp;');
+	$('#todo_wordcount_pc').html(todo_wordcount_pc.toString());
 	// and change the color if necessary:
-	if (work_left_todo == 0){
-		$('#word_left_todo').attr('wostatus','1'); 
+	if (todo_wordcount == 0){
+		$('#todo_wordcount_AND_pc').attr('wostatus','1'); 
 		// and disable the 'i know all' button
 		$('button#iknowall').attr('disabled','');
 	} else {
-		$('#word_left_todo').attr('wostatus','0'); }
+		$('#todo_wordcount_AND_pc').attr('wostatus','0'); }
 }
 
 /* NOT USED FINALLY */

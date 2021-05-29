@@ -16,7 +16,9 @@ from django.utils.translation import ngettext
 import json
 import datetime
 # third party
-import requests #use to scrap
+# import requests #use to scrap
+from urllib.request import Request, urlopen # use to scrarp the dictionary
+import html # use to scrarp the dictionary
 from bs4 import BeautifulSoup #use to scrap
 # local
 from lwt.models import *
@@ -60,8 +62,9 @@ def text_read(request, text_id):
     texttotalword = Words.objects.filter(text=text,isnotword=False).exclude(isCompoundword=True).count()
     textsavedword = Words.objects.filter(text=text,isnotword=False,status__gt=0).exclude(isCompoundword=True).count()
     todo_wordcount = texttotalword - textsavedword 
+    todo_wordcount_pc = int(round( todo_wordcount*100 / texttotalword ))
     
-    # to have the tooltip displayed. Creating the block of text which the Javascript aill read:
+    # to have the tooltip displayed. Creating the block of text which the Javascript will read:
     statuses = json.dumps(get_statuses()) # function in _utilities_views
     wordtags = json.dumps(list(Wordtags.objects.values_list('wotagtext',flat=True).order_by('wotagtext')))
     texttags = json.dumps(list(Texttags.objects.values_list('txtagtext',flat=True).order_by('txtagtext')))
@@ -75,13 +78,26 @@ def text_read(request, text_id):
     return render(request, 'lwt/text_read.html',{ 
                 'text':text,
                 'previoustext':previoustext,'nexttext':nexttext,
-                'todo_wordcount': todo_wordcount,
+                'todo_wordcount': todo_wordcount, 'todo_wordcount_pc':todo_wordcount_pc,
+                                                'texttotalword':texttotalword,
                 # inside thetext div:
                 'word_inthistext':word_inthistext,
                 # for tooltip
                 'statuses':statuses,'wordtags':wordtags,'texttags':texttags,
         })
 
+def _google_API(content):
+    raw_data = content.read()
+    data = raw_data.decode("utf-8")
+    expr = r'(?s)class="(?:t0|result-container)">(.*?)<'
+    re_result = re.findall(expr, data)
+    if (len(re_result) == 0):
+        result = None
+    else:
+        result = html.unescape(re_result[0])
+    
+    return [result]
+    
 ''' Helper func for dictwebpage
     allows to clean the webpage to get only the useful content:
     for ex: remove banner, <script> etc... '''
@@ -127,14 +143,20 @@ def dictwebpage(request):
         if 'issentence' in request.GET.keys() and request.GET['issentence'] != '': # no key "issentence" is sent if the value of 'issentence' is empty in AJAX
             wo_id = int(request.GET['issentence'])
             word = Sentences.objects.values_list('sentencetext',flat=True).get(sentence_having_this_word=wo_id)
-        finalurl = createTheDictLink(wbl,word) # create the url of the dictionary, integrating the searched word
+        finalurl = createTheDictLink(wbl, word) # create the url of the dictionary, integrating the searched word
 
         # case where we can't put the url in an iframe src. we must request the entire html webpage
         # and will display it in the iframe srcdoc 
 
-        if finalurl[0] == '^': # case where we open into the frame
-            try: # check that the URL is working. else display a well-formed error 
-                content = requests.get(finalurl[1:]).content
+        if finalurl[0] == '^' or finalurl[0] == '!': # case where we open into the frame
+#             try: # check that the URL is working. else display a well-formed error 
+            headers = {"User-Agent":"Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727; .NET CLR 3.0.04506.30)",
+                    "Accept":"text/html,application/xhtml+xml,application/xml; q=0.9,image/webp,*/*;q=0.8"}
+            reqest = Request(finalurl[1:], headers=headers)
+            content = urlopen(reqest)
+
+        if finalurl[0] == '^':
+            try:
                 soup = BeautifulSoup(content, 'html.parser')
                 soup = _remove_scriptTag(soup)
                 links = soup.findAll('link')
@@ -143,12 +165,19 @@ def dictwebpage(request):
                     link_str += str(link)
                 body = soup.find('body')
                 body_str = str(_clean_body(body, finalurl))
-                html_str = '^' + escape(link_str + body_str)
-                return HttpResponse(json.dumps(html_str))
+                html = link_str + body_str 
             except:
-                body_str = render_to_string('lwt/dictwebpage_not_working.html') 
-                html_str = '^' + escape(body_str)
-                return HttpResponse(json.dumps(html_str))
+                html = render_to_string('lwt/dictwebpage_not_working.html') 
+            result_str = escape(html)
+            return HttpResponse(json.dumps(result_str)) 
+
+        if finalurl[0] == '!': # this dictionary use the API (for ex. Google translate)
+            if finalurl[1:].startswith('https://translate.google.com'):
+                translation_result = _google_API(content)
+                context = {'url':finalurl[1:], 'url_name': 'Google Translate',
+                           'translation_result':translation_result, 'word_OR_sentence_origin':word} 
+            return render(request, 'lwt/_translation_api.html', context) 
+
         return HttpResponse(json.dumps(finalurl)) # case where we open into a new window
 
 ''' NOT USED FINALLY '''

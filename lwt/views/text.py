@@ -69,14 +69,16 @@ def load_texttable(request):
         t_dict = {}
         t_dict['id'] = t.id
         ##############################
-        if not t.archived: # display a choice popup if trying to read an archived text
+        if not t.archived: # display a choice popup if trying to read/edit an archived text
             onclick_r = 'document.location = \''+reverse('text_read',args=[t.id]) +'\';'
+            onclick_e = 'document.location = \''+reverse('text_detail')+'?edit='+str(t.id)+'\';'
         else:
-            onclick_r = 'warning_read(\''+reverse('text_read',args=[t.id]) +'\');'
+            onclick_r = 'warning_archive(\''+reverse('text_read',args=[t.id]) +'\');'
+            onclick_e = 'warning_archive(\''+reverse('text_detail')+'?edit='+str(t.id)+'\');'
         t_dict['read'] = '<img class="btn" onclick="'+onclick_r+'" src="' + \
             static('lwt/img/icn/book-open-bookmark.png') + '" title="'+ _('Read text') + '" alt="'+_('Read')+'" />'
-        t_dict['edit'] = '<a href="'+ reverse('text_detail') + '?edit='+str(t.id) + '"><img src="' + \
-            static('lwt/img/icn/document--pencil.png') + '" title="'+ _('edit text') + '" alt="'+_('edit')+'" /></a>'
+        t_dict['edit'] = '<img class="btn" onclick="'+onclick_e+'" src="' + \
+            static('lwt/img/icn/document--pencil.png') + '" title="'+ _('edit text') + '" alt="'+_('edit')+'" />'
         ##############################
         t_dict['language'] = t.language.name
         ##############################
@@ -160,7 +162,7 @@ def load_texttable(request):
             r = _('never') 
         t_dict['lastopentime'] = r
         ##############################
-        r = '<img onclick="document.location = \''+reverse('text_list')+'?unarchive='+str(t.id)+'\';" title="'+_('text was archived. Click to Un-archive')+'" src="'+static('lwt/img/icn/fa-file-archive-o_colored2.png')+'" />'
+        r = '<img class="btn" onclick="document.location = \''+reverse('text_list')+'?unarchive='+str(t.id)+'\';" title="'+_('text was archived. Click to Un-archive')+'" src="'+static('lwt/img/icn/archive-box.png')+'" />'
         t_dict['archived'] = r if t.archived else '' 
 
         data.append(t_dict)
@@ -479,14 +481,14 @@ def text_detail(request):
                             _('With this additional text, you\'ve got now ') + str(total_words) +\
                              _(' words for ') + savedtext.language.name + \
                             _('. This could slow the program a lot. Please consider archiving or deleting some texts.'))
-
+                text_id = savedtext.id
             else:
                 savedtext = f.save(commit=False)
                 # the field 'created_date' isn't copied in the model because it's an 'auto_add=True'
                 # ... do it manually:
                 savedtext.created_date = f.data['created_date']
-                text_id = request.GET['edit']
-                savedtext.id = int(text_id) # Without doing this, modelform is creating a new object, strangely...
+                text_id = int(request.GET['edit'])
+                savedtext.id = text_id # Without doing this, modelform is creating a new object, strangely...
                 savedtext.save()
 
             # add the Owner in the texttags model (not done automatically)
@@ -500,7 +502,10 @@ def text_detail(request):
                 messages.add_message(request, messages.SUCCESS, _('Text successfully modified'))
             #update the cookie for the database_size
             set_word_database_size(request)
-            return redirect(reverse('text_list'))
+            if 'save_read' in f.data.keys(): # clicking on button "save and read"
+                return redirect(reverse('text_read', args=(text_id,)))
+            else:
+                return redirect(reverse('text_list'))
 
         else: # errors processing
             f = TextsForm(request.user, request.POST)

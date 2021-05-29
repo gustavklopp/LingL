@@ -110,7 +110,7 @@
 			<i class="fa fa-trash" aria-hidden="true"></i>
 		</button>
 		<button id="archive" type="button" class="btn btn-default" title="{% trans 'archive the selected text(s)' %}">
-			<i class="fa fa-file-archive-o" aria-hidden="true"></i>
+			<i class="fa fa-archive" aria-hidden="true"></i>
 		</button>
 		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0" title="{% trans "create a new text" %}" ><img src="{% static 'lwt/img/icn/new-text.png' %}" alt="New" /> {% trans "New Text " %}...</a> 
 	</div>
@@ -255,7 +255,7 @@
 	}); // end of '$("button#archive").click(function(){...'
 		
 /* display a warning when reading an archived text */
-function warning_read(read_url){
+function warning_archive(redirect_url){
 	$('<div></div>').appendTo('body')
     .html(gettext('Text is archived.<br/>Do you want to un-archive it?'))
     .dialog({
@@ -264,7 +264,7 @@ function warning_read(read_url){
         width: 'auto', resizable: false,
         buttons: [ {text: gettext("Yes"),
 					click: function() {
-			document.location = read_url;
+			document.location = redirect_url;
 						}
 					},
 					{text: gettext("Cancel"),

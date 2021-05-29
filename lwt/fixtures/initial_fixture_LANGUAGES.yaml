@@ -9,7 +9,7 @@
     dicturi: "^https://en.pons.com/translate/english-<LCNAME>/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=eng&&dest=<2TCODE>&format=json, http://www.wordreference.com/en<1CODE>/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=en&tl=<1CODE>&q=###"
     textsize: 150
     charactersubstitutions: "´=\"|`=\"|’=\"|‘=\"|...=…|..=‥"
     regexpsplitsentences: ".!?:;"
@@ -35,7 +35,7 @@
     dicturi: "^https://en.pons.com/translate/french-<LCNAME>/###, https://en.wiktionary.org/wiki/###, http://www.wordreference.com/fr<1CODE>/###, https://glosbe.com/gapi/translate?from=fra&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=en&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=en&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -61,7 +61,7 @@
     dicturi: "^https://en.pons.com/translate/italian-<LCNAME>/###, http://www.wordreference.com/it<1CODE>/###, https://glosbe.com/gapi/translate?from=ita&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=it&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=it&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -87,7 +87,7 @@
     dicturi: "http://de-<1CODE>.syn.dict.cc/?s=###, http://www.wordreference.com/ge<1CODE>/###, ^https://en.pons.com/translate/german-<LCNAME>/###, https://glosbe.com/gapi/translate?from=deu&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=de&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=de&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -113,7 +113,7 @@
     dicturi: "http://www.wordreference.com/pt<1CODE>/###, ^https://en.pons.com/translate/portuguese-<LCNAME>/###, https://en.wiktionary.org/wiki/###, https://context.reverso.net/translation/portuguese-<LCNAME>/###, https://www.collinsdictionary.com/dictionary/portuguese-<LCNAME>/###, https://www.linguee.com/portuguese-<LCNAME>/search?query=###&source=auto, https://glosbe.com/gapi/translate?from=por&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=pt&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=pt&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -139,7 +139,7 @@
     dicturi: "http://ce.linedict.com/#/cn<1CODE>/search?query=###, https://kanji.koohii.com/study/kanji/###, http://m.nciku.com/<1CODE>/entry/?query=###, http://chinesedictionary.mobi/?handler=QueryWorddict&mwdqb=###, https://en.wiktionary.org/wiki/###, ^https://en.pons.com/translate/chinese-<LCNAME>/###, http://www.wordreference.com/zh<1CODE>/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=zh&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=zh&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 200
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -165,7 +165,7 @@
     dicturi: "http://jisho.org/words?<2TCODE>=&dict=edict&jap=###, https://kanji.koohii.com/study/kanji/###, http://jisho.org/kanji/details/###, https://en.wiktionary.org/wiki/###, ^https://en.pons.com/translate/japanese-<LCNAME>/###, http://www.wordreference.com/ja<1CODE>/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=ja&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=ja&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 200
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -191,7 +191,7 @@
     dicturi: "http://dictionary.sensagent.com/###/ko-<1CODE>, http://en.wiktionary.org/wiki/###, http://www.wordreference.com/ko<1CODE>/###, https://dict.naver.com/<1CODE>kodict/#/search?query=###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=ko&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=ko&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -217,7 +217,7 @@
     dicturi: "http://dict.longdo.com/search/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=tha&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=th&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=th&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 250
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -243,7 +243,7 @@
     dicturi: "http://morfix.mako.co.il/default.aspx?q=###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=heb&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=he&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=he&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -269,7 +269,7 @@
     dicturi:  "^https://en.pons.com/translate/slovenian-<LCNAME>/###, http://www.wordreference.com/sl<1CODE>/###, https://en.wiktionary.org/wiki/###, https://glosbe.com/gapi/translate?from=sl&&dest=<1CODE>&format=json"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=sl&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=sl&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
@@ -295,7 +295,7 @@
     dicturi:  "^https://en.pons.com/translate/swedish-<LCNAME>/###, http://folkets-lexikon.csc.kth.se/folkets/#lookup&###, http://tyda.se/search/###, https://en.wiktionary.org/wiki/###"
     dict1uri: null
     dict2uri: null
-    googletranslateuri: "*http://translate.google.com/?ie=UTF-8&sl=sv&tl=<1CODE>&text=###"
+    googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=sv&tl=<1CODE>&q=###"
     exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥

@@ -183,7 +183,7 @@ def search_possiblesimilarword(request, word=None):
                        exclude(status=0).\
                        order_by('grouper_of_same_words_id')
 
-    possiblesimilarword = possiblesimilarword_obj.values('id','sentence','customsentence',
+    possiblesimilarword = possiblesimilarword_obj.values('id','status','sentence','customsentence',
                             'translation','text__title', 'wordtext','grouper_of_same_words_id')
     # If other words have the same FK Grouper_of_same_words, remove them from the list
     possiblesimilarword_distinctFK = [] 
@@ -275,6 +275,7 @@ def _copy_word(sourceword, destword, save=True):
                      = i.e they have the same FK Grouper_of_same_words
 '''
 def get_similar_words_AND_gosw(request, word):
+    gosw_to_update = None
     grouper_of_same_words = word.grouper_of_same_words
     if grouper_of_same_words:
         samewordtext_query = Words.objects.filter(language=word.language).\
@@ -284,8 +285,10 @@ def get_similar_words_AND_gosw(request, word):
         samewordtext_query = Words.objects.filter(language=word.language).\
                                  filter(wordtext__iexact=word.wordtext)
 
-    gosw_to_update = samewordtext_query.exclude(grouper_of_same_words=None).first()
-    # creating a GOSW if needed
+    word_with_gosw_to_update = samewordtext_query.exclude(grouper_of_same_words=None).first()
+    if word_with_gosw_to_update:
+        gosw_to_update = word_with_gosw_to_update.grouper_of_same_words
+        # creating a GOSW if needed
     if not gosw_to_update and samewordtext_query.count() != 1:
         id_string = json.dumps([word.wordtext, word.language.natural_key()])
         gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,

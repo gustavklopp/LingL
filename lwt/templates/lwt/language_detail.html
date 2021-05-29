@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 
-	{% block pagetitle %}{% if op == 'new' %}New Language{% elif op == 'edit' %}Edit Language{% endif %} | {{ block.super }}
+	{% block pagetitle %}{% if op == 'new' %}{% trans 'New Language' %}{% elif op == 'edit' %}{% trans 'Edit Language' %}{% endif %} | {{ block.super }}
 	{% endblock pagetitle %}
 
 
@@ -59,7 +59,8 @@ $(document).ready( function() {
 	</script>
 {% endif %}
 
-<h4>{% if op == 'new' %}{% trans "New Language" %} {% else %}{% trans "Edit Language" %} {% endif %}</h4>
+<h4>{% if op == 'new' %}<img src="{% static 'lwt/img/icn/new-language_32px.png' %}" title="{% trans "New" %}" alt="New" />  {% trans "New Language" %}
+ {% else %}<img src="{% static 'lwt/img/icn/document--pencil_32px.png' %}" alt="edit" />  {% trans "Edit Language" %}{% endif %}</h4>
 
 {% crispy form %}
 

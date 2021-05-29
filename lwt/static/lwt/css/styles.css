@@ -1,4 +1,3 @@
-
 /******************************************************************************
      GENERAL (ALL THE PAGES)
 ******************************************************************************/
@@ -8,6 +7,13 @@
   left: 50%;	
 	/* allows to display according to the size of the object to center */
   transform: translate(-50%, -50%);
+}
+
+.icon_16px {
+	max-width: 16px;
+}
+.hover_pointer{ /* make the element as a link: the cursor becomes a pointer */
+	cursor: pointer;
 }
 /******************************************************************************
      IN _MENU
@@ -60,7 +66,7 @@
 }
 
 /* the statuses */
-word_left_todo[wostatus="0"] {
+todo_wordcount[wostatus="0"] {
 	/* for display the TO DO with the word count */
 	background-color: #ADDFFF;
 }
@@ -181,8 +187,8 @@ span[wostatus="99"] {
 }
 
 span[wostatus="100"] { /* status for well-known */
-	background-color: #F8F8F8;
-	border-bottom: dashed 1px #CCFFCC;
+	background-color: #F2F2F2;
+	/*border-bottom: dashed 1px #D6FFD6;*/
 }
 
 span[wostatus="101"] { /* status for ignored */

@@ -91,15 +91,15 @@ var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script>
 	<div class="form-group" id="wblnk_search" data-dictwebpage_searched_word="{{ dictwebpage_searched_word }}" data-wo_id="{{ wo.id }}">
 
 	  <img src="{% static 'lwt/img/dictionary_16x16.png' %}" title="{% trans "Lookup term" %}" alt="Lookup term" /> 
-	  <label title="{% trans "Search word in : " %}{{ wo.language.dict1uri }}" class="radio-inline"><input value="{{ wo.language.dict1uri }}" type="radio" name="wblnk" checked>{% trans "Dict1" %}</label> 
-	  <label title="{% trans "Search word in : " %}{{ wo.language.dict2uri }}" class="radio-inline"><input value="{{ wo.language.dict2uri }}" type="radio" name="wblnk">{% trans "Dict2" %}</label>    
-	  <label title="{% trans "Search word in : " %}{{ wo.language.googletranslateuri }}" class="radio-inline"><input value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "GTr" %}</label>
-	  |<label title="{% trans "Search sentence in : " %}{{ wo.language.googletranslateuri }}" class="radio-inline"><input id="sent_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "Sent.: GTr" %}</label>  
+	  <label title="{% trans "Search word in : " %}{{ wo.language.dict1uri }}. ({% trans 'shortcut=' %}[D])" class="radio-inline"><input id="dict1uri" value="{{ wo.language.dict1uri }}" type="radio" name="wblnk" checked>{% trans "Dict1" %}</label> 
+	  <label title="{% trans "Search word in : " %}{{ wo.language.dict2uri }}. ({% trans 'shortcut=' %}[Shift+D])" class="radio-inline"><input id="dict2uri" value="{{ wo.language.dict2uri }}" type="radio" name="wblnk">{% trans "Dict2" %}</label>    
+	  <label title="{% trans "Search word in : " %}{{ wo.language.googletranslateuri }}. ({% trans 'shortcut=' %}[G])" class="radio-inline"><input id="wo_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "GTr" %}</label>
+	  |<label title="{% trans "Search sentence in : " %}{{ wo.language.googletranslateuri }}. ({% trans 'shortcut=' %}[Shift+G])" class="radio-inline"><input id="sent_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "Sent.: GTr" %}</label>  
 	</div>
 	
 	<!--  Custom searchbox of a word (it calls: function submit_termformSearchbox() )-->
     <div class="input-group" id="termformSearchbox_div">
-  <input id="termformSearchbox" title="{% trans "Note: If it's a compound word, separate the element by a space" %}" type="text" class="form-control" placeholder="{% trans "Search with another spelling?" %}" aria-label="{% trans "Search with another spelling?" %}" aria-describedby="termformSearchbox">
+  <input id="termformSearchbox" title="{% trans "Note: If it's a compound word, separate the element by a space" %}" type="text" class="form-control" placeholder="{% trans "Search another spelling? [AltGr+S]" %}" aria-label="{% trans "Search with another spelling?" %}" aria-describedby="termformSearchbox">
   <div class="input-group-append">
     <button class="btn btn-outline-secondary" onclick="submit_termformSearchbox({{ wo.id }}, {{ wo.language.id }})" type="button">go</button>
   </div>
@@ -113,7 +113,7 @@ var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script>
 		{% if forloop.first %}checked="checked"{% endif %}
 		/>{{ abbr_and_name.abbr }}&nbsp;</span>
 	{% endfor %}
-	<button id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>
+	<button title="{% trans 'shortcut=[AltGr+W]' %}" id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>
 	{% if op == 'edit' %}
 	<!--  Redefine only this word -->
     <div class="form-group">

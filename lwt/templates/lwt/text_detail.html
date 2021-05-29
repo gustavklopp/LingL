@@ -22,7 +22,7 @@
 {% block content %}
 
 {% if op == 'new' %}
-	<h4>{% trans "New Text : Upload your text file -or- Fill the form " %} </h4>
+	<h4><img src="{% static 'lwt/img/icn/new-text_32px.png' %}" alt="New" />  {% trans "New Text : Upload your text file -or- Fill the form " %} </h4>
 
 	<form id="uploaded_textform">
 	{% csrf_token %}
@@ -32,7 +32,7 @@
 	{% crispy form %}
 
 {% elif op == 'edit' %}
-	<h4>{% trans "Edit Text : Modify the text " %} </h4>
+	<h4><img src="{% static 'lwt/img/icn/document--pencil_32px.png' %}" alt="edit" />  {% trans "Edit Text : Modify the text " %} </h4>
 
 <form class="form-horizontal text_detail" method="post" novalidate="novalidate">
 

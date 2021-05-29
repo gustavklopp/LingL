@@ -152,21 +152,25 @@ $(function() {
 		// 'd': link dict1
 		if (keypress == '100' && !_toprightInputBoxes_have_focus()){ 
 			ajax_dictwebpage(WBLINK1, sel_word.attr('wowordtext'),'');
+			$('input#dict1uri[type="radio"]').prop('checked', true);
 		}
 		
 		// 'D': link dict2
 		if (keypress == '68' && !_toprightInputBoxes_have_focus()){ 
 			ajax_dictwebpage(WBLINK2, sel_word.attr('wowordtext'),'');
+			$('input#dict2uri[type="radio"]').prop('checked', true);
 		}
 		
 		// 'g': link gogle word
 		if (keypress == '103' && !_toprightInputBoxes_have_focus()){ 
 			ajax_dictwebpage(WBLINK3, sel_word.attr('wowordtext'),'');
+			$('input#wo_gtr[type="radio"]').prop('checked', true);
 		}
 		
 		// 'G': link google sentence
 		if (keypress == '71' && !_toprightInputBoxes_have_focus()){ 
 			ajax_dictwebpage(WBLINK3, sel_word.attr('wowordtext'), sel_word.attr('woid'));
+			$('input#sent_gtr[type="radio"]').prop('checked', true);
 		}
 
 		// 'AltGr+k': mark all the words in the current sentence as known
@@ -200,35 +204,40 @@ $(function() {
 		}
 
 		// '1': choose the first similar word
-		if (keypress == '49' && !_toprightInputBoxes_have_focus()){ 
+		if (keypress == '49' && !_toprightInputBoxes_have_focus() && 
+							!($('#checkfocus_for_keyboardshortcut').length)){ 
 			var wo_id = $('.kb_short_'+'1').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
 			_move_next_word(sel_word, e);
 		}
 
 		// '2': choose the second similar word
-		if (keypress == '50' && !_toprightInputBoxes_have_focus()){ 
+		if (keypress == '50' && !_toprightInputBoxes_have_focus() && 
+						!($('#checkfocus_for_keyboardshortcut').length)){ 
 			var wo_id = $('.kb_short_'+'2').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
 			_move_next_word(sel_word, e);
 		}
 
 		// '3': choose the third similar word
-		if (keypress == '51' && !_toprightInputBoxes_have_focus()){ 
+		if (keypress == '51' && !_toprightInputBoxes_have_focus() &&
+						!($('#checkfocus_for_keyboardshortcut').length)){ 
 			var wo_id = $('.kb_short_'+'3').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
 			_move_next_word(sel_word, e);
 		}
 
 		// '4': choose the fourth similar word
-		if (keypress == '52' && !_toprightInputBoxes_have_focus()){ 
+		if (keypress == '52' && !_toprightInputBoxes_have_focus() &&
+								!($('#checkfocus_for_keyboardshortcut').length)){ 
 			var wo_id = $('.kb_short_'+'4').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
 			_move_next_word(sel_word, e);
 		}
 
 		// '5': choose the fifth similar word
-		if (keypress == '53' && !_toprightInputBoxes_have_focus()){ 
+		if (keypress == '53' && !_toprightInputBoxes_have_focus() &&
+								!($('#checkfocus_for_keyboardshortcut').length)){ 
 			var wo_id = $('.kb_short_'+'5').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
 			_move_next_word(sel_word, e);
@@ -239,6 +248,40 @@ $(function() {
 			$('#submit_word').trigger('click');
 			event.preventDefault();
 			_move_next_word(sel_word, e);
+		}
+	/*********************************************************/
+	/*          BOTTOMRIGHT PANEL                               */
+	/*********************************************************/
+		// '1': choose the first translation
+		if (keypress == '49' && !_toprightInputBoxes_have_focus()){ 
+			var trans_item_1 = $('#trans_item_1').text();
+			addTranslation(trans_item_1);
+		}
+
+		// '2': choose the first translation
+		if (keypress == '50' && !_toprightInputBoxes_have_focus()){ 
+			var trans_item_2 = $('#trans_item_1').text();
+			addTranslation(trans_item_1);
+		}
+		// '3': choose the first translation
+		if (keypress == '51' && !_toprightInputBoxes_have_focus()){ 
+			var trans_item_3 = $('#trans_item_1').text();
+			addTranslation(trans_item_1);
+		}
+		// '4': choose the first translation
+		if (keypress == '52' && !_toprightInputBoxes_have_focus()){ 
+			var trans_item_4 = $('#trans_item_1').text();
+			addTranslation(trans_item_1);
+		}
+		// '5': choose the first translation
+		if (keypress == '53' && !_toprightInputBoxes_have_focus()){ 
+			var trans_item_5 = $('#trans_item_1').text();
+			addTranslation(trans_item_1);
+		}
+		// '6': choose the first translation
+		if (keypress == '54' && !_toprightInputBoxes_have_focus()){ 
+			var trans_item_6 = $('#trans_item_1').text();
+			addTranslation(trans_item_1);
 		}
 	});
 });

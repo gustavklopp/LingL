@@ -1,0 +1,52 @@
+{% load static %}
+{% load i18n %} {# used for internationalization #}
+
+<div hidden id="checkfocus_for_keyboardshortcut">This is used to check that this panel has loaded</div>
+<p><small><a href="{{ url }}" target="_blank">{{ url }}</a></small></p>
+<p>[{{ url_name }}] <b>{{ word_OR_sentence_origin }}:</b>{% blocktranslate count counter=translation_result|length %}
+																1 translation
+																{% plural %}
+																{{ counter }} translations
+															{% endblocktranslate %}</p>
+{% blocktrans %}
+<p><small>(Click on the word below to copy word(s) as a translation)</small></p>
+{% endblocktrans %}
+
+<script type="text/javascript">
+function addTranslation(s) {
+	var c = $('#id_translation');
+	if (typeof c != 'object') {
+		alert ('Translation can not be copied!');
+		return;
+	}
+	var oldValue = c.val();
+	if (oldValue.trim() == '') {
+		$('#id_translation').val(s); // nothing here, put the new value
+	}
+	else {
+		if (oldValue.indexOf(s) == -1) {
+			c.value = oldValue + ' / ' + s;
+			$('#id_translation').val(c.value); // already something inside (and different). append it
+		}
+		else {
+			if (confirm(s +' = {% trans "Seems already to exist as a translation.\nInsert anyway?" %}')) { 
+				c.value = oldValue + ' / ' + s;
+				$('#id_translation').val(c.value); // already something inside, the SAME!!. but append it anyway...)
+			}
+		}
+	}
+}
+</script>
+
+{% if translation_result|length > 0 %}
+	{% for trans_item in translation_result %}
+		<p><span  title="Copy" class="hover_pointer" onclick="addTranslation('{{ trans_item }}');">
+			<img src="{% static 'lwt/img/icn/tick-button.png' %}"alt="Copy" />&nbsp;
+			<span id="trans_item_{{ forloop.counter }}">{{ trans_item }}</span> <span class="text-muted" title="{% trans 'keyboard shortcut' %}">[{{ forloop.counter }}]</span>
+		</span></p>
+	{% endfor %}
+{% else %}
+		
+		<p>{% trans 'No translations found' %).</p>
+{% endif %}
+	

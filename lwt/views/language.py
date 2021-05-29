@@ -28,7 +28,6 @@ from lwt.forms import make_languagesform
 # helper functions:
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import get_word_database_size
-from test.test_sys_settrace import called
 
 
 # display a table containing all the languages of the User

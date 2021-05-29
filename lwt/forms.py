@@ -188,7 +188,7 @@ def make_languagesform(user_id, dicturi_list=[]):
 
     return LanguagesForm
 
-
+''' saving a text in text_detail (new or edited text)'''
 class TextsForm(forms.ModelForm):
 #     id = forms.IntegerField()
     language = forms.ModelChoiceField(queryset=None, required=True)
@@ -218,7 +218,8 @@ class TextsForm(forms.ModelForm):
 #                                       onclick="{resetDirty(); location.href='{% url 'text_list' %}?page=1';}"))
 #         self.helper.add_input(Button(_('Save and Open'), css_class='btn'))
 #         self.helper.add_input(Submit('Save', 'save'))
-        self.helper.add_input(Submit('save', 'save'))
+        self.helper.add_input(Submit('save', _('save')))
+        self.helper.add_input(Submit('save_read', _('save and read it')))
         self.helper.layout = Layout(
             Field('owner', type="hidden"),
             'language', 'title','text','annotatedtext','audiouri','sourceuri','texttags') # to automatically put request.user in the database
@@ -240,7 +241,8 @@ class TextsForm(forms.ModelForm):
             Field('text', type="hidden"),
             Field('lastopentime', type="hidden"),
             'annotatedtext','audiouri','sourceuri','texttags')
-        self.helper_edit2.add_input(Submit('save', 'save'))
+        self.helper_edit2.add_input(Submit('save', _('save')))
+        self.helper_edit2.add_input(Submit('save_read', _('save and read it')))
  
 #         if hasattr(self.Meta, 'fields'): delattr(self.Meta, 'fields')
 
@@ -282,6 +284,8 @@ class WordsForm(forms.ModelForm):
 #         self.helper.add_input(Submit('Save', 'save'))
         self.helper.add_input(Submit('save', 'save'))
         # rename the labels for the field:
+        self.fields['translation'].label = _('Translation') + ' <small class="text-muted" title="'+\
+            _('keyboard shortcut')+'">[altgr+T]</small>'
         self.fields['extra_field'].label = _('Extra field') + \
             ' <a href="' + reverse('language_detail') + '?edit=' + \
             str(kwargs['instance'].language.id) + '#extra_field'\
@@ -312,7 +316,7 @@ class RestoreForm(forms.ModelForm):
             'import_oldlwt': forms.FileInput(attrs={'accept': '.sql.gz'})
             }
         
-
+'''choose a text in text_detail'''
 class Uploaded_textForm(forms.ModelForm):
     
     def __init__(self, *args, **kwargs):

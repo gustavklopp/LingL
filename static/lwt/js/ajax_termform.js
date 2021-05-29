@@ -113,7 +113,7 @@ function _display_possiblesimilarword(data, wo_id){
 				val.wordtext +'</span>';
 			if (val.translation){ r += ' (= '+val.translation+')'; }
 			r += ' ['+gettext('in : ')+'"'+val.customsentence+'"]'+
-				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('Number keyboard shortcut')+'">['+(key+1)+']</span></li>';
+				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('keyboard shortcut')+'">['+(key+1)+']</span></li>';
 		});
 		r += '</ul>';
 	}

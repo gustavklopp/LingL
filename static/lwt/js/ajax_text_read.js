@@ -154,7 +154,7 @@ function ajax_del_singleword(wo_id) {
  @issentence: it´s the id of the word. put ´´ in fact if it´s not a sentence. */
 function ajax_dictwebpage(WBLINK, phrase, issentence) {
 
-		// case 1 (OUTDATED): it's a dict API: AJAX fetches the JSON on the wwww,
+		// case (OUTDATED): it's a dict API: AJAX fetches the JSON on the wwww,
 		// (in fact, API on Glosbe doesn't work anymore...)
 		if (WBLINK.indexOf('glosbe.com/gapi') != -1){
 			$.ajax({url: WBLINK, type: 'GET',
@@ -170,25 +170,52 @@ function ajax_dictwebpage(WBLINK, phrase, issentence) {
 					}
 					});
 		}
-		// case 2: it's a simple dict webpage: AJAX sends the link to process to the view dictwebpage,
+		// Case where Opening in a new window with the url given
+		else if (WBLINK.charAt(0) == '*') {	
+			$.ajax({url: '/dictwebpage/', type: 'GET',
+					dataType: 'json',
+					data: {'word': phrase, 'wbl': WBLINK, 'issentence': issentence},
+					// and the view sends backs a JSON containing the string URL. <iframe> displays it then.
+					success: function(data){
+								var params = 'width='+window.innerWidth/2+', height='+window.innerHeight*0.7+', ';
+								params += 'top='+window.innerHeight/2+', left='+window.innerWidth/2+', ';
+								params += ' scrollbars=yes, menubar=no, resizable=yes, status=no';
+								window.open(data,'dictwin', params);
+							
+							},
+					 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr); }
+					});
+			}
+		// Case where Not using iframe but scraping of the url. Note: 'sandbox' allows to deactivate link inside iframe
+		else if (WBLINK.charAt(0) == '^'){ 
+			$.ajax({url: '/dictwebpage/', type: 'GET',
+					dataType: 'json',
+					data: {'word': phrase, 'wbl': WBLINK, 'issentence': issentence},
+					// and the view sends backs a JSON containing the string URL. <iframe> displays it then.
+					success: function(data){
+								$('#bottomright.text_read').html('<span class="iframe_container"><iframe class="text_read nolink_iframe" id="dictwebpage" src="about:blank" srcdoc="'+data+'"></iframe></span>');
+							},
+					 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr); }
+					});
+			}
+		// Case where the dictionary uses an API (for ex. with Google translate)
+		 else if (WBLINK.charAt(0) == '!'){
+			$.ajax({url: '/dictwebpage/', type: 'GET',
+					data: {'word': phrase, 'wbl': WBLINK, 'issentence': issentence},
+					// and the view sends backs a JSON containing the string URL. <iframe> displays it then.
+					success: function(data){
+								$('#bottomright.text_read').html(data);
+							},
+					 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr); }
+					});
+			}
+		// Case where opening the webpage dict in an iframe with the url given
 		else {	
 			$.ajax({url: '/dictwebpage/', type: 'GET',
 					dataType: 'json',
 					data: {'word': phrase, 'wbl': WBLINK, 'issentence': issentence},
 					// and the view sends backs a JSON containing the string URL. <iframe> displays it then.
 					success: function(data){
-							// Case where Opening in a new window with the url given
-							if (data.charAt(0) == '*'){ 
-								var params = 'width='+window.innerWidth/2+', height='+window.innerHeight*0.7+', ';
-								params += 'top='+window.innerHeight/2+', left='+window.innerWidth/2+', ';
-								params += ' scrollbars=yes, menubar=no, resizable=yes, status=no';
-								window.open(data.slice(1),'dictwin', params);
-							// Case where Not using iframe but scraping of the url. Note: 'sandbox' allows to deactivate link inside iframe
-							} else if (data.charAt(0) == '^'){ 
-								var html_str = data.slice(1);
-								$('#bottomright.text_read').html('<span class="iframe_container"><iframe class="text_read nolink_iframe" id="dictwebpage" src="about:blank" srcdoc="'+data.slice(1)+'"></iframe></span>');
-							// Case where opening the webpage dict in an iframe with the url given
-							} else {
 								$('#bottomright.text_read').html('<iframe class="text_read" id="dictwebpage" src="'+data+'"></iframe>');
 								// check that crossdomain is authorized in iframe:
 								// NOT WORKING
@@ -202,9 +229,6 @@ function ajax_dictwebpage(WBLINK, phrase, issentence) {
 								m += '<p>'+gettext("(see the Help page for more info.)")+'</p>';
 								$('#bottomright.text_read').html('<iframe class="text_read" id="dictwebpage" src="about:blank" srcdoc="'+m+'"></iframe>');
 								*/
-							}
-							
-							
 							},
 					 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr); }
 					});

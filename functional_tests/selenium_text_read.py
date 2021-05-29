@@ -95,9 +95,10 @@ class Text_read(Base):
         text2.text += sentence2
         sentence3 = 'PPP LLL PPP MMM NNN OOO MMM LLL MMM NNN.'
         text2.text += sentence3
+
+        # Verify that the splitting text is working
         splitText(text2)
         self.selenium.get('{}/text_read/{}'.format(self.live_server_url, text2.id))
- 
         thetext = self.find(By.ID, "thetext")
         self.assertEqual(text2.text.strip(), thetext.text.strip(), msg='Text on the text_read screen is not what the new text when created')
         
@@ -113,12 +114,11 @@ class Text_read(Base):
         words = self.finds(By.XPATH, "//span[contains(text(),'MMM')]")
         words[0].click()
  
+        # verify that new_term_form is created in the top right and submit a translation
         expected_sent = sentence3.replace('MMM', '**MMM**')
         self.wait_until_appear(By.XPATH, "//textarea[@id='id_sentence' and contains(text(), '{}')]".format(expected_sent))
-
         textarea = self.find(By.ID, 'id_translation')
         textarea.send_keys('a')
-
         self.find(By.ID, 'submit_word').click()
         elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="1"')
         self.assertEqual(len(elements), 3)
@@ -142,6 +142,52 @@ class Text_read(Base):
         self.assertEqual(len(elements), 3, msg="New text don't get the already saved words")
         self.assertEqual(elements[0].text, 'MMM')
         
+        #editing a word translation:
+        elements[0].click()
+        self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
+        self.find(By.XPATH, "//a[contains(text(),'Edit term')]").click()
+        submit = self.find(By.XPATH, "//button[@id='submit_word' and contains(text(),'Change')]")
+        textarea = self.find(By.ID, 'id_translation')
+        textarea.clear()
+        textarea.send_keys('b')
+        submit.click()
+        elements[2].click()
+        tooltip = self.find(By.CLASS_NAME, 'tooltiptext')
+        self.assertTrue('▶ b' in tooltip.text)
+        
+        #editing a word status to 'well-known':
+        tooltip_righthandle_selector = (By.XPATH, '//td[@align="RIGHT"]/a') 
+        tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
+        ActionChains(self.selenium).move_to_element(tooltip_righthandle).click().perform()
+        self.wait_until_disappear(*tooltip_righthandle_selector)
+
+        elements[1].click()
+        self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
+        self.find(By.XPATH, "//a[contains(text(),'Edit term')]").click()
+        submit = self.find(By.XPATH, "//button[@id='submit_word' and contains(text(),'Change')]")
+        textarea = self.find(By.ID, 'id_translation')
+        textarea.clear()
+        textarea.send_keys('c')
+        # changing status to well known
+        self.find(By.CSS_SELECTOR, 'input[value="100"]').click()
+        submit.click()
+        elements = self.finds(By.XPATH, '//span[@wostatus="100" and contains(text(),"MMM")]')
+        self.assertEqual(len(elements), 3)
+        
+        # and changing again the status 'well-known' to learning:
+        elements[2].click()
+        self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
+        self.find(By.XPATH, "//a[contains(text(),'Edit term')]").click()
+        submit = self.find(By.XPATH, "//button[@id='submit_word' and contains(text(),'Change')]")
+        textarea = self.find(By.ID, 'id_translation')
+        textarea.clear()
+        textarea.send_keys('d')
+        # changing status to well known
+        self.find(By.CSS_SELECTOR, 'input[value="1"]').click()
+        submit.click()
+        elements = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(),"MMM")]')
+        self.assertEqual(len(elements), 3)
+        
     def test_submit_similar_word(self):
 #         language_3 = LanguagesFactory(owner=self.user_1)
 #         Settings_currentlang_id.objects.get(owner=self.user_1).stvalue=language_3
@@ -154,6 +200,7 @@ class Text_read(Base):
  
         self.wait_until_appear(By.CSS_SELECTOR, 'iframe[id="dictwebpage"]')
         
+        # moving on the 'x' of the tooltip makes it disappear
         tooltip_righthandle_selector = (By.XPATH, '//td[@align="RIGHT"]/a') 
         tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
         ActionChains(self.selenium).move_to_element(tooltip_righthandle).click().perform()
@@ -162,8 +209,8 @@ class Text_read(Base):
                          msg="Tooltip doesn't disappear when mouse over the right handle")
  
         # submit the word 'aimer'
-        words = self.finds(By.XPATH, "//span[contains(text(),'aimer')]")
-        words[0].click()
+        words_aimer = self.finds(By.XPATH, "//span[contains(text(),'aimer')]")
+        words_aimer[0].click()
         textarea = self.find(By.ID, 'id_translation')
         textarea.send_keys('to love')
 
@@ -172,8 +219,8 @@ class Text_read(Base):
         self.wait_until_text_appear((By.XPATH, '//div[@id="topright"]'), 'OK: Term saved.')
         
         # then click on another word: 'aimerais' in text_read
-        words = self.finds(By.XPATH, "//span[contains(text(),'aimerais')]")
-        words[0].click()
+        words_aimerais = self.finds(By.XPATH, "//span[contains(text(),'aimerais')]")
+        words_aimerais[0].click()
         # click on the similar word (word already saved)
         similarwords = self.finds(By.XPATH, '//span[@class="possible_similarword"]')
         self.assertEqual(len(similarwords), 1)
@@ -207,6 +254,24 @@ class Text_read(Base):
         words[0].click()
         similarwords = self.finds(By.XPATH, '//span[@class="possible_similarword"]')
         self.assertEqual(len(similarwords), 1)
+        
+        #editing a word make all similar words updated:
+        tooltip_righthandle_selector = (By.XPATH, '//td[@align="RIGHT"]/a') 
+        tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
+        ActionChains(self.selenium).move_to_element(tooltip_righthandle).click().perform()
+        self.wait_until_disappear(*tooltip_righthandle_selector)
+
+        self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')[1].click()
+        self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
+        self.find(By.XPATH, "//a[contains(text(),'Edit term')]").click()
+        submit = self.find(By.XPATH, "//button[@id='submit_word' and contains(text(),'Change')]")
+        textarea = self.find(By.ID, 'id_translation')
+        textarea.clear()
+        textarea.send_keys('to hate')
+        submit.click()
+        self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimer")]')[1].click()
+        tooltip = self.find(By.CLASS_NAME, 'tooltiptext')
+        self.assertTrue('▶ to hate' in tooltip.text)
 
     def test_saving_one_compoundword(self):
 #         language_2 = EnglishLanguagesFactory(owner=self.user_1)
