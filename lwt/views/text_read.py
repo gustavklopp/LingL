@@ -95,9 +95,46 @@ def _google_API(content):
         result = None
     else:
         result = html.unescape(re_result[0])
-    
     return [result]
     
+
+def _pons_API(content):
+    trans_item_nb = 0
+    result = []
+    soup = BeautifulSoup(content, 'html.parser')
+    div_result = soup.find('div', {'class':'results'})
+    if div_result:
+        div_entrys = div_result.findChildren('div', {'class': 'entry'}, recursive=False)
+        for div_entry in div_entrys:
+            h2 = div_entry.find('h2')
+            h2.find('sup').extract()
+            h2 = h2.get_text().strip()
+            result.append({'td1': h2, 'td2': None, 'level': 'h2' })
+            div_translations = div_entry.find('div', {'class': 'translations'})
+            
+            if div_translations:
+                for div_translation in div_translations:
+                    h3 = div_entry.find('h3').get_text().strip()
+                    result.append({'td': h3, 'td': None, 'level': 'h3' })
+                    dl_horizontals = div_translation.findChildren('dl', {'class':'dl-horizontal'},
+                                                                                          recursive=False)
+                    for dl_horizontal in dl_horizontals:
+                        origin = dl_horizontal.find('div', {'class':'source'}).get_text().strip()
+                        target = dl_horizontal.find('div', {'class':'target'}).get_text().strip()
+                        trans_item_nb += 1
+                        result.append({'td1': origin, 'td1': target, 'level': None, 'nb': trans_item_nb })
+            else:
+                dl_horizontals = div_entry.findChildren('dl', {'class':'dl-horizontal'},
+                                                                                      recursive=False)
+                for dl_horizontal in dl_horizontals:
+                    origin = dl_horizontal.find('div', {'class':'source'}).get_text().strip()
+                    target = dl_horizontal.find('div', {'class':'target'}).get_text().strip()
+                    trans_item_nb += 1
+                    result.append({'td1': origin, 'td2': target, 'level': None, 'nb': trans_item_nb })
+            
+
+    return (trans_item_nb, result)
+
 ''' Helper func for dictwebpage
     allows to clean the webpage to get only the useful content:
     for ex: remove banner, <script> etc... '''
@@ -171,10 +208,14 @@ def dictwebpage(request):
             result_str = escape(html)
             return HttpResponse(json.dumps(result_str)) 
 
-        if finalurl[0] == '!': # this dictionary use the API (for ex. Google translate)
-            if finalurl[1:].startswith('https://translate.google.com'):
+        if finalurl[0] == '!': # this dictionary uses my custom APIs (for ex. Google translate)
+            if 'https://translate.google.com' in finalurl:
                 translation_result = _google_API(content)
-                context = {'url':finalurl[1:], 'url_name': 'Google Translate',
+                context = {'url':finalurl[1:], 'url_name': 'Google Translate', 'trans_item_nb':len(translation_result),
+                           'translation_result':translation_result, 'word_OR_sentence_origin':word} 
+            if 'pons.com/translate' in finalurl:
+                trans_item_nb, translation_result = _pons_API(content)
+                context = {'url':finalurl[1:], 'url_name': 'Pons.com', 'trans_item_nb':trans_item_nb,
                            'translation_result':translation_result, 'word_OR_sentence_origin':word} 
             return render(request, 'lwt/_translation_api.html', context) 
 

@@ -2,16 +2,42 @@
 {% load i18n %} {# used for internationalization #}
 
 <div hidden id="checkfocus_for_keyboardshortcut">This is used to check that this panel has loaded</div>
-<p><small><a href="{{ url }}" target="_blank">{{ url }}</a></small></p>
-<p>[{{ url_name }}] <b>{{ word_OR_sentence_origin }}:</b>{% blocktranslate count counter=translation_result|length %}
-																1 translation
-																{% plural %}
-																{{ counter }} translations
-															{% endblocktranslate %}</p>
-{% blocktrans %}
-<p><small>(Click on the word below to copy word(s) as a translation)</small></p>
-{% endblocktrans %}
+{% if trans_item_nb == 0 %}
+	<p>{% trans 'No translations found' %}.</p>
+{% else %}
+	<p>[<a href="{{ url }}" target="_blank">{{ url_name }}</a>] {% blocktranslate count counter=trans_item_nb %}
+																	1 translation
+																	{% plural %}
+																	{{ counter }} translations
+																{% endblocktranslate %}
+	{% static 'lwt/img/icn/tick-button.png' as static_tick_button %}
+	{% blocktranslate %}
+	<br><small>(Click word(s) to copy as a translation or use keyboard shortcuts)</small></p>
+	{% endblocktranslate %}
 
+	{% if trans_item_nb == 1 %}
+		 <p>{{ word_OR_sentence_origin }}: <span  title="Copy" class="hover_pointer" 
+					 onclick="addTranslation('{{ translation_result.0 }}');">
+					<span class="font-weight-bold" id="trans_item_1">{{ translation_result.0 }}</span> 
+					&nbsp;&nbsp;<img src="{% static 'lwt/img/icn/tick-button.png' %}"alt="Copy" />&nbsp;
+					<span class="text-muted" title="{% trans 'keyboard shortcut' %}">[1]</span>
+				</span></p>
+	{% else %}
+		<table class="table">
+		{% for row in translation_result %}
+			<tr class="table-{% if row.level == "h2" %}danger"{% elif row.level == 'h3' %}success{% else %}default{% endif %}">
+					<td {% if not row.td2 %}colspan="2"{% endif %}>{{ row.td1 }}</td>
+					{% if row.td2 %}<td>span  title="Copy" class="hover_pointer" onclick="addTranslation('{{ trans_item.dest }}');">
+				<span class="font-weight-bold"  id="trans_item_{{ row.nb }}">{{ row.td2 }}</span> 
+				&nbsp;&nbsp;<img src="{% static 'lwt/img/icn/tick-button.png' %}"alt="Copy" />&nbsp;
+				<span class="text-muted" title="{% trans 'keyboard shortcut' %}">[{{ row.nb }}]</span>
+			</span></td>{% endif %}
+			</tr>
+		{% endfor %}
+		</table>
+	{% endif %}
+{% endif %}
+	
 <script type="text/javascript">
 function addTranslation(s) {
 	var c = $('#id_translation');
@@ -37,16 +63,3 @@ function addTranslation(s) {
 	}
 }
 </script>
-
-{% if translation_result|length > 0 %}
-	{% for trans_item in translation_result %}
-		<p><span  title="Copy" class="hover_pointer" onclick="addTranslation('{{ trans_item }}');">
-			<img src="{% static 'lwt/img/icn/tick-button.png' %}"alt="Copy" />&nbsp;
-			<span id="trans_item_{{ forloop.counter }}">{{ trans_item }}</span> <span class="text-muted" title="{% trans 'keyboard shortcut' %}">[{{ forloop.counter }}]</span>
-		</span></p>
-	{% endfor %}
-{% else %}
-		
-		<p>{% trans 'No translations found' %).</p>
-{% endif %}
-	

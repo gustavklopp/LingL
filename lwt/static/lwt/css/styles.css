@@ -89,7 +89,9 @@ span[wostatus="6"],
 span[wostatus="7"],
 span[wostatus="8"],
 span[wostatus="9"],
-span[wostatus="10"],
+span[wostatus="10"]{
+	background-color: #F5B8A9;
+}
 span[wostatus="11"],
 span[wostatus="12"],
 span[wostatus="13"],
@@ -99,7 +101,9 @@ span[wostatus="16"],
 span[wostatus="17"],
 span[wostatus="18"],
 span[wostatus="19"],
-span[wostatus="20"],
+span[wostatus="20"]{
+	background-color: #f4beb1;
+}
 span[wostatus="21"],
 span[wostatus="22"],
 span[wostatus="23"],
@@ -110,7 +114,7 @@ span[wostatus="27"],
 span[wostatus="28"],
 span[wostatus="29"],
 span[wostatus="30"] {
-	background-color: #F5B8A9;
+	background-color: #f4c4b9;
 }
 span[wostatus="31"],
 span[wostatus="32"],
@@ -121,7 +125,9 @@ span[wostatus="36"],
 span[wostatus="37"],
 span[wostatus="38"],
 span[wostatus="39"],
-span[wostatus="40"],
+span[wostatus="40"]{
+	background-color: #f4cbc1;
+}
 span[wostatus="41"],
 span[wostatus="42"],
 span[wostatus="43"],
@@ -131,7 +137,9 @@ span[wostatus="46"],
 span[wostatus="47"],
 span[wostatus="48"],
 span[wostatus="49"],
-span[wostatus="50"],
+span[wostatus="50"]{
+	background-color: #f3d1c9;
+}
 span[wostatus="51"],
 span[wostatus="52"],
 span[wostatus="53"],
@@ -141,19 +149,21 @@ span[wostatus="56"],
 span[wostatus="57"],
 span[wostatus="58"],
 span[wostatus="59"],
-span[wostatus="60"],
+span[wostatus="60"]{
+	background-color: #f3d8d1;
+}
 span[wostatus="61"],
 span[wostatus="62"],
 span[wostatus="63"],
 span[wostatus="64"],
 span[wostatus="65"],
-span[wostatus="66"] {
-	background-color: #F6CDC3;
-}
+span[wostatus="66"],
 span[wostatus="67"],
 span[wostatus="68"],
 span[wostatus="69"],
-span[wostatus="70"],
+span[wostatus="70"]{
+	background-color: #f3ded9;
+}
 span[wostatus="71"],
 span[wostatus="72"],
 span[wostatus="73"],
@@ -163,7 +173,9 @@ span[wostatus="76"],
 span[wostatus="77"],
 span[wostatus="78"],
 span[wostatus="79"],
-span[wostatus="80"],
+span[wostatus="80"]{
+	background-color: #f2e5e1;
+}
 span[wostatus="81"],
 span[wostatus="82"],
 span[wostatus="83"],
@@ -173,7 +185,9 @@ span[wostatus="86"],
 span[wostatus="87"],
 span[wostatus="88"],
 span[wostatus="89"],
-span[wostatus="90"],
+span[wostatus="90"]{
+	background-color:#f2ebe9;
+}
 span[wostatus="91"],
 span[wostatus="92"],
 span[wostatus="93"],
@@ -182,10 +196,7 @@ span[wostatus="95"],
 span[wostatus="96"],
 span[wostatus="97"],
 span[wostatus="98"],
-span[wostatus="99"] {
-	background-color: #F7E2DD;
-}
-
+span[wostatus="99"],
 span[wostatus="100"] { /* status for well-known */
 	background-color: #F2F2F2;
 	/*border-bottom: dashed 1px #D6FFD6;*/
@@ -209,8 +220,8 @@ span[show_compoundword="true"]
 span[show_compoundword="True"][cowostatus="100"],
 span[show_compoundword="true"][cowostatus="100"] 
 { /* compoundword status for well-known */
-	background-color: #F8F8F8;
-	border-bottom: dashed 1px #CCFFCC;
+	background-color: #F2F2F2;
+	/* border-bottom: dashed 1px #CCFFCC;*/
 }
 
 span[show_compoundword="True"][cowostatus="101"], 
