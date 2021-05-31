@@ -1,0 +1,632 @@
+#dictcc body {
+	margin: 0;
+	padding: 0;
+	background-color: #fff;
+	-webkit-text-size-adjust: 100%;
+}
+
+#dictcc body,
+#dictcc table,
+#dictcc tr,
+#dictcc td,
+#dictcc div,
+#dictcc p {
+	font-family: arial, helvetica, sans-serif;
+	font-size: 13px
+}
+
+#dictcc a,
+#dictcc a:visited {
+	color: black
+}
+
+#dictcc #adxtop {
+	padding: 0px 11px 11px;
+	margin-bottom: 10px;
+	height: 105px;
+	width: 728px
+}
+
+#dictcc #maincontent,
+#dictcc .mc {
+	background-color: white;
+	width: 730px;
+	padding: 15px 10px 5px 10px;
+	overflow: hidden;
+}
+
+#dictcc #mi2 {
+	width: 728px;
+	margin-left: 1px;
+	display: none
+}
+
+#dictcc ol.nopad {
+	padding: 0px 30px;
+	margin: 0
+}
+
+#dictcc td {
+	padding-left: 6px;
+	padding-right: 6px
+}
+
+#dictcc table.nopad td,
+#wordref td.nopad {
+	padding: 0px
+}
+
+#dictcc table.vokabelheft {
+	border-collapse: collapse
+}
+
+#dictcc table.vokabelheft td {
+	border-bottom: 1px solid #666;
+	padding: 3px 10px
+}
+
+#dictcc td.rlr {
+	border-right: 1px solid #f33
+}
+
+#dictcc dfn {
+	color: #fff;
+	background-color: #aaa;
+	font-style: normal;
+	padding: 0px 3px;
+	cursor: pointer;
+	margin-left: 2px;
+	width: 50px;
+	text-align: center
+}
+
+#dictcc em {
+	color: #36c;
+	font-style: normal;
+	font-weight: bold
+}
+
+#dictcc var {
+	color: #36c;
+	font-style: normal
+}
+
+#dictcc abbr {
+	color: #039;
+	border-bottom: 0
+}
+
+#dictcc kbd {
+	background-color: transparent;
+	color: #039;
+	font-family: serif, arial, helvetica
+}
+
+#dictcc dd {
+	margin-left: 20px;
+	line-height: 18px
+}
+
+#dictcc #overDiv td {
+	padding-left: 1px;
+	padding-right: 1px
+}
+
+#dictcc sup {
+	vertical-align: top;
+	padding-left: 1px;
+}
+
+#dictcc .gendatakk {
+	color: #039;
+	font-style: italic;
+	font-family: serif, arial, helvetica
+}
+
+#dictcc a.nolibg,
+#wordref a.noline,
+#dictcc .noline a,
+#dictcc .nolibg a,
+#dictcc .noli666 a,
+#dictcc .noli666,
+#dictcc .subnav a,
+#dictcc .orangebar a,
+#dictcc .rightli a,
+#dictcc .searchh1 a {
+	text-decoration: none;
+}
+
+#dictcc .noli666 a,
+#dictcc .noli666 {
+	color: #666
+}
+
+#dictcc a.nolibg:hover,
+#dictcc .nolibg a:hover {
+	background-color: white
+}
+
+#dictcc .nolibg a {
+	display: block;
+	padding: 1px 3px
+}
+
+#dictcc a.noline:hover,
+#dictcc .noline a:hover,
+#dictcc .noli666 a:hover,
+#wordref a.noli666:hover,
+#dictcc .subnav a:hover,
+#dictcc .orangebar a:hover,
+#dictcc .rightli a:hover,
+#dictcc .searchh1 a:hover {
+	text-decoration: underline
+}
+
+#dictcc a.bblu {
+	color: #36c;
+	font-weight: bold
+}
+
+#dictcc a.taba,
+#wordref a.tabi:hover {
+	text-decoration: none;
+	background-color: #36c;
+	color: white;
+	padding: 3px 6px 1px
+}
+
+#dictcc a.tabi {
+	text-decoration: none;
+	color: #36c;
+	padding: 2px 6px 1px
+}
+
+#dictcc a.hometaba,
+#wordref a.hometabi:hover {
+	background-color: darkorange;
+	text-decoration: none;
+	color: white;
+	padding: 3px 6px 1px
+}
+
+#dictcc a.hometabi {
+	text-decoration: none;
+	color: darkorange;
+	border: 1px solid darkorange;
+	padding: 2px 6px 1px
+}
+
+#dictcc .dym {
+	background-color: #ddd;
+	color: #333;
+	border-bottom: 1px solid #000;
+	padding: 3px 6px
+}
+
+#dictcc .dym a {
+	color: #666;
+	text-decoration: none
+}
+
+#dictcc .dym a:hover {
+	color: #000;
+	text-decoration: none;
+	background-color: white
+}
+
+#dictcc .td1 a,
+#dictcc .td1nl a,
+#dictcc .td2 a,
+#dictcc .td2nl a {
+	color: white
+}
+
+#dictcc .td1nl a,
+#dictcc .td2nl a,
+#dictcc .td3nl a,
+#dictcc .td4nl a,
+#dictcc .td7nl a {
+	text-decoration: none
+}
+
+#dictcc .td1nl a:hover,
+#dictcc .td2nl a:hover,
+#dictcc .td3nl a:hover,
+#dictcc .td4nl a:hover,
+#dictcc .td7nl a:hover {
+	text-decoration: underline
+}
+
+#dictcc .orangebar,
+#dictcc .subnav,
+#dictcc .bluebar,
+#dictcc .subblue {
+	border-bottom: 1px solid white;
+	width: 716px;
+	padding: 3px 6px;
+	height: 16px;
+	margin-left: 1px
+}
+
+#dictcc .orangebar {
+	background-color: darkorange;
+	background-image: url(//www4.dict.cc/img/bg_orangebar.gif);
+}
+
+#dictcc .subnav {
+	background-color: #fc6;
+	background-image: url(//www4.dict.cc/img/bg_subnav.gif);
+	background-repeat: repeat-x
+}
+
+#dictcc .bluebar {
+	background-color: #36c;
+	color: white
+}
+
+#dictcc .subblue {
+	background-color: #3986e5;
+	color: white
+}
+
+#dictcc .bluebar a,
+#dictcc .subblue a {
+	color: white
+}
+
+#dictcc h1.mainheadline {
+	font-size: 12px;
+	margin: -6px 0px 0px 4px;
+	color: darkorange;
+	font-weight: normal
+}
+
+#dictcc .searchh1 {
+	color: white;
+	font-size: 13px;
+	margin: 0;
+	font-weight: normal
+}
+
+#dictcc .hl1,
+#wordref h1 {
+	color: darkorange;
+	font-size: 16px;
+	font-weight: bold;
+	margin: 25px 0px 3px 0px
+}
+
+#dictcc .hl2,
+#wordref h2 {
+	font-size: 12pt;
+	font-weight: bold;
+	margin: 13px 0px 0px 0px
+}
+
+#dictcc .hl3,
+#wordref h3 {
+	color: #36c;
+	font-size: 14px;
+	font-weight: bold;
+	margin: 13px 0px 0px 0px
+}
+
+#dictcc .td1,
+#dictcc .td1nl {
+	color: white;
+	background-color: #36c
+}
+
+#dictcc .td2,
+#dictcc .td2nl {
+	color: white;
+	padding: 3px 6px;
+	background-color: #666
+}
+
+#dictcc .td3,
+#dictcc .td3nl,
+#dictcc .td3cml,
+#dictcc .td3cmr {
+	background-color: #ddd;
+	word-wrap: break-word;
+	overflow: hidden;
+	max-width: 320px;
+}
+
+#dictcc .td4,
+#dictcc .td4nl,
+#dictcc .td4cml,
+#dictcc .td4cmr {
+	background-color: #eee;
+	word-wrap: break-word;
+	overflow: hidden;
+	max-width: 320px;
+}
+
+#dictcc .td5 {
+	background-color: #ff9
+}
+
+#dictcc .td6 {
+	border-top: 2px solid darkorange;
+	border-bottom: 2px solid darkorange;
+	color: darkorange;
+	font-size: 14px;
+	padding: 8px 8px 1px
+}
+
+#dictcc .td7,
+#dictcc .td7nl,
+#dictcc .td7cml,
+#dictcc .td7cmr {
+	background-color: #eaeaea;
+	border-bottom: 1px solid #ccc;
+	word-wrap: break-word;
+}
+
+#dictcc .td3cml,
+#dictcc .td3cmr,
+#dictcc .td4cml,
+#dictcc .td4cmr,
+#dictcc .td7cml,
+#dictcc .td7cmr {
+	margin: 0;
+	padding: 0;
+	text-align: center;
+	background-image: url(//www4.dict.cc/img/bg_cml.gif);
+	background-position: center;
+	background-repeat: no-repeat
+}
+
+#dictcc .td3cmr,
+#dictcc .td4cmr,
+#dictcc .td7cmr {
+	background-image: url(//www4.dict.cc/img/bg_cmr.gif)
+}
+
+#dictcc .aftertable {
+	margin: 2px 2px 4px 6px;
+	font-size: 11px;
+	color: #999;
+	font-style: italic
+}
+
+#dictcc .aftertable a,
+#wordref a.aftertable {
+	color: #999
+}
+
+#dictcc .news {
+	border-left: 4px solid #36c;
+	background-color: #DDE6EF;
+	padding: 6px;
+	padding-left: 9px;
+	margin-bottom: 3px;
+	border-bottom: 1px solid #666
+}
+
+#dictcc .rightli {
+	background-color: #eee;
+	padding: 0px 3px;
+	margin-bottom: 2px;
+	font-size: 11px
+}
+
+#dictcc .rightli td {
+	padding: 0px;
+	font-size: 11px
+}
+
+#dictcc .rightli a {
+	color: #666
+}
+
+#dictcc .rightmsg {
+	background-color: #ffc;
+	padding: 2px 4px;
+	margin-bottom: 11px;
+	margin-left: 1px;
+	border: 1px solid #666
+}
+
+#dictcc .inp1 {
+	border-width: 1px;
+	background-color: darkorange;
+	color: white
+}
+
+#dictcc .inp2 {
+	border-width: 1px;
+	background-color: #ddd;
+	width: 26px
+}
+
+#dictcc .inp3 {
+	border-width: 1px;
+	background-color: #ccc;
+	width: 42px;
+	font-size: 10px
+}
+
+#dictcc .inp4 {
+	border-width: 1px;
+	background-color: #ccc;
+	width: 85px;
+	font-size: 10px
+}
+
+#dictcc .inp5 {
+	border-width: 1px;
+	background-color: #ccc;
+	width: 18px;
+	font-size: 10px
+}
+
+#dictcc .inp6 {
+	border-color: #666;
+	height: 18px;
+	border-left-color: #fff;
+	border-width: 1px;
+	background-color: #eee;
+	font-size: 10px
+}
+
+#dictcc .inp7 {
+	border-width: 1px;
+	background-color: #ddd
+}
+
+#dictcc .amenu {
+	color: white;
+	background-color: #666;
+	padding: 0 0 0 9px;
+	font: 11px Tahoma, sans serif;
+	width: 225px
+}
+
+#dictcc .amenu a {
+	text-decoration: none;
+	color: white;
+	font-weight: bold
+}
+
+#dictcc .amenu a:hover {
+	text-decoration: underline
+}
+
+#dictcc .cmenu {
+	color: white;
+	background-image: url(//www4.dict.cc/img/bg_cm.gif);
+	padding: 1px;
+	border: 2px solid white;
+	border-right-color: #666;
+	border-bottom-color: #666
+}
+
+#dictcc .cmenu a {
+	display: block;
+	font: 11px Tahoma, sans serif;
+	text-decoration: none;
+	color: #000;
+	padding: 5px 5px 5px 30px
+}
+
+#dictcc .cmenu a:hover {
+	background-color: #ddd;
+	border: 1px solid #808080;
+	padding: 4px 5px 4px 29px
+}
+
+@media print {
+	#dictcc .hidefromprint {
+		visibility: hidden
+	}
+	#dictcc .orangebar,
+	.subnav {
+		visibility: hidden
+	}
+	#dictcc #adxtop,
+	#dictcc #adxtop2,
+	#dictcc #adrig,
+	#dictcc #langbar {
+		display: none
+	}
+	#dictcc div {
+		overflow: visible !important
+	}
+	/*ff printing bug*/
+}
+
+#dictcc .vocbox li {
+	display: block;
+	margin: 1px;
+	padding: 2px;
+	font-size: 20px;
+	text-align: center;
+	background-color: #fff
+}
+
+#dictcc .langlabelfo {
+	background-color: #ccc;
+	font-size: 10px;
+	margin: 2px 0px 2px 3px;
+	border: 1px solid #aaa
+}
+
+#dictcc .langlabelmy {
+	background-color: #eee;
+	font-size: 10px;
+	border: 1px solid #999;
+	color: #333;
+	width: 44px;
+	float: left;
+	text-align: center;
+	margin-right: 5px;
+	padding: 1px
+}
+
+#dictcc .msg {
+	background-color: #ffc;
+	padding: 3px 5px;
+	margin: 0 0 1px 1px
+}
+
+#dictcc #msg {
+	width: 718px;
+	background-color: #ffc;
+	padding: 3px 5px;
+	margin: 0 0 1px 1px
+}
+
+#dictcc .gameanswer {
+	background-color: white;
+	padding: 1px 8px;
+	margin: 3px 5px 3px 17px;
+	display: block;
+	width: 180px;
+	text-decoration: none;
+	border: 1px solid #fc6;
+	border-left-color: white;
+	border-top-color: white;
+	text-align: left
+}
+
+#dictcc .gameanswer:hover {
+	background-color: #fc6
+}
+
+#dictcc .sc_but a {
+	color: black;
+	text-decoration: none;
+	padding: 0 4px;
+	background-color: #ddd;
+	border: 1px solid #666;
+	border-left: 1px solid white;
+	border-top: 1px solid white
+}
+
+#dictcc .sc_but a:hover {
+	background-color: white
+}
+
+#dictcc .imgslide {
+	border: none;
+	opacity: 0;
+	z-index: 0;
+	position: absolute;
+	top: 0;
+	left: 0;
+	-webkit-transition: opacity 1s linear;
+	-moz-transition: opacity 1s linear;
+	-ms-transition: opacity 1s linear;
+	-o-transition: opacity 1s linear;
+	transition: opacity 1s linear;
+}
+
+#dictcc .visi {
+	opacity: 1;
+	z-index: 1;
+}
+
+
