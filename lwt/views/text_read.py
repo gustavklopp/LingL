@@ -12,9 +12,11 @@ from django.utils import timezone
 from django.utils.html import escape
 from django.utils.translation import ugettext as _
 from django.utils.translation import ngettext 
+from django.templatetags.static import static # to use the 'static' tag as in the templates
 # second party:
 import json
 import datetime
+import re
 # third party
 # import requests #use to scrap
 from urllib.request import Request, urlopen # use to scrarp the dictionary
@@ -98,66 +100,148 @@ def _google_API(content):
     return [result]
     
 
-def _pons_API(content):
-    trans_item_nb = 0
-    result = []
+def _pons_API(content, url):
     soup = BeautifulSoup(content, 'html.parser')
-    div_result = soup.find('div', {'class':'results'})
-    if div_result:
-        div_entrys = div_result.findChildren('div', {'class': 'entry'}, recursive=False)
-        for div_entry in div_entrys:
-            h2 = div_entry.find('h2')
-            h2.find('sup').extract()
-            h2 = h2.get_text().strip()
-            result.append({'td1': h2, 'td2': None, 'level': 'h2' })
-            div_translations = div_entry.find('div', {'class': 'translations'})
+    # Sometimes Pons displays the targeted language in the second block, sometimes in the second...
+    pattern = r'(?<=en\.pons\.com/translate/)\w+(?=-)'
+    origin_lang = re.search(pattern, url).group()
+    divs_lang = soup.find_all('div', {'class':'lang'})
+    div_targets = []
+    for div_lang in divs_lang:
+        span_flag = div_lang.findAll('span', {'class':'flag'})[0]
+        if span_flag['title'].lower() == origin_lang.lower():
+            div_targets.extend(div_lang.find_all('div', {'class': 'target'}))
+        else:
+            div_targets.extend(div_lang.find_all('div', {'class': 'source'}))
             
-            if div_translations:
-                for div_translation in div_translations:
-                    h3 = div_entry.find('h3').get_text().strip()
-                    result.append({'td': h3, 'td': None, 'level': 'h3' })
-                    dl_horizontals = div_translation.findChildren('dl', {'class':'dl-horizontal'},
-                                                                                          recursive=False)
-                    for dl_horizontal in dl_horizontals:
-                        origin = dl_horizontal.find('div', {'class':'source'}).get_text().strip()
-                        target = dl_horizontal.find('div', {'class':'target'}).get_text().strip()
-                        trans_item_nb += 1
-                        result.append({'td1': origin, 'td1': target, 'level': None, 'nb': trans_item_nb })
-            else:
-                dl_horizontals = div_entry.findChildren('dl', {'class':'dl-horizontal'},
-                                                                                      recursive=False)
-                for dl_horizontal in dl_horizontals:
-                    origin = dl_horizontal.find('div', {'class':'source'}).get_text().strip()
-                    target = dl_horizontal.find('div', {'class':'target'}).get_text().strip()
-                    trans_item_nb += 1
-                    result.append({'td1': origin, 'td2': target, 'level': None, 'nb': trans_item_nb })
-            
+    for idx, div_target in enumerate(div_targets):
+        trans_item = div_target.get_text().strip()
+        new_tag = '''
+            <span  title="Copy" class="hover_pointer" onclick="addTranslation('{0}');">
+                <img src="{1}" alt="Copy" />&nbsp;<span id="trans_item_{2}">{0}</span>&nbsp;<span class="text-muted" 
+                title="{3}">[{2}]</span>
+            </span>'''.format(trans_item, static('lwt/img/icn/tick-button.png'), idx+1, _('keyboard shortcut'))
+        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('span', {'title':'Copy'})
+        div_target.replace_with(tag_soup)
+    html = _clean_soup(soup, url)
+    return html
 
-    return (trans_item_nb, result)
+def _dictcc_API(content, url):
+    soup = BeautifulSoup(content, 'html.parser')
+    table = soup.find_all('table')[1]
+    rows = table.find_all('tr')
+    idx_item = 0
+    for row in rows:
+        if not row.has_attr('id'):
+            continue
+        idx_item += 1
+        td = row.find_all('td')[1]
+        trans_item = td.get_text().strip()
+        new_tag = '''
+            <td><span  title="Copy" class="hover_pointer" onclick="addTranslation('{0}');">
+                <img src="{1}" alt="Copy" />&nbsp;<span id="trans_item_{2}">{0}</span>&nbsp;<span class="text-muted" 
+                title="{3}">[{2}]</span>
+            </span></td>'''.format(trans_item, static('lwt/img/icn/tick-button.png'), idx_item, _('keyboard shortcut'))
+        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('td')
+        td.replace_with(tag_soup)
+    html = _clean_soup(soup, url)
+    return html
 
-''' Helper func for dictwebpage
+def _wordref_API(content, url):
+    soup = BeautifulSoup(content, 'html.parser')
+    td_towrds = soup.find_all('td',{'class':'ToWrd'})
+    idx_item = 0
+    for td_towrd in td_towrds:
+        if td_towrd.get_text() == 'Englisch':
+            continue
+        idx_item += 1
+        spans = td_towrd.find_all('span')
+        for span in spans:
+            if span.has_attr('title'):
+                continue
+            span.extract()
+        trans_item = td_towrd.get_text().strip()
+        new_tag = '''
+            <td class="ToWrd"><span  title="Copy" class="hover_pointer" onclick="addTranslation('{0}');">
+                <img src="{1}" alt="Copy" />&nbsp;<span id="trans_item_{2}">{0}</span>&nbsp;<span class="text-muted" 
+                title="{3}">[{2}]</span>
+            </span></td>'''.format(trans_item, static('lwt/img/icn/tick-button.png'), idx_item, _('keyboard shortcut'))
+        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('td')
+        td_towrd.replace_with(tag_soup)
+    span_romans = soup.find_all('span',{'class':'roman'})
+    for span_roman in span_romans:
+        idx_item += 1
+        spans = span_roman.find_all('span')
+        for span in spans:
+            if span.has_attr('title'):
+                continue
+            span.extract()
+        trans_item = span_roman.get_text().strip()
+        new_tag = '''
+            <span  title="Copy" class="roman hover_pointer" onclick="addTranslation('{0}');">
+                <img src="{1}" alt="Copy" />&nbsp;<span id="trans_item_{2}">{0}</span>&nbsp;<span class="text-muted" 
+                title="{3}">[{2}]</span>
+            </span></td>'''.format(trans_item, static('lwt/img/icn/tick-button.png'), idx_item, _('keyboard shortcut'))
+        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('span')
+        span_roman.replace_with(tag_soup)
+    html = _clean_soup(soup, url)
+    return html
+
+''' Helper func for dictwebpage (and _pons_API()
     allows to clean the webpage to get only the useful content:
     for ex: remove banner, <script> etc... '''
-def _clean_body(body, url):
-    if 'pons' in url: # Case of a PONS.com website
+def _clean_soup(soup, url):
+    # Remove all <script></script>
+    for scr in soup.select('script'):
+        scr.extract()
+    # We'll keep only <link> and <body>
+    links = soup.findAll('link')
+    link_str = ''
+    for link in links:
+        # further editing of <link> or some API (css file messsing up with my own style)
+        str_link = str(link)
+        # bootstrap style loaded by pons.com are messing up with my own style
+        if 'pons' in url  and 'bootstrap_dict_catalogue' in str_link:
+            continue
+        if 'dict.cc' in url and 'dict.cc/inc/dict.css' in str_link:
+            continue
+        link_str += str_link
+    body = soup.find('body')
+    # further editing of the <body> for some API
+    if 'pons' in url: # Case of a PONS.com website, some div can be removed
         body = body.select_one('#container-content')
 #         for header in body.select('#page-header'):
 #             header.extract()
         body.select_one('.searchbar-tabs').extract()
-#         for header in body.select('#feature-nav'):
-#             header.extract()
-#         for header in body.select('#mobile-page-header'): #useless because the css leaves space for it anyway
-#             header.extract()
-    return body
+    if 'wordref' in url:
+        body.find('header', {'class':'full-header'}).extract()
+        body.find('div', {'id':'ad1'}).extract()
+        body.find('div', {'id':'search'}).extract()
+    body_str = str(body)
+    html = link_str + body_str 
+    return html
 
-def _remove_scriptTag(soup):
-    for scr in soup.select('script'):
-        scr.extract()
-#     for link in soup.select('link'):
-#         link.extract()
-#         if link.find({'type':'text/css'}):
-#             link.extract()
-    return soup
+
+# def _clean_body(body, url):
+#     if 'pons' in url: # Case of a PONS.com website
+#         body = body.select_one('#container-content')
+# #         for header in body.select('#page-header'):
+# #             header.extract()
+#         body.select_one('.searchbar-tabs').extract()
+# #         for header in body.select('#feature-nav'):
+# #             header.extract()
+# #         for header in body.select('#mobile-page-header'): #useless because the css leaves space for it anyway
+# #             header.extract()
+#     return body
+# 
+# def _remove_scriptTag(soup):
+#     for scr in soup.select('script'):
+#         scr.extract()
+# #     for link in soup.select('link'):
+# #         link.extract()
+# #         if link.find({'type':'text/css'}):
+# #             link.extract()
+#     return soup
 
 ''' create dictionary webpage in the bottom right on text_read.html.
 Adapted from: makeOpenDictStrJS(createTheDictLink($wb1,$word)) '''
@@ -180,7 +264,8 @@ def dictwebpage(request):
         if 'issentence' in request.GET.keys() and request.GET['issentence'] != '': # no key "issentence" is sent if the value of 'issentence' is empty in AJAX
             wo_id = int(request.GET['issentence'])
             word = Sentences.objects.values_list('sentencetext',flat=True).get(sentence_having_this_word=wo_id)
-        finalurl = createTheDictLink(wbl, word) # create the url of the dictionary, integrating the searched word
+        finalurl = wbl.replace('<WORD>', word)
+#         finalurl = createTheDictLink(wbl, word) # create the url of the dictionary, integrating the searched word
 
         # case where we can't put the url in an iframe src. we must request the entire html webpage
         # and will display it in the iframe srcdoc 
@@ -195,14 +280,7 @@ def dictwebpage(request):
         if finalurl[0] == '^':
             try:
                 soup = BeautifulSoup(content, 'html.parser')
-                soup = _remove_scriptTag(soup)
-                links = soup.findAll('link')
-                link_str = ''
-                for link in links:
-                    link_str += str(link)
-                body = soup.find('body')
-                body_str = str(_clean_body(body, finalurl))
-                html = link_str + body_str 
+                html = _clean_soup(soup, finalurl)
             except:
                 html = render_to_string('lwt/dictwebpage_not_working.html') 
             result_str = escape(html)
@@ -213,10 +291,16 @@ def dictwebpage(request):
                 translation_result = _google_API(content)
                 context = {'url':finalurl[1:], 'url_name': 'Google Translate', 'trans_item_nb':len(translation_result),
                            'translation_result':translation_result, 'word_OR_sentence_origin':word} 
+                return render(request, 'lwt/_google_api.html', context) 
             if 'pons.com/translate' in finalurl:
-                trans_item_nb, translation_result = _pons_API(content)
-                context = {'url':finalurl[1:], 'url_name': 'Pons.com', 'trans_item_nb':trans_item_nb,
-                           'translation_result':translation_result, 'word_OR_sentence_origin':word} 
+                translation_result = _pons_API(content, finalurl)
+                context = {'translation_result':translation_result, 'API_name':'pons'} 
+            if 'dict.cc' in finalurl:
+                translation_result = _dictcc_API(content, finalurl)
+                context = {'translation_result':translation_result, 'API_name':'dictcc'} 
+            if 'wordref' in finalurl:
+                translation_result = _wordref_API(content, finalurl)
+                context = {'translation_result':translation_result, 'API_name':'wordref'} 
             return render(request, 'lwt/_translation_api.html', context) 
 
         return HttpResponse(json.dumps(finalurl)) # case where we open into a new window

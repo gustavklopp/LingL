@@ -602,15 +602,16 @@ def get_name_status(nb):
     if nb == 101:
         return _("Ignored")
     else:
-        return _('Learning')
+        return _('Learning') #status from 1 to 99
         
 ''' 
+NOTUSEDINFACT
 - called by view dictwebpage to create the dict link in text_read bottomright 
 - called by pgm.js:  create_link_webdict(wblink1,wblink2,wblink3,txt,txid,torder)
 createTheDictLink(wblink1,txt,'Dict1','Lookup Term: ') + =>http://127.0.0.1/trans.php?x=2&i=http%3A//www.wordreference.com/enfr/%23%23%23&t=This  
 createTheDictLink(wblink2,txt,'Dict2','') +
 createTheDictLink(wblink3,txt,'GTr','') + ...'''
-def createTheDictLink(u,t): 
+def NOTUSEDINFACTcreateTheDictLink(u,t): 
     # Case 1: url without any ###: append UTF-8-term
     # Case 2: url with 1 ###: substitute UTF-8-term
     # Case 3: url with 2 ###enc###: substitute enc-encoded-term

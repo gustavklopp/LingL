@@ -8,9 +8,7 @@ import re
 import json
 # local import
 from lwt.models import *
-from lwt.views._utilities_views import splitText
 from lwt.constants import  LANGUAGES_CODE
-from django.utils.lorem_ipsum import sentence
 
 data_file = 'lwt/insert_old_lwt/lwt-backup-2017-10-06-08-45-34.sql'
 

@@ -2,40 +2,34 @@
 {% load i18n %} {# used for internationalization #}
 
 <div hidden id="checkfocus_for_keyboardshortcut">This is used to check that this panel has loaded</div>
-{% if trans_item_nb == 0 %}
-	<p>{% trans 'No translations found' %}.</p>
-{% else %}
-	<p>[<a href="{{ url }}" target="_blank">{{ url_name }}</a>] {% blocktranslate count counter=trans_item_nb %}
-																	1 translation
-																	{% plural %}
-																	{{ counter }} translations
-																{% endblocktranslate %}
-	{% static 'lwt/img/icn/tick-button.png' as static_tick_button %}
-	{% blocktranslate %}
-	<br><small>(Click word(s) to copy as a translation or use keyboard shortcuts)</small></p>
-	{% endblocktranslate %}
+{% if API_name == 'pons' %} {# Pons API needs its own stylesheet #}
+<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_pons.css' %}">
+{% elif API_name == 'dictcc' %} 
+<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_dictcc.css' %}">
+{% elif API_name == 'wordref' %} 
+<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_wordref.css' %}">
+{% endif %}
 
-	{% if trans_item_nb == 1 %}
-		 <p>{{ word_OR_sentence_origin }}: <span  title="Copy" class="hover_pointer" 
-					 onclick="addTranslation('{{ translation_result.0 }}');">
-					<span class="font-weight-bold" id="trans_item_1">{{ translation_result.0 }}</span> 
-					&nbsp;&nbsp;<img src="{% static 'lwt/img/icn/tick-button.png' %}"alt="Copy" />&nbsp;
-					<span class="text-muted" title="{% trans 'keyboard shortcut' %}">[1]</span>
-				</span></p>
-	{% else %}
-		<table class="table">
-		{% for row in translation_result %}
-			<tr class="table-{% if row.level == "h2" %}danger"{% elif row.level == 'h3' %}success{% else %}default{% endif %}">
-					<td {% if not row.td2 %}colspan="2"{% endif %}>{{ row.td1 }}</td>
-					{% if row.td2 %}<td>span  title="Copy" class="hover_pointer" onclick="addTranslation('{{ trans_item.dest }}');">
-				<span class="font-weight-bold"  id="trans_item_{{ row.nb }}">{{ row.td2 }}</span> 
-				&nbsp;&nbsp;<img src="{% static 'lwt/img/icn/tick-button.png' %}"alt="Copy" />&nbsp;
-				<span class="text-muted" title="{% trans 'keyboard shortcut' %}">[{{ row.nb }}]</span>
-			</span></td>{% endif %}
-			</tr>
-		{% endfor %}
-		</table>
-	{% endif %}
+{% static 'lwt/img/icn/tick-button.png' as tick_button %}
+{% blocktrans %}
+<p><small>(Click word(s) beside the <img src="{{ tick_button }}" alt="Copy" /> to copy as a translation or 
+use <span class="text-muted">[keyboard shortcuts nb]</span>)</small></p>
+{% endblocktrans %}
+
+{% if API_name == 'pons' %}
+	<div id="pons">
+	{{ translation_result|safe }}
+	</div>
+{% elif API_name == 'dictcc' %}
+	<div id="dictcc">
+	{{ translation_result|safe }}
+	</div>
+{% elif API_name == 'wordref' %}
+	<div id="wordref">
+	{{ translation_result|safe }}
+	</div>
+{% else %}
+	{{ translation_result|safe }}
 {% endif %}
 	
 <script type="text/javascript">
