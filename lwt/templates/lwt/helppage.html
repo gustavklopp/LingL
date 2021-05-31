@@ -132,12 +132,15 @@
 <p><em>LingL</em> provides a few choice of dictionary links which could work for your language (like Wiktionary, Google etc...)</p>
 <p>Those dictionary links are of the form: <span class="font-weight-bold">'!https://....'</span>. The 
 	<span class="font-weight-bold">'!'</span> at the start means that LingL has an already defined
-   way to fetch this dictionary website (i.e an "API").</p>
+   way to fetch this dictionary website (i.e an "API") and a way to click on the translation 
+   (or use shortcut) to automatically set as a translation.</p>
 <p>But you are not restricted to those dictionaries and you can provide your own link to your prefered dictionary.</p>
 <p>The easiest way is to look at this predefined dictionary links to use a example. But here how it works:</p>
-<ul><li>1. Try to do a simple search for a word on the online dictionary that you want:<br/>
+<ul><li>1. Try to do a simple search for a word on the online dictionary that you want in your browser:<br/>
      	The URL of the word 'test' for example may look like: "https://en.pons.com/translate/english-french/test"</li>
-	<li>2. Replace 'test' with '###' : '###' will be processed as the searched word. so, for example: write: <span class="font-weight-bold">https://en.pons.com/translate/french-english/###</span></li>
+	<li>2. Replace 'test' with '&lt;WORD&gt;' : '&lt;WORD&gt;' will be processed as the searched word. so, for example: 
+	write: <span class="font-weight-bold">https://en.pons.com/translate/french-english/&lt;WORD&gt;</span>
+		(NB: it's only an example since this dictionary is already amongst the built-in <em>LingL</em> dictionary links)</li>
 	<li>3. <span class="font-weight-bold">Warning!</span> Some dictionary webpages prevent the opening of their website on <em>LingL</em> (or any other third party websites) (for ex. Google translate).
 	<p>When trying to look out a word, you will see an error message like: <span class="bg-warning"> a security error prevented the resource from being loaded. </span></p>
 	<p><em>LingL</em> has 2 ways to counteract this:</p>
@@ -148,8 +151,11 @@
 			To have it prepend the link with the <span class="font-weight-bold">'^'</span> character. 
 		For ex.: write <span class="font-weight-bold">^https://translate.google.com/?sl=fr&tl=en&text=test&op=translate</span></p>
 		<p>The first solution may make the website faster than the second one but with the disadvantage of a new window. 
-		The scraped website may also lead to wrong layout of the original dictionary website.</p></li></ul>
-		</li>
+		The scraped website may also lead to wrong layout of the original dictionary website.</p></li>
+		<li>P.S: You can also ask on <a href="https://github.com/gustavklopp/LingL">LingLibre</a> if anybody would like to create an API for your particular dictionary.</li>
+		</ul>
+	</li>
+
 </ul>
 {% endblocktrans %}
 {% endblock content %}

@@ -6,7 +6,7 @@
     owner:
     - lingl
     name: "English"
-    dicturi: "^https://en.pons.com/translate/english-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#English, https://glosbe.com/gapi/translate?from=eng&&dest=<2TCODE>&format=json, http://www.wordreference.com/en<1CODE>/<WORD>"
+    dicturi: "!https://en.pons.com/translate/english-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#English, https://glosbe.com/gapi/translate?from=eng&&dest=<2TCODE>&format=json, http://www.wordreference.com/en<1CODE>/<WORD>"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=en&tl=<1CODE>&q=<WORD>"
@@ -32,7 +32,7 @@
     owner:
     - lingl
     name: French
-    dicturi: "^https://en.pons.com/translate/french-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#French, http://www.wordreference.com/fr<1CODE>/<WORD>, https://glosbe.com/gapi/translate?from=fra&&dest=<2TCODE>&format=json"
+    dicturi: "!https://en.pons.com/translate/french-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#French, http://www.wordreference.com/fr<1CODE>/<WORD>, https://glosbe.com/gapi/translate?from=fra&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=en&tl=<1CODE>&q=<WORD>"
@@ -58,7 +58,7 @@
     owner:
     - lingl
     name: Italian
-    dicturi: "^https://en.pons.com/translate/italian-<LCNAME>/<WORD>, http://www.wordreference.com/it<1CODE>/<WORD>, https://glosbe.com/gapi/translate?from=ita&&dest=<2TCODE>&format=json"
+    dicturi: "!https://en.pons.com/translate/italian-<LCNAME>/<WORD>, http://www.wordreference.com/it<1CODE>/<WORD>, https://glosbe.com/gapi/translate?from=ita&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=it&tl=<1CODE>&q=<WORD>"
@@ -84,7 +84,7 @@
     owner:
     - lingl
     name: German
-    dicturi: "http://de-<1CODE>.syn.dict.cc/?s=<WORD>, http://www.wordreference.com/de<1CODE>/<WORD>, ^https://en.pons.com/translate/german-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#German, https://glosbe.com/gapi/translate?from=deu&&dest=<2TCODE>&format=json"
+    dicturi: "!http://de-<1CODE>.syn.dict.cc/?s=<WORD>, http://www.wordreference.com/de<1CODE>/<WORD>, !https://en.pons.com/translate/german-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#German, https://glosbe.com/gapi/translate?from=deu&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=de&tl=<1CODE>&q=<WORD>"
@@ -110,7 +110,7 @@
     owner:
     - lingl
     name: Portuguese (Portugal)
-    dicturi: "http://www.wordreference.com/pt<1CODE>/<WORD>, ^https://en.pons.com/translate/portuguese-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Portuguese, https://context.reverso.net/translation/portuguese-<LCNAME>/<WORD>, https://www.collinsdictionary.com/dictionary/portuguese-<LCNAME>/<WORD>, https://www.linguee.com/portuguese-<LCNAME>/search?query=<WORD>&source=auto, https://glosbe.com/gapi/translate?from=por&&dest=<2TCODE>&format=json"
+    dicturi: "http://www.wordreference.com/pt<1CODE>/<WORD>, !https://en.pons.com/translate/portuguese-<LCNAME>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Portuguese, https://context.reverso.net/translation/portuguese-<LCNAME>/<WORD>, https://www.collinsdictionary.com/dictionary/portuguese-<LCNAME>/<WORD>, https://www.linguee.com/portuguese-<LCNAME>/search?query=<WORD>&source=auto, https://glosbe.com/gapi/translate?from=por&&dest=<2TCODE>&format=json"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=pt&tl=<1CODE>&q=<WORD>"
@@ -136,7 +136,7 @@
     owner:
     - lingl
     name: Chinese
-    dicturi: "http://ce.linedict.com/#/cn<1CODE>/search?query=<WORD>, https://kanji.koohii.com/study/kanji/<WORD>, http://m.nciku.com/<1CODE>/entry/?query=<WORD>, http://chinesedictionary.mobi/?handler=QueryWorddict&mwdqb=<WORD>, https://en.wiktionary.org/wiki/<WORD>#Chinese, ^https://en.pons.com/translate/chinese-<LCNAME>/<WORD>, http://www.wordreference.com/zh<1CODE>/<WORD>"
+    dicturi: "http://ce.linedict.com/#/cn<1CODE>/search?query=<WORD>, https://kanji.koohii.com/study/kanji/<WORD>, http://m.nciku.com/<1CODE>/entry/?query=<WORD>, http://chinesedictionary.mobi/?handler=QueryWorddict&mwdqb=<WORD>, https://en.wiktionary.org/wiki/<WORD>#Chinese, !https://en.pons.com/translate/chinese-<LCNAME>/<WORD>, http://www.wordreference.com/zh<1CODE>/<WORD>"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=zh&tl=<1CODE>&q=<WORD>"
@@ -162,7 +162,7 @@
     owner:
     - lingl
     name: Japanese
-    dicturi: "http://jisho.org/words?<2TCODE>=&dict=edict&jap=<WORD>, https://kanji.koohii.com/study/kanji/<WORD>, http://jisho.org/kanji/details/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Japanese, ^https://en.pons.com/translate/japanese-<LCNAME>/<WORD>, http://www.wordreference.com/ja<1CODE>/<WORD>"
+    dicturi: "http://jisho.org/words?<2TCODE>=&dict=edict&jap=<WORD>, https://kanji.koohii.com/study/kanji/<WORD>, http://jisho.org/kanji/details/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Japanese, !https://en.pons.com/translate/japanese-<LCNAME>/<WORD>, http://www.wordreference.com/ja<1CODE>/<WORD>"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=ja&tl=<1CODE>&q=<WORD>"
@@ -266,7 +266,7 @@
     owner:
     - lingl
     name: Slovenian
-    dicturi:  "^https://en.pons.com/translate/slovenian-<LCNAME>/<WORD>, http://www.wordreference.com/sl<1CODE>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Slovenian, https://glosbe.com/gapi/translate?from=sl&&dest=<1CODE>&format=json"
+    dicturi:  "!https://en.pons.com/translate/slovenian-<LCNAME>/<WORD>, http://www.wordreference.com/sl<1CODE>/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Slovenian, https://glosbe.com/gapi/translate?from=sl&&dest=<1CODE>&format=json"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=sl&tl=<1CODE>&q=<WORD>"
@@ -292,7 +292,7 @@
     owner:
     - lingl
     name: Swedish
-    dicturi:  "^https://en.pons.com/translate/swedish-<LCNAME>/<WORD>, http://folkets-lexikon.csc.kth.se/folkets/#lookup&<WORD>, http://tyda.se/search/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Swedish"
+    dicturi:  "!https://en.pons.com/translate/swedish-<LCNAME>/<WORD>, http://folkets-lexikon.csc.kth.se/folkets/#lookup&<WORD>, http://tyda.se/search/<WORD>, https://en.wiktionary.org/wiki/<WORD>#Swedish"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=sv&tl=<1CODE>&q=<WORD>"
