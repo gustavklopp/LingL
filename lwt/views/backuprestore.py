@@ -35,7 +35,7 @@ from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
 from tkinter.constants import CURRENT
-from MySQLdb._mysql import result
+#from MySQLdb._mysql import result
 
 
 ''' delete all the data (except MyUser * Settings_... (but all Settings_current are deleted)) '''
