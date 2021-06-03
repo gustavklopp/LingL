@@ -201,14 +201,18 @@ class TextsForm(forms.ModelForm):
     audiouri = forms.URLField(required=False,max_length=1000)
     sourceuri = forms.URLField(required=False,max_length=200)
     texttags = tag_fields.TagsInputField( Texttags.objects.all(),
-                                    create_missing=True,
-                                    required=False) 
+                                            create_missing=True,
+                                            required=False 
+                                            ) 
     
-    def __init__(self, user, *args, **kwargs):
+    def __init__(self, owner, *args, **kwargs):
+        self.owner = owner
         super(TextsForm, self).__init__(*args,**kwargs)
   
         # the dropdown menu for Languages only shows the languages owned by User
-        self.fields['language'].queryset = Languages.objects.all().filter(owner=user)
+        self.fields['language'].queryset = Languages.objects.filter(owner=self.owner)
+#         self.fields['texttags'].queryset = Texttags.objects.filter(owner=owner)
+        self.fields['texttags'].owner = owner
 
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal text_detail'
@@ -248,11 +252,11 @@ class TextsForm(forms.ModelForm):
 
     def clean(self):
         super(TextsForm, self).clean()
-#         data = self.cleaned_data
+        data = self.cleaned_data
 #         if re.search(r'^[-!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/0-9 ]*$', data['text']):
 #             message = _('Text should contain characters, not only symbols')
 #             self.add_error('text', forms.ValidationError(message))
-#         return data
+        return data
  
     class Meta:
         model = Texts
@@ -272,7 +276,8 @@ class WordsForm(forms.ModelForm):
     # TO CHANGE
     extra_field = json_fields.SplitJSONField(required=False)
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, owner, *args, **kwargs):
+        self.owner = owner
         super(WordsForm, self).__init__(*args,**kwargs)
   
         self.helper = FormHelper()
@@ -290,6 +295,7 @@ class WordsForm(forms.ModelForm):
             ' <a href="' + reverse('language_detail') + '?edit=' + \
             str(kwargs['instance'].language.id) + '#extra_field'\
             '">' + _('(manage extra fields)') + '</a>'
+        self.fields['wordtags'].owner = owner
 
 
     class Meta:

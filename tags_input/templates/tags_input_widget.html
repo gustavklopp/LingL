@@ -1,0 +1,28 @@
+<input class="form-control" type="text" name="{{ name }}" id="{{ id }}_tags_input" value="{{ values }}" autocomplete="off" {{ attrs }} />
+
+<script type="text/javascript">
+//<![CDATA[
+jQuery(document).ready(function($){
+    $('#{{ id }}_tags_input').tagsInput({
+        autocomplete: {
+            source: '{{ autocomplete_url }}',
+            autoFocus: true,
+            delay: 20
+        },
+        {% if not mapping.create_missing %}autocompleteOnly: true,{% endif %}
+        minInputWidth: 145,
+        height: '40px',
+        width: '460px',
+        {% if on_add_tag %}onAddTag: {{ on_add_tag }},{% endif %}
+        {% if on_remove_tag %}onRemoveTag: {{ on_remove_tag }},{% endif %}
+        {% if on_change_tag %}onChangeTag: {{ on_change_tag }},{% endif %}
+        autocomplete_url: '{{ autocomplete_url }}'
+    });
+{% block extra_script %}{% endblock %}
+});
+//]]>
+</script>
+
+{# django admin adds the help text. this is for use outside of the admin #}
+{% block help %}{% if help_text %}<p class="help">{{help_text}}</p>{% endif %}{% endblock %}
+{{ inline }}

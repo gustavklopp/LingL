@@ -2,12 +2,16 @@
 {% load i18n %} {# used for internationalization #}
 
 <div hidden id="checkfocus_for_keyboardshortcut">This is used to check that this panel has loaded</div>
+
+{# some API needs to have specific stylesheet to be added for them #}
 {% if API_name == 'pons' %} {# Pons API needs its own stylesheet #}
 <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_pons.css' %}">
 {% elif API_name == 'dictcc' %} 
 <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_dictcc.css' %}">
 {% elif API_name == 'wordref' %} 
 <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_wordref.css' %}">
+{% elif API_name == 'wiki' %} 
+<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_wiki.css' %}">
 {% endif %}
 
 {% static 'lwt/img/icn/tick-button.png' as tick_button %}
@@ -16,6 +20,7 @@
 use <span class="text-muted">[keyboard shortcuts nb]</span>)</small></p>
 {% endblocktrans %}
 
+{# some API needs to have specific stylesheet to be added for them #}
 {% if API_name == 'pons' %}
 	<div id="pons">
 	{{ translation_result|safe }}
@@ -28,6 +33,11 @@ use <span class="text-muted">[keyboard shortcuts nb]</span>)</small></p>
 	<div id="wordref">
 	{{ translation_result|safe }}
 	</div>
+{% elif API_name == 'wiki' %}
+	<div id="wiki">
+	{{ translation_result|safe }}
+	</div>
+
 {% else %}
 	{{ translation_result|safe }}
 {% endif %}

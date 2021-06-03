@@ -205,9 +205,9 @@ def import_oldlwt(owner, data_file):
             # and update the existing word with the data from oldlwt
             try:
                 duplicate_word = Words.objects.get(owner=owner, language=language, wordtext__iexact=wordtext)
-                duplicate_word.status = status,
-                duplicate_word.translation = translation,
-                duplicate_word.romanization = romanization,
+                duplicate_word.status = status
+                duplicate_word.translation = translation
+                duplicate_word.romanization = romanization
                 duplicate_word.customsentence = customsentence
                 words_to_update.append(duplicate_word)
 

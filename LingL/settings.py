@@ -180,12 +180,18 @@ def language_get_queryset(*args, **kwargs):
     from lwt.models import Languages
     return Languages.objects.all()
 
-TAGS_INPUT_MAPPINGS = { 
-                        'lwt.Wordtags':        {'field': 'wotagtext', 'create_missing': True},
-                        'lwt.Words':           {'field': 'wotext'   , 'queryset'      : word_get_queryset},
+def texttag_get_queryset(*args, **kwargs):
+    owner = kwargs.pop('owner')
+    from lwt.models import Texttags
+    return Texttags.objects.filter(owner=owner)
 
-                        'lwt.Texttags':        {'field': 'txtagtext', 'create_missing': True},
-                        'lwt.Texts':           {'field': 'txtitle'  , 'queryset'      : text_get_queryset},
+TAGS_INPUT_MAPPINGS = { 
+                        'lwt.Wordtags':        {'field': 'wotagtext', 'create_missing': False},
+#                         'lwt.Words':           {'field': 'wotext'   , 'queryset'      : word_get_queryset},
+
+                        'lwt.Texttags':        {'field': 'txtagtext', 'create_missing': True,
+                                                },
+#                         'lwt.Texts':           {'field': 'txtitle'  , 'queryset'      : text_get_queryset},
 
                         'lwt.Extra_field_key': {'field': 'title'    , 'create_missing': True},
                         'lwt.Languages':       {'field': 'title'    , 'queryset'      : language_get_queryset},

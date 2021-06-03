@@ -84,7 +84,7 @@ def _create_curlybrace_sentence(wo, compoundword_list=None, compoundword_id_list
     
 ''' helper function for termform. display the term form at the top right of text_read, 
 for a compoundword if a list of compoundword_id is provided, else for a single word '''
-def new_or_edit_word(op, compoundword_id_list=None, wo_id=None):
+def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
 
     ########################## Displaying the form for COMPOUNDWORD #########################################
     if compoundword_id_list:
@@ -103,12 +103,12 @@ def new_or_edit_word(op, compoundword_id_list=None, wo_id=None):
             if op == 'edit':
                 # getting the compoundowrd if already defined:
                 compoundword = Words.objects.get(wordinside_order=json.dumps(compoundword_id_list, separators=(',',':')))
-                f = WordsForm(instance=compoundword)
+                f = WordsForm(owner, instance=compoundword)
                 customsentence = compoundword.customsentence
             elif op == 'new':
                 # the ´instance´ is only used to get the language.id (used inside
                 # "manage extra field" link
-                f = WordsForm(initial = {'wordinside_order': compoundword_id_list},
+                f = WordsForm(owner, initial = {'wordinside_order': compoundword_id_list},
                                          instance =  compoundword_list[0])
                 customsentence = ''
 
@@ -125,7 +125,7 @@ def new_or_edit_word(op, compoundword_id_list=None, wo_id=None):
         compoundword_list = [wo] # in the compoundword version, we get only the wordtext, but it's okay...
         dictwebpage_searched_word = wo.wordtext
 
-        f = WordsForm(instance=wo) # put the pre-filled text of the textitem in the field for uwtext
+        f = WordsForm(owner, instance=wo) # put the pre-filled text of the textitem in the field for uwtext
 
         # displaying the word inside its sentence, with '{' '}' around it:
         customsentence = wo.customsentence
@@ -320,11 +320,11 @@ def termform(request):
             # Displaying the form for COMPOUNDWORD 
             if 'compoundword_id_list' in request.GET.keys():
                 compoundword_id_list = json.loads(request.GET['compoundword_id_list'])
-                html_ctx, dictwebpage_searched_word = new_or_edit_word(op, compoundword_id_list=compoundword_id_list)
+                html_ctx, dictwebpage_searched_word = new_or_edit_word(request.user, op, compoundword_id_list=compoundword_id_list)
             # Displaying the form for WORD 
             else:
                 wo_id = int(request.GET['wo_id']) # the text ID
-                html_ctx, dictwebpage_searched_word = new_or_edit_word(op, wo_id=wo_id)
+                html_ctx, dictwebpage_searched_word = new_or_edit_word(request.user, op, wo_id=wo_id)
 
             html = render_to_string('lwt/termform_new_or_edit.html', html_ctx, request)
             
@@ -513,7 +513,7 @@ def termform(request):
                 # the firstword will be used as reference for copy in the compoundword
                 firstword = Words.objects.get(id=compoundword_id_list[0])
                 
-                f = WordsForm(json.loads(request.POST['newwordform']), instance=firstword)
+                f = WordsForm(request.user, json.loads(request.POST['newwordform']), instance=firstword)
                 if f.is_valid():
                     compoundword_prototype = f.save(commit=False) 
                     # it's a compound word, so put additional data in word:
@@ -601,15 +601,22 @@ def termform(request):
                 sameword_list = [virgin_word]
                 sameword_id_list = [wo_id]# need to actualize in javascript the wostatus of all these similar words 
                 
-                f = WordsForm(json.loads(request.POST['newwordform']), instance=virgin_word)
+                f = WordsForm(request.user, json.loads(request.POST['newwordform']), instance=virgin_word)
                 if f.is_valid():
-                    word = f.save() 
+                # I need to manually add all the fields, I don't know why??? Bug???
+                    word = f.save(commit=False) 
+                    word.translation = f.cleaned_data['translation']
+                    word.romanization = f.cleaned_data['romanization']
+                    word.status = f.cleaned_data['status']
+                    word.save()
+                    wotagtext_list = [] if f.data["wordtags"] == '' else f.data['wordtags'].split(',')
+                    word.wordtags.exclude(wotagtext__in=wotagtext_list).delete() #first, remove non existent tags
+                    for wotagtext in wotagtext_list:
+                        wordtag = Wordtags.objects.get_or_create( wotagtext=wotagtext)[0]
+#                             wordtag = Wordtags.objects.get_or_create(owner=request.user, wotagtext=wotagtext)[0]
+                        word.wordtags.add(wordtag)
+                    word.save()
 
-                    # add the Owner in the texttags model (not done automatically)
-                    for ttag in word.wordtags.all():
-                        ttag.owner = request.user
-                        ttag.save()
-                    
                     # TODO
                     if redefine_only_this_word:
                         # we give it back its original GOSW

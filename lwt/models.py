@@ -216,6 +216,7 @@ class WordtagsManager(models.Manager):
         return self.get(wotagtext=wotagtext, owner__username=owner)
 
 class Wordtags(BaseModel):
+
     wotagtext = models.CharField(max_length=20)  
     wotagcomment = models.CharField( max_length=200)  
 

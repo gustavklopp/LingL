@@ -84,7 +84,7 @@ def load_texttable(request):
         ##############################
         r = t.title
         tag_for_text = [tt.txtagtext for tt in t.texttags.all()]
-        if tag_for_text: # display the tags if there are
+        if tag_for_text != []: # display the tags if there are
             r += ' <span class="small">['+ ','.join(tag_for_text) + ']</span>'
         ##############################
         if t.audiouri != "" and t.audiouri != None: #I use the 'or' because in the fixture demo, it's sometimes null or ''
@@ -470,7 +470,22 @@ def text_detail(request):
         f = TextsForm(request.user, request.POST or None)
         if f.is_valid():
             if 'new' in request.GET.keys():
-                savedtext = f.save()
+                # I need to manually add all the fields, I don't know why??? Bug???
+                savedtext = f.save(commit=False)
+                savedtext.language = f.cleaned_data['language']
+                savedtext.owner = request.user
+                savedtext.title = f.cleaned_data['title']
+                savedtext.text = f.cleaned_data['text']
+                savedtext.annotatedtext = f.cleaned_data['annotatedtext']
+                savedtext.audiouri = f.cleaned_data['audiouri']
+                savedtext.sourceuri = f.cleaned_data['sourceuri']
+                savedtext.save()
+                txtagtext_list = [] if f.data["texttags"] == '' else f.data['texttags'].split(',')
+                savedtext.texttags.exclude(txtagtext__in=txtagtext_list).delete() #first, remove non existent tags
+                for txtagtext in txtagtext_list:
+                    texttag = Texttags.objects.get_or_create(owner=request.user, txtagtext=txtagtext)[0]
+                    savedtext.texttags.add(texttag)
+                savedtext.save()
                 # Process the file :
                 # split the text into sentences and into words and put it in Unknownwords
                 splitText(savedtext) #  in _utilities_views
@@ -508,12 +523,15 @@ def text_detail(request):
                 return redirect(reverse('text_list'))
 
         else: # errors processing
+            # get the current database size:
+            database_size = get_word_database_size(request)
+
             f = TextsForm(request.user, request.POST)
             if 'new' in request.GET.keys():
                 messages.add_message(request, messages.ERROR, _('There was an error in adding this text.'))
             else:
                 messages.add_message(request, messages.ERROR, _('There was an error in modifying this text.'))
-            return render(request, 'lwt/text_list.html')
+            return render(request, 'lwt/text_list.html', {'database_size':database_size})
 
     # Displaying the form to Create a new text, or Delete/Edit a word or Insert a Word:
     # (for the edit part: triggered by the submit in the tooltip)

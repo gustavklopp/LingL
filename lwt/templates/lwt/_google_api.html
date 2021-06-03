@@ -42,7 +42,7 @@ function addTranslation(s) {
 
 {% if translation_result|length > 0 %}
 	{% for trans_item in translation_result %}
-		<p><span  title="Copy" class="hover_pointer" onclick="addTranslation('{{ trans_item }}');">
+		<p><span  title="{% trans 'Copy this translation' %}" class="hover_pointer" onclick="addTranslation('{{ trans_item }}');">
 			<img src="{% static 'lwt/img/icn/tick-button.png' %}"alt="Copy" />&nbsp;
 			<span id="trans_item_{{ forloop.counter }}">{{ trans_item }}</span> <span class="text-muted" title="{% trans 'keyboard shortcut' %}">[{{ forloop.counter }}]</span>
 		</span></p>

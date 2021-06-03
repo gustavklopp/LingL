@@ -119,6 +119,12 @@ class Text_read(Base):
         self.wait_until_appear(By.XPATH, "//textarea[@id='id_sentence' and contains(text(), '{}')]".format(expected_sent))
         textarea = self.find(By.ID, 'id_translation')
         textarea.send_keys('a')
+        wordtagarea = self.find(By.ID, 'id_wordtags_tags_input_tag')
+        wordtagarea.send_keys('masculine')
+        wordtagarea.send_keys(',')
+        wordtagarea.send_keys('singular')
+        wordtagarea.send_keys(',')
+        self.wait_until_appear(By.XPATH, '//span[contains(text(), "singular")]')
         self.find(By.ID, 'submit_word').click()
         elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="1"')
         self.assertEqual(len(elements), 3)
@@ -129,7 +135,7 @@ class Text_read(Base):
         text3.text = text2.text
         splitText(text3)
         self.selenium.get('{}/text_read/{}'.format(self.live_server_url, text3.id))
- 
+  
         # when using move_to_element, we MUST use 'click()' after (even if not needed to click...)
 #         tooltip_righthandle_selector = (By.XPATH, "//td[contains(text(),'Close')]") 
 #         tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
@@ -141,7 +147,7 @@ class Text_read(Base):
         elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="1"')
         self.assertEqual(len(elements), 3, msg="New text don't get the already saved words")
         self.assertEqual(elements[0].text, 'MMM')
-        
+         
         #editing a word translation:
         elements[0].click()
         self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
@@ -150,17 +156,22 @@ class Text_read(Base):
         textarea = self.find(By.ID, 'id_translation')
         textarea.clear()
         textarea.send_keys('b')
+        wordtagarea = self.find(By.ID, 'id_wordtags_tags_input_tag')
+        wordtagarea.send_keys('masculine')
+        wordtagarea.send_keys(',')
+        wordtagarea.send_keys('singular')
+        wordtagarea.send_keys(',')
         submit.click()
         elements[2].click()
         tooltip = self.find(By.CLASS_NAME, 'tooltiptext')
         self.assertTrue('▶ b' in tooltip.text)
-        
+         
         #editing a word status to 'well-known':
         tooltip_righthandle_selector = (By.XPATH, '//td[@align="RIGHT"]/a') 
         tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
         ActionChains(self.selenium).move_to_element(tooltip_righthandle).click().perform()
         self.wait_until_disappear(*tooltip_righthandle_selector)
-
+ 
         elements[1].click()
         self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
         self.find(By.XPATH, "//a[contains(text(),'Edit term')]").click()
@@ -168,12 +179,17 @@ class Text_read(Base):
         textarea = self.find(By.ID, 'id_translation')
         textarea.clear()
         textarea.send_keys('c')
+        wordtagarea = self.find(By.ID, 'id_wordtags_tags_input_tag')
+        wordtagarea.send_keys('masculine')
+        wordtagarea.send_keys(',')
+        wordtagarea.send_keys('singular')
+        wordtagarea.send_keys(',')
         # changing status to well known
         self.find(By.CSS_SELECTOR, 'input[value="100"]').click()
         submit.click()
         elements = self.finds(By.XPATH, '//span[@wostatus="100" and contains(text(),"MMM")]')
         self.assertEqual(len(elements), 3)
-        
+         
         # and changing again the status 'well-known' to learning:
         elements[2].click()
         self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
@@ -182,12 +198,17 @@ class Text_read(Base):
         textarea = self.find(By.ID, 'id_translation')
         textarea.clear()
         textarea.send_keys('d')
+        wordtagarea = self.find(By.ID, 'id_wordtags_tags_input_tag')
+        wordtagarea.send_keys('masculine')
+        wordtagarea.send_keys(',')
+        wordtagarea.send_keys('singular')
+        wordtagarea.send_keys(',')
         # changing status to well known
         self.find(By.CSS_SELECTOR, 'input[value="1"]').click()
         submit.click()
         elements = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(),"MMM")]')
         self.assertEqual(len(elements), 3)
-        
+         
     def test_submit_similar_word(self):
 #         language_3 = LanguagesFactory(owner=self.user_1)
 #         Settings_currentlang_id.objects.get(owner=self.user_1).stvalue=language_3
@@ -197,9 +218,9 @@ class Text_read(Base):
         text2.text = sentences
         splitText(text2)
         self.selenium.get('{}/text_read/{}'.format(self.live_server_url, text2.id))
- 
+  
         self.wait_until_appear(By.CSS_SELECTOR, 'iframe[id="dictwebpage"]')
-        
+         
         # moving on the 'x' of the tooltip makes it disappear
         tooltip_righthandle_selector = (By.XPATH, '//td[@align="RIGHT"]/a') 
         tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
@@ -207,17 +228,22 @@ class Text_read(Base):
         self.wait_until_disappear(*tooltip_righthandle_selector)
         self.assertEqual(self.selenium.find_element(*tooltip_righthandle_selector).text, '', 
                          msg="Tooltip doesn't disappear when mouse over the right handle")
- 
+  
         # submit the word 'aimer'
         words_aimer = self.finds(By.XPATH, "//span[contains(text(),'aimer')]")
         words_aimer[0].click()
         textarea = self.find(By.ID, 'id_translation')
         textarea.send_keys('to love')
-
+        wordtagarea = self.find(By.ID, 'id_wordtags_tags_input_tag')
+        wordtagarea.send_keys('verb')
+        wordtagarea.send_keys(',')
+        wordtagarea.send_keys('transitive')
+        wordtagarea.send_keys(',')
+ 
         self.find(By.ID, 'submit_word').click()
-
+ 
         self.wait_until_text_appear((By.XPATH, '//div[@id="topright"]'), 'OK: Term saved.')
-        
+         
         # then click on another word: 'aimerais' in text_read
         words_aimerais = self.finds(By.XPATH, "//span[contains(text(),'aimerais')]")
         words_aimerais[0].click()
@@ -229,13 +255,13 @@ class Text_read(Base):
         self.assertEqual(len(totalsavedwords), 4)
         newsavedwords = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')
         self.assertEqual(len(newsavedwords), 2)
-        
+         
         # create a new text with the same text
         text3 = TextsFactory(owner=self.user_1, language=self.language_1)
         text3.text = text2.text
         splitText(text3)
         self.selenium.get('{}/text_read/{}'.format(self.live_server_url, text3.id))
- 
+  
         # when using move_to_element, we MUST use 'click()' after (even if not needed to click...)
 #         tooltip_righthandle_selector = (By.XPATH, "//td[contains(text(),'Close')]") 
 #         tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
@@ -243,24 +269,24 @@ class Text_read(Base):
 #         self.wait_until_disappear(*tooltip_righthandle_selector)
 #         self.assertEqual(len(self.selenium.find_elements(*tooltip_righthandle_selector)), 0, 
 #                          msg="Tooltip doesn't disappear when mouse over the right handle")
-
+ 
         totalsavedwords = self.finds(By.XPATH, '//span[@wostatus="1"]')
         self.assertEqual(len(totalsavedwords), 4)
         newsavedwords = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')
         self.assertEqual(len(newsavedwords), 2, )
-
+ 
         # clicking on word 'aimeront' should make only one similar word to appear:
         words = self.finds(By.XPATH, "//span[contains(text(),'aimeront')]")
         words[0].click()
         similarwords = self.finds(By.XPATH, '//span[@class="possible_similarword"]')
         self.assertEqual(len(similarwords), 1)
-        
+         
         #editing a word make all similar words updated:
         tooltip_righthandle_selector = (By.XPATH, '//td[@align="RIGHT"]/a') 
         tooltip_righthandle = self.find(*tooltip_righthandle_selector) 
         ActionChains(self.selenium).move_to_element(tooltip_righthandle).click().perform()
         self.wait_until_disappear(*tooltip_righthandle_selector)
-
+ 
         self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')[1].click()
         self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
         self.find(By.XPATH, "//a[contains(text(),'Edit term')]").click()
@@ -268,11 +294,16 @@ class Text_read(Base):
         textarea = self.find(By.ID, 'id_translation')
         textarea.clear()
         textarea.send_keys('to hate')
+        wordtagarea = self.find(By.ID, 'id_wordtags_tags_input_tag')
+        wordtagarea.send_keys('verb')
+        wordtagarea.send_keys(',')
+        wordtagarea.send_keys('transitive')
+        wordtagarea.send_keys(',')
         submit.click()
         self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimer")]')[1].click()
         tooltip = self.find(By.CLASS_NAME, 'tooltiptext')
         self.assertTrue('▶ to hate' in tooltip.text)
-
+ 
     def test_saving_one_compoundword(self):
 #         language_2 = EnglishLanguagesFactory(owner=self.user_1)
 #         Settings_currentlang_id.objects.get(owner=self.user_1).stvalue=language_2
@@ -287,7 +318,7 @@ is over the carry?''')
         self.assertEqual(first_word_DB_before.compoundword, None) 
         self.assertEqual(second_word_DB_before.compoundword, None)
         self.assertEqual(first_word_DB_before.status, 0) 
- 
+  
         self.selenium.get('{}/text_read/{}'.format(self.live_server_url, text2.id))
         first_word_before = self.find(By.XPATH, '//span[@wowordtext="carry"]')
         self.assertEqual(first_word_before.get_attribute('title'), 'carry\r▶ Unknown [0]')
@@ -297,10 +328,15 @@ is over the carry?''')
         second_word_before = self.find(By.XPATH, '//span[@wowordtext="over"]')
         # ctrl+click the second word
         ActionChains(self.selenium).key_down(Keys.CONTROL).click(second_word_before).key_up(Keys.CONTROL).perform()
- 
+  
         self.wait_until_appear(By.XPATH, '//textarea[@id="id_sentence"][contains(.,"Do you **carry** the surplus **over**?")]') 
         trans_textarea = self.find(By.XPATH, '//textarea[@id="id_translation"]')
         trans_textarea.send_keys('excédent')
+        wordtagarea = self.find(By.ID, 'id_wordtags_tags_input_tag')
+        wordtagarea.send_keys('economics')
+        wordtagarea.send_keys(',')
+        wordtagarea.send_keys('masculine')
+        wordtagarea.send_keys(',')
         self.find(By.XPATH, '//button[@id="submit_word"]').click()
         self.wait_until_appear(By.XPATH, '//div[@id="topright"][contains(.,"OK: Term saved.")]')
         # good in database
@@ -320,7 +356,7 @@ is over the carry?''')
         self.assertEqual(firstword_after.get_attribute('show_compoundword'), 'True')
         self.assertEqual(firstword_after.get_attribute('iscompoundword'), 'True')
         self.assertEqual(firstword_after.get_attribute('title'), 'carry+over\r• excédent\r• Learning [1]')
- 
+  
     ####### FUNCTIONS BELOW TO BE CHECKED ###########
 
 #     def test_click_on_unknown_word_dictwebpage(self):
