@@ -148,6 +148,10 @@ def create_filter(filter_type, filter_list_json):
         if filter_type == 'lastopentime' and not filter_list:
             filter_args = {'lastopentime': timezone.now() + timedelta(days=1)} #1 day in the future
             return Q(**filter_args)
+        # special case for filtering on tags: if list if empty,
+        if filter_type == 'texttags__id' and not filter_list:
+            return Q()
+        # we shoul display all objects
         for idx, filter_val in enumerate(filter_list):
             # special case for latopentime filter
             if filter_type == 'lastopentime':

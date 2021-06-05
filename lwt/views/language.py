@@ -93,7 +93,7 @@ def language_detail(request):
     if request.method == 'POST': 
                 
         if 'new' in request.GET.keys(): # saving a New language:
-            f = make_languagesform(request.user.id)(request.POST or None)
+            f = make_languagesform(request.user.id)(request.user, request.POST or None)
             if f.is_valid():
                 savedlanguage = f.save()
                 # manually saving the fields because Modelform is not saving (I don't know why...)
@@ -103,7 +103,7 @@ def language_detail(request):
                 messages.add_message(request, messages.SUCCESS, _('Language successfully created'))
         elif 'edit' in request.GET.keys(): # editing an existing language:
             existinglanguage = Languages.objects.get(id=request.GET['edit'])
-            f = make_languagesform(request.user.id)(request.POST, instance=existinglanguage)
+            f = make_languagesform(request.user.id)(request.user, request.POST, instance=existinglanguage)
             if f.is_valid():
                 savedlanguage = f.save(commit=False)
                 existinglanguage = Languages.objects.get(id=request.GET['edit'])
@@ -172,7 +172,7 @@ def language_detail(request):
         # a new language is requested:
         if 'new' in request.GET.keys():
             # always set the owner as default request.user
-            f = make_languagesform(request.user.id)(initial = { 'owner': request.user.id })
+            f = make_languagesform(request.user.id)(request.user, initial = { 'owner': request.user.id })
             # STRING CONSTANTS:
             op = 'new'
         if 'edit' in request.GET.keys():
@@ -188,6 +188,7 @@ def language_detail(request):
                 chosen_lang_datalist = []
             # we pre-initialized LanguagesForm with datalist for the dropdowntoggle widget
             f = make_languagesform(request.user.id, dicturi_list=chosen_lang_datalist)(
+                                    request.user,
                                     instance= lang_Obj)
             # STRING CONSTANTS:
             op = 'edit'

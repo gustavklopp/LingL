@@ -80,7 +80,7 @@ class Text_detail(Base):
         self.assertEqual(text_title, title_str)
 
         # creating a second text with tags:
-        newtext_a = self.find(By.XPATH, '//a[@title="create a new text"]').click()
+        self.find(By.XPATH, '//a[@title="create a new text"]').click()
         select = Select(self.find(By.NAME,'language'))
         select.select_by_visible_text(self.language_1.name)
         title2_str = 'another title'
@@ -109,7 +109,7 @@ class Text_detail(Base):
         text_row = texts[1]
         text_tds = text_row.find_elements_by_css_selector('td')
         text_title = text_tds[4].text
-        self.assertEqual(text_title, title2_str+'[testing,demo]')
+        self.assertEqual(text_title, title2_str+' [testing,demo]')
         
         
         

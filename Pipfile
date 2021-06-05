@@ -18,6 +18,7 @@ cx-freeze = "*"
 waitress = "*"
 selenium = "*"
 factory-boy = "*"
+pyinstaller = "*"
 
 [dev-packages]
 

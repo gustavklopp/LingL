@@ -606,7 +606,7 @@ buildOptions = dict(
             'opcode',
             'operator',
             'os',
-            'pdb',
+            #'pdb',
             'pickle',
             'pkgutil',
             'platform',
@@ -739,6 +739,7 @@ buildOptions = dict(
         excludes = [],
         include_files = [
                 'appversion.txt',
+                #('./libcrypt.so.2', 'libcrypt.so.2'),
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined
 #                 os.path.join('templates','allauth'),
                 ],

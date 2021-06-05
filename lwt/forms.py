@@ -140,9 +140,12 @@ def make_languagesform(user_id, dicturi_list=[]):
                                                     required=False
                                               )
 
-        def __init__(self, *args, **kwargs):
+        def __init__(self, owner, *args, **kwargs):
+            self.owner =  owner
             super(LanguagesForm, self).__init__(*args,**kwargs)
       
+            self.fields['extra_field_key'].owner = self.owner
+
             self.helper = FormHelper()
             self.helper.form_class = 'form-horizontal text_detail'
             self.helper.label_class = 'col-md-3'
