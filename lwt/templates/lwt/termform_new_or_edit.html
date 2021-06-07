@@ -28,8 +28,8 @@ $(document).ready(function(){
 <!--  used to send data to javascript : to fetch the name to search in dictwebpage -->
 <div class="hidden">
 <script type="text/javascript">
-var compoundword_id_list = {{ compoundword_id_list }};
-var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script> 
+//var compoundword_id_list = {{ compoundword_id_list }};
+//var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script> 
 <!--  Not used -->
 <div id="dictwebpage_searched_word">{{ dictwebpage_searched_word }}</div>
 </div>
@@ -39,7 +39,7 @@ var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script>
 {% csrf_token %}
 {{ form.media }}
 <div class="row">
-	{{ Op_Thing }} : <h5>"{% if compoundword_list|length > 1 %}
+	{{ Op_Thing }} :&nbsp;&nbsp;<h5>"{% if compoundword_list|length > 1 %}
 					{% for wo in compoundword_list %}{% if not forloop.first %}+{% endif %}{{ wo }}{% endfor %}
 					{% else %}{{ wo.wordtext }}{% endif %}"</h5>
 </div>
@@ -107,11 +107,13 @@ var dictwebpage_searched_word  = '{{ dictwebpage_searched_word }}';</script>
 	<!--  End custom... -->
 
 	<strong>{% trans "Status" %}: </strong>
-	{% for nb, abbr_and_name in statuses.items %}
-		<span class="status{{ nb }}" title="{{ abbr_and_name.name }}">
-		&nbsp;<input type="radio" name="status" value="{{ nb }}"
-		{% if forloop.first %}checked="checked"{% endif %}
-		/>{{ abbr_and_name.abbr }}&nbsp;</span>
+	{% for status, status_dict in statuses.items %}
+		{% if forloop.counter0 != 0 %}
+		<span class="status{{ status }}" title="{{ status_dict.name }}">
+		&nbsp;<input type="radio" name="status" value="{{ status_dict.nb }}"
+		{% if forloop.counter0 == 1 %}checked="checked"{% endif %}
+		/>{{ status_dict.abbr }}&nbsp;</span>
+		{% endif %}
 	{% endfor %}
 	<button title="{% trans 'shortcut=[AltGr+W]' %}" id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>
 	{% if op == 'edit' %}

@@ -21,6 +21,7 @@ when it should be: "https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format
 @origin_lang_code it's the code '1' in constants.LANGUAGES_CODE
  '''
 def converter_bad_url(url, name, origin_lang_code):
+    url = url.replace('###', '<WORD>') # I'm using different placeholder
     if 'glosbe' in url:
         from_639_1 = re.search(r'(?<=from=).{2}', url).group()
         dest_639_1 = re.search(r'(?<=dest=).{2}', url).group()
@@ -31,12 +32,12 @@ def converter_bad_url(url, name, origin_lang_code):
             if lang['1'] == dest_639_1:
                 dest_639_2t = lang['2T']
         return "https://glosbe.com/gapi/translate?from="+from_639_2t+"&&dest="+dest_639_2t+"&&format=json"
-    elif 'www.dict.cc' in url:
+    elif 'www.dict.cc' in url: # dict.cc is bad formed
         lang_code1 = 'XX'
         for lang in LANGUAGES_CODE:
             if lang['name'] == name:
                 lang_code1 =  lang['1']
-        return 'http://'+lang_code1+'-'+origin_lang_code+'.syn.dict.cc/?s=###'
+        return 'http://'+lang_code1+'-'+origin_lang_code+'.syn.dict.cc/?s=<WORD>'
     else:
         return url
 

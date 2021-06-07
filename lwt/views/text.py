@@ -101,16 +101,22 @@ def load_texttable(request):
             #        display some stats about the Texts:                             #
             ##########################################################################
             # Total words in this text: don't count duplicate (words written similarly)
-            texttotalword_list = Words.objects.filter(text=t).\
-                    exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
-            texttotalword_list = (distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
-            texttotalword = len(texttotalword_list)
+#             texttotalword_list = Words.objects.filter(text=t).\
+#                     exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
+#             texttotalword_list = (distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
+#             texttotalword = len(texttotalword_list)
+            texttotalword = t.wordcount_distinct
                     
             # Already saved words in this text: don't count duplicate (words written similarly) 
-            textsavedword = len([wo for wo in texttotalword_list if wo.status != 0])
+            textsavedword_list = Words.objects.filter(Q(text=t)&Q(isnotword=False)&Q(status__gt=0)).\
+                                exclude(isCompoundword=True).annotate(wordtext_lc=Lower('wordtext')).\
+                                                    order_by('wordtext_lc')
+            textsavedword_list = (distinct_on(textsavedword_list, 'wordtext', case_unsensitive=True))
+            textsavedword = len(textsavedword_list)
+                            
+#             textsavedword = len([wo for wo in texttotalword_list if wo.status != 0])
 
-            textsavedexpr = Words.objects.filter(owner=request.user).\
-                                filter(text=t, isCompoundword=True, status__gt=0).count()
+            textsavedexpr = Words.objects.filter(Q(text=t)&Q(isCompoundword=True)&Q(status__gt=0)).count()
             textunknownword = texttotalword - textsavedword
             if texttotalword != 0:
                 textunknownwordpercent = 100 * textunknownword//texttotalword
@@ -332,7 +338,7 @@ def text_list(request):
             op = 'deleting'
             ids_to_del_OR_archive = request.GET['del']
             # it's possible to delete text but keep the already saved words:
-            delete_saved_words = str_to_bool(request.GET['delete_saved_words'])
+            is_deleting_saved_words = str_to_bool(request.GET['is_deleting_saved_words'])
         else:
             op = 'archiving'
             ids_to_del_OR_archive = request.GET['archive']
@@ -342,13 +348,14 @@ def text_list(request):
         delORarchivetxt_nb = 0
         delwo_nb = 0
         
-
         for text_id in ids_to_del_OR_archive:
-            ### FASTER ######    
-            # words unknown are deleted, whatever the case
+            # Case of words unknown (status == 0): deleted, whatever the case
             delwo_nb += Words.objects.filter(Q(text_id=text_id)&Q(status=0)).delete()[0]
+
+            # and delete also notaword (which are not compoundword):
+            Words.objects.filter(Q(text_id=text_id)&Q(isnotword=True)&Q(isCompoundword=False)).delete()
             
-            # and for words with status != 0:
+            # Case of saved words (status != 0):
             todel_OR_toarchive_words = Words.objects.filter(text_id=text_id).order_by(
                                                             'grouper_of_same_words','wordtext')
             toupdate_savedwords = [] # used for bulk_update
@@ -366,14 +373,12 @@ def text_list(request):
 
                 # if status == 0 -> we delete the words whatever the case.
                 # else:   - if it's archiving:  we keep the saved words
-                #         - or: if it's deleting: we keep the saved words if the option 'delete_saved_words'...
+                #         - or: if it's deleting: we keep the saved words if the option 'is_deleting_saved_words'...
                 #                           was not checked
-                if op == 'archiving' or ( op == 'deleting' and not delete_saved_words ):
-                        # create a customsentence if not existing
-                        customsentence = '' if not todel_OR_toarchive_wo.customsentence else \
-                                                   todel_OR_toarchive_wo.customsentence+' / ' 
-                        customsentence += todel_OR_toarchive_wo.sentence.sentencetext
-                        todel_OR_toarchive_wo.customsentence = customsentence
+                if op == 'archiving' or ( op == 'deleting' and not is_deleting_saved_words ):
+                    # create a customsentence if not existing (not sure if useful since all words should already have it
+                    if not todel_OR_toarchive_wo.customsentence:
+                        todel_OR_toarchive_wo.customsentence = todel_OR_toarchive_wo.sentence.sentencetext
                         toupdate_savedwords.append(todel_OR_toarchive_wo)
                 else:
                     # delete also Grouper_of_same_words associated:
@@ -397,7 +402,7 @@ def text_list(request):
 #                         gosw_for_this_word.delete()
 #                         delwo_nb += 1 # else it's not a word but a space ' ', or '?', '!' etc...
 #                     todel_OR_toarchive_wo.delete()
-            # bulk update:
+            # bulk update: (not sure if useful since all words should already have a customsentence)
             Words.objects.bulk_update(toupdate_savedwords, ['customsentence'])
 
             # all sentences need to be deleted and in Words: set order and textOrder to Null
@@ -554,14 +559,6 @@ def text_detail(request):
             created_date = None
             text_id = None
 
-        # deleting a word
-        elif 'word_delete' in request.GET.keys():
-            wo_id = request.GET['word_delete']
-            deleted_or_edited_word = Words.objects.get(id=wo_id)
-            text_id = deleted_or_edited_word.text.id
-            deleted_or_edited_word.delete()
-            text = Texts.objects.get(id=text_id)
-
         # editing a word
         elif 'word_edit' in request.GET.keys():
             wo_id = request.GET['wo_id'] # where is the word edited
@@ -571,6 +568,14 @@ def text_detail(request):
             deleted_or_edited_word.save()
             text = Words.objects.get(id=wo_id).text
         
+        elif 'word_delete' in request.GET.keys():
+            wo_id = request.GET['word_delete']
+            deleted_or_edited_word = Words.objects.get(id=wo_id)
+            wo_wordtext = deleted_or_edited_word.wordtext # used to update the wordcound of text
+            text_id = deleted_or_edited_word.text.id
+            deleted_or_edited_word.delete()
+            text = Texts.objects.get(id=text_id)
+            
         # inserting a word
         elif 'word_insert' in request.GET.keys():
             wo_id = request.GET['wo_id'] # where to insert the word
@@ -618,13 +623,26 @@ def text_detail(request):
             new_word.save()
             new_space.save()
 
+        # when deleting and inserting a word, update the wordcount and wordcound_distinct of the text
+        elif 'word_delete' in request.GET.keys() or 'word_insert' in request.GET.keys():
+            similarwordtext_count = Words.objects.filter(Q(text=text)&\
+                                            Q(wordtext__iexact=wo_wordtext)).count()
+            if 'word_insert' in request.GET.keys():
+                text.wordcount += 1
+                if similarwordtext_count > 1: # >1 because we have already inserted the word
+                    text.wordcount_distinct += 1
+            if 'word_delete' in request.GET.keys():
+                text.wordcount -= 1
+                if similarwordtext_count > 0: # >0 because we have already deleted the word
+                    text.wordcount_distinct -= 1
+
         # displaying the editable text
         elif 'edit' in request.GET.keys():
             text_id = request.GET['edit']
             text = Texts.objects.get(id=text_id)
         
         # the field 'text' in Text must be changed also, and the sentence where this word is
-        if 'word_delete' in request.GET.keys() or \
+        if 'word_delete' in request.GET.keys() or 'word_edit' in request.GET.keys() or \
                 'word_edit' in request.GET.keys():
             # updating the field 'text' in Text
             allwords_in_this_text = Words.objects.filter(text=text)

@@ -57,6 +57,8 @@
 		onclick="textlist_filter();" value="{{ tt_ls.texttag.id }}" class="unstyled">
 		<span class="checkboxitem-{% if tt_ls.bold %}bold{% else %}normal{% endif %}">{{ tt_ls.texttag.txtagtext }}</span>
 		<br></span>
+	{% empty %}
+	<span class="font-italic">{% trans 'No tags in texts' %}</span>
 	{% endfor %}
 	</form>
 </ul>
@@ -197,15 +199,15 @@
 		});
 		if (ids_to_delete.length > 0){
 			$('<div></div>').appendTo('body')
-            .html(gettext('Confirm Deletion?<br/><input type="checkbox" id="delete_saved_words"/> (optional) delete also text saved words'))
+            .html(gettext('Confirm Deletion?<br/><input type="checkbox" id="is_deleting_saved_words"/> (optional) delete also text saved words'))
             .dialog({
                 modal: true,
                 title: gettext('Deleting text(s)'), zIndex: 10000, autoOpen: true,
                 width: 'auto', resizable: false,
                 buttons: [{text: gettext("Yes"),
 							click: function() {
-					var delete_saved_words = $('#delete_saved_words:checked').length > 0;
-					document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete)+'&delete_saved_words='+delete_saved_words;
+					var is_deleting_saved_words = $('#is_deleting_saved_words:checked').length > 0;
+					document.location = '{% url 'text_list' %}?del='+JSON.stringify(ids_to_delete)+'&is_deleting_saved_words='+is_deleting_saved_words;
 								}
 							},
 							{text: gettext("Cancel"),

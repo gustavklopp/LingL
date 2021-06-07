@@ -80,8 +80,10 @@ function ajax_ctrlclicked_compoundword(wo_id, op, rtl) {
 				$('#wblnk_search input').on('change', function() {
 					var wblnk = $('input[name=wblnk]:checked').val()
 					var dictwebpage_searched_word = $('#wblnk_search').data('dictwebpage_searched_word');
-					ajax_dictwebpage(wblink, dictwebpage_searched_word);
+					ajax_dictwebpage(wblnk, dictwebpage_searched_word);
 				});
+				// and remove the compoundword highlights:
+				$('.ctrlclicked').removeClass('ctrlclicked');
 
 			},
 			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}

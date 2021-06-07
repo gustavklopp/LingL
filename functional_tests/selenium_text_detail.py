@@ -65,6 +65,7 @@ class Text_detail(Base):
 #         self.wait_until(By.ID, 'text_table')
         self.selenium.get('{}/text_list/'.format(self.live_server_url))
         self.assertEqual(self.selenium.current_url, '{}/text_list/'.format(self.live_server_url))
+        self.find(By.CSS_SELECTOR, '#filterlangform input[value="2"]').click()
         self.wait_until_disappear(By.XPATH, '//td[contains(text(), "No matching records found")]')
         self.wait_until_appear(By.XPATH, '//td[contains(text(), "an Example of title")]')
         texts = self.finds(By.CSS_SELECTOR, '#text_table tbody tr')
@@ -108,7 +109,7 @@ class Text_detail(Base):
         self.assertEqual(len(texts), 2)
         text_row = texts[1]
         text_tds = text_row.find_elements_by_css_selector('td')
-        text_title = text_tds[4].text
+        text_title = text_tds[5].text
         self.assertEqual(text_title, title2_str+' [testing,demo]')
         
         

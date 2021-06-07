@@ -10,7 +10,7 @@
 
 {% block content %}
 
-{% if text_exist == 0 and language_selectoption|length == 1 %} {# First time user: No texts in the database and only one language #}
+{% if database_size.database_size == 0 and language_selectoption|length == 1 %} {# First time user: No texts in the database and only one language #}
 	<div class="alert alert-danger notfading" role="alert">
 		{% trans "Hint: The database seems to be empty." %}<br>
 		   {# Install the demo database if the website is on localhost #}
@@ -43,10 +43,8 @@
 			{% trans "Last open Texts" %}:
 					<ul>
 					{% for lastopentext in lastopentexts %}
-					<li> <i>{{ lastopentext }}</i>
-					<br>
-					<a href="{% url 'text_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" title="Read" alt="Read" />&nbsp;{% trans "Read" %}</a>
-
+					<li><a title="{% trans 'Read it' %}" href="{% url 'text_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" alt="Read" />&nbsp;&#9658;
+						&nbsp;<i>{{ lastopentext }}</i></a>
 					</li>
 					{% endfor %}
 					</ul>

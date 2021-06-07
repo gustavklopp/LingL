@@ -321,7 +321,7 @@ class RestoreForm(forms.ModelForm):
         # is the field 'restore_file_name' useful??
         fields = ['owner', 'restore_file_name', 'restore_file', 'import_oldlwt']
         widgets = {
-            'restore_file': forms.FileInput(attrs={'accept': '.yaml'}),
+            'restore_file': forms.FileInput(attrs={'accept': '.yaml.gz'}),
             'import_oldlwt': forms.FileInput(attrs={'accept': '.sql.gz'})
             }
         

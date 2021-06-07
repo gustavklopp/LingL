@@ -1,16 +1,23 @@
 function clickword(event) { // check whether a word is clicked (and +ctrl-clicked)
-	//click_ctrlclick_toggle func is defined in its own file (with the same name in lwt/js)
-	click_ctrlclick_toggle(this, event); // creating: clicktooltip and the right panel (bottom & top)
-	// and if status == 0: the termform at the top right, and the dictwebpage at the bottom right
-	
-	// change the color when clicked:
+	// change the color when clicked depending on a click or Ctrl-click event:
 	if (event.ctrlKey){
 		$(this).addClass('ctrlclicked');
 	} else {
 		$('.clicked').removeClass('clicked'); // only one word can be clicked at one time
 		$('.ctrlclicked').removeClass('ctrlclicked'); 
+		$('.firstword').removeClass('firstword'); 
 		$(this).addClass('clicked');
+		// reset the global variables needed for storing compound words:
+		compoundword_id_list = []; 
+		dictwebpage_searched_word = []; 
 	}
+	// global variables need updating
+	compoundword_id_list.push(parseInt($(this).attr('woid'))); 
+	dictwebpage_searched_word.push($(this).attr('wowordtext')); 
+
+	//click_ctrlclick_toggle func is defined in its own file (with the same name in lwt/js)
+	click_ctrlclick_toggle(this, event); // creating: clicktooltip and the right panel (bottom & top)
+	// and if status == 0: the termform at the top right, and the dictwebpage at the bottom right
 };
 
 /* creating: clicktooltip, the termform at the top right, and the dictwebpage at the bottom right 
@@ -30,7 +37,7 @@ function click_ctrlclick_toggle(el, event, op=null) {
 		var click = event;
 
 		if (click.ctrlKey){ // function is called by control+clicking on a word
-			compoundword_id_list.push(parseInt($el.attr('woid'))); // add the word already in termform to the already
+			//compoundword_id_list.push(parseInt($el.attr('woid'))); // add the word already in termform to the already
 			                                                          // knwon compoundword
 			ajax_ctrlclicked_compoundword(compoundword_id_list, 'new', RTL); // display the termform
 			return false; // don't continue after it: Don't open a tooltip 

@@ -17,8 +17,7 @@ var STATUSES = {{ statuses }};
 var TAGS = {% if tags %}{{ tags }}{% else %}[]{% endif %};
 var TEXTTAGS = {% if texttags %}{{ texttags }}{% else %}[]{% endif %};
 {% endautoescape %}
-</script>
-<script type="text/javascript">
+
 TEXTPOS = -1;
 WBLINK1 = {% if text.language.dict1uri %}'{% autoescape off %}{{ text.language.dict1uri }}{% endautoescape %}'{% else %}''{% endif %};
 WBLINK2 = {% if text.language.dict2uri %}'{% autoescape off %}{{ text.language.dict2uri }}{% endautoescape %}'{% else %}''{% endif %}; 
@@ -39,6 +38,9 @@ $(document).ready( function() {
 	
 	update_workcount(); 
 });
+// store the list of the current click word()
+var compoundword_id_list = [];
+var dictwebpage_searched_word  = [];
 </script>
 <script type="text/javascript" src="{% static 'lwt/js/ajax_update.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/hovertooltip.js' %}" charset="utf-8"></script>

@@ -31,6 +31,7 @@ from lwt.views._nolang_redirect_decorator import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views.termform import *
+from lwt.constants import STATUS_CHOICES
 
 ''' display the text to be read, with lots of javascript...'''
 @login_required
@@ -62,13 +63,14 @@ def text_read(request, text_id):
             Words.objects.bulk_update(learning_inthistext_words, ['status'])
     
     # calculate the statistic (it's the same stats than in text_list)s
-    texttotalword = Words.objects.filter(text=text,isnotword=False).exclude(isCompoundword=True).count()
+    texttotalword = text.wordcount_distinct
     textsavedword = Words.objects.filter(text=text,isnotword=False,status__gt=0).exclude(isCompoundword=True).count()
+#     texttotalword = Words.objects.filter(text=text,isnotword=False).exclude(isCompoundword=True).count()
     todo_wordcount = texttotalword - textsavedword 
     todo_wordcount_pc = int(round( todo_wordcount*100 / texttotalword ))
     
     # to have the tooltip displayed. Creating the block of text which the Javascript will read:
-    statuses = json.dumps(get_statuses()) # function in _utilities_views
+    statuses = json.dumps(STATUS_CHOICES) 
     wordtags = json.dumps(list(Wordtags.objects.values_list('wotagtext',flat=True).order_by('wotagtext')))
     texttags = json.dumps(list(Texttags.objects.values_list('txtagtext',flat=True).order_by('txtagtext')))
 
@@ -102,31 +104,32 @@ def _google_API(content):
     
 
 def _pons_API(content, url):
+    from django.utils.translation import get_language_info
+
     soup = BeautifulSoup(content, 'html.parser')
     # Sometimes Pons displays the targeted language in the second block, sometimes in the second...
     pattern = r'(?<=en\.pons\.com/translate/)\w+(?=-)'
-    origin_lang = re.search(pattern, url).group()
+    origin_lang = re.search(pattern, url).group().lower()
+
     divs_lang = soup.find_all('div', {'class':'lang'})
     div_targets = []
     for div_lang in divs_lang:
-        span_flag = div_lang.findAll('span', {'class':'flag'})
-        
-        if span_flag:
-            span_flag = span_flag[0]
-            if span_flag['title'].lower() == origin_lang.lower():
-                div_targets.extend(div_lang.find_all('div', {'class': 'target'}))
-            else:
-                div_targets.extend(div_lang.find_all('div', {'class': 'source'}))
+        # we must determine what is the origin language for each block
+        div_lang_origin = div_lang['id']
+        is_origin_lang_first = origin_lang == get_language_info(div_lang_origin)['name'].lower()
+        if is_origin_lang_first:
+            div_targets.extend(div_lang.find_all('div', {'class': 'target'}))
+        else:
+            div_targets.extend(div_lang.find_all('div', {'class': 'source'}))
             
     for idx, div_target in enumerate(div_targets):
         trans_item = div_target.get_text().strip()
-        new_tag = '''
-            <span  title="{0}" class="hover_pointer" onclick="addTranslation('{1}');">
-                <img src="{2}" alt="Copy" />&nbsp;<span id="trans_item_{3}">{1}</span>&nbsp;<span class="text-muted" 
-                title="{4}">[{3}]</span>
-            </span>'''.format(_('Copy this translation'), trans_item, static('lwt/img/icn/tick-button.png'), 
+        new_tag = '<span  title="{0}" class="hover_pointer" onclick="addTranslation(\'{1}\');">'
+        new_tag += '<img src="{2}" alt="Copy" />&nbsp;<span id="trans_item_{3}">{1}</span>&nbsp;'
+        new_tag += '<span class="text-muted" title="{4}">[{3}]</span> </span>'
+        new_tag = new_tag.format(_('Copy this translation'), trans_item, static('lwt/img/icn/tick-button.png'), 
                                 idx+1, _('keyboard shortcut'))
-        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('span', {'title':'Copy'})
+        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('span')
         div_target.replace_with(tag_soup)
     html = _clean_soup(soup, url)
     return html
@@ -226,11 +229,12 @@ def _wiki_API(content, url):
 def _wiki_API_redirect(error, finalurl, word_escaped):
     soup = BeautifulSoup(error, 'html.parser')
     didyoumean = soup.find('span', {'id':'did-you-mean'})
-    didyoumean_a = didyoumean.find('a') # --> '/wiki/thisotherspelledword'
-    didyoumean_word = didyoumean_a['href'].split('/')[-1]
-    didyoumean_word_escaped = parse.quote(didyoumean_word)
-    redirect_url = finalurl.replace(word_escaped, didyoumean_word_escaped)
-    return redirect_url
+    if didyoumean:
+        didyoumean_a = didyoumean.find('a') # --> '/wiki/thisotherspelledword'
+        didyoumean_word = didyoumean_a['href'].split('/')[-1]
+        didyoumean_word_escaped = parse.quote(didyoumean_word)
+        finalurl = finalurl.replace(word_escaped, didyoumean_word_escaped)
+    return finalurl
 
 ''' Helper func for dictwebpage (and _pons_API()
     allows to clean the webpage to get only the useful content:
@@ -257,10 +261,16 @@ def _clean_soup(soup, url):
     body = soup.find('body')
     # further editing of the <body> for some API
     if 'pons' in url: # Case of a PONS.com website, some div can be removed
-        body = body.select_one('#container-content')
-#         for header in body.select('#page-header'):
-#             header.extract()
-        body.select_one('.searchbar-tabs').extract()
+        body_pageheader = body.select_one('#page-header')
+        if body_pageheader:
+            body_pageheader.extract()
+        body_containercontent = body.select_one('#container-content')
+        if body_containercontent:
+            body.select_one('.searchbar-tabs').extract()
+        if result_section_nav := body.select_one('#result-section__nav'):
+            result_section_nav.extract()
+        if result_section_header := body.find_all('h3', {'class':'result-section__header'}):
+            [r.extract() for r in result_section_header]
     if 'wordref' in url:
         body.find('header', {'class':'full-header'}).extract()
         body.find('div', {'id':'ad1'}).extract()
@@ -294,6 +304,7 @@ def dictwebpage(request):
         if 'issentence' in request.GET.keys() and request.GET['issentence'] != '': # no key "issentence" is sent if the value of 'issentence' is empty in AJAX
             wo_id = int(request.GET['issentence'])
             word = Sentences.objects.values_list('sentencetext',flat=True).get(sentence_having_this_word=wo_id)
+            word_escaped = parse.quote(word)
         finalurl = wbl.replace('<WORD>', word_escaped)
 #         finalurl = createTheDictLink(wbl, word) # create the url of the dictionary, integrating the searched word
 
@@ -309,13 +320,17 @@ def dictwebpage(request):
                 content = urlopen(reqest)
             # catch the redirect from Wiktionary
             except urllib.error.HTTPError as httpError:
+                error = httpError.read().decode()
+                # wiktionary has a way to redirect to similar word if nothing found
                 if 'wiktionary' in finalurl:
-                    error = httpError.read().decode()
                     redirect_url = _wiki_API_redirect(error, finalurl[1:], word_escaped)
                     reqest = Request(redirect_url, headers=headers)
-                    content = urlopen(reqest)
+                    try:
+                        content = urlopen(reqest)
+                    except:
+                        content = error # redirect doesn't work neither, so display the error
                 else:
-                    raise urllib.error.HTTPError
+                    content = error 
 
         if finalurl[0] == '^':
             try:

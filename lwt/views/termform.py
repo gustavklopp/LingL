@@ -24,6 +24,7 @@ from lwt.forms import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views.text_read import *
+from lwt.constants import STATUS_CHOICES
 
 ''' helper function: called by termform if GET is 'del' 
     it's not 'deleting' the word in the database: it's reinitializing as an unknown word'''
@@ -68,7 +69,7 @@ def _create_curlybrace_sentence(wo, compoundword_list=None, compoundword_id_list
     if compoundword_list: 
         wo = compoundword_list[0]
     allword_in_this_sentence = Words.objects.filter(sentence=wo.sentence).\
-        exclude(isCompoundword=True,isnotword=True).order_by('order')
+        exclude(isCompoundword=True, isnotword=True).order_by('order')
     sentenceList = []
     for allword in allword_in_this_sentence:
         # compound word elements
@@ -110,10 +111,6 @@ def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
                 # "manage extra field" link
                 f = WordsForm(owner, initial = {'wordinside_order': compoundword_id_list},
                                          instance =  compoundword_list[0])
-                customsentence = ''
-
-            # displaying the word inside its sentence, with '{' '}' around it:
-            if not customsentence: 
                 customsentence = _create_curlybrace_sentence(compoundword, compoundword_list, compoundword_id_list)
                 wo = compoundword_list[0] # used after in the html to search dict at the end of the page
 
@@ -129,11 +126,11 @@ def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
 
         # displaying the word inside its sentence, with '{' '}' around it:
         customsentence = wo.customsentence
-        if not customsentence: 
+        if op == 'new': 
             customsentence = _create_curlybrace_sentence(wo)
 
-    statuses = get_statuses() # display radio buttons to choose among available status for a term
-    del statuses[0] # we dont'need this key (in the form, it always atleast a Learning word)
+    statuses = STATUS_CHOICES # display radio buttons to choose among available status for a term
+#     statuses.pop(0, None) # we dont'need this key (in the form, it always atleast a Learning word)
 
     if op == 'new': 
         Op_Thing = _('New Term')
@@ -425,7 +422,7 @@ def termform(request):
             samewordtextlength = len(sameword_list)
             html = render_to_string('lwt/term_message.html', {'wordtext':word.wordtext, 
                     'head_message':_('Changing Status of "{}"').format(word.wordtext), 
-                    'content_message':_('status updated, now : "')+get_statuses()[status]['name']+'"',
+                    'content_message':_('status updated, now : "')+STATUS_CHOICES[status]['name']+'"',
                      'sameword_list':sameword_list, 'samewordtextlength':samewordtextlength }
                                     )
             # used for the hovertooltip 
@@ -595,7 +592,7 @@ def termform(request):
                     cowotranslation = compoundword.translation
                 
             ########################## Processing the form for WORD #########################################
-            elif len(compoundword_id_list) == 1:
+            elif len(compoundword_id_list) == 1 or not compoundword_id_list:
                 wo_id = request.POST['wo_id']
                 virgin_word = Words.objects.get(id=wo_id)
                 sameword_list = [virgin_word]

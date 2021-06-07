@@ -1,10 +1,11 @@
 from django.utils.translation import ugettext as _
 
 
-STATUS_CHOICES = ( (0, _('Unknown')),
-                   (1, _('Learning')),
-                   (100, _('Well-known')),
-                   (101, _('Ignored')))
+STATUS_CHOICES = { 0: {'nb':0, 'name': _('Unknown'), 'abbr':_('Unk.'), 'small': '[0]'},
+                   1: {'nb':1, 'name': _('Learning'), 'abbr': ('Lear.'), 'small': '[1-99]'},
+                   100: {'nb':100, 'name': _('Well known'), 'abbr':_('Wkn.'), 'small': '[100]'},
+                   101: {'nb':101, 'name': _('Ignored'), 'abbr':_('Ign.'), 'small': '[101]'}
+                }
 
 # Number of words where an alert is trigger to archive or delete some texts
 MAX_WORDS_NOTICE = 2000

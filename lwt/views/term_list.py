@@ -188,7 +188,9 @@ def load_wordtable(request):
         w_dict = {}
         w_dict['state'] = 'checked' if w.state else '' # checkbox to export to anki
         w_dict['id'] = w.id
-        w_dict['status'] = get_name_status(w.status)
+        # the 'hidden' part in 'status' allows to color the row accordingly in the html file
+        w_dict['status'] = '<span hidden>{:03d}</span>'.format(w.status)+\
+                                get_name_status(w.status)+'<small>['+str(w.status)+']</small>'
         w_dict['language_name'] = w.language.name
         w_dict['text_title'] = w.text.title if w.text else ''
         sentence = w.sentence.sentencetext if w.sentence else ''
@@ -333,7 +335,6 @@ def term_list(request):
     # the checked checkboxes infulence the list of texts and statuses to display.
 
     texts = Texts.objects.filter(owner=request.user).order_by('language').all()
-    statuses = STATUS_CHOICES
 
     # Manage extra field:
     extra_field_json = Words.objects.filter(owner=request.user).values_list('extra_field', flat=True).first()
@@ -346,14 +347,14 @@ def term_list(request):
     database_size = get_word_database_size(request)
 
     return render(request, 'lwt/term_list.html',
-                   {'languages':languages, 'texts':texts,'statuses':statuses,
+                   {'languages':languages, 'texts':texts,'statuses':STATUS_CHOICES,
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
 
                     'lang_filter': lang_filter, 
                     'text_filter': text_filter, 
                     'status_filter': status_filter,
                     'wordtag_filter': wordtag_filter, 'wordtags_list':wordtags_list, 'wordtags_list_empty':wordtags_list_empty,
-                    'compounword_filter':compoundword_filter, 'compoundword_textIds_boldlist':compoundword_textIds_boldlist,
+                    'compoundword_filter':compoundword_filter, 'compoundword_textIds_boldlist':compoundword_textIds_boldlist,
 
                     'noback':noback,
                     'words_with_state_True':words_with_state_True,

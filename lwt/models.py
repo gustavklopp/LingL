@@ -173,6 +173,8 @@ class Texts(BaseModel):
     texttags = models.ManyToManyField(Texttags,related_name='texthavingthistag') 
     lastopentime = models.DateTimeField(blank=True, null=True)
     archived = models.BooleanField(default=False)
+    wordcount = models.IntegerField(default=0, blank=True, null=True)
+    wordcount_distinct = models.IntegerField(default=0, blank=True, null=True) # same as 'wordcount' but without written similarly word
 
     objects = TextsManager() # use to call the parent foreign key by its name (or title , or etc...)
     
@@ -295,7 +297,7 @@ class Words(BaseModel):
     ####      Foreign keys    ####
     language = models.ForeignKey(Languages,blank=True, null=True, related_name='wordhavingthislanguage', 
                                     on_delete=models.CASCADE )
-    text = models.ForeignKey(Texts, on_delete=models.CASCADE,blank=True, null=True, related_name='texthavingthisword')
+    text = models.ForeignKey(Texts, on_delete=models.SET_NULL, blank=True, null=True, related_name='texthavingthisword')
     sentence = models.ForeignKey(Sentences, related_name='sentence_having_this_word',blank=True, 
                                  null=True, on_delete=models.SET_NULL)
     # compoundword: Several words which together have a meaning in the language:
@@ -319,7 +321,7 @@ class Words(BaseModel):
 #                        (1, _('Learning')),
 #                        (100, _('Well-known')),
 #                        (101, _('Ignored')))
-    status = models.IntegerField(choices=STATUS_CHOICES, default=0)  
+    status = models.IntegerField(default=0)  
     order = models.IntegerField(blank=True, null=True)  # where is the word in the sentence
     textOrder = models.IntegerField(blank=True, null=True)  # where is the word in the text
     wordtext = models.CharField( max_length=250,blank=True, null=True)  

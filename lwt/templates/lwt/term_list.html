@@ -58,8 +58,10 @@
 		<input type="checkbox" 
 		{% if text_filter|length == 0 or text.id in text_filter %}checked{% endif %} 
 		onclick="termlist_filter();" value="{{ text.id }}" class="unstyled">
- {{ text.title }}
+		 {{ text.title }}
 		<br></span>
+	{% empty %}
+		<i>{% trans 'Nothing to display'%}</i>
 	{% endfor %}
 	</form>
 </ul>
@@ -71,11 +73,11 @@
 <ul id="ul_status" class="collapse show">
 	<form id="filterstatusform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
-	{% for status in statuses %}
+	{% for status, status_dict in statuses.items %}
 		<input type="checkbox" 
-		{% if status_filter|length == 0 or status.0 in status_filter %}checked{% endif %} 
-		onclick="termlist_filter();" value="{{ status.0 }}" class="unstyled">
-		 {{ status.1 }}
+		{% if status_filter|length == 0 or status_dict.nb in status_filter %}checked{% endif %} 
+		onclick="termlist_filter();" value="{{ status_dict.nb }}" class="unstyled">
+		 <span class="row_status_{{ status_dict.nb }}">&nbsp;{{ status_dict.name }}&nbsp;<small>{{ status_dict.small|safe }}</small></span>
 		  </input><br>
 	{% endfor %}
 	</form>
@@ -88,7 +90,6 @@
 <ul id="ul_wordtag" class="collapse show">
 	<form id="filterwordtagform" method="POST" action="{% url 'term_list' %}">
 	{% csrf_token %}
-	{% if wordtags_list_empty %}{% trans 'Nothing to display'%}{% endif %}
 	{% for wt_ls in wordtags_list %} {# loop on a zipped(tag, languages contained in this tag) #}
 		<span wordtag="{{ wt_ls.tag.id }}" language="{{ wt_ls.lang }}"
 		{% if wt_ls.hidden %}class="hidden"{% endif %}>	
@@ -97,6 +98,8 @@
 		onclick="termlist_filter();" value="{{ wt_ls.tag.id }}" class="unstyled">
 		{{ wt_ls.tag.wotagtext }}
 		<br></span>
+	{% empty %}
+		<i>{% trans 'Nothing to display'%}</i>
 	{% endfor %}
 	</form>
 </ul>
@@ -316,7 +319,18 @@ $(function () {
 		}
 	});
 });
-       
+	
+/* coloring the row depending on the status of the word */
+function rowStyle(row) {
+	//console.log(row.status);
+	var status = row.status;
+	if (!$.isNumeric(status)){
+		var status = parseInt(row.status.slice(13,16));
+	}
+	var status_class = 'row_status_'+status.toString();
+	//console.log(status_class);
+	return { classes: status_class };
+}      
 /* the button 'delete' then sends the ids by simple GET function */
 /*
 $("button#delete").click(function(){

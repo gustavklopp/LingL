@@ -1,8 +1,6 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
 
-<div hidden id="checkfocus_for_keyboardshortcut">This is used to check that this panel has loaded</div>
-
 {# some API needs to have specific stylesheet to be added for them #}
 {% if API_name == 'pons' %} {# Pons API needs its own stylesheet #}
 <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_pons.css' %}">
@@ -17,7 +15,8 @@
 {% static 'lwt/img/icn/tick-button.png' as tick_button %}
 {% blocktrans %}
 <p><small>(Click word(s) beside the <img src="{{ tick_button }}" alt="Copy" /> to copy as a translation or 
-use <span class="text-muted">[keyboard shortcuts nb]</span>)</small></p>
+use <span class="text-muted">[keyboard shortcuts nb] (the result in "Possible similar words" should not 
+have focus: AltGr+D to toggle focus)</span>)</small></p>
 {% endblocktrans %}
 
 {# some API needs to have specific stylesheet to be added for them #}

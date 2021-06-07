@@ -18,7 +18,7 @@ function create_tooltip_title(chosen_symbol, trans, roman, status) {
 		r += ret  + '(' + roman + ')';}
 	if (trans != 'None' && trans != '' && trans != null && trans != 'NULL') { 
 		r += ret  + symbol + trans; }
-	r += ret + symbol + getStatusName(status) + ' [' + getStatusAbbr(status) + ']';
+	r += ret + symbol + getStatusName(status) + ' [' + status + ']';
 	return r;
 }
 
@@ -26,20 +26,25 @@ function create_tooltip_title(chosen_symbol, trans, roman, status) {
 
 /* Display the tooltip when hovering (not clicked) over words in text_read -> Blablabla Unknown[?] */
 function getStatusName(status) {
+	var status = parseInt(status);
 	var stat = STATUSES[status];
-	if (stat === undefined || stat == '1') { // Learning status can be between 1 and 99, so no defined as a constant
-		return 'Learning';
+	if (stat === undefined || stat == '1') { // Learning status can be between 1 and 99, so not defined as a constant
+		return STATUSES[1]['name'];
 		} else {
 		return STATUSES[status]['name'];
 	} 
 }
 
+/* NOT USED
 /* Display the tooltip when hovering (not clicked) over words in text_read -> Blablabla Unknown[?] */
+/*
 function getStatusAbbr(status) {
+	var status = parseInt(status);
 	var stat = STATUSES[status];
-	if (stat === undefined || stat == '1') { // Learning status can be between 1 and 99, so no defined as a constant
+	if (stat === undefined || stat == '1') { // Learning status can be between 1 and 99, so not defined as a constant
 		return status;
 		} else {
 		return STATUSES[status]['abbr'];
+	}
 	} 
-}
+*/

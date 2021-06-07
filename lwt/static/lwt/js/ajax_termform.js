@@ -102,7 +102,7 @@ function _display_possiblesimilarword(data, wo_id){
 	if ($.isEmptyObject(possiblesimilarword)){
 		r += gettext('No similar words found.');
 	} else {
-		r += '<ul class="fa-ul">';
+		r += '<ul class="fa-ul sim_OR_dict_highlight" id="possible_similarword_result">';
 		$.each(possiblesimilarword, function(key, val){
 			r += '<li ';
 			r += '> <span simwo_id="'+val.id+'" href="#" data=toggle="tooltip" class="possible_similarword" ';
@@ -113,7 +113,7 @@ function _display_possiblesimilarword(data, wo_id){
 				val.wordtext +'</span>';
 			if (val.translation){ r += ' (= '+val.translation+')'; }
 			r += ' ['+gettext('in : ')+'"'+val.customsentence+'"]'+
-				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('keyboard shortcut')+'">['+(key+1)+']</span></li>';
+				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('[]keyboard shortcut] (it should have focus though: AltGr+D to toggle focus with the Dict.)')+'">['+(key+1)+']</span></li>';
 		});
 		r += '</ul>';
 	}
@@ -124,7 +124,7 @@ function _display_possiblesimilarword(data, wo_id){
 /* clicking on 'go' in the termform searchbox (to search other word) */
 function submit_termformSearchbox(wo_id, language_id){
 	var searched_word = $('#termformSearchbox').val();	
-	if (dictwebpage_searched_word != ''){
+	//if (dictwebpage_searched_word != ''){
 		// search in the dictionary with the text given
 		_clicked_weblink_radiobutton(searched_word);
 		// search similar word with the text given 
@@ -144,6 +144,8 @@ function submit_termformSearchbox(wo_id, language_id){
 			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
 			});
 		} else { //it's a compound word
+			var firstsearch_el = searched_word_list[0];
+			var secondsearch_el = searched_word_list[1];
 			$.ajax({url: '/search_possiblesimilarCompoundword/', type: 'GET',
 			data: {
 					'firstsearch_el' : firstsearch_el, 
@@ -158,7 +160,7 @@ function submit_termformSearchbox(wo_id, language_id){
 			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
 			});
 		}
-	}
+	//}
 }
 
 

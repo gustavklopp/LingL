@@ -139,6 +139,7 @@ def time_filter_args(week_json):
         filter_args = {'lastopentime__gt': ancient_cutout_date, 'lastopentime__lte': recent_cutout_date}
     return filter_args
 
+
 ''' helper function for list_filtering'''
 def create_filter(filter_type, filter_list_json):
     if filter_list_json:
@@ -148,7 +149,7 @@ def create_filter(filter_type, filter_list_json):
         if filter_type == 'lastopentime' and not filter_list:
             filter_args = {'lastopentime': timezone.now() + timedelta(days=1)} #1 day in the future
             return Q(**filter_args)
-        # special case for filtering on tags: if list if empty,
+        # special case for filtering on tags: if list if empty, we'll display everything
         if filter_type == 'texttags__id' and not filter_list:
             return Q()
         # we shoul display all objects
@@ -157,11 +158,16 @@ def create_filter(filter_type, filter_list_json):
             if filter_type == 'lastopentime':
                 filter_args = time_filter_args(filter_val)
             else:
-                if filter_type == 'archived' or filter_type == 'compoundword':
+                if filter_type == 'archived' or filter_type == 'isCompoundword':
                     filter_val = str_to_bool(filter_val)
                 else:
                     filter_val = int(filter_val)
-                filter_args = {filter_type: filter_val}
+                # special case for status "Learning" since we need to take into account 
+                # choice 'Learning [0 to 99]' 
+                if filter_type == 'status' and filter_val == 1:
+                    filter_args = {'status__gt': 0, 'status__lt': 100}
+                else:
+                    filter_args = {filter_type: filter_val}
             
             if idx == 0:
                 filter_Q = Q(**filter_args)
@@ -232,7 +238,7 @@ def list_filtering( model, request):
         filter_Q_text = create_filter('text_id', text_filter_json) 
         filter_Q_status = create_filter('status', status_filter_json)
         filter_Q_wordtag = create_filter('wordtags', wordtag_filter_json)
-        filter_Q_compoundword = create_filter('compounword', compoundword_filter_json)
+        filter_Q_compoundword = create_filter('isCompoundword', compoundword_filter_json)
         # special case for filtering on compoundword or not:
         # special case for filtering on compoundword or not:
 #         filter_Q_compoundword = Q()
@@ -363,8 +369,13 @@ def splitText(text):
     ######################## Splitting and insert sentences/Words in the database ######################
     textOrder = 0
     new_words_created = []
+    distinct_wordtext_dict = {} # we´ll count the number of distinct wordtexts (used in text list and in text_read)
     isWord_created_nb = 0 # because bulk_create doesn't return the ID!!!
     for sentID,sentTxt in enumerate(sentences): # Loop on each sentence
+        # it will be used to create the 'customsentence': the sentence with the word inside '**...**'
+        senttext_before_wo = ''
+        senttext_after_wo = ''
+
         newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
                                                sentencetext=sentTxt, order=sentID+1,text=text) # create each sentence
         # splitting the words inside the sentence:
@@ -387,22 +398,26 @@ def splitText(text):
                     splitEachChar_List = re.split(r'(['+termchar+'])', word)
                     splitEachChar_List = [i for i in splitEachChar_List if i] # remove the empty item created by re.split
                     temp_sentList.extend(splitEachChar_List)
-                else: # the element doesn't contain any Jap/Chinese character. not to spit in character
+                else: # the element doesn't contain any Jap/Chinese character. not to split in character
                     temp_sentList.append(word)
             sentList = temp_sentList
 
-        for wordidx,word in enumerate(sentList): 
+        for wordidx, word in enumerate(sentList): 
             if re.search(r'[' + termchar +  ']', word): 
+                # creating the custom sentence 
+                senttext_before_wo = ''.join(sentList[:wordidx])
+                senttext_after_wo = ''.join(sentList[wordidx+1:])
+                customsentence = senttext_before_wo + '**'+word+'**' + senttext_after_wo
+
                 wo = Words(owner=text.owner,language=text.language, 
                                           sentence=newsentence,text=text,
                                           order=wordidx, textOrder=textOrder,
-                                            wordtext=word, 
+                                            wordtext=word, customsentence=customsentence, 
 #                                               wordtext=remove_spaces(word,removeSpaces), \
                                           isnotword=False)
                 new_words_created.append(wo)
-                # used later to search the word which will be created 
-                filter_Q_nk = Q(wordtext=wo.wordtext)&Q(text=wo.text)&\
-                               Q(owner=wo.owner)
+                word_LC = word.lower()
+                distinct_wordtext_dict[word_LC] = distinct_wordtext_dict.setdefault(word_LC, 0)+1
                 isWord_created_nb += 1
             else: # Non-words
                 wo = Words(owner=text.owner,language=text.language, sentence=newsentence,
@@ -498,6 +513,10 @@ def splitText(text):
     Words.objects.bulk_update(sim_cowo_to_update, ['isCompoundword','compoundword',
                                                    'show_compoundword'])
 
+    # update the wordcount and wordcount without the similar wordtext in the text:
+    text.wordcount = isWord_created_nb
+    text.wordcount_distinct = len(distinct_wordtext_dict)
+    text.save()
 
 # IS IT USEFUL???
 # def remove_spaces(s,remove):
@@ -587,14 +606,14 @@ def strToHex(mystring):
             myhex += h
     return myhex.upper()
 
-''' CONSTANTS (I know, it's not me...) used inside text_read when displaying the tooltip '''
+''' CONSTANTS  used inside text_read when displaying the tooltip '''
     #TODO increase the status of learning words each time we open a text that contains this word??
-def get_statuses():
-    statuses = { 0 : {"abbr" :   "0", "name" : _("Unknown")},
-                1 : {"abbr" :   "1", "name" : _("Learning")},
-                100 : {"abbr" : _("WKn"), "name" : _("Well Known")},
-                101 : {"abbr" : _("Ign"), "name" : _("Ignored")}, }
-    return statuses
+# def get_statuses():
+#     statuses = { 0 : {"abbr" :   "0", "name" : _("Unknown")},
+#                 1  : {"abbr" :   "1", "name" : _("Learning")},
+#                 100 : {"abbr" : _("WKn"), "name" : _("Well Known")},
+#                 101 : {"abbr" : _("Ign"), "name" : _("Ignored")}, }
+#     return statuses
 
 ''' same as above but with using parameter. NOTE: It allows to get intermediate number
     for example: 56, would be considered as 'Learning'. '''

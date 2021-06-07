@@ -51,15 +51,15 @@ class PieChart(Chart):
         words = Words.objects.exclude(Q(isnotword=True)&Q(isCompoundword=False)).\
                             filter(filter_language).all().order_by('status')
         data = []
-        self.labels = [i[1] for i in STATUS_CHOICES]
-        count = 0
-        for idx, el in enumerate(STATUS_CHOICES):
-            if el[0] == 101:
+        self.labels = [STATUS_CHOICES[i]['name'] for i in STATUS_CHOICES]
+#         count = 0
+        for status in STATUS_CHOICES:
+            if status == 1:
                 status_words_count = words.filter(filter_language).\
-                    filter(status__gte=el[0]).count()
+                    filter(Q(status__gte=1)&Q(status__lt=100)).count()
             else:
                 status_words_count = words.filter(filter_language).\
-                    filter(status__gte=el[0]).filter(status__lt=STATUS_CHOICES[idx+1][0]).count()
+                    filter(status=status).count()
             data.append(status_words_count)
         return [DataSet(
                         type='pie',
