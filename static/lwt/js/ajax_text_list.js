@@ -115,6 +115,6 @@ function textlist_filter() {
 		},
 		error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
 		}
-});
+	});
 }
 

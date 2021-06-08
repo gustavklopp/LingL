@@ -1,7 +1,6 @@
 {% extends "lwt/__baseSkeleton.html" %}
 {% load static %}
 {% load i18n %} {# used for internationalization #}
-{% load jchart %}
 
 {% block pagetitle %}{% if currentlang_id == -1 %}{% trans "Statistics" %}{% else %}{% trans "Statistics" %}{{ currentlang_name }}{% endif %} | {{ block.super }}
 
@@ -19,60 +18,96 @@
 {# FILTERING THE GRAPH #}
 <div class="col-md-2 filtering_graph">
 
+<form id="chart_filtering_form" method="POST" action="{% url 'line_chart' %}">
+{% csrf_token %}
 {# filter on language #}
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_language">{% trans 'Languages' %} :</a>
 <ul id="ul_language" class="collapse show">
-		<li><a id="total" onclick="ajax_filterlangform_submit('total', {{ currentlang_id }});" class="unstyled" href="#">
-			{% trans 'All Languages' %}
-		  </a></li>
+		<button onclick="check_all(this)" type="button" id="total"  class="btn btn-outline-secondary btn-sm">
+			{% trans 'All Languages' %}</button>
+		  </br>
 	{% for lang in filterlangs %}
-		<li><a id="{{ lang.id }}" onclick="ajax_filterlangform_submit('{{ lang.id }}', {{ currentlang_id }});" class="unstyled" href="#">
-			{% if lang.id == currentlang_id %}<strong>{{ lang.name }}</strong> {% else %} {{ lang.name }}{% endif %}
-		  </a> {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.id }}';" title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}</li>
+		<input onclick="ajax_filterlangform_submit()" {% if lang.id == currentlang_id %}checked{% endif %} type="checkbox" id="{{ lang.id }}" name="lang" value="{{ lang.id }}">
+			<span >{{ lang.name }}</span>
+		 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.id }}';" title="{% trans 'Set it as the current language' %}" src="{% static 'lwt/img/bullet-grey_16x16.png' %}"/>{% endif %}
+		  <br/>
 	{% endfor %}
 </ul>
 <br>
+
+{# filter on activity time #}
+<a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_activetime">{% trans 'Activity time period' %} :</a>
+<ul id="ul_activetime" class="collapse show">
+		<input onclick="ajax_filterlangform_submit()" type="radio" id="4" name="week" value="4" >
+			<span>{% trans 'last 4 weeks' %}</span>
+		  <br/>
+		<input onclick="ajax_filterlangform_submit()" type="radio" id="12" name="week" value="12">
+			<span>{% trans 'last 3 monthss' %}</span>
+		 <br/>
+		<input onclick="ajax_filterlangform_submit()" type="radio" id="36" name="week" value="36">
+			<span>{% trans 'last 6 months' %}</span>
+		 <br/>
+		<input onclick="ajax_filterlangform_submit()" checked type="radio" id="-1" name="week" value="-1">
+			<span >{% trans 'all time' %}</span>
+		  <br/>
+</ul>
+</form>
+
 </div>
 
 {# DISPLAYING THE GRAPH #}
 <div class="col-md-10 displaying_graph">
-{# the stacked bar chart #}
-<div class="chart-container" style="position: relative;  ">
-  <canvas class="chart" id="chart-wordnumber"></canvas>
+{# the line chart by week #}
+{% trans 'Known words per week:' %}
+<div id="chartwordnb-container">
+	<canvas id="chart-wordnumber" data-url="{% url 'line_chart' currentlang_id 0 %}"></canvas>
 </div>
 
-<script type="text/javascript">
-window.addEventListener("DOMContentLoaded", function() {
-	ajax_filterlangform_submit({{ currentlang_id }},{{ currentlang_id }});
-});
-$('#chart-statusnumber').onclick = function(evt){
-	console.log('clicked');
-var activePoints = PieNewChart.getElementsAtEvent(ev);
-var firstPoint = activePoints[0];
-var label = statusnumber.data.labels[firstPoint._index];
-var value = statusnumber.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-if (firstPoint !== undefined)
-	alert(label + ": " + value);
-}
-</script>
+{# the line chart cumulative #}
+{% trans 'Known words cumulative:' %}
+<div id="chartwordnb-container">
+	<canvas id="chart-wordnumber_cumul" data-url="{% url 'line_chart' currentlang_id 1 %}"></canvas>
+</div>
 
 {# the pie chart #}
-<div class="chart-container" style="position: relative;  ">
-  <canvas class="chart" id="chart-statusnumber"></canvas>
+<div id="chartstatusnb-container">
+	<canvas id="chart-statusnumber" data-url="{% url 'pie_chart' currentlang_id %}"></canvas>
 </div>
 
 <script type="text/javascript">
+
 $(document).ready( function() { 
-$('#chart-statusnumber').click(function(ev){
-	console.log('test');
-var activePoints = PieNewChart.getElementsAtEvent(ev);
-var firstPoint = activePoints[0];
-var label = PieNewChart.data.labels[firstPoint._index];
-var value = PieNewChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
-if (firstPoint !== undefined)
-	alert(label + ": " + value);
+	
+	
+	
+	$('#chart-statusnumber').click(function(ev){
+		console.log('test');
+		var activePoints = PieNewChart.getElementsAtEvent(ev);
+		var firstPoint = activePoints[0];
+		var label = PieNewChart.data.labels[firstPoint._index];
+		var value = PieNewChart.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+		if (firstPoint !== undefined)
+			alert(label + ": " + value);
+	});
+
+	$('#chart-statusnumber').click(function(evt){
+		console.log('clicked');
+		var activePoints = PieNewChart.getElementsAtEvent(ev);
+		var firstPoint = activePoints[0];
+		var label = statusnumber.data.labels[firstPoint._index];
+		var value = statusnumber.data.datasets[firstPoint._datasetIndex].data[firstPoint._index];
+		if (firstPoint !== undefined)
+			alert(label + ": " + value);
+	});
+
+
+
+window.addEventListener("DOMContentLoaded", function() {
+	ajax_filterlangform_submit({{ currentlang_id }}, {{ currentlang_id }});
 });
+
 });
+
 </script>
 
 </div>
@@ -83,9 +118,8 @@ if (firstPoint !== undefined)
 {% include "lwt/_footlicence.html" %}
 {% endblock footlicence %}
 
-
 {% block footjavascript %}
 	<!--  Plugin for Django-jchart -->
-	<script type="text/javascript" src="{% static 'lwt/js/Chart.bundle.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'lwt/js/ajax_statistics.js' %}"></script>
+	<script type="text/javascript" src="{% static 'lwt/js/chart.min.js' %}"></script>
 {% endblock footjavascript %}

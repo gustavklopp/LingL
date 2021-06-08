@@ -20,7 +20,7 @@ from django.conf import settings
 from django.contrib import admin
 from django.views.i18n import JavaScriptCatalog # internationalization for javascript
 # 2nd party:
-from jchart.views import ChartView  # LineChart is a class inheriting from jchart.Chart
+# from jchart.views import ChartView  # LineChart is a class inheriting from jchart.Chart
 # local import
 from lwt import views
 
@@ -67,7 +67,7 @@ urlpatterns = [
     url(r'^create_or_del_similarword/$',views.create_or_del_similarword,name='create_or_del_similarword'),
     url(r'^submit_termformSearchbox/$',views.submit_termformSearchbox,name='submit_termformSearchbox'),
 
-    url(r'^text_read/(?P<text_id>\w+)/$',views.text_read,name='text_read'),
+    url(r'^text_read/(?P<text_id>\w+)/$', views.text_read, name='text_read'),
     url(r'^dictwebpage/$',views.dictwebpage,name='dictwebpage'), # when it's the callback of AJAX (when clicking on word in text_read, it's at the oring ot the domain strangely...
     url(r'dictwebpage/$',views.dictwebpage,name='dictwebpage'), # no '^' because text_read calls it to display the webpage
     url(r'^update_show_compoundword/$',views.update_show_compoundword,name='toggle_show_compoundword'),
@@ -90,8 +90,10 @@ urlpatterns = [
     url(r'^selectivebackup_exporter/$',views.selectivebackup_exporter,name='selectivebackup_exporter'),
 
     url(r'^statistics/$',views.statistics,name='statistics'),
-    url(r'^statistics/pie_chart/(?P<language_id>\w+)/$', ChartView.from_chart(views.PieChart()), name='pie_chart'),
-    url(r'^statistics/line_chart/(?P<language_id>\w+)/$', ChartView.from_chart(views.LineChart()), name='line_chart'),
+    url(r'^statistics/pie_chart/(?P<language_id>\w+)/$', views.pie_chart, name='pie_chart'),
+    url(r'^statistics/pie_chart/$', views.pie_chart, name='pie_chart'),
+    url(r'^statistics/line_chart/(?P<language_id>\w+)/(?P<is_cumulative>\d)/$', views.line_chart, name='line_chart'),
+    url(r'^statistics/line_chart/$', views.line_chart, name='line_chart'),
     
     url(r'^backuprestore/$',views.backuprestore,name='backuprestore'),
     

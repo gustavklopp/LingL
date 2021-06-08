@@ -499,3 +499,18 @@ a.headCaret:before {
 	width: 50px !important;
 	background-size: 100% 100%  !important; 
 }
+/******************************************************************************
+     IN STATISTICS
+******************************************************************************/
+canvas#chart-wordnumber {
+	height: 250px !important;
+	width: 800px !important;
+}
+canvas#chart-wordnumber_cumul {
+	height: 250px !important;
+	width: 800px !important;
+}
+canvas#chart-statusnumber {
+	height: 300px !important;
+	width: 300px !important;
+}

@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
     # local
     'lwt',
-    'jchart', # graphical tool to display statistics. Local, because Jchart is outdated(it lacks: the simple "import six")
+#     'jchart', # graphical tool to display statistics. Local, because Jchart is outdated(it lacks: the simple "import six")
     # third party
     'tags_input',
     'mathfilters', # allow to do math in template
