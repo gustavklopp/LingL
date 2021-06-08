@@ -99,7 +99,7 @@ def line_chart(request, language_id=None, is_cumulative=None):
             first_time = last_time
             if first_time > timezone.now():
                 break
-        y_max = data_points['non_cumulative'][-1] if data_points['non_cumulative'][-1] > y_max else y_max
+        y_max = data_points['cumulative'][-1] 
 
         if request.method == 'POST':
             datasets = {

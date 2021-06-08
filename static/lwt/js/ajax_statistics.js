@@ -5,9 +5,10 @@ var new_line_chart = new Chart(ctx, {
 	options: {
 		responsive: true,
 		maintainAspectRatio: false,
-		legend: {
-			position: 'left',
-			//labels: { fontSize: 30},
+		plugins: { 
+			legend: {
+					labels: { font: {size: 15} }
+					},
 		},
 		title: {
 			display: true,
@@ -41,10 +42,12 @@ function create_line_chart_cumul(ctx, data){
 	type: 'line',
 	data: data.cargo,
 	options: {
-		responsive: true,
-		maintainAspectRatio: false,
-	  legend: {
-		position: 'left',
+	  responsive: true,
+	  maintainAspectRatio: false,
+	  plugins: { 
+		legend: {
+				labels: { font: {size: 15} }
+				},
 	  },
 	  title: {
 		display: true,
