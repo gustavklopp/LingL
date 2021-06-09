@@ -20,6 +20,14 @@ function clickword(event) { // check whether a word is clicked (and +ctrl-clicke
 	// and if status == 0: the termform at the top right, and the dictwebpage at the bottom right
 };
 
+function _str_to_bool(boolstr){
+	if (boolstr == 'True' || boolstr == 'true'){
+		return true;
+	} else {
+		return false;
+	}
+}
+
 /* creating: clicktooltip, the termform at the top right, and the dictwebpage at the bottom right 
    -when clicling in text_read (simple click)
    -when control+clicking another time in text_read  
@@ -31,38 +39,52 @@ function click_ctrlclick_toggle(el, event, op=null) {
 		var $el = $(el);
 	}
 
-	var toggle_show_compoundword = '';
 	
-//	if (event instanceof $.Event){ // function is called by clicking on a word
-		var click = event;
+	var toggle_show_compoundword = '';
 
-		if (click.ctrlKey){ // function is called by control+clicking on a word
-			//compoundword_id_list.push(parseInt($el.attr('woid'))); // add the word already in termform to the already
-			                                                          // knwon compoundword
-			ajax_ctrlclicked_compoundword(compoundword_id_list, 'new', RTL); // display the termform
-			return false; // don't continue after it: Don't open a tooltip 
-			} 
+	//	called by clicking on a word
+	var click = event;
 
-	var show_compoundword = $el.attr('show_compoundword');
-	if (show_compoundword == 'true' || show_compoundword == 'True'){
+	if (click.ctrlKey){ // function is called by control+clicking on a word
+		//compoundword_id_list.push(parseInt($el.attr('woid'))); // add the word already in termform to the already
+																  // knwon compoundword
+		ajax_ctrlclicked_compoundword(compoundword_id_list, 'new', RTL); // display the termform
+		return false; // don't continue after it: Don't open a tooltip 
+	}
+
+	var $el_show_compoundword = _str_to_bool($el.attr('show_compoundword'));
+	var $el_iscompoundword = _str_to_bool($el.attr('iscompoundword'));
+	if ($el_show_compoundword){
 		var status = $el.attr('cowostatus');
+		var wordtext = $el.attr('cowordtext');
+		var translation = $el.attr('cowotranslation');
 	} else {
 		var status = $el.attr('wostatus');
+		var wordtext = $el.attr('wordtext');
+		var translation = $el.attr('wotranslation');
 	}
 
 
 	if ( status == 0 ) { // word is Unknown (status 0)
 		// change only the text inside the tooltip if the event is a toggle show_compoundword
 		// or if the tooltip must only be updated
-		if (event == toggle_show_compoundword && op=='update_tooltip'){ 
-			$('#'+ $el.attr('woid') + '.tooltip').text(
-			text_tooltip_stat_unkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-			$el.attr('show_compoundword'), RTL )); 
+		if (typeof event == "boolean" && op=='update_tooltip'){ 
+			var $event_show_compoundword = event;
+			if($event_show_compoundword){
+				$('#'+ $el.attr('woid') + '.tooltip').text(
+					text_tooltip_stat_unkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('cowowordtext'), 
+					$el.attr('cowotranslation'), status, $el.attr('cowotranslation'),$el_iscompoundword, 
+					$event_show_compoundword, RTL )); 
+			} else {
+				$('#'+ $el.attr('woid') + '.tooltip').text(
+					text_tooltip_stat_unkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
+					$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el_iscompoundword, 
+					$event_show_compoundword, RTL )); 
+			}
 		} else {
 			create_tooltip_stat_unkwn (WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-				$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-				$el.attr('show_compoundword'), RTL ); 
+				$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el_iscompoundword, 
+				$el_show_compoundword, RTL ); 
 		}	
 			// create AJAX inside the top right of text_read with the form termform
 			// get the words also by the return in function to be searched inside dictwebpage:
@@ -70,7 +92,7 @@ function click_ctrlclick_toggle(el, event, op=null) {
 			if(typeof $ajaxClickedWord !== 'undefined'){
 				$ajaxClickedWord.abort();
 			}
-			$ajaxClickedWord = ajax_clicked_word($el.attr('woid'), $el.attr('show_compoundword'), 'new', RTL);
+			$ajaxClickedWord = ajax_clicked_word($el.attr('woid'), $el_show_compoundword, 'new', RTL);
 
 			// sends by AJAX data to refresh the bottom right of text_read with the dict webpage inside
 			// ajax_dictwebpage(WBLINK1, dictwebpage_searched_word);
@@ -79,43 +101,50 @@ function click_ctrlclick_toggle(el, event, op=null) {
 	else if ( status == 100 ) {// word is well-known
 		// change only the text inside the tooltip if the event is a toggle show_compoundword
 		// or if the tooltip must only be updated
-		if (event == toggle_show_compoundword && op=='update_tooltip'){ 
-			$('#'+ $el.attr('woid') + '.tooltip').text(
-			text_tooltip_stat_wellkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-			$el.attr('show_compoundword'), RTL )); 
+		if (typeof event == "boolean" && op=='update_tooltip'){ 
+			var $event_show_compoundword = event;
+			r = text_tooltip_stat_wellkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
+				$el.attr('wotranslation'), status, $el.attr('cowordtext'), $el.attr('cowotranslation'),
+				$el.attr('cowostatus'), $el_iscompoundword, $event_show_compoundword, $el.attr('cowo_id_list'),  RTL ) 
+//			$('#'+ $el.attr('woid') + '.tooltip').text(r);  
+			$('#overDiv .tooltiptext').parent().replaceWith(r); 
+			ajax_toggle_show_compoundword($el.attr('woid'), $event_show_compoundword);
 		} else {
-		create_tooltip_stat_wellkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-			$el.attr('show_compoundword'), RTL ); 
+			create_tooltip_stat_wellkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
+				$el.attr('wotranslation'), status, $el.attr('cowordtext'), $el.attr('cowotranslation'),
+				$el.attr('cowostatus'), $el_iscompoundword, $el_show_compoundword, $el.attr('cowo_id_list'),  RTL ); 
 		}
 	}
 	else if ( status == 101 ) {// word is ignored 
 		// change only the text inside the tooltip if the event is a toggle show_compoundword
 		// or if the tooltip must only be updated
-		if (event == toggle_show_compoundword && op=='update_tooltip'){ 
+		if (typeof event == "boolean" && op=='update_tooltip'){ 
+			var $event_show_compoundword = event;
 			$('#'+ $el.attr('woid') + '.tooltip').text(
 			text_tooltip_stat_ignored(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-			$el.attr('show_compoundword'), RTL )); 
+			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el_iscompoundword, 
+			$event_show_compoundword, RTL )); 
 		} else {
 		create_tooltip_stat_ignored(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-			$el.attr('show_compoundword'),RTL ); 
+			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el_iscompoundword, 
+			$el_show_compoundword, RTL ); 
 		}
 	}
 	else {// status is 'learning')
 		// change only the text inside the tooltip if the event is a toggle show_compoundword
 		// or if the tooltip must only be updated
-		if (event == toggle_show_compoundword && op=='update_tooltip'){ 
-			$('#'+ $el.attr('woid') + '.tooltip').text(
-			text_tooltip_stat_learning(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-			$el.attr('show_compoundword'), RTL )); 
+		if (typeof event == "boolean" && op=='update_tooltip'){ 
+			var $event_show_compoundword = event;
+			r = text_tooltip_stat_learning(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
+				$el.attr('wotranslation'), status, $el.attr('cowordtext'), $el.attr('cowotranslation'),
+				$el.attr('cowostatus'), $el_iscompoundword, $event_show_compoundword, $el.attr('cowo_id_list'),  RTL ) 
+//			$('#'+ $el.attr('woid') + '.tooltip').text(r);  
+			$('#overDiv .tooltiptext').parent().replaceWith(r); 
+			ajax_toggle_show_compoundword($el.attr('woid'), $event_show_compoundword);
 		} else {
-		create_tooltip_stat_learning(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
-			$el.attr('wotranslation'), status, $el.attr('cowotranslation'),$el.attr('iscompoundword'), 
-			$el.attr('show_compoundword'),RTL ); 
+			create_tooltip_stat_learning(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
+				$el.attr('wotranslation'), status, $el.attr('cowordtext'), $el.attr('cowotranslation'),
+				$el.attr('cowostatus'), $el_iscompoundword, $el_show_compoundword, $el.attr('cowo_id_list'), RTL ); 
 		}
 	}
 	return false;

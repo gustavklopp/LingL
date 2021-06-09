@@ -46,6 +46,8 @@ var dictwebpage_searched_word  = [];
 <script type="text/javascript" src="{% static 'lwt/js/hovertooltip.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/click_ctrlclick_toggle.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/helppage.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/tooltip_link.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/tooltip_ajax.js' %}" charset="utf-8"></script>
 {% endblock javascript %}
 
 {% block content %}
@@ -94,18 +96,13 @@ var dictwebpage_searched_word  = [];
 
 {#   DISPLAYING THE TEXT      #}
 {# the 'if wo.order == 0... is to add a space after a delimiter: aering the text! #}
-{% for wo in word_inthistext %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span >{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}<span 
-woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
+{% for wo in word_inthistext %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span >{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}
+<span woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
 {% if wo.language.has_romanization %}woromanization="{{ wo.romanization }}"
-{% else %}
-woromanization=""
-{% endif %} iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
-{% if wo.isCompoundword %} cowordtext={{ wo.compoundword.wordtext }} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
-{% else %}
-cowordtext="" cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
-{% endif %}
-{% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}
->{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
+{% else %} woromanization="" {% endif %} iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
+{% if wo.isCompoundword %} cowo_id_list="{{ wo.compoundword.wordinside_order }}" cowordtext={{ wo.compoundword.wordtext }} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
+{% else %} cowordtext="" cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
+{% endif %} {% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}>{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
 {# END -- DISPLAYING THE TEXT #}
 
 <span id="totalcharcount" class="hide">{{ currcharcount }}</span></p><p style="font-size:{{ text.textsize }}%;line-height: 1.4; margin-bottom: 300px;">&nbsp;</p></div>

@@ -62,6 +62,10 @@ function ajax_submit_word(event, op, wo_id, language_id, simwo_id=null){
 					//update the tooltip for the word also
 					var sel_word = $('.clicked');
 					click_ctrlclick_toggle(sel_word, event, 'update_tooltip');
+
+					// and remove the compoundword highlights:
+					$('.ctrlclicked').removeClass('ctrlclicked');
+
 					},
 				error : function(data , status , xhr){ console.log('ERROR'); console.log(data); console.log(status); console.log(xhr); }
 		});
@@ -102,6 +106,8 @@ function _display_possiblesimilarword(data, wo_id){
 	if ($.isEmptyObject(possiblesimilarword)){
 		r += gettext('No similar words found.');
 	} else {
+		// make the highlight on this block, and remove the highlight if existing on bottomright:
+		$('#bottomright').removeClass('sim_OR_dict_highlight');
 		r += '<ul class="fa-ul sim_OR_dict_highlight" id="possible_similarword_result">';
 		$.each(possiblesimilarword, function(key, val){
 			r += '<li ';

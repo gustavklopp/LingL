@@ -26,6 +26,7 @@ function _clicked_weblink_radiobutton(dictwebpage_searched_word=null){
 	@return an AJAX obj: allows to abort the previous AJAX if another call arrives */
 function ajax_clicked_word(wo_id, show_compoundword, op, rtl) {
 
+	// we return an object to be able to interrupt the function if another request comes
 	var $ajaxClickedWord = $.ajax({url: '/termform/', type: 'GET',
 			data: {
 					'op' : op, 
@@ -82,72 +83,11 @@ function ajax_ctrlclicked_compoundword(wo_id, op, rtl) {
 					var dictwebpage_searched_word = $('#wblnk_search').data('dictwebpage_searched_word');
 					ajax_dictwebpage(wblnk, dictwebpage_searched_word);
 				});
-				// and remove the compoundword highlights:
-				$('.ctrlclicked').removeClass('ctrlclicked');
-
 			},
 			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
 			});
 }
 
-// CREATING A NEW WORD:  sends by AJAX data to refresh the top right of text_read with the form termform
-// or EDITING A WORD:
-// Is it the same func than function ajax_clicked_word???? Don´t know what this func is for!!!
-function ajax_termform(wo_id, op, rtl) {
-	/* called by: text_read_clickevent, if status == 0: op: 'new'
-	        and: create_link_newword: op: 'new'
-	        and: create_link_editword: op: 'edit' */
-	$.ajax({url: '/termform/', type: 'GET',
-			data: {'op':op, 'wo_id': wo_id},
-			success: function(data){
-				var data = JSON.parse(data);
-				$('#topright.text_read').html(data['html']);
-			},
-			 error : function(data , status , xhr){
-					console.log(data);
-					console.log(status);
-					console.log(xhr);}
-			});
-}
-
-
-/* delete a word and the similar words and compoundword with it */
-function ajax_del_word(wo_id) {
-	$.ajax({url: '/termform/', 
-			type: 'GET',
-			dataType: 'json',
-			data: 
-				{ 
-					'op':'del', 'wo_id' : wo_id,
-				},
-			success: function(data){ 
-				$('#topright.text_read').html(data['html']); 
-				update_data_of_wo_cowo_and_sims(data, 'del');
-			},
-			error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
-			}
-	});
-}
-
-/* same as above but we delete only one single word, not the similar words with it */
-function ajax_del_singleword(wo_id) {
-	$.ajax({url: '/termform/', 
-			type: 'GET',
-			dataType: 'json',
-			data: 
-				{ 
-					'op':'del', 'wo_id' : wo_id, 'singleword': true,
-				},
-			success: function(data){ 
-				$('#topright.text_read').html(data['html']); 
-				// update status of the word and the counter at the top
-				update_status(wo_id, 'del');
-				$('span[woid='+wo_id+']').attr('title', create_tooltip_title('▶',data['wowordtext'],'','','0'));
-			},
-			error : function(data , status , xhr){ console.log('ERROR');//error console.log(data); console.log(status); console.log(xhr);
-			}
-	});
-}
 
 /* BROWSE DICT WEBPAGE : sends by AJAX data to refresh the bottom right of text_read 
  with the dict webpage inside 
@@ -267,6 +207,8 @@ function iknowall(event, wo_id){
 					var sel_word = $('#thetext span[woid="'+data['firstWord_of_nextSentence']+'"]');
 					sel_word.addClass('clicked');	
 					click_ctrlclick_toggle(sel_word, event); // creating: clicktooltip and the right panel (bottom & top)
+					// and autoscroll to it
+					_autoscroll_to_sel_word(sel_word);
 				}
 			},
 			error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);

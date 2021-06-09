@@ -26,16 +26,16 @@ from tkinter.constants import ACTIVE
 '''provide a different colors for each categories'''
 def get_spaced_colors(n):
     if n == 1:
-        return 'rgb(0,0,0)'
+        return ['0,0,0'] #black if only one color requested
     else:
         max_value = 16581375 #255**3
         interval = int(max_value / (n-1)) 
         colors = [hex(I)[2:].zfill(6) for I in range(0, max_value+1, interval)] # it's max_value-1 ...
         #... because for 2 only elements for example, the range goes from 0-> max: so only one value is erroneously created
         
-        return [('rgb('+str(int(i[:2], 16)) +','+\
+        return [(str(int(i[:2], 16)) +','+\
                 str(int(i[2:4], 16)) +','+\
-                str(int(i[4:], 16))+')') for i in colors]
+                str(int(i[4:], 16))) for i in colors]
             
 ''' the bar graph by week  '''
 def line_chart(request, language_id=None, is_cumulative=None):
@@ -86,24 +86,26 @@ def line_chart(request, language_id=None, is_cumulative=None):
             data_points['cumulative'].append(words_count_cumul)
             if idx == 0: # we use the first language to create the Y label
                 if not prev_time: # first date of the Y label, we display YYYY Month.
-                    labels.append(first_time.strftime('%Y %b'))
+                    labels.append(first_time.strftime('(%Y) %b-%d'))
                 else:
                     if first_time.month == 1 and prev_time.month == 12:
-                        labels.append(first_time.strftime('%Y %b'))
+                        labels.append(first_time.strftime('(%Y) %b-%d'))
                     else:
                         if first_time.month != prev_time.month:
-                            labels.append(first_time.strftime('%b'))
+                            labels.append(first_time.strftime('%b-%d'))
                         else:
-                            labels.append(' ')
+                            labels.append(first_time.strftime('%d'))
                 prev_time = first_time
             first_time = last_time
             if first_time > timezone.now():
                 break
-        y_max = data_points['cumulative'][-1] 
+        y_max = data_points['cumulative'][-1] # the y-axis has the same max for 'cumulative' and 'non cumul' graphs
 
         if request.method == 'POST':
             datasets = {
-                                    'backgroundColor':colors[idx],
+                                    'fill':True,
+                                    'backgroundColor':'rgba('+colors[idx]+',0.3)',
+                                    'borderColor':'rgb('+colors[idx]+')',
                                     'label': language.name, 
                                     'data':data_points['non_cumulative'],
                                     'borderWidth': 2,
@@ -111,7 +113,9 @@ def line_chart(request, language_id=None, is_cumulative=None):
             langs_datasets_noncumul.append(datasets)
             
             datasets = {
-                                    'backgroundColor':colors[idx],
+                                    'fill':True,
+                                    'backgroundColor':'rgba('+colors[idx]+',0.3)',
+                                    'borderColor':'rgb('+colors[idx]+')',
                                     'label': language.name, 
                                     'data':data_points['cumulative'],
                                     'borderWidth': 2,
@@ -121,7 +125,9 @@ def line_chart(request, language_id=None, is_cumulative=None):
         else:
             data_inside = data_points['cumulative'] if is_cumulative else data_points['non_cumulative']
             datasets = {
-                                    'backgroundColor':colors[idx],
+                                    'fill':True,
+                                    'backgroundColor':'rgba('+colors[idx]+',0.3)',
+                                    'borderColor':'rgb('+colors[idx]+')',
                                     'label': language.name, 
                                     'data':data_inside,
                                     'borderWidth': 2,
@@ -202,7 +208,7 @@ def statistics(request):
     # get currentlang_id from cookie, else from database
     currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
     # get the list of languages for filtering:
-    filterlangs = Languages.objects.filter(owner=request.user).all().order_by('name')
+    filterlangs = Languages.objects.filter(owner=request.user).order_by('name')
         
     # get the current database size:
     database_size = get_word_database_size(request)

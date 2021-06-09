@@ -23,19 +23,58 @@ function text_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, tra
 	return r;
 }
 
-function text_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, cotrans, iscompoundword, show_compoundword, rtl)
+function text_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
+						cowordtext, cotrans, costatus, iscompoundword, show_compoundword, cowo_id_list, rtl)
 {
-	r =
-		'<div class="tooltiptext" id="'+wo_id+'">' +
-		'<b>' + escape_html_chars(wowordtext) + '</b><br>' +
-		show_compoundword_checkbox(wo_id, iscompoundword, show_compoundword) +
-		check_undefined_else_return(trans) + // display translation if any
-		create_link_editword(wo_id,wowordtext,wblink1) +' | '+ create_link_deleteword(wo_id) + ' <br> ' + // "Edit term | delete term"
-		create_link_deletesingleword(wo_id) + '<br>'+ // delete only the word, not the similar words with it
+	r = '<div class="tooltiptext" id="'+wo_id+'">';
+	if (show_compoundword){
+		r += '<b>' + escape_html_chars(cowordtext) + '</b><br>';
+	} else {
+		r += '<b>' + escape_html_chars(wowordtext) + '</b><br>';
+	}
+	if (show_compoundword){
+		r += check_undefined_else_return(cotrans, show_compoundword); // display translation if any
+	} else {
+		r += check_undefined_else_return(trans, show_compoundword); // display translation if any
+	}
+	r +=	show_compoundword_checkbox(wo_id, iscompoundword, show_compoundword);
+	if (show_compoundword){
+		r += create_link_editword(wo_id, cowordtext, wblink1, show_compoundword, cowo_id_list) +' | '; // "Edit term | delete term"
+	} else {
+		r += create_link_editword(wo_id, wowordtext, wblink1) +' | '; // "Edit term | delete term"
+	}
+	r += create_link_deleteword(wo_id) + ' <br> ' + create_link_deletesingleword(wo_id) + '<br>'+ // delete only the word, not the similar words with it
+	     create_links_webdict(wblink1,wblink2,wblink3,wowordtext,wo_id) +
+		'</div>' ;
+	return r;
+}
+// it's exactly the same function than above in fact. Maybe I could custom this a bit that's why I've kept it
+function text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
+						cowordtext, cotrans, costatus, iscompoundword, show_compoundword, cowo_id_list, rtl)
+{
+	r = '<div class="tooltiptext" id="'+wo_id+'">';
+	if (show_compoundword){
+		r += '<b>' + escape_html_chars(cowordtext) + '</b><br>';
+	} else {
+		r += '<b>' + escape_html_chars(wowordtext) + '</b><br>';
+	}
+	if (show_compoundword){
+		r += check_undefined_else_return(cotrans, show_compoundword); // display translation if any
+	} else {
+		r += check_undefined_else_return(trans, show_compoundword); // display translation if any
+	}
+	r +=	show_compoundword_checkbox(wo_id, iscompoundword, show_compoundword);
+	if (show_compoundword){
+		r += create_link_editword(wo_id, cowordtext, wblink1, show_compoundword, cowo_id_list) +' | '; // "Edit term | delete term"
+	} else {
+		r += create_link_editword(wo_id, wowordtext, wblink1) +' | '; // "Edit term | delete term"
+	}
+	r += create_link_deleteword(wo_id) + ' <br> ' + create_link_deletesingleword(wo_id) + '<br>'+ // delete only the word, not the similar words with it
 		create_links_webdict(wblink1,wblink2,wblink3,wowordtext,wo_id) +
 		'</div>' ;
 	return r;
 }
+
 function text_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, cotrans, iscompoundword, show_compoundword, rtl)
 {
 	r =
@@ -50,25 +89,12 @@ function text_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, t
 	return r;
 }
 
-function text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, cotrans, iscompoundword, show_compoundword, rtl)
-{
-	r =
-		'<div class="tooltiptext" id="'+wo_id+'">' +
-		'<b>' + escape_html_chars(wowordtext) + '</b><br>' +
-		show_compoundword_checkbox(wo_id, iscompoundword, show_compoundword) +
-		check_undefined_else_return(trans) +
-		create_link_editword(wo_id,wowordtext,wblink1) + ' | ' + create_link_deleteword(wo_id) + ' <br> ' +
-		create_link_deletesingleword(wo_id) + '<br>'+ // delete only the word, not the similar words with it
-		create_links_webdict(wblink1,wblink2,wblink3,wowordtext,wo_id) +
-		'</div>' ;
-	return r;
-}
 /****************************************************************************************** */
 /*         the user clicked on a WORD. create the tooltip                                   */
 /* the word can be of the status: ignored, well-known, learning, unknown.****************** */
 /****************************************************************************************** */
 function create_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-		cotrans, iscompoundword, show_compoundword, rtl)
+											cotrans, iscompoundword, show_compoundword, rtl)
 {
 	return overlib(
 		text_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -77,12 +103,20 @@ function create_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, t
 }
 
 function create_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-		cotrans, iscompoundword, show_compoundword, rtl)
+		cowordtext, costatus, cotrans, iscompoundword, show_compoundword, cowo_id_list, rtl)
 {
 	return overlib(
 		text_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-				cotrans, iscompoundword, show_compoundword, rtl),
+				cowordtext, costatus, cotrans, iscompoundword, show_compoundword, cowo_id_list, rtl),
 		CAPTION, gettext('Learning'));
+}
+function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
+		cowordtext, costatus, cotrans, iscompoundword, show_compoundword, rtl)
+{
+	return overlib(
+		text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
+				cowordtext, costatus, cotrans, iscompoundword, show_compoundword, cowo_id_list, rtl),
+		CAPTION, gettext('Well-known'));
 }
 function create_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
 		cotrans, iscompoundword, show_compoundword, rtl)
@@ -93,14 +127,6 @@ function create_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext,
 		CAPTION, gettext('ignored'));
 }
 
-function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-		cotrans, iscompoundword, show_compoundword, rtl)
-{
-	return overlib(
-		text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-				cotrans, iscompoundword, show_compoundword, rtl),
-		CAPTION, gettext('Well-known'));
-}
 
 /**************************************************************
  		HELPER FUNCTIONS:
@@ -110,14 +136,14 @@ function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext,
  		"create_links_webdict(wblink1,wblink2,wblink3,txt,txid,torder), => create the link to the dictionary webpage 
 ***************************************************************/
 
-function show_compoundword_checkbox(wo_id, iscompoundword, show_compoundword){
+function show_compoundword_checkbox(wo_id, $el_iscompoundword, $el_show_compoundword){
 		/* display a checkbox for showing compoundword:*/
 		var r = '';
-		if (iscompoundword == 'true' || iscompoundword == 'True') {
+		if ($el_iscompoundword) {
 			r += '<input type="checkbox" name="show_compoundword_checkbox" onchange="';
-			r += 'click_ctrlclick_toggle($(\'span[woid='+wo_id+']\'),this.checked)"';
+			r += 'click_ctrlclick_toggle($(\'span[woid='+wo_id+']\'),this.checked, \'update_tooltip\')"';
 
-			if (show_compoundword == 'True'){
+			if ($el_show_compoundword){
 				r += ' checked';
 			}
 			r += '>show compoundword?<br>'; 
@@ -126,10 +152,14 @@ function show_compoundword_checkbox(wo_id, iscompoundword, show_compoundword){
 }
 
 
-function check_undefined_else_return(myvar){
+function check_undefined_else_return(myvar, $el_show_compoundword){
 		/* check if the var has beed defined, then return it if yes:*/
 		if (typeof myvar != 'undefined' && myvar != '' && myvar != 'None'){
-			r = '<b>▶ ' + escape_html_chars(myvar) + '</b><br> ' ;
+			if($el_show_compoundword){
+				r = '<b>• ' + escape_html_chars(myvar) + '</b><br> ' ;
+			} else {
+				r = '<b>▶ ' + escape_html_chars(myvar) + '</b><br> ' ;
+			}
 		} else { r = '';}
 		return r;
 }
@@ -147,13 +177,21 @@ function create_links_webdict(wblink1,wblink2,wblink3,wowordtext,wo_id) {
 }
 
 
-function create_link_newword(wo_id,wowordtext,wblink1) {
-	return ' <a href="" onClick="ajax_termform(\''+wo_id+'\',\'new\',\'\');ajax_dictwebpage(\''+wblink1+'\',\''+wowordtext+'\');return false;">New term</a> ';
+function create_link_newword(wo_id, wowordtext, wblink1, show_compoundword, compoundword_id_list) {
+	if (show_compoundword){
+		return ' <a href="" onClick="tooltip_ajax_termform(\''+wo_id+'\',\'new\', '+show_compoundword+',\''+compoundword_id_list+'\');ajax_dictwebpage(\''+wblink1+'\',\''+wowordtext+'\');return false;">'+gettext('New term')+'</a> ';
+	} else{
+		return ' <a href="" onClick="tooltip_ajax_termform(\''+wo_id+'\',\'new\',\'\');ajax_dictwebpage(\''+wblink1+'\',\''+wowordtext+'\');return false;">'+gettext('New term')+'</a> ';
+	}
 }
 
 
-function create_link_editword(wo_id, wowordtext, wblink1) {
-	return ' <a href="" onClick="ajax_termform(\''+wo_id+'\',\'edit\',\'\');ajax_dictwebpage(\''+wblink1+'\',\''+wowordtext+'\');return false;">Edit term</a> ';
+function create_link_editword(wo_id, wowordtext, wblink1, show_compoundword, compoundword_id_list) {
+	if (show_compoundword){
+		return ' <a href="" onClick="tooltip_ajax_termform(\''+wo_id+'\',\'edit\', '+show_compoundword+',\''+compoundword_id_list+'\');ajax_dictwebpage(\''+wblink1+'\',\''+wowordtext+'\');return false;">'+gettext('Edit term')+'</a> ';
+	} else{
+		return ' <a href="" onClick="tooltip_ajax_termform(\''+wo_id+'\',\'edit\',\'\');ajax_dictwebpage(\''+wblink1+'\',\''+wowordtext+'\');return false;">'+gettext('Edit term')+'</a> ';
+	}
 }
 
 /* NOT USED YET */
@@ -164,11 +202,11 @@ function create_link_editword_title(text,txid,torder,wid) {
 }
 
 function create_link_deleteword(wo_id) {
-	return ' <a href="" onClick="ajax_del_word(\''+wo_id+'\');return false;">Delete term</a> ';
+	return ' <a href="" onClick="tooltip_ajax_del_word(\''+wo_id+'\');return false;">Delete term</a> ';
 }
 
 function create_link_deletesingleword(wo_id) {
-	return ' <a href="" onClick="ajax_del_singleword(\''+wo_id+'\');return false;">Delete single term</a> ';
+	return ' <a href="" onClick="tooltip_ajax_del_singleword(\''+wo_id+'\');return false;">Delete single term</a> ';
 }
 
 function create_link_stat_wellkwn(wo_id) {

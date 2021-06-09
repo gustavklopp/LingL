@@ -62,6 +62,10 @@ function ajax_submit_word(event, op, wo_id, language_id, simwo_id=null){
 					//update the tooltip for the word also
 					var sel_word = $('.clicked');
 					click_ctrlclick_toggle(sel_word, event, 'update_tooltip');
+
+					// and remove the compoundword highlights:
+					$('.ctrlclicked').removeClass('ctrlclicked');
+
 					},
 				error : function(data , status , xhr){ console.log('ERROR'); console.log(data); console.log(status); console.log(xhr); }
 		});

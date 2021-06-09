@@ -468,10 +468,9 @@ def create_or_del_similarword(request):
         return HttpResponse(json.dumps({'simwo_id':similarword.id}))
     
 ''' When the checkbox for 'show_compoundword' is switched '''
-def update_show_compoundword(request):
+def toggle_show_compoundword(request):
     wo_id = request.GET['wo_id']
-    show_compoundword = request.GET['show_compoundword']
-    show_compoundword = True if show_compoundword in ('True','true') else False # because Jquery sends a string of 'True'/'False'
+    show_compoundword = str_to_bool(request.GET['show_compoundword'])
 
     this_wordinside = Words.objects.get(id=wo_id)
     compoundword = this_wordinside.compoundword

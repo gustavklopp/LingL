@@ -3,12 +3,19 @@ var new_line_chart = new Chart(ctx, {
 	type: 'line',
 	data: data.cargo,
 	options: {
+		tooltips: {  /* Bug?? not showing */
+			 mode: 'point',
+			 enabled: true,
+			 backgroundColor: 'rgba(0,0,0,0.8)',
+			 titleFontSize: 15,
+		 },
 		responsive: true,
 		maintainAspectRatio: false,
 		plugins: { 
 			legend: {
 					labels: { font: {size: 15} }
 					},
+
 		},
 		title: {
 			display: true,
@@ -43,11 +50,13 @@ function create_line_chart_cumul(ctx, data){
 	data: data.cargo,
 	options: {
 	  responsive: true,
+	  showTooltips: true,
 	  maintainAspectRatio: false,
 	  plugins: { 
 		legend: {
 				labels: { font: {size: 15} }
 				},
+		tooltip: { enabled: true}
 	  },
 	  title: {
 		display: true,

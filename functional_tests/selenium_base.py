@@ -80,27 +80,27 @@ class Base(StaticLiveServerTestCase):
         return self.selenium.find_elements(findhow, findwhere)
 
     def wait_until_appear(self, findhow, findwhere):
-        WebDriverWait(self.selenium, 30).until(
+        WebDriverWait(self.selenium, 10).until(
             EC.presence_of_element_located((findhow,findwhere))
             )
 
     def wait_until_disappear(self, findhow, findwhere):
-        WebDriverWait(self.selenium, 30).until(
+        WebDriverWait(self.selenium, 10).until(
             EC.invisibility_of_element_located((findhow,findwhere))
             )
 
     def wait_until_clickable(self, element_selector):
-        WebDriverWait(self.selenium, 30).until(
+        WebDriverWait(self.selenium, 10).until(
             EC.element_to_be_clickable(element_selector)
             )
 
     def wait_until_text_appear(self, element_selector, text):
-        WebDriverWait(self.selenium, 30).until(
+        WebDriverWait(self.selenium, 10).until(
             EC.text_to_be_present_in_element(element_selector, text)
             )
 
     def wait_until_bool(self, element_selector, text):
-        WebDriverWait(self.selenium, 30).until(
+        WebDriverWait(self.selenium, 10).until(
             EC.text_to_be_present_in_element(element_selector, text)
             )
 class BasePage(Base):

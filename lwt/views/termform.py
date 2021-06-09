@@ -25,6 +25,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views.text_read import *
 from lwt.constants import STATUS_CHOICES
+from re import search
 
 ''' helper function: called by termform if GET is 'del' 
     it's not 'deleting' the word in the database: it's reinitializing as an unknown word'''
@@ -166,9 +167,14 @@ def search_possiblesimilarword(request, word=None):
     # search with the 3 first letters of the given word. research is made more accurate with the search 
     # box by the user (use in AJAX).
     # we exclude: the same word (of course) (whatever the upper/lowercase) and the already similar word
+    
     if word: # clicking on new word in text_read section
+        # for longer words, the text we search should be longer. 
+        searched_wordtext = word.wordtext[:3]
+        if len(word.wordtext) >= 8: 
+            searched_wordtext = word.wordtext[:int(round((len(word.wordtext)*2)/3))] # we use 75% of the word similarity in length 
         possiblesimilarword_obj =  Words.objects.\
-                filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=word.wordtext[:3])).\
+                filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=searched_wordtext)).\
                        exclude(wordtext__iexact=word.wordtext).\
                        exclude(status=0).\
                        order_by('grouper_of_same_words_id')
@@ -247,7 +253,8 @@ def search_possiblesimilarCompoundword(request, compoundword_list=None):
     else:
         return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarCompoundword_distinctFK}))
 
-''' helper for termform: superficial copy of a word (or compoundword)'''
+''' helper for termform: superficial copy of a word (or compoundword)
+    the boolean return allows to know whether we can do bulk update (forbidden on many2many field) or not'''
 def _copy_word(sourceword, destword, save=True):
     destword.status = sourceword.status
     destword.translation = sourceword.translation
@@ -261,10 +268,14 @@ def _copy_word(sourceword, destword, save=True):
     # adding a manytomany relationship:
     # for the wordtag ManyToManyfield
     wordtags_with_this_word = Wordtags.objects.filter(wordtag_with_this_word=sourceword)
-    for wordtag in wordtags_with_this_word:
-        destword.wordtags.add(wordtag)
+#     for wordtag in wordtags_with_this_word:
+#         destword.wordtags.add(wordtag)
+    destword.wordtags.add(*wordtags_with_this_word)
+
     if save:
         destword.save()    
+    
+    return False if wordtags_with_this_word else True
     
 '''  All similar Words need to be have an updated status also:
              - Those are searching by the same wordtext, OR
@@ -478,11 +489,16 @@ def termform(request):
             samewordtext_query = Words.objects.filter(language=alreadysavedword.language).\
                                  filter(wordtext__iexact=simwordtext)
             for sw in samewordtext_query:
-                _copy_word(alreadysavedword, sw, save=False)
+                can_bulkupdate = _copy_word(alreadysavedword, sw, save=False)
                 sw.grouper_of_same_words = gosw
-                sw.save()
                 # used in the AJAX to change in realtime the words 
                 sameword_id_list.append(sw.id)
+                if not can_bulkupdate:
+                    sw.save()
+            if can_bulkupdate:
+                Words.objects.bulk_update(samewordtext_query, ['status','translation','romanization',
+                                                           'customsentence','compoundword','isCompoundword',
+                                                           'show_compoundword', 'grouper_of_same_words'])
 
             # Bunch of values more used when creating new word...
             cowo_id_to_update_in_ajax = [] # no need to update other word
@@ -533,11 +549,12 @@ def termform(request):
                         wordinside.isCompoundword = True
                         wordinside.compoundword = compoundword # set the ForeignKey
                         wordinside.show_compoundword = True # user can switch that in the clicked tooltip for example
-                        wordinside.save()
                         compoundword_obj_list.append(wordinside)
                         compoundword_wordtext_list.append(wordinside.wordtext)
                         message_wordtext.append(wordinside.wordtext)
                         samecompoundword_id_list.append(wordinside.id)
+                    Words.objects.bulk_update(compoundword_obj_list, ['isCompoundword','compoundword',
+                                                                      'show_compoundword'])
 
                     compoundword.wordtext = '+'.join(compoundword_wordtext_list)
                     wordinside_order_NK = [[wo.wordtext, wo.language.natural_key()]
@@ -614,7 +631,6 @@ def termform(request):
                         word.wordtags.add(wordtag)
                     word.save()
 
-                    # TODO
                     if redefine_only_this_word:
                         # we give it back its original GOSW
                         word.grouper_of_same_words = Grouper_of_same_words.objects.get(id=word.id)
@@ -629,10 +645,17 @@ def termform(request):
                         for sw in samewordtext_query:
                             if gosw_to_update:
                                 sw.grouper_of_same_words = gosw_to_update
-                            _copy_word(word, sw)
+                            can_bulkupdate = _copy_word(word, sw, save=False)
                             # used in the AJAX to change in realtime the words 
                             sameword_id_list.append(sw.id)
                             sameword_list.append(sw)
+                            if not can_bulkupdate:
+                                sw.save()
+                        if can_bulkupdate:
+                            Words.objects.bulk_update(samewordtext_query, ['status','translation','romanization',
+                                                                       'customsentence','compoundword','isCompoundword',
+                                                                       'show_compoundword',
+                                                                       'grouper_of_same_words'])
                     message_wordtext = word.wordtext
 
                     iscompoundword = False

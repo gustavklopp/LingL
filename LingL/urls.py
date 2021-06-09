@@ -70,7 +70,7 @@ urlpatterns = [
     url(r'^text_read/(?P<text_id>\w+)/$', views.text_read, name='text_read'),
     url(r'^dictwebpage/$',views.dictwebpage,name='dictwebpage'), # when it's the callback of AJAX (when clicking on word in text_read, it's at the oring ot the domain strangely...
     url(r'dictwebpage/$',views.dictwebpage,name='dictwebpage'), # no '^' because text_read calls it to display the webpage
-    url(r'^update_show_compoundword/$',views.update_show_compoundword,name='toggle_show_compoundword'),
+    url(r'^toggle_show_compoundword/$',views.toggle_show_compoundword,name='toggle_show_compoundword'),
     
     # AJAX text_read iknowall
     url(r'^iknowall/$', views.iknowall, name='iknowall'),

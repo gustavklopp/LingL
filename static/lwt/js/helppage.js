@@ -1,4 +1,4 @@
-/* helper func for the arrow key navigating */
+/* helper functions for the arrow key navigating */
 function _is_word(input){
 	var woid_attr = input.attr('woid');
 	// For some browsers, `attr` is undefined; for others,
@@ -21,7 +21,8 @@ function _is_in_text(input){
 /* (just before the first unknown word, except if it´s the first of the text) */
 $(document).ready(function(e) {
 	//select the word before the first unknown word as the start
-	var sel_word = $('#thetext span[wostatus="0"]').first(); //it´s an unknown word
+	//it´s an unknown word: (but if compound word and showing it, continue)
+	var sel_word = $('#thetext span[wostatus="0"]:not([show_compoundword="True"][cowostatus!="0"])').first(); 
 
 	var prev_unknown_word = sel_word.prev();
 	while(_is_in_text(prev_unknown_word)){
@@ -58,6 +59,16 @@ $(document).ready(function(e) {
 	$("#bottomleft").focus();
 });
 
+// auto scroll when moving with the keyboard arrow ->, after "I know all" :
+function _autoscroll_to_sel_word(sel_word){
+	var scrollY = sel_word.offset().top - $( window ).height()*1/3;
+	if (sel_word.offset().top > $( window ).height()*2/3){
+		$('#bottomleft').animate({
+			scrollTop:  '+='+scrollY.toString()+'px'
+		}, 800);
+	}
+}
+
 /* helper function to navigate (it's also used in ajax_termform after a word has been submitted) */
 function _move_next_word(sel_word, e){
 	sel_word.removeClass('clicked'); //unselect the current word
@@ -72,13 +83,7 @@ function _move_next_word(sel_word, e){
 		}
 	}
 
-	// auto scroll when moving with the keyboard arrow -> :
-	var scrollY = sel_word.offset().top - $( window ).height()*1/3;
-	if (sel_word.offset().top > $( window ).height()*2/3){
-		$('#bottomleft').animate({
-			scrollTop:  '+='+scrollY.toString()+'px'
-		}, 800);
-	}
+	_autoscroll_to_sel_word(sel_word);
 
 	sel_word.addClass('clicked'); //select the next word
 	//click_ctrlclick_toggle(sel_word, e); // creating: clicktooltip and the right panel (bottom & top)
@@ -87,7 +92,11 @@ function _move_next_word(sel_word, e){
 	} else {
 		var op = 'edit';
 	}
-	ajax_clicked_word(sel_word.attr('woid'), sel_word.attr('show_compoundword'), op, null);
+	// we interrupt the previous request if it exists
+	if(typeof $ajaxClickedWord !== 'undefined'){
+		$ajaxClickedWord.abort();
+	}
+	$ajaxClickedWord = ajax_clicked_word(sel_word.attr('woid'), sel_word.attr('show_compoundword'), op, null);
 }
 
 /* helper function to detect the keypress outof the focus of the termform */

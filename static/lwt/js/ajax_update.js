@@ -216,20 +216,16 @@ function update_workcount(){
 		$('#todo_wordcount_AND_pc').attr('wostatus','0'); }
 }
 
-/* NOT USED FINALLY */
 /* update span attribute of word in text_read */
-/*
-function ajax_update_HTML_show_compoundword(compoundword_id_list, show_compoundword){
+function HTML_toggle_show_compoundword(compoundword_id_list, show_compoundword){
 	$.each(compoundword_id_list, function(key, val){
 		$('span[woid='+val+']').attr('show_compoundword', show_compoundword);
 	});
-}*/
+}
 
-/* NOT USED finally */
-/* called by: click_ctrlclick_toggle() */
-/*
-function ajax_update_DB_show_compoundword(wo_id, show_compoundword){
-	$.ajax({url: '/update_show_compoundword/', 
+
+function ajax_toggle_show_compoundword(wo_id, show_compoundword){
+	$.ajax({url: '/toggle_show_compoundword/', 
 			type: 'GET',
 			dataType: 'json',
 			data: {
@@ -237,8 +233,8 @@ function ajax_update_DB_show_compoundword(wo_id, show_compoundword){
 					'show_compoundword' : show_compoundword,
 					},
 			success: function(data){ 
-				ajax_update_HTML_show_compoundword(data['compoundword_id_list'], show_compoundword);
+				HTML_toggle_show_compoundword(data['compoundword_id_list'], show_compoundword);
 			},
 			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
 			});
-} */
+}
