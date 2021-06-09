@@ -358,14 +358,14 @@ def text_list(request):
             # Case of saved words (status != 0):
             todel_OR_toarchive_words = Words.objects.filter(text_id=text_id).order_by(
                                                             'grouper_of_same_words','wordtext')
-            toupdate_savedwords = [] # used for bulk_update
+            todelete_savedwords = [] # used for bulk delete
             prev_wordtext = ''
             prev_gosw = None
             for todel_OR_toarchive_wo in todel_OR_toarchive_words:
                 # don't keep same saved words written similarly
                 if todel_OR_toarchive_wo.wordtext.lower() == prev_wordtext and \
                             todel_OR_toarchive_wo.grouper_of_same_words == prev_gosw:
-                    delwo_nb += todel_OR_toarchive_wo.delete()[0]
+                    todelete_savedwords.append(todel_OR_toarchive_wo.id)
                     continue
                 else:
                     prev_wordtext = todel_OR_toarchive_wo.wordtext.lower()
@@ -375,12 +375,7 @@ def text_list(request):
                 # else:   - if it's archiving:  we keep the saved words
                 #         - or: if it's deleting: we keep the saved words if the option 'is_deleting_saved_words'...
                 #                           was not checked
-                if op == 'archiving' or ( op == 'deleting' and not is_deleting_saved_words ):
-                    # create a customsentence if not existing (not sure if useful since all words should already have it
-                    if not todel_OR_toarchive_wo.customsentence:
-                        todel_OR_toarchive_wo.customsentence = todel_OR_toarchive_wo.sentence.sentencetext
-                        toupdate_savedwords.append(todel_OR_toarchive_wo)
-                else:
+                if op == 'deleting' and is_deleting_saved_words:
                     # delete also Grouper_of_same_words associated:
                     # maybe there isn´t (if we have make this word as a similar word to another)
                     # we want to keep words in other texts though
@@ -397,13 +392,12 @@ def text_list(request):
                         delwo_nb += 1
                     todel_OR_toarchive_wo.delete()
 
-            # bulk update: (not sure if useful since all words should already have a customsentence)
-            Words.objects.bulk_update(toupdate_savedwords, ['customsentence'])
+            # bulk delete:
+            delwo_nb += Words.objects.filter(id__in=todelete_savedwords).delete()[0]
 
             # all sentences need to be deleted and in Words: set order and textOrder to Null
             Sentences.objects.filter(text_id=text_id).delete()
-            Words.objects.filter(owner=request.user).filter(text_id=text_id).update(order=None) 
-            Words.objects.filter(owner=request.user).filter(text_id=text_id).update(textOrder=None)
+            Words.objects.filter(owner=request.user).filter(text_id=text_id).update(order=None, textOrder=None) 
 
             if op == 'deleting':
                 # delete the text
