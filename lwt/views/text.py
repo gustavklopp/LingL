@@ -397,11 +397,6 @@ def text_list(request):
                         delwo_nb += 1
                     todel_OR_toarchive_wo.delete()
 
-#                     gosw_for_this_word = Grouper_of_same_words.objects.filter(id=todel_OR_toarchive_wo.id).first()
-#                     if gosw_for_this_word:
-#                         gosw_for_this_word.delete()
-#                         delwo_nb += 1 # else it's not a word but a space ' ', or '?', '!' etc...
-#                     todel_OR_toarchive_wo.delete()
             # bulk update: (not sure if useful since all words should already have a customsentence)
             Words.objects.bulk_update(toupdate_savedwords, ['customsentence'])
 

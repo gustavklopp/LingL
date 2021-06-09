@@ -102,6 +102,8 @@ function _display_possiblesimilarword(data, wo_id){
 	if ($.isEmptyObject(possiblesimilarword)){
 		r += gettext('No similar words found.');
 	} else {
+		// make the highlight on this block, and remove the highlight if existing on bottomright:
+		$('#bottomright').removeClass('sim_OR_dict_highlight');
 		r += '<ul class="fa-ul sim_OR_dict_highlight" id="possible_similarword_result">';
 		$.each(possiblesimilarword, function(key, val){
 			r += '<li ';

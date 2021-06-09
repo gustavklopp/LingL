@@ -549,7 +549,7 @@ def termform(request):
                     compoundword.save()
                     firstword = compoundword_obj_list[0]
                     
-                    if redefine_only_this_word: #TODO
+                    if redefine_only_this_word: 
                         pass
                     else:
                         # we update by default all the words considered 'similar' by the system 

@@ -120,7 +120,7 @@ $(document).ready(function(){
 	<!--  Redefine only this word -->
     <div class="form-group">
 	<input type="checkbox" name="redefine_only_this_word id="redefine_only_this_word">
-	<label for="redefine_only_this_word">{% trans "Redefine Only this Word" %}</label>
+	<label title="{% trans 'If you have previously defined this word as similar to other words, you can choose to redefine only this word, and not the other words considered similar' %}" for="redefine_only_this_word">{% trans "Redefine Only this Word" %}</label>
 	<div>
 	<!--  End Redefine only this... -->
 	{% endif %}
