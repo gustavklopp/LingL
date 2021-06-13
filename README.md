@@ -3,7 +3,7 @@ Learn new languages by reading anything you choose.
 
 This was inspired by other site/projects like the opensource Lwt, the closed source lingq etc...
 
-![lingl_German_800px](https://user-images.githubusercontent.com/6438275/116420467-47bdec80-a83e-11eb-8023-4f67974223ad.png)
+![Screencast_small_clip](https://user-images.githubusercontent.com/6438275/121800774-05a50a80-cc34-11eb-825a-37145f2e4461.gif)
 ![lingl_homepage_600px](https://user-images.githubusercontent.com/6438275/116420494-4d1b3700-a83e-11eb-9570-ef473cba9777.png)
 
 
