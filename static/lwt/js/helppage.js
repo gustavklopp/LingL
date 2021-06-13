@@ -211,7 +211,7 @@ $(function() {
 	/*********************************************************/
 		// 'e': edit this word
 		if (keypress == '101' && !_toprightInputBoxes_have_focus()){ 
-			ajax_termform(sel_word.attr('woid'),'edit','');
+			tooltip_ajax_termform(sel_word.attr('woid'),'edit','');
 			ajax_dictwebpage(WBLINK1, sel_word.attr('wowordtext'),'');
 		}
 		
@@ -224,8 +224,8 @@ $(function() {
 			event.preventDefault();
 		}
 
-		// 'altGr+s': focus on search other spelling input box
-		if (keypress == '353'){ 
+		// 'altGr+w': focus on search other spelling input box
+		if (keypress == '229'){ 
 			$('#termformSearchbox').focus();
 			event.preventDefault();
 		}
@@ -248,7 +248,6 @@ $(function() {
 							$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
 			var wo_id = $('.kb_short_'+'1').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
-			_move_next_word(sel_word, e);
 		}
 
 		// '2': choose the second similar word
@@ -256,7 +255,6 @@ $(function() {
 						$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
 			var wo_id = $('.kb_short_'+'2').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
-			_move_next_word(sel_word, e);
 		}
 
 		// '3': choose the third similar word
@@ -264,7 +262,6 @@ $(function() {
 						$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
 			var wo_id = $('.kb_short_'+'3').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
-			_move_next_word(sel_word, e);
 		}
 
 		// '4': choose the fourth similar word
@@ -272,7 +269,6 @@ $(function() {
 								$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
 			var wo_id = $('.kb_short_'+'4').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
-			_move_next_word(sel_word, e);
 		}
 
 		// '5': choose the fifth similar word
@@ -280,14 +276,12 @@ $(function() {
 								$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
 			var wo_id = $('.kb_short_'+'5').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
-			_move_next_word(sel_word, e);
 		}
 
-		// 'altGr+w': submit the form to save the word´s definition
-		if (keypress == '229'){ 
+		// 'altGr+a': submit the form to save the word´s definition
+		if (keypress == '225'){ 
 			$('#submit_word').trigger('click');
 			event.preventDefault();
-			_move_next_word(sel_word, e);
 		}
 	/*********************************************************/
 	/*          BOTTOMRIGHT PANEL                               */

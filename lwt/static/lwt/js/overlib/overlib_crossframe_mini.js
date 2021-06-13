@@ -12,7 +12,7 @@ if(typeof olInfo=='undefined'||typeof olInfo.meets=='undefined'||!olInfo.meets(4
 function parseFrameExtras(pf,i,ar){var k=i,v;
 if(k<ar.length){if(ar[k]==FRAME){v=ar[++k];if(pf=='ol_')ol_frame=v;else opt_FRAME(v);return k;}}
 return-1;}
-function opt_FRAME(frm){o3_frame=frm;over=createDivContainer('overDiv');return 0;}
+function opt_FRAME(frm){o3_frame=frm;over=createDivContainer('overlibDiv');return 0;}
 function frmDepth(thisFrame,ofrm){var retVal='';
 for(var i=0;i<thisFrame.length;i++){if(thisFrame[i].length>0){retVal=frmDepth(thisFrame[i],ofrm);if(retVal=='')continue;}else if(thisFrame[i]!=ofrm)continue;retVal='['+i+']'+retVal;break;}
 return retVal;}

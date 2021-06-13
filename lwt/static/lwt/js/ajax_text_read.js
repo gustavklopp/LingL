@@ -43,10 +43,6 @@ function ajax_clicked_word(wo_id, show_compoundword, op, rtl) {
 				var r = _display_possiblesimilarword(data, wo_id);
 				$('#result_possiblesimilarword').html(r);
 				
-				// clicking on the radio button in termform to choose link 
-				$('#wblnk_search input').change(function() {
-						_clicked_weblink_radiobutton();
-					});
 			},
 
 			 error : function(data , status , xhr){ 
@@ -78,7 +74,7 @@ function ajax_ctrlclicked_compoundword(wo_id, op, rtl) {
 				$('#result_possiblesimilarword').html(r);
 				
 				/* clicking on the radio button in termform to choose link */
-				$('#wblnk_search input').on('change', function() {
+				$('#wblnk_search input').change(function() {
 					var wblnk = $('input[name=wblnk]:checked').val()
 					var dictwebpage_searched_word = $('#wblnk_search').data('dictwebpage_searched_word');
 					ajax_dictwebpage(wblnk, dictwebpage_searched_word);

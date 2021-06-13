@@ -274,7 +274,7 @@
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
-    exceptionssplitsentences: (?<=Mr)\.|(?<=Dr)\.|(?<=[A-Z])\.|(?<=Vd)\.|(?<=Vds)\.|(?<=[0-9])\.(?= [a-z])
+    exceptionssplitsentences: (?<=Mr)\.|(?<=Dr)\.|(?<=[A-Z])\.|(?<=Vd)\.|(?<=Vds)\.|(?<=[0-9])\.(?= [a-z])|(?<=oz)\.(?= [a-z])
     regexpwordcharacters: a-zA-ZÀ-ÖØ-öø-ȳ
     removespaces: false
     spliteachchar: false

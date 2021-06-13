@@ -150,7 +150,7 @@ def create_filter(filter_type, filter_list_json):
             filter_args = {'lastopentime': timezone.now() + timedelta(days=1)} #1 day in the future
             return Q(**filter_args)
         # special case for filtering on tags: if list if empty, we'll display everything
-        if filter_type == 'texttags__id' and not filter_list:
+        if (filter_type == 'texttags__id' or filter_type == 'wordtags__id') and not filter_list:
             return Q()
         # we shoul display all objects
         for idx, filter_val in enumerate(filter_list):
@@ -258,14 +258,16 @@ def list_filtering( model, request):
                     
     # And finally filter the models:
     if isinstance(model.first(), Texts): # texts table is filtered
-        results = model.filter(filter_Q_lang).\
+        results = model.filter(owner=request.user).\
+                        filter(filter_Q_lang).\
                         filter(filter_Q_time).\
                         filter(filter_Q_tag).\
                         filter(filter_Q_archived).\
                         distinct() # because many2many, a text can have 2 tags. don't count 2 times so...
 #                         filter(filter_Q_tag).\
     if isinstance(model.first(), Words): # words table is filtered
-        results = model.filter(filter_Q_lang).\
+        results = model.filter(owner=request.user).\
+                        filter(filter_Q_lang).\
                         filter(filter_Q_status).\
                         filter(filter_Q_wordtag).\
                         filter(filter_Q_text).\
@@ -361,7 +363,7 @@ def splitText(text):
 #         t = t.strip()
 
     if noSentenceEnd != '': # 'M.John' must not be cut into 2 sentences. replace the dot with an 'hyphenation point'
-        noSentenceEnd = noSentenceEnd.replace('.', '\.') #because the string '\.' were escaped to '.' we need to rescaped them...       t = re.sub(noSentenceEnd , r'‧', t)
+#         noSentenceEnd = noSentenceEnd.replace('.', '\.') #because the string '\.' were escaped to '.' we need to rescaped them...       t = re.sub(noSentenceEnd , r'‧', t)
         t = re.sub(noSentenceEnd , r'‧', t)
 
     sentences = splitSentence(t, splitSentenceMark)

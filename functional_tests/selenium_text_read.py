@@ -89,11 +89,11 @@ class Text_read(Base):
 #         language_2 = LanguagesFactory(owner=self.user_1)
 #         Settings_currentlang_id.objects.get(owner=self.user_1).stvalue=language_2
         text2 = TextsFactory(owner=self.user_1, language=self.language_1)
-        sentence1 ='AAA BBB AAA AAA BBB.\n' 
+        sentence1 ='Aaa bbb aaa aaa bbb.\n' 
         text2.text = sentence1
-        sentence2 = 'VVV DDD VVV DDD EEE RRR TTT UUU EEE EEE TTT OOO.\n'
+        sentence2 = 'Vvv ddd vvv ddd eee rrr ttt uuu eee eee ttt ooo.\n'
         text2.text += sentence2
-        sentence3 = 'PPP LLL PPP MMM NNN OOO MMM LLL MMM NNN.'
+        sentence3 = 'Ppp lll ppp mmm nnn ooo mmm lll mmm nnn.'
         text2.text += sentence3
 
         # Verify that the splitting text is working
@@ -111,11 +111,11 @@ class Text_read(Base):
 #                          msg="Tooltip doesn't disappear when mouse over the right handle")
 # 
         self.wait_until_appear(By.CSS_SELECTOR, 'iframe[id="dictwebpage"]')
-        words = self.finds(By.XPATH, "//span[contains(text(),'MMM')]")
+        words = self.finds(By.XPATH, "//span[contains(text(),'mmm')]")
         words[0].click()
  
         # verify that new_term_form is created in the top right and submit a translation
-        expected_sent = sentence3.replace('MMM', '**MMM**')
+        expected_sent = sentence3.replace('mmm', '**mmm**')
         self.wait_until_appear(By.XPATH, "//textarea[@id='id_sentence' and contains(text(), '{}')]".format(expected_sent))
         textarea = self.find(By.ID, 'id_translation')
         textarea.send_keys('a')
@@ -128,7 +128,7 @@ class Text_read(Base):
         self.find(By.ID, 'submit_word').click()
         elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="1"')
         self.assertEqual(len(elements), 3)
-        self.assertEqual(elements[0].text, 'MMM')
+        self.assertEqual(elements[0].text, 'mmm')
         
         # creating a new text with the same words:
         text3 = TextsFactory(owner=self.user_1, language=self.language_1)
@@ -146,7 +146,7 @@ class Text_read(Base):
 # 
         elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="1"')
         self.assertEqual(len(elements), 3, msg="New text don't get the already saved words")
-        self.assertEqual(elements[0].text, 'MMM')
+        self.assertEqual(elements[0].text, 'mmm')
          
         #editing a word translation:
         elements[0].click()
@@ -164,7 +164,8 @@ class Text_read(Base):
         submit.click()
         elements[2].click()
         tooltip = self.find(By.CLASS_NAME, 'tooltiptext')
-        self.assertTrue('▶ b' in tooltip.text)
+        self.assertEqual('mmm\n▶ b\nEdit term | Delete term & similar\nDelete single term\nLookup Term: Dict1 Dict2 GTr\nLookup Sentence: GTr',
+                                 tooltip.text)
          
         #editing a word status to 'well-known':
         tooltip_righthandle_selector = (By.XPATH, '//td[@align="RIGHT"]/a') 
@@ -187,7 +188,7 @@ class Text_read(Base):
         # changing status to well known
         self.find(By.CSS_SELECTOR, 'input[value="100"]').click()
         submit.click()
-        elements = self.finds(By.XPATH, '//span[@wostatus="100" and contains(text(),"MMM")]')
+        elements = self.finds(By.XPATH, '//span[@wostatus="100" and contains(text(),"mmm")]')
         self.assertEqual(len(elements), 3)
          
         # and changing again the status 'well-known' to learning:
@@ -206,7 +207,7 @@ class Text_read(Base):
         # changing status to well known
         self.find(By.CSS_SELECTOR, 'input[value="1"]').click()
         submit.click()
-        elements = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(),"MMM")]')
+        elements = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(),"mmm")]')
         self.assertEqual(len(elements), 3)
          
     def test_submit_similar_word(self):
@@ -242,7 +243,7 @@ class Text_read(Base):
  
         self.find(By.ID, 'submit_word').click()
  
-        self.wait_until_text_appear((By.XPATH, '//div[@id="topright"]'), 'OK: Term saved.')
+        self.wait_until_text_appear((By.XPATH, '//div[@id="topright"]'), '"aimerais"')
          
         # then click on another word: 'aimerais' in text_read
         words_aimerais = self.finds(By.XPATH, "//span[contains(text(),'aimerais')]")
@@ -251,7 +252,7 @@ class Text_read(Base):
         similarwords = self.finds(By.XPATH, '//span[@class="possible_similarword"]')
         self.assertEqual(len(similarwords), 1)
         similarwords[0].click()
-        totalsavedwords = self.finds(By.XPATH, '//span[@wostatus="1"]')
+        totalsavedwords = self.finds(By.XPATH, '//*[@id="thetext"]/p[1]/span[@wostatus="1"]')
         self.assertEqual(len(totalsavedwords), 4)
         newsavedwords = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')
         self.assertEqual(len(newsavedwords), 2)
@@ -338,7 +339,7 @@ is over the carry?''')
         wordtagarea.send_keys('masculine')
         wordtagarea.send_keys(',')
         self.find(By.XPATH, '//button[@id="submit_word"]').click()
-        self.wait_until_appear(By.XPATH, '//div[@id="topright"][contains(.,"OK: Term saved.")]')
+        self.wait_until_appear(By.XPATH, '//div[@id="topright"][contains(.,"it")]')
         # good in database
         compoundword = Words.objects.get(isCompoundword=True, isnotword=True)
         self.assertEqual(compoundword.status, 1) # and now is 'Learning'
@@ -347,7 +348,7 @@ is over the carry?''')
         self.assertEqual(first_word_DB_after.compoundword, compoundword) # and now is 'Learning'
         self.assertEqual(second_word_DB_after.compoundword, compoundword) # and now is 'Learning'
         self.assertEqual(first_word_DB_after.show_compoundword, True) # and now is 'Learning'
-        self.assertEqual(first_word_DB_after.status, 0) # it must not changed
+        self.assertEqual(first_word_DB_after.status, 1) 
         # and good css:
         firstword_after = self.find(By.XPATH, '//span[@wowordtext="carry" and @cowordtext="carry+over"]')
         secondword_after = self.find(By.XPATH, '//span[@wowordtext="over" and @cowordtext="carry+over"]')

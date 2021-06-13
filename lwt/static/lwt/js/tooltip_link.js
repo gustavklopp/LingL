@@ -94,7 +94,7 @@ function text_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, t
 /* the word can be of the status: ignored, well-known, learning, unknown.****************** */
 /****************************************************************************************** */
 function create_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-											cotrans, iscompoundword, show_compoundword, rtl)
+		cowordtext, costatus, cotrans, iscompoundword, show_compoundword, cowo_id_list, rtl)
 {
 	return overlib(
 		text_tooltip_stat_unkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -111,7 +111,7 @@ function create_tooltip_stat_learning(wblink1,wblink2,wblink3, wo_id, wowordtext
 		CAPTION, gettext('Learning'));
 }
 function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-		cowordtext, costatus, cotrans, iscompoundword, show_compoundword, rtl)
+		cowordtext, costatus, cotrans, iscompoundword, show_compoundword, cowo_id_list, rtl)
 {
 	return overlib(
 		text_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -119,7 +119,7 @@ function create_tooltip_stat_wellkwn(wblink1,wblink2,wblink3, wo_id, wowordtext,
 		CAPTION, gettext('Well-known'));
 }
 function create_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
-		cotrans, iscompoundword, show_compoundword, rtl)
+		cowordtext, costatus, cotrans, iscompoundword, show_compoundword, cowo_id_list, rtl)
 {
 	return overlib(
 		text_tooltip_stat_ignored(wblink1,wblink2,wblink3, wo_id, wowordtext, trans, wostatus, 
@@ -202,19 +202,19 @@ function create_link_editword_title(text,txid,torder,wid) {
 }
 
 function create_link_deleteword(wo_id) {
-	return ' <a href="" onClick="tooltip_ajax_del_word(\''+wo_id+'\');return false;">Delete term</a> ';
+	return ' <a href="" onClick="tooltip_ajax_del_word(\''+wo_id+'\');return false;">'+gettext('Delete term & similar')+'</a> ';
 }
 
 function create_link_deletesingleword(wo_id) {
-	return ' <a href="" onClick="tooltip_ajax_del_singleword(\''+wo_id+'\');return false;">Delete single term</a> ';
+	return ' <a href="" onClick="tooltip_ajax_del_singleword(\''+wo_id+'\');return false;">'+gettext('Delete single term')+'</a> ';
 }
 
 function create_link_stat_wellkwn(wo_id) {
-	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'wellkwn\');return false;">I know this term well</a> ';
+	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'wellkwn\');return false;">'+gettext('I know this term well')+'</a> ';
 }
 
 function create_link_stat_ignored(wo_id) {
-	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'ignored\');return false;">Ignore this term</a> ';
+	return ' <a href="" onClick="ajax_update_status(event, \''+wo_id+'\',\'ignored\');return false;">'+gettext('Ignore this term')+'</a> ';
 }
 
 /**************************************************************

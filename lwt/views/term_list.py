@@ -311,9 +311,9 @@ def term_list(request):
         # get the languages which are found associated to this wordtag
         wordtag_lang = Words.objects.filter(wordtags=wordtag).values_list('language_id', flat=True).all()
         if set(wordtag_lang).isdisjoint(set(lang_filter)): # some languages are common
-            wordtags_list.append({'tag':wordtag, 'hidden': True, 'lang': list(wordtag_lang)})
+            wordtags_list.append({'tag':wordtag, 'bold': True, 'lang': list(wordtag_lang)})
         else:
-            wordtags_list.append({'tag':wordtag, 'hidden': False, 'lang': list(wordtag_lang)})
+            wordtags_list.append({'tag':wordtag, 'bold': False, 'lang': list(wordtag_lang)})
             wordtags_list_empty = False
 
     ################## COMPOUNDWORD FILTERING ######################################################################################

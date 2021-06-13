@@ -107,7 +107,7 @@ function click_ctrlclick_toggle(el, event, op=null) {
 				$el.attr('wotranslation'), status, $el.attr('cowordtext'), $el.attr('cowotranslation'),
 				$el.attr('cowostatus'), $el_iscompoundword, $event_show_compoundword, $el.attr('cowo_id_list'),  RTL ) 
 //			$('#'+ $el.attr('woid') + '.tooltip').text(r);  
-			$('#overDiv .tooltiptext').parent().replaceWith(r); 
+			$('#overlibDiv .tooltiptext').parent().replaceWith(r); 
 			ajax_toggle_show_compoundword($el.attr('woid'), $event_show_compoundword);
 		} else {
 			create_tooltip_stat_wellkwn(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 
@@ -139,7 +139,7 @@ function click_ctrlclick_toggle(el, event, op=null) {
 				$el.attr('wotranslation'), status, $el.attr('cowordtext'), $el.attr('cowotranslation'),
 				$el.attr('cowostatus'), $el_iscompoundword, $event_show_compoundword, $el.attr('cowo_id_list'),  RTL ) 
 //			$('#'+ $el.attr('woid') + '.tooltip').text(r);  
-			$('#overDiv .tooltiptext').parent().replaceWith(r); 
+			$('#overlibDiv .tooltiptext').parent().replaceWith(r); 
 			ajax_toggle_show_compoundword($el.attr('woid'), $event_show_compoundword);
 		} else {
 			create_tooltip_stat_learning(WBLINK1,WBLINK2,WBLINK3, $el.attr('woid'), $el.attr('wowordtext'), 

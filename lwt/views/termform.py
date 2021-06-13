@@ -30,12 +30,11 @@ from re import search
 ''' helper function: called by termform if GET is 'del' 
     it's not 'deleting' the word in the database: it's reinitializing as an unknown word'''
 def delete_a_single_word(word):
-    word.status=0
+    word.status = 0
     word.translation = None
-    word.omanization = None
-    word.customsentence = None
+    word.romanization = None
     # we give them back the grouper of same words for this word:
-    word.grouper_of_same_words = Grouper_of_same_words.objects.get(id=word.id)
+    word.grouper_of_same_words = None
     word.compoundword = None
     # ... and delete wordtags too:
     # inside a manytomany relationship:
@@ -360,21 +359,28 @@ def termform(request):
             cowo_id_to_update_in_ajax = []
 
                 
-            if singleword:
+            if singleword: #The User wants to delete only this word
                 delete_a_single_word(word)
                 sameword_list.append(word)
                 sameword_id_list.append(wo_id)
-            elif not singleword:
-                words_for_this_grouper_of_same_words = Words.objects.\
-                                            filter(grouper_of_same_words=word.grouper_of_same_words)
-                for sw in words_for_this_grouper_of_same_words:
-                    if not sw.show_compoundword: 
-                        delete_a_single_word(sw)
-                        sameword_list.append(sw)
-                        sameword_id_list.append(sw.id)
-                    elif sw.show_compoundword: # the User wants to delete the Compound word
-                        insidecompoundword_list = delete_a_compoundword(sw)
-                        cowo_id_to_update_in_ajax.extend(insidecompoundword_list) # it produces duplicate (because we add the
+            elif not singleword: # The User wants to delete this word AND its similars
+                gosw = word.grouper_of_same_words
+                if gosw:
+                    words_for_this_grouper_of_same_words = Words.objects.\
+                                                filter(grouper_of_same_words=word.grouper_of_same_words)
+                    for sw in words_for_this_grouper_of_same_words:
+                        if not sw.show_compoundword: 
+                            delete_a_single_word(sw)
+                            sameword_list.append(sw)
+                            sameword_id_list.append(sw.id)
+                        elif sw.show_compoundword: # the User wants to delete the Compound word
+                            insidecompoundword_list = delete_a_compoundword(sw)
+                            cowo_id_to_update_in_ajax.extend(insidecompoundword_list) # it produces duplicate (because we add the
+                    gosw.delete()
+                else: # there is no similars in fact: delete only this word
+                    delete_a_single_word(word)
+                    sameword_list.append(word)
+                    sameword_id_list.append(wo_id)
 
             sameword_id_list = list(set(sameword_id_list)) # removing duplicate 
             samewordtextlength = len(sameword_list)
@@ -388,7 +394,7 @@ def termform(request):
 #                                             'cowostatus':word.compoundword.status,
 #                                             'cowotranslation': word.compoundword.translation,\
 #                                             'coworomanization': word.compoundword.coworomanization,\
-                                            'sameword_id_list':sameword_id_list,
+                                            'wo_id_to_update_in_ajax':sameword_id_list,
                                             'cowo_id_to_update_in_ajax':cowo_id_to_update_in_ajax,
                                             }))
         
@@ -546,6 +552,9 @@ def termform(request):
                     # and make the words inside the compoundword detectable as such:
                     for idx in compoundword_id_list:
                         wordinside = Words.objects.get(id=idx)
+                        # I've chosen to make the word inside the compoundword themselves with an updated status
+                        # (Maybe to be change later...)
+                        wordinside.status = compoundword.status
                         wordinside.isCompoundword = True
                         wordinside.compoundword = compoundword # set the ForeignKey
                         wordinside.show_compoundword = True # user can switch that in the clicked tooltip for example
@@ -553,7 +562,7 @@ def termform(request):
                         compoundword_wordtext_list.append(wordinside.wordtext)
                         message_wordtext.append(wordinside.wordtext)
                         samecompoundword_id_list.append(wordinside.id)
-                    Words.objects.bulk_update(compoundword_obj_list, ['isCompoundword','compoundword',
+                    Words.objects.bulk_update(compoundword_obj_list, ['status','isCompoundword','compoundword',
                                                                       'show_compoundword'])
 
                     compoundword.wordtext = '+'.join(compoundword_wordtext_list)

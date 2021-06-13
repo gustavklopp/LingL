@@ -98,7 +98,7 @@ def load_texttable(request):
         t_dict['title_tag'] = r
         if not t.archived:
             ##########################################################################
-            #        display some stats about the Texts:                             #
+            #        display some statistics about the Texts:                             #
             ##########################################################################
             # Total words in this text: don't count duplicate (words written similarly)
 #             texttotalword_list = Words.objects.filter(text=t).\
@@ -109,14 +109,15 @@ def load_texttable(request):
                     
             # Already saved words in this text: don't count duplicate (words written similarly) 
             textsavedword_list = Words.objects.filter(Q(text=t)&Q(isnotword=False)&Q(status__gt=0)).\
-                                exclude(isCompoundword=True).annotate(wordtext_lc=Lower('wordtext')).\
+                               annotate(wordtext_lc=Lower('wordtext')).\
                                                     order_by('wordtext_lc')
             textsavedword_list = (distinct_on(textsavedword_list, 'wordtext', case_unsensitive=True))
             textsavedword = len(textsavedword_list)
                             
 #             textsavedword = len([wo for wo in texttotalword_list if wo.status != 0])
 
-            textsavedexpr = Words.objects.filter(Q(text=t)&Q(isCompoundword=True)&Q(status__gt=0)).count()
+            textsavedexpr = Words.objects.filter(Q(text=t)&Q(isCompoundword=True)&\
+                                                 Q(isnotword=True)&Q(status__gt=0)).count()
             textunknownword = texttotalword - textsavedword
             if texttotalword != 0:
                 textunknownwordpercent = 100 * textunknownword//texttotalword
@@ -356,7 +357,7 @@ def text_list(request):
             Words.objects.filter(Q(text_id=text_id)&Q(isnotword=True)&Q(isCompoundword=False)).delete()
             
             # Case of saved words (status != 0):
-            todel_OR_toarchive_words = Words.objects.filter(text_id=text_id).order_by(
+            todel_OR_toarchive_words = Words.objects.filter(owner=request.user).order_by(
                                                             'grouper_of_same_words','wordtext')
             todelete_savedwords = [] # used for bulk delete
             prev_wordtext = ''
@@ -483,6 +484,7 @@ def text_detail(request):
                 # Process the file :
                 # split the text into sentences and into words and put it in Unknownwords
                 splitText(savedtext) #  in _utilities_views
+
                 ###################### Calculate how many words are for this language: Display a warning if too many words: ####################
                 total_words = Words.objects.filter(owner=request.user).count()
                 if total_words > MAX_WORDS_DANGER:

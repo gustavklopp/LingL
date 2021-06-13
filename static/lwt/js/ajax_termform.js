@@ -59,12 +59,26 @@ function ajax_submit_word(event, op, wo_id, language_id, simwo_id=null){
 					$('#newwordform').replaceWith(data['html']);
 					update_data_of_wo_cowo_and_sims(data, op);
 					$('#bottomleft').focus(); //and set the focus to the text again (useful for keyboard shortcuts)
-					//update the tooltip for the word also
-					var sel_word = $('.clicked');
-					click_ctrlclick_toggle(sel_word, event, 'update_tooltip');
 
+					//update the tooltip for the word also
+					//click_ctrlclick_toggle(sel_word, event, 'update_tooltip');
+					
+					// remove the overtooltip
+					$('div#overlibDiv').remove();
+
+					// if compound word, we must move past the last element of the compound word
+					var sel_word = $('.clicked');
+					var ctrl_sel_word = $('.ctrlclicked').last();
+					if (ctrl_sel_word.length != 0){
+						sel_word = ctrl_sel_word
+						$('.clicked').removeClass('clicked');
+					}
 					// and remove the compoundword highlights:
 					$('.ctrlclicked').removeClass('ctrlclicked');
+					
+					//and move next word
+					_move_next_word(sel_word, event);
+					
 
 					},
 				error : function(data , status , xhr){ console.log('ERROR'); console.log(data); console.log(status); console.log(xhr); }

@@ -3,7 +3,7 @@
 {% load i18n %} {# used for internationalization #}
 
 
-{% block pagetitle %}{% if currentlang_id == -1 %}{% trans "My Texts" %}{% else %}{% trans "My Texts in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
+{% block pagetitle %}{% trans "My Texts" %} | {{ block.super }}
 {% endblock pagetitle %}
 
 {% block stylesheets %}{{ block.super }}

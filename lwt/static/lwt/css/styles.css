@@ -391,13 +391,13 @@ div.headPlus.collapsed:before {
 }
 
 /************** the word Tooltip ****************/
-/* because bootstrap is modifying the 'table' of overDiv, unset it :*/
-div#overDiv table  tbody tr td table:nth-child(1){
+/* because bootstrap is modifying the 'table' of overlibDiv, unset it :*/
+div#overlibDiv table  tbody tr td table:nth-child(1){
 	background-color: #333399;
 	border: 0.3px solid black;
 }
 
-div#overDiv table  tbody tr td table:nth-child(2){
+div#overlibDiv table  tbody tr td table:nth-child(2){
 	background-color: #FFFFE8;
 	border: 0.3px solid black;
 }

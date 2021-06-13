@@ -110,7 +110,7 @@ class Languages(BaseModel):
     textsize = models.IntegerField( default=150)  
     charactersubstitutions = models.CharField(max_length=500, default="´='|`='|’='|‘='|...=…|..=‥")  
     regexpsplitsentences = models.CharField(max_length=500, default=".!?:;")  
-    exceptionssplitsentences = models.CharField(max_length=500, default="Mr.|Dr.|[A-Z].[A-Z]|Vd.|Vds.")  
+    exceptionssplitsentences = models.CharField(max_length=500, default="(?<=Mr)\.|(?<=Dr)\.|(?<=[A-Z])\.|(?<=Vd)\.|(?<=Vds)\.")  
     regexpwordcharacters = models.CharField(max_length=500, default="a-zA-ZÀ-ÖØ-öø-ȳ")  
     removespaces = models.BooleanField(default=False)  
     spliteachchar = models.BooleanField(default=False)  

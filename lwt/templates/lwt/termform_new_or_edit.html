@@ -91,10 +91,10 @@ $(document).ready(function(){
 	<div class="form-group" id="wblnk_search" data-dictwebpage_searched_word="{{ dictwebpage_searched_word }}" data-wo_id="{{ wo.id }}">
 
 	  <img src="{% static 'lwt/img/dictionary_16x16.png' %}" title="{% trans "Lookup term" %}" alt="Lookup term" /> 
-	  <label title="{% trans "Search word in : " %}{{ wo.language.dict1uri }}. ({% trans 'shortcut=' %}[D])" class="radio-inline"><input id="dict1uri" value="{{ wo.language.dict1uri }}" type="radio" name="wblnk" checked>{% trans "Dict1" %}</label> 
-	  <label title="{% trans "Search word in : " %}{{ wo.language.dict2uri }}. ({% trans 'shortcut=' %}[Shift+D])" class="radio-inline"><input id="dict2uri" value="{{ wo.language.dict2uri }}" type="radio" name="wblnk">{% trans "Dict2" %}</label>    
-	  <label title="{% trans "Search word in : " %}{{ wo.language.googletranslateuri }}. ({% trans 'shortcut=' %}[G])" class="radio-inline"><input id="wo_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "GTr" %}</label>
-	  |<label title="{% trans "Search sentence in : " %}{{ wo.language.googletranslateuri }}. ({% trans 'shortcut=' %}[Shift+G])" class="radio-inline"><input id="sent_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "Sent.: GTr" %}</label>  
+	  <label title="{% trans "Search word in : " %}{{ wo.language.dict1uri }}. ({% trans 'shortcut=' %}[D])" class="radio-inline"><input onclick="_clicked_weblink_radiobutton();" id="dict1uri" value="{{ wo.language.dict1uri }}" type="radio" name="wblnk" checked>{% trans "Dict1" %}</label> 
+	  <label title="{% trans "Search word in : " %}{{ wo.language.dict2uri }}. ({% trans 'shortcut=' %}[Shift+D])" class="radio-inline"><input onclick="_clicked_weblink_radiobutton();" id="dict2uri" value="{{ wo.language.dict2uri }}" type="radio" name="wblnk">{% trans "Dict2" %}</label>    
+	  <label title="{% trans "Search word in : " %}{{ wo.language.googletranslateuri }}. ({% trans 'shortcut=' %}[G])" class="radio-inline"><input onclick="_clicked_weblink_radiobutton();" id="wo_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "GTr" %}</label>
+	  |<label title="{% trans "Search sentence in : " %}{{ wo.language.googletranslateuri }}. ({% trans 'shortcut=' %}[Shift+G])" class="radio-inline"><input onclick="_clicked_weblink_radiobutton();" id="sent_gtr" value="{{ wo.language.googletranslateuri }}" type="radio" name="wblnk">{% trans "Sent.: GTr" %}</label>  
 	</div>
 	
 	<!--  Custom searchbox of a word (it calls: function submit_termformSearchbox() )-->
@@ -109,10 +109,14 @@ $(document).ready(function(){
 	<strong>{% trans "Status" %}: </strong>
 	{% for status, status_dict in statuses.items %}
 		{% if forloop.counter0 != 0 %}
-		<span class="status{{ status }}" title="{{ status_dict.name }}">
-		&nbsp;<input type="radio" name="status" value="{{ status_dict.nb }}"
-		{% if forloop.counter0 == 1 %}checked="checked"{% endif %}
-		/>{{ status_dict.abbr }}&nbsp;</span>
+			<span class="status{{ status }}" title="{{ status_dict.name }}">
+			&nbsp;<input type="radio" name="status" value="{{ status_dict.nb }}"
+			{% if op == 'new' and forloop.counter0 == 1 %}checked="checked"{% endif %}
+			{% if op == 'edit' %}
+					{% if status == 1 and wo.status > 1 and wo.status < 100 %}checked="checked"
+					{% elif status == wo.status %}checked="checked"{% endif %}
+			{% endif %}
+			/>{{ status_dict.abbr }}&nbsp;</span>
 		{% endif %}
 	{% endfor %}
 	<button title="{% trans 'shortcut=[AltGr+W]' %}" id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>

@@ -27,7 +27,7 @@ function getLayerLevel(lyr){var i=0;
 if(typeof document.popups=='undefined'){document.popups=new Array(lyr);}else{var l=document.popups;for(var i=0;i<l.length;i++)if(lyr==l[i])break;if(i==l.length)l[l.length++]=lyr;}
 return i;}
 function getDivZindex(id){var obj;
-if(id==''||id==null)id='overDiv';
+if(id==''||id==null)id='overlibDiv';
 obj=layerReference(id);obj=(olNs4?obj:obj.style);
 return obj.zIndex;}
 function setCanShowParm(debugID){var lyr,pLyr;

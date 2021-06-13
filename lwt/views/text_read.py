@@ -271,10 +271,13 @@ def _clean_soup(soup, url):
             result_section_nav.extract()
         if result_section_header := body.find_all('h3', {'class':'result-section__header'}):
             [r.extract() for r in result_section_header]
+    if 'dict.cc' in url:
+        pass
     if 'wordref' in url:
-        body.find('header', {'class':'full-header'}).extract()
-        body.find('div', {'id':'ad1'}).extract()
-        body.find('div', {'id':'search'}).extract()
+        if full_header := body.find('header', {'class':'full-header'}):
+            full_header.extract()
+            body.find('div', {'id':'ad1'}).extract()
+            body.find('div', {'id':'search'}).extract()
     if 'wiktionary' in url:
         div_mwbody = body.find('div', {'class':'mw-body'})
         body = div_mwbody

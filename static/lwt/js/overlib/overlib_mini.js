@@ -30,7 +30,7 @@ if(olNs6)olIe4=false;}
 if(document.compatMode&&document.compatMode=='CSS1Compat'){docRoot=((olIe4&&!olOp)?'document.documentElement':docRoot);}
 if(window.addEventListener)window.addEventListener("load",OLonLoad_handler,false);else if(window.attachEvent)window.attachEvent("onload",OLonLoad_handler);
 var capExtent;
-function overlib(){if(!olLoaded||isExclusive(overlib.arguments))return true;if(olCheckMouseCapture)olMouseCapture();if(over){over=(typeof over.id!='string')?o3_frame.document.all['overDiv']:over;cClick();}
+function overlib(){if(!olLoaded||isExclusive(overlib.arguments))return true;if(olCheckMouseCapture)olMouseCapture();if(over){over=(typeof over.id!='string')?o3_frame.document.all['overlibDiv']:over;cClick();}
 olHideDelay=0;o3_text=ol_text;o3_cap=ol_cap;o3_sticky=ol_sticky;o3_background=ol_background;o3_close=ol_close;o3_hpos=ol_hpos;o3_offsetx=ol_offsetx;o3_offsety=ol_offsety;o3_fgcolor=ol_fgcolor;o3_bgcolor=ol_bgcolor;o3_textcolor=ol_textcolor;o3_capcolor=ol_capcolor;o3_closecolor=ol_closecolor;o3_width=ol_width;o3_border=ol_border;o3_cellpad=ol_cellpad;o3_status=ol_status;o3_autostatus=ol_autostatus;o3_height=ol_height;o3_snapx=ol_snapx;o3_snapy=ol_snapy;o3_fixx=ol_fixx;o3_fixy=ol_fixy;o3_relx=ol_relx;o3_rely=ol_rely;o3_fgbackground=ol_fgbackground;o3_bgbackground=ol_bgbackground;o3_padxl=ol_padxl;o3_padxr=ol_padxr;o3_padyt=ol_padyt;o3_padyb=ol_padyb;o3_fullhtml=ol_fullhtml;o3_vpos=ol_vpos;o3_aboveheight=ol_aboveheight;o3_capicon=ol_capicon;o3_textfont=ol_textfont;o3_captionfont=ol_captionfont;o3_closefont=ol_closefont;o3_textsize=ol_textsize;o3_captionsize=ol_captionsize;o3_closesize=ol_closesize;o3_timeout=ol_timeout;o3_function=ol_function;o3_delay=ol_delay;o3_hauto=ol_hauto;o3_vauto=ol_vauto;o3_closeclick=ol_closeclick;o3_wrap=ol_wrap;o3_followmouse=ol_followmouse;o3_mouseoff=ol_mouseoff;o3_closetitle=ol_closetitle;o3_css=ol_css;o3_compatmode=ol_compatmode;o3_fgclass=ol_fgclass;o3_bgclass=ol_bgclass;o3_textfontclass=ol_textfontclass;o3_captionfontclass=ol_captionfontclass;o3_closefontclass=ol_closefontclass;
 setRunTimeVariables();
 fnRef='';
@@ -176,7 +176,7 @@ if(fnMark&&o3_function)o3_text=o3_function();
 if((pf=='o3_')&&o3_wrap){o3_width=0;
 var tReg=/<.*\n*>/ig;if(!tReg.test(o3_text))o3_text=o3_text.replace(/[ ]+/g,'&nbsp;');if(!tReg.test(o3_cap))o3_cap=o3_cap.replace(/[ ]+/g,'&nbsp;');}
 if((pf=='o3_')&&o3_sticky){if(!o3_close&&(o3_frame!=ol_frame))o3_close=ol_close;if(o3_mouseoff&&(o3_frame==ol_frame))opt_NOCLOSE(' ');}}
-function layerWrite(txt){txt+="\n";if(olNs4){var lyr=o3_frame.document.layers['overDiv'].document
+function layerWrite(txt){txt+="\n";if(olNs4){var lyr=o3_frame.document.layers['overlibDiv'].document
 lyr.write(txt)
 lyr.close()
 }else if(typeof over.innerHTML!='undefined'){if(olIe5&&isMac)over.innerHTML='';over.innerHTML=txt;}else{range=o3_frame.document.createRange();range.setStartAfter(over);domfrag=range.createContextualFragment(txt);
@@ -255,7 +255,7 @@ return placeY;}
 function checkPositionFlags(){if(olHautoFlag)olHautoFlag=o3_hauto=0;if(olVautoFlag)olVautoFlag=o3_vauto=0;return true;}
 function windowWidth(){var w;if(o3_frame.innerWidth)w=o3_frame.innerWidth;else if(eval('o3_frame.'+docRoot)&&eval("typeof o3_frame."+docRoot+".clientWidth=='number'")&&eval('o3_frame.'+docRoot+'.clientWidth'))
 w=eval('o3_frame.'+docRoot+'.clientWidth');return w;}
-function createDivContainer(id,frm,zValue){id=(id||'overDiv'),frm=(frm||o3_frame),zValue=(zValue||1000);var objRef,divContainer=layerReference(id);
+function createDivContainer(id,frm,zValue){id=(id||'overlibDiv'),frm=(frm||o3_frame),zValue=(zValue||1000);var objRef,divContainer=layerReference(id);
 if(divContainer==null){if(olNs4){divContainer=frm.document.layers[id]=new Layer(window.innerWidth,frm);objRef=divContainer;}else{var body=(olIe4?frm.document.all.tags('BODY')[0]:frm.document.getElementsByTagName("BODY")[0]);if(olIe4&&!document.getElementById){body.insertAdjacentHTML("beforeEnd",'<div id="'+id+'"></div>');divContainer=layerReference(id);}else{divContainer=frm.document.createElement("DIV");divContainer.id=id;body.appendChild(divContainer);}
 objRef=divContainer.style;}
 objRef.position='absolute';objRef.visibility='hidden';objRef.zIndex=zValue;if(olIe4&&!olOp)objRef.left=objRef.top='0px';else objRef.left=objRef.top=-10000+(!olNs4?'px':0);}

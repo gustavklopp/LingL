@@ -65,9 +65,14 @@ def line_chart(request, language_id=None, is_cumulative=None):
         return JsonResponse(data={'data':'EMPTY'})
 
     if activetime_filter == -1:
-        first_time_all = first_word.modified_date
+        firstword_modif_date = first_word.modified_date
+        # make the first_time_all so that we display whole weeks 
+        first_time_all = timezone.now()
+        while first_time_all > firstword_modif_date:
+            first_time_all -= timedelta(days=7)
     else:
         first_time_all = timezone.now() - timedelta(weeks=activetime_filter)        
+    first_time_all += timedelta(seconds=1)
     langs_datasets = []
     langs_datasets_cumul = []
     langs_datasets_noncumul = []
@@ -77,7 +82,7 @@ def line_chart(request, language_id=None, is_cumulative=None):
         words_count_cumul = 0 # used for cumulative
         prev_time = None
         while (True):
-            last_time = first_time + timedelta(weeks=1)
+            last_time = first_time + timedelta(weeks=1) 
             word_perweek_count  = words.filter(language=language).\
                         filter(Q(modified_date__gte=first_time)&Q(modified_date__lt=last_time)).count()
             data_points['non_cumulative'].append(word_perweek_count)
@@ -86,16 +91,16 @@ def line_chart(request, language_id=None, is_cumulative=None):
             data_points['cumulative'].append(words_count_cumul)
             if idx == 0: # we use the first language to create the Y label
                 if not prev_time: # first date of the Y label, we display YYYY Month.
-                    labels.append(first_time.strftime('(%Y) %b-%d'))
+                    labels.append(last_time.strftime('(%Y) %b %d'))
                 else:
-                    if first_time.month == 1 and prev_time.month == 12:
-                        labels.append(first_time.strftime('(%Y) %b-%d'))
+                    if last_time.month == 1 and last_time.month == 12:
+                        labels.append(last_time.strftime('(%Y) %b %d'))
                     else:
-                        if first_time.month != prev_time.month:
-                            labels.append(first_time.strftime('%b-%d'))
+                        if last_time.month != prev_time.month:
+                            labels.append(last_time.strftime('%b %d'))
                         else:
-                            labels.append(first_time.strftime('%d'))
-                prev_time = first_time
+                            labels.append(last_time.strftime('%d'))
+                prev_time = last_time
             first_time = last_time
             if first_time > timezone.now():
                 break
