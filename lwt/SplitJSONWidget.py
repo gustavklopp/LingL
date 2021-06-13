@@ -68,7 +68,7 @@ class SplitJSONWidget(forms.Widget):
         result = []
 
         def _to_parse_key(k, v):
-            if k.find(self.separator) is not -1:
+            if k.find(self.separator) != -1:
                 apx, _, nk = k.rpartition(self.separator)
                 try:
                     # parse list
@@ -124,7 +124,7 @@ class SplitJSONWidget(forms.Widget):
             if k in copy_raw_data:
                 # to transform value from list to string
                 v = v[0] if isinstance(v, list) and len(v) is 1 else v
-                if k.find(self.separator) is not -1:
+                if k.find(self.separator) != -1:
                     d = _to_parse_key(k, v)
                     # set type result
                     if not len(result):
