@@ -244,7 +244,7 @@ def backuprestore(request):
             with open(demo_fixt_path, encoding="utf8") as demo_fixt_file:
                 demo = demo_fixt_file.read()
                 demo = demo.replace("- lingl", "- {}".format(user_username))
-                with open(USER_demo_fixt_path, encoding="utf8", "w") as USER_demo_fixt_file:
+                with open(USER_demo_fixt_path, "w", encoding="utf8") as USER_demo_fixt_file:
                     USER_demo_fixt_file.write(demo)
             call_command('loaddata', USER_demo_fixt_path , app_label='lwt') # load the fixtures
             os.remove(USER_demo_fixt_path)
