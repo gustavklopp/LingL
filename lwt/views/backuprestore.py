@@ -64,7 +64,7 @@ def wipeout_database(request, keep_myuser=False):
 ''' gunzip (=decompress a gzipped file) the file uploaded'''
 def gunzipper(data_file):
     fp = tempfile.NamedTemporaryFile(suffix='.yaml')
-    with gzip.open(data_file.path, 'r', encoding="utf8") as f:
+    with gzip.open(data_file.path, 'r') as f:
         fp.write(f.read())
     fp.seek(0) # obligatory to rewind the file after having been read/written
     return fp

@@ -124,7 +124,7 @@ class Test_views(TestCase):
         response = self.client.post(reverse('backuprestore'), {'backingup':'backingup'})
         self.assertIn('attachment', response['Content-Disposition'])
         out = io.BytesIO(response.content)
-        with gzip.open(out, 'r',encoding="utf8") as f: # uncompress it
+        with gzip.open(out, 'r') as f: # uncompress it
             json_text = f.read().decode()
         count = json_text.count('lwt.texts')
         self.assertEqual(20, count)
@@ -136,7 +136,7 @@ class Test_views(TestCase):
         self.assertIn('attachment', response['Content-Disposition'])
         out = io.BytesIO(response.content)
         fp = tempfile.NamedTemporaryFile(suffix='.json')
-        with gzip.open(out, 'r',encoding="utf8") as f:
+        with gzip.open(out, 'r') as f:
             fp.write(f.read())
         fp.seek(0)
         response = self.client.post(reverse('backuprestore'), {'restore':'restore', 'restore_file':fp})
