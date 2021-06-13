@@ -15,7 +15,7 @@ from lwt.views._utilities_views import splitText
 backup_file = 'lwt/insert_old_lwt/lwt-backup-2017-10-06-08-45-34.sql'
 
 def insert_into_db(models, owner):
-    with open(backup_file) as f:
+    with open(backup_file, encoding="utf8") as f:
         # dicts where "'old_lwt_id'" :  <Word object in new lwt>
         languages_dict = {}
         texttags_dict = {}

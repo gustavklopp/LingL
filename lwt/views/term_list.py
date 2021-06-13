@@ -311,23 +311,33 @@ def term_list(request):
         # get the languages which are found associated to this wordtag
         wordtag_lang = Words.objects.filter(wordtags=wordtag).values_list('language_id', flat=True).all()
         if set(wordtag_lang).isdisjoint(set(lang_filter)): # some languages are common
-            wordtags_list.append({'tag':wordtag, 'bold': True, 'lang': list(wordtag_lang)})
+            wordtags_list.append({'tag':wordtag, 'bold': True, 'lang': set(list(wordtag_lang))})
         else:
-            wordtags_list.append({'tag':wordtag, 'bold': False, 'lang': list(wordtag_lang)})
+            wordtags_list.append({'tag':wordtag, 'bold': False, 'lang': set(list(wordtag_lang))})
             wordtags_list_empty = False
 
     ################## COMPOUNDWORD FILTERING ######################################################################################
     compoundword_filter_json = getter_settings_cookie('compoundword_filter', request)
     compoundword_filter = [] if not compoundword_filter_json else json.loads(compoundword_filter_json)
     compoundword_filter = [str_to_bool(i) for i in compoundword_filter]
-    isCompoundword_textIds = list(Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=True)).values_list(
-                                                    'id', flat=True))
-    isnotCompoundword_textIds = list(Words.objects.filter(Q(owner=request.user)&Q(isCompoundword=False)).values_list(
-                                                    'id', flat=True))
+    isCompoundword_langIds = list(Words.objects.filter(Q(owner=request.user)&\
+                           Q(isCompoundword=True)).values_list('language_id', flat=True))
+    isnotCompoundword_langIds = list(Words.objects.filter(Q(owner=request.user)&\
+                          Q(isCompoundword=False)).values_list('language_id', flat=True))
 
-    compoundword_textIds_boldlist = [ {'isCompoundword':False, 
-                                       'txt_set':json.dumps(isnotCompoundword_textIds)},
-                    {'isCompoundword':True, 'txt_set':json.dumps(isCompoundword_textIds)}]
+    compoundword_langIds_boldlist = []
+    if set(isnotCompoundword_langIds).isdisjoint(set(lang_filter)): # some languages are common
+        compoundword_langIds_boldlist.append({'isCompoundword':False, 'bold': False,
+                                               'lang': set(list(isCompoundword_langIds))})
+    else:
+        compoundword_langIds_boldlist.append({'isCompoundword':False, 'bold': True,
+                                               'lang': set(list(isCompoundword_langIds))})
+    if set(isCompoundword_langIds).isdisjoint(set(lang_filter)): # some languages are common
+        compoundword_langIds_boldlist.append({'isCompoundword':True, 'bold': False,
+                                               'lang': set(list(isCompoundword_langIds))})
+    else:
+        compoundword_langIds_boldlist.append({'isCompoundword':True, 'bold': True,
+                                               'lang': set(list(isCompoundword_langIds))})
 
     ####################################################################################################
     # get the list of languages to display them in the drop-down menu:
@@ -354,7 +364,8 @@ def term_list(request):
                     'text_filter': text_filter, 
                     'status_filter': status_filter,
                     'wordtag_filter': wordtag_filter, 'wordtags_list':wordtags_list, 'wordtags_list_empty':wordtags_list_empty,
-                    'compoundword_filter':compoundword_filter, 'compoundword_textIds_boldlist':compoundword_textIds_boldlist,
+                    'compoundword_filter':compoundword_filter, 
+                    'compoundword_langIds_boldlist':compoundword_langIds_boldlist,
 
                     'noback':noback,
                     'words_with_state_True':words_with_state_True,

@@ -64,7 +64,7 @@ def wipeout_database(request, keep_myuser=False):
 ''' gunzip (=decompress a gzipped file) the file uploaded'''
 def gunzipper(data_file):
     fp = tempfile.NamedTemporaryFile(suffix='.yaml')
-    with gzip.open(data_file.path, 'r') as f:
+    with gzip.open(data_file.path, encoding="utf8", 'r') as f:
         fp.write(f.read())
     fp.seek(0) # obligatory to rewind the file after having been read/written
     return fp
@@ -119,7 +119,7 @@ def backuprestore(request):
                 current_section = ''
                 writing = True
                 restore_username = request.user.username # the default value
-                with open(editedOwner_fp, 'w') as edited_f:
+                with open(editedOwner_fp, encoding="utf8", 'w') as edited_f:
                     for line in fp.file.readlines():
                         line = line.decode('utf-8') # the line in this file are binary: b'my text...'
 
@@ -217,11 +217,11 @@ def backuprestore(request):
             lang_fixt_path = os.path.join(settings.BASE_DIR, 'lwt','fixtures','initial_fixture_LANGUAGES.yaml')
             USER_lang_fixt_path = lang_fixt_path.replace('.yaml','_{}.yaml'.format(user_username))
 
-            with open(lang_fixt_path) as lang_fixt_file:
+            with open(lang_fixt_path, encoding="utf8") as lang_fixt_file:
                 langs = lang_fixt_file.read()
                 # replace the owner username
                 langs = langs.replace("- lingl", "- {}".format(user_username))
-                with open(USER_lang_fixt_path, "w") as USER_lang_fixt_file:
+                with open(USER_lang_fixt_path, encoding="utf8", "w") as USER_lang_fixt_file:
                     USER_lang_fixt_file.write(langs)
             call_command('loaddata', USER_lang_fixt_path , app_label='lwt') # load the fixtures
             os.remove(USER_lang_fixt_path)
@@ -241,10 +241,10 @@ def backuprestore(request):
             demo_fixt_path = os.path.join(settings.BASE_DIR, 'lwt','fixtures', 'oldlwt_fixture_demo.yaml')
             USER_demo_fixt_path = demo_fixt_path.replace('.yaml','_{}.yaml'.format(user_username))
 
-            with open(demo_fixt_path) as demo_fixt_file:
+            with open(demo_fixt_path, encoding="utf8") as demo_fixt_file:
                 demo = demo_fixt_file.read()
                 demo = demo.replace("- lingl", "- {}".format(user_username))
-                with open(USER_demo_fixt_path, "w") as USER_demo_fixt_file:
+                with open(USER_demo_fixt_path, encoding="utf8", "w") as USER_demo_fixt_file:
                     USER_demo_fixt_file.write(demo)
             call_command('loaddata', USER_demo_fixt_path , app_label='lwt') # load the fixtures
             os.remove(USER_demo_fixt_path)

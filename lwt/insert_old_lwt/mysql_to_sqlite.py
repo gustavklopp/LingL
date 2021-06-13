@@ -87,10 +87,10 @@ if __name__ == '__main__':
 #      ENGINE=MyISAM AUTO_INCREMENT=592 DEFAULT CHARSET=utf8;
 # '''  
 #     print(mysql_to_sqlite(content))
-    with open('lwt-backup-2017-10-06-08-45-34.sql') as fin:
+    with open('lwt-backup-2017-10-06-08-45-34.sql',encoding="utf8") as fin:
         content = fin.read()
         content = mysql_to_sqlite(content)
-        with open('converted_sqlite3_python.sql', 'w') as fout:
+        with open('converted_sqlite3_python.sql',encoding="utf8", 'w') as fout:
             fout.write(content)
 
 

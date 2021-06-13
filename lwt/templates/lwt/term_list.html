@@ -29,11 +29,11 @@
 	{% csrf_token %}
 	{% for lang in languages %}
 	 	{% if lang.id in lang_filter %}
-		<input type="checkbox"  checked onclick="termlist_filter();" value="{{ lang.id }}" class="unstyled">
+		<input type="checkbox"  checked onclick="termlist_filter();" value="{{ lang.id }}">
 		{% else %}
-		<input type="checkbox"  onclick="termlist_filter();" value="{{ lang.id }}" class="unstyled">
+		<input type="checkbox"  onclick="termlist_filter();" value="{{ lang.id }}">
 		{% endif %}
-			 {{ lang.name }}
+			 <span  class="font-weight-bold">{{ lang.name }}</span>
 		 {% if lang.id == currentlang_id %} <img title="{% trans 'it is the current language' %}" 
 		  src="{% static 'lwt/img/bullet-green_16x16.png' %}"/>{% else %} <img 
 		  onclick="location.href='{% url 'text_list' %}?currentlang_id={{ lang.id }}';" 
@@ -58,7 +58,7 @@
 		<input type="checkbox" 
 		{% if text_filter|length == 0 or text.id in text_filter %}checked{% endif %} 
 		onclick="termlist_filter();" value="{{ text.id }}" class="unstyled">
-		 {{ text.title }}
+		 <span class="font-weight-bold">{{ text.title }}</span>
 		<br></span>
 	{% empty %}
 		<i>{% trans 'Nothing to display'%}</i>
@@ -94,7 +94,7 @@
 		<span wordtag="{{ wt_ls.tag.id }}" language="{{ wt_ls.lang }}"
 		class="font-weight-{% if wt_ls.bold %}bold{% else %}normal{% endif %}">	
 		<input type="checkbox" 
-		{% if wordtag_filter|length == 0 %}checked{% endif %} 
+		{% if wt_ls.tag.id in wordtag_filter %}checked{% endif %} 
 		onclick="termlist_filter();" value="{{ wt_ls.tag.id }}" class="unstyled">
 		{{ wt_ls.tag.wotagtext }}
 		<br></span>
@@ -111,11 +111,11 @@
 <ul id="ul_compoundword" class="collapse show">
 	<form id="filtercompoundwordform" method="POST" action="{% url 'term_list' %}">
 	{% csrf_token %}
-	{% for ti_ls in compoundword_textIds_boldlist %}
-		<span><input type="checkbox" checked onclick="termlist_filter();" 
+	{% for ti_ls in compoundword_langIds_boldlist %}
+		<span><input data-tagids="{{ ti_ls.lang }}" type="checkbox" checked onclick="termlist_filter();" 
 				value="{% if ti_ls.isCompoundword %}True{% else %}False{% endif %}" 
-				class="unstyled"> {% if ti_ls.isCompoundword %}{% trans 'display compound words' %}{% else %}
-																{% trans 'display words' %}{% endif %}<br></span>
+				class="unstyled"> <span class="font-weight-{% if ti_ls.bold %}bold{% else %}normal{% endif %}">{% if ti_ls.isCompoundword %}{% trans 'display compound words' %}{% else %}
+																{% trans 'display words' %}{% endif %}</span><br></span>
 	{% endfor %}
 	</form>
 </ul>

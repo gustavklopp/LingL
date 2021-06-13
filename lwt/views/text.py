@@ -686,7 +686,7 @@ def uploaded_text(request):
             title = files.uploaded_text.name
             title = title.split('.')[0] # myfile.txt => title = 'myfile'
             try:
-                with open(files.uploaded_text.path, 'r') as f:
+                with open(files.uploaded_text.path, encoding="utf8", 'r') as f:
                     text = f.read() 
                 delete_uploadedfiles(files.uploaded_text.path, request.user)
                 return HttpResponse(json.dumps({'title':title, 'text':text}))

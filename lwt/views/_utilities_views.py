@@ -149,8 +149,11 @@ def create_filter(filter_type, filter_list_json):
         if filter_type == 'lastopentime' and not filter_list:
             filter_args = {'lastopentime': timezone.now() + timedelta(days=1)} #1 day in the future
             return Q(**filter_args)
-        # special case for filtering on tags: if list if empty, we'll display everything
-        if (filter_type == 'texttags__id' or filter_type == 'wordtags__id') and not filter_list:
+        # special case for filtering on tags and texts: if list if empty, we'll display everything
+#         if (filter_type == 'texttags__id' or filter_type == 'wordtags__id'\
+#             or filter_type == 'text_id') and not filter_list:
+        # Finally, it's better to not filtering when nothing is selected:
+        if not filter_list:
             return Q()
         # we shoul display all objects
         for idx, filter_val in enumerate(filter_list):
