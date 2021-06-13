@@ -26,6 +26,7 @@ import io #it's standard in python
 import tempfile #it's standard in python
 # third party
 from yaml import load, Loader, FullLoader
+import warnings
 # local
 from lwt.models import *
 from lwt.forms import *
@@ -166,7 +167,9 @@ def backuprestore(request):
                                     
                             else:
                                 edited_f.write(line)
-                call_command('loaddata', editedOwner_fp, app_label='lwt') # load the fixtures
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    call_command('loaddata', editedOwner_fp, app_label='lwt') # load the fixtures
                 fp.close()
                 # clean it
                 delete_uploadedfiles(files.restore_file.path, request.user) 
