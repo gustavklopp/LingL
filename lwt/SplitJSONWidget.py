@@ -51,7 +51,7 @@ class SplitJSONWidget(forms.Widget):
         if l:
             result = ''
             for el in l:
-                if isinstance(el, list) and len(l) is 1:
+                if isinstance(el, list) and len(l) == 1:
                     result += '%s' % self._prepare_as_ul(el)
                 elif isinstance(el, list):
                     result += '<ul>'
@@ -123,7 +123,7 @@ class SplitJSONWidget(forms.Widget):
         for k, v in raw_data.iteritems():
             if k in copy_raw_data:
                 # to transform value from list to string
-                v = v[0] if isinstance(v, list) and len(v) is 1 else v
+                v = v[0] if isinstance(v, list) and len(v) == 1 else v
                 if k.find(self.separator) != -1:
                     d = _to_parse_key(k, v)
                     # set type result

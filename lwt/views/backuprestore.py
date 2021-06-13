@@ -21,6 +21,7 @@ from django.templatetags.static import static # to use the 'static' tag as in th
 from django.contrib import messages
 # second party
 import os
+import sys
 import gzip #it's standard in python
 import io #it's standard in python
 import tempfile #it's standard in python
@@ -166,10 +167,11 @@ def backuprestore(request):
                                     
                             else:
                                 edited_f.write(line)
-                import sys
+                # because with CX_Freeze on Windows, it crashes the system when stdout isn't redirected to null
                 stdout_backup, sys.stdout = sys.stdout, open(os.devnull, 'a')
                 call_command('loaddata', editedOwner_fp, app_label='lwt') # load the fixtures
                 sys.stdout = stdout_backup
+
                 fp.close()
                 # clean it
                 delete_uploadedfiles(files.restore_file.path, request.user) 
@@ -226,7 +228,10 @@ def backuprestore(request):
                 langs = langs.replace("- lingl", "- {}".format(user_username))
                 with open(USER_lang_fixt_path, "w", encoding="utf8") as USER_lang_fixt_file:
                     USER_lang_fixt_file.write(langs)
+            # because with CX_Freeze on Windows, it crashes the system when stdout isn't redirected to null
+            stdout_backup, sys.stdout = sys.stdout, open(os.devnull, 'a')
             call_command('loaddata', USER_lang_fixt_path , app_label='lwt') # load the fixtures
+            sys.stdout = stdout_backup
             os.remove(USER_lang_fixt_path)
             
             #########################
@@ -249,7 +254,10 @@ def backuprestore(request):
                 demo = demo.replace("- lingl", "- {}".format(user_username))
                 with open(USER_demo_fixt_path, "w", encoding="utf8") as USER_demo_fixt_file:
                     USER_demo_fixt_file.write(demo)
+            # because with CX_Freeze on Windows, it crashes the system when stdout isn't redirected to null
+            stdout_backup, sys.stdout = sys.stdout, open(os.devnull, 'a')
             call_command('loaddata', USER_demo_fixt_path , app_label='lwt') # load the fixtures
+            sys.stdout = stdout_backup
             os.remove(USER_demo_fixt_path)
             
             # the language chosen initially for the User is in double: remove it
