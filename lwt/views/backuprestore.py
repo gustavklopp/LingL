@@ -64,7 +64,7 @@ def wipeout_database(request, keep_myuser=False):
 ''' gunzip (=decompress a gzipped file) the file uploaded'''
 def gunzipper(data_file):
     fp = tempfile.NamedTemporaryFile(suffix='.yaml')
-    with gzip.open(data_file.path, encoding="utf8", 'r') as f:
+    with gzip.open(data_file.path, 'r', encoding="utf8") as f:
         fp.write(f.read())
     fp.seek(0) # obligatory to rewind the file after having been read/written
     return fp
@@ -119,7 +119,7 @@ def backuprestore(request):
                 current_section = ''
                 writing = True
                 restore_username = request.user.username # the default value
-                with open(editedOwner_fp, encoding="utf8", 'w') as edited_f:
+                with open(editedOwner_fp, 'w', encoding="utf8") as edited_f:
                     for line in fp.file.readlines():
                         line = line.decode('utf-8') # the line in this file are binary: b'my text...'
 
@@ -221,7 +221,7 @@ def backuprestore(request):
                 langs = lang_fixt_file.read()
                 # replace the owner username
                 langs = langs.replace("- lingl", "- {}".format(user_username))
-                with open(USER_lang_fixt_path, encoding="utf8", "w") as USER_lang_fixt_file:
+                with open(USER_lang_fixt_path, "w", encoding="utf8") as USER_lang_fixt_file:
                     USER_lang_fixt_file.write(langs)
             call_command('loaddata', USER_lang_fixt_path , app_label='lwt') # load the fixtures
             os.remove(USER_lang_fixt_path)

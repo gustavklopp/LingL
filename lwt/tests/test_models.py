@@ -249,7 +249,7 @@ text='介绍\n\n\u3000大家好，我是Jenny. 今天，我和Ken 为大家准�
         all_qs += qs_33
 
         fixture = serialize('json', all_qs)
-        with open('lwt/fixtures/old_lwt.json', encoding="utf8", 'w') as f:
+        with open('lwt/fixtures/old_lwt.json', 'w', encoding="utf8") as f:
             f.write(fixture)
 
 

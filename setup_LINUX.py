@@ -747,7 +747,7 @@ executables = [
 
 # define the appversion and save it:
 today = date.today().strftime("%Y.%m.%d")
-with open('appversion.txt', encoding="utf8", 'w') as appversion_f:
+with open('appversion.txt', 'w', encoding="utf8") as appversion_f:
     appversion_f.write(today)
 
 
