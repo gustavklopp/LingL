@@ -1,5 +1,6 @@
 from django.utils.translation import ugettext as _
 
+VIDEO_LANG_TUTORIAL = 'https://tube.tchncs.de/videos/watch/6063f531-1c36-430b-af13-a57238640202?start=0s'
 
 STATUS_CHOICES = { 0: {'nb':0, 'name': _('Unknown'), 'abbr':_('Unk.'), 'small': '[0]'},
                    1: {'nb':1, 'name': _('Learning'), 'abbr': ('Lear.'), 'small': '[1-99]'},

@@ -4,7 +4,7 @@
 
 {% block pagetitle %}{% if request.path == '/export2anki/' %}{% trans "Export to Anki" %}
 			{% elif request.path == '/selectivebackup/' %}{% trans "Selective Backup" %}
-			{% else %}{% trans "My Words in " %}{{ currentlang_name }}{% endif %} | {{ block.super }}
+			{% else %}{% trans "My Words" %}{% endif %} | {{ block.super }}
 {% endblock pagetitle %}
 
 {% block stylesheets %}{{ block.super }}
@@ -201,6 +201,7 @@
 							data-url="{% url 'load_wordtable' %}"
 							data-row-style="rowStyle"
 							data-toolbar="#wordtable_toolbar"
+							data-classes="table table-sm"
 						    >
 	{# DISPLAYING THE HEADERS #}
 	<thead>
@@ -243,6 +244,7 @@
 
 
 {% block footjavascript %}
+	<script type="text/javascript" src="{% static 'lwt/js/overlib/overlib_maxi.js' %}" charset="utf-8"></script>
 	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'lwt/js/_bootstrap-table_filter-extension.js' %}"></script>
 	<script type="text/javascript" src="{% static 'lwt/js/lodash_javascript_library.js' %}"></script>

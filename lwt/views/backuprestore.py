@@ -35,7 +35,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
-from tkinter.constants import CURRENT
+from lwt.constants import VIDEO_LANG_TUTORIAL
 #from MySQLdb._mysql import result
 
 
@@ -106,6 +106,7 @@ def backuprestore(request):
             messages.add_message(request, messages.SUCCESS, _('Account successfully deleted.'))
             return redirect(reverse('homepage'))
 
+        m_alert = _('Suggestion: Upgrade your own Language dictionary links with the latest from LingL: Look at this <a target="_blank" href="{}">video</a> to know how to do it.').format(VIDEO_LANG_TUTORIAL)
         if 'restore_data' in request.POST.keys() and request.POST['restore_data'] != '':
             need_text = True if request.POST['restore_data'] == 'word+text' else False
             form = RestoreForm(request.POST, request.FILES)
@@ -179,6 +180,8 @@ def backuprestore(request):
 
                 messages.add_message(request, messages.SUCCESS, _('Import of backup file successful.'))
 
+                messages.add_message(request, messages.WARNING, m_alert)
+
             # set arbitrary the currentlang
             lang = Languages.objects.filter(owner=request.user).first()
             setter_settings_cookie('currentlang_id', lang.id, request)
@@ -204,6 +207,8 @@ def backuprestore(request):
                 m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
                                 result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
                 messages.add_message(request, messages.SUCCESS, m)
+
+                messages.add_message(request, messages.WARNING, m_alert)
         
         if 'install_demo' in request.POST.values():
             # First, install the languages (must change the owner):

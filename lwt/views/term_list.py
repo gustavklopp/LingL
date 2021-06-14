@@ -36,6 +36,7 @@ from ast import parse
 def select_rows(request):
     op = request.GET['op']
     check_uncheck = request.GET['check_uncheck']
+    called_site = request.GET['called_site']
 
     warning_deletion = 0
 
@@ -47,8 +48,9 @@ def select_rows(request):
     if op == 'all':
         words_possible_selected_rows = Words.objects.filter(id__in=possible_selected_rows_list)
         # we can't check a word for deletion if it's still linked to a text 
+        # (it's useless for exporter to anki or to selective backup)
         warning_deletion = words_possible_selected_rows.exclude(text=None).count()
-        if not warning_deletion:
+        if called_site != 'term_list' or not warning_deletion:
             words_possible_selected_rows.update(state=True)
             currently_selected_rows_nb = len(possible_selected_rows_list)
     # clicking on 'uncheck all'
@@ -69,11 +71,15 @@ def select_rows(request):
         for wo in wos:
             if check_uncheck == 'check':
                 # we can't check a word for deletion if it's still linked to a text 
-                if not wo.text: 
+                if called_site == 'term_list':
+                    if not wo.text: 
+                        wo.state = True
+                        currently_selected_rows_nb += 1
+                    else:
+                        warning_deletion += 1
+                else:
                     wo.state = True
                     currently_selected_rows_nb += 1
-                else:
-                    warning_deletion += 1
             elif check_uncheck == 'uncheck':
                 wo.state = False
                 currently_selected_rows_nb -= 1
@@ -168,18 +174,13 @@ def load_wordtable(request):
         en = '</a>'
         return st + word.wordtext + en
 
-    '''use inside the word_table cells to truncate the too big text and display "more"'''
-    def _truncate(text, maxtext=50):
+    '''use inside the word_table cells to truncate the too big text and display "...more"'''
+    def _truncate(text, overlib_title, maxtext=50):
         if len(text) > maxtext:
-            not_trunc_text = '<span hidden>{}<span class="d-inline btn btn-link" '+\
-                            'onclick="$(this).parent().next().prop(\'hidden\',false);'+\
-                            '$(this).parent().prop(\'hidden\',true);"> '+_('hide')+\
-                            '</span></span>'
-            trunc_text = '<span>{}...<span class="d-inline btn btn-link" '+\
-                'onclick="$(this).parent().prev().prop(\'hidden\',false);'+\
-              '$(this).parent().prop(\'hidden\',true);">'+_('more')+\
-              '</span><span>'
-            return not_trunc_text.format(text) + trunc_text.format(text[:maxtext])
+            span_text = '<span>{trunc}<span class="d-inline btn btn-link" '+\
+                        'onclick="return overlib('+\
+                '\'{nontrunc}\', CAPTION, \'{overlib_title}\');">'+_('...more')+'</span>'
+            return span_text.format(trunc=text[:maxtext], nontrunc=text, overlib_title=overlib_title)
         else:
             return text
 
@@ -194,9 +195,9 @@ def load_wordtable(request):
         w_dict['language_name'] = w.language.name
         w_dict['text_title'] = w.text.title if w.text else ''
         sentence = w.sentence.sentencetext if w.sentence else ''
-        w_dict['sentence'] = _truncate(sentence)
+        w_dict['sentence'] = _truncate(sentence, _('sentence'))
         customsentence = w.customsentence if w.customsentence else ''
-        w_dict['customsentence'] = _truncate(customsentence)
+        w_dict['customsentence'] = _truncate(customsentence, _('custom sentence'))
         w_dict['wordtext'] = w.wordtext if w.wordtext else ''
         w_dict['translation'] = w.translation if w.translation else ''
         w_dict['romanization'] = w.romanization if w.romanization else ''

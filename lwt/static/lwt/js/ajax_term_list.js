@@ -1,24 +1,27 @@
 /* used for the word_table in term_list: check/uncheck the row 
    it set the 'state' field for the Word in the database. It will be used later when exporting the data */
 function ajax_select_rows(op, check_uncheck){
+	// adapt according to the caller
+	var pathname = window.location.pathname;
+	if (pathname.search('term_list') != -1){
+		var called_site = 'term_list';
+	} else if (pathname.search('export2anki') != -1){
+		var called_site = 'export2anki';
+	} else if (pathname.search('selectivebackup') != -1){
+		var called_site = 'selectivebackup';
+	}
+
 	$.ajax({url: '/select_rows/', 
 		type: 'GET',
 		dataType: 'json',
 		data: 
 			{ 
-				'op': op, 'check_uncheck': check_uncheck
+				'op': op, 
+				'check_uncheck': check_uncheck,
+				'called_site': called_site
 			},
 		success: function(data){ 
 			var message = ''; 
-			// adapt according to the caller
-			var pathname = window.location.pathname;
-			if (pathname.search('term_list') != -1){
-				var called_site = 'term_list';
-			} else if (pathname.search('export2anki') != -1){
-				var called_site = 'export2anki';
-			} else if (pathname.search('selectivebackup') != -1){
-				var called_site = 'selectivebackup';
-			}
 
 			// you can't delete words still linked to text
 			if (called_site == 'term_list' && data['warning_deletion'] >0){

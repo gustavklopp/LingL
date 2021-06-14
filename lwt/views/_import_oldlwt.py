@@ -202,17 +202,38 @@ def import_oldlwt(owner, data_file):
             romanization = None if el[6] == 'NULL' else el[6]
             customsentence = None if el[7] == 'NULL' else el[7].replace('{','**').replace('}','**')
 
-            # Check whether this word already exists in database.
-            # and update the existing word with the data from oldlwt
-            try:
-                duplicate_word = Words.objects.get(owner=owner, language=language, wordtext__iexact=wordtext)
-                duplicate_word.status = status
-                duplicate_word.translation = translation
-                duplicate_word.romanization = romanization
-                duplicate_word.customsentence = customsentence
-                words_to_update.append(duplicate_word)
+            '''used later for editing wordtags by looking for the Natural keys'''
+            def _add_to_wordtag_dict(word):
+                if word.textOrder:
+                    oldlwtID_wordNK_dict[el[0]] = (word.textOrder, word.text.title, owner.username)
+                else:
+                    oldlwtID_wordNK_dict[el[0]] = (word.wordtext, word.language.name, owner.username)
 
-            except Words.DoesNotExist:
+            # Check whether this word already exists in database.
+            # if it exists, we don't create a new word but we choose to OVERWRITE 
+            # the data currently present with the ones from oldlwt
+            duplicate_word = Words.objects.filter(Q(owner=owner)&Q(language=language)&\
+                                               Q(status__gt=0)&Q(wordtext__iexact=wordtext)).\
+                                               order_by('-grouper_of_same_words').first()
+            if duplicate_word:
+                # we need also to update all the similar words for this word:
+                if gosw := duplicate_word.grouper_of_same_words:
+                    for simwo in gosw.grouper_of_same_words_for_this_word.all():
+                        simwo.status = status
+                        simwo.translation = translation
+                        simwo.romanization = romanization
+                        simwo.customsentence = customsentence
+                        words_to_update.append(simwo)
+                        _add_to_wordtag_dict(simwo)
+                else: # this word has no similar words defined
+                    duplicate_word.status = status
+                    duplicate_word.translation = translation
+                    duplicate_word.romanization = romanization
+                    duplicate_word.customsentence = customsentence
+                    words_to_update.append(duplicate_word)
+                    _add_to_wordtag_dict(duplicate_word)
+
+            else:
                 # it IS a compound word
                 if len(compoundword_wordtext_list) > 1: 
                     wordtext = '+'.join(compoundword_wordtext_list)
@@ -245,8 +266,9 @@ def import_oldlwt(owner, data_file):
                                 customsentence = customsentence
                                 )
                 words_to_create.append(wo)
+                _add_to_wordtag_dict(wo)
 
-            oldlwtID_wordNK_dict[el[0]] = (wordtext,language.name,owner.username)
+#             oldlwtID_wordNK_dict[el[0]] = (wordtext, language.name, owner.username)
             
         # adding wordtags to the words:
         insertinto_str = 'INSERT INTO wordtags VALUES('

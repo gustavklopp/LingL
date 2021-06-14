@@ -33,6 +33,9 @@ from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._import_oldlwt import *
 
+''' because the \t character in the database is recovered as a '\\t' '''
+def _unescape_special_char(text):
+    return text.replace('\\t', '\t')
 
 ''' download the txt file with anki formated words'''
 def export2anki_exporter(request):
@@ -40,9 +43,10 @@ def export2anki_exporter(request):
     language = anki_words.first().language
     anki = ''
     for wo in anki_words.prefetch_related('wordtags'): # 'prefetch_related': because it's a m2m relationshi:
-        if wo.language != language: # each languge can habe its own template
+        if wo.language != language: # each languge can have its own template
             language = wo.language
         exporttemplate = language.exporttemplate
+        exporttemplate = _unescape_special_char(exporttemplate)
         exporttemplate = exporttemplate.replace('$status', str(wo.status))
         exporttemplate = exporttemplate.replace('$language', wo.language.name)
         exporttemplate = exporttemplate.replace('$text', wo.text.title)
@@ -85,7 +89,9 @@ def export2anki_exporter(request):
                 v = list(extra.values())[0]
                 r += k + ': ' + v
             exporttemplate = exporttemplate.replace('$extra_field', extra_field_kv)
-        anki += exporttemplate
+        else:
+            exporttemplate = exporttemplate.replace('$extra_field', '')
+        anki += exporttemplate + '\n'
         
     response = HttpResponse(anki, content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename={}'.format('lingl_words_for_anki.txt')
