@@ -24,7 +24,7 @@
     code_639_2b: eng
     django_code: en
 # "for ex: English => French   \"https://glosbe.com/gapi/translate?from=eng&dest=fra&format=json\""
-    exporttemplate: "$word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status"
+    exporttemplate: "$word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status"
 - model: lwt.languages
   fields:
     created_date: 2020-07-25 00:00:00+00:00
@@ -36,7 +36,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=en&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
@@ -62,7 +62,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=it&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
@@ -88,7 +88,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=de&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
@@ -114,7 +114,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=pt&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
@@ -140,7 +140,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=zh&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 200
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;。！？：；
@@ -166,7 +166,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=ja&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 200
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;。！？：；
@@ -192,7 +192,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=ko&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;。！？：；
@@ -218,7 +218,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=th&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 250
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
@@ -244,7 +244,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=he&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
@@ -270,7 +270,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=sl&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
@@ -296,7 +296,7 @@
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=sv&tl=<1CODE>&q=<WORD>"
-    exporttemplate: $word<br>$sentence,$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
+    exporttemplate: $word<br>$sentence\t$translation<br>$romanization<br>$compoundword<br>$similarword<br>$extra_field<br>$status
     textsize: 150
     charactersubstitutions: ´="|`="|’="|‘="|...=…|..=‥
     regexpsplitsentences: .!?:;
