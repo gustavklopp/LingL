@@ -64,7 +64,7 @@
     </tr>
     <tr>
       <td class="text-center"><div class="d-flex justify-content-start">
-	<div class="shift key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">K</div>
+	<div class="shift key text-center">{% if is_Mac %}⌥{% else %}AltGr{% endif %}</div>+<div class="key text-center align-middle d-inline-block">K</div>
 	</div></td>
       <td>{% trans "Mark all the words in this sentence (where the word is currently selected) as **K**nown" %}</td>
     </tr>
@@ -76,19 +76,19 @@
   <tbody>
     <tr>
       <td class="text-center"><div class="d-flex justify-content-start">
-	<div class="shift key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">T</div>
+	<div class="shift key text-center">{% if is_Mac %}⌥{% else %}AltGr{% endif %}</div>+<div class="key text-center align-middle d-inline-block">T</div>
 	</div></td>
       <td>{% trans "Change the focus to the *T*ranslation input box (in the form at the top right)" %}</td>
     </tr>
     <tr>
       <td class="text-center"><div class="d-flex justify-content-start">
-	<div class="shift key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">W</div>
+	<div class="shift key text-center">{% if is_Mac %}⌥{% else %}AltGr{% endif %}</div>+<div class="key text-center align-middle d-inline-block">W</div>
 	</div></td>
       <td>{% trans "Change the focus to enter another *W*riting for this word (in the form at the top right)" %}</td>
     </tr>
     <tr>
       <td><div class="d-flex justify-content-start">
-	<div class="alt key text-center">AltGr</div>+<div class="key text-center align-middle d-inline-block">A</div>
+	<div class="alt key text-center">{% if is_Mac %}⌥{% else %}AltGr{% endif %}</div>+<div class="key text-center align-middle d-inline-block">A</div>
 	</div></td>
       <td>{% trans "Save this word (*A*ccept it)" %}</td>
     </tr>
@@ -97,7 +97,7 @@
 	<div class="key text-center">1</div> or <div class="key text-center align-middle d-inline-block">2</div> or <div class="key text-center align-middle d-inline-block">3</div>...
 	</div></td>
       <td>{% trans "Choose this word as similar word. The key number corresponds to the number noted in '[..]' just beside" %}<br/>
-      {% trans 'Note: This field must have focus: <div class="alt key text-center d-inline-block">AltGr</div>+<div class="key text-center align-middle d-inline-block">D</div> to switch focus' %}</td>
+      {% trans 'Note: This field must have focus: <div class="alt key text-center d-inline-block">{% if is_Mac %}⌥{% else %}AltGr{% endif %}</div>+<div class="key text-center align-middle d-inline-block">D</div> to switch focus' %}</td>
     </tr>
   </tbody>
 </table>
@@ -110,7 +110,7 @@
 	<div class="key text-center">1</div> or <div class="key text-center align-middle d-inline-block">2</div> or <div class="key text-center align-middle d-inline-block">3</div>...
 	</div></td>
       <td>{% trans "Choose this translation as the right translation. The key number corresponds to the number noted in '[..]' just beside" %}<br/>
-      {% trans 'Note: This field must have focus: <div class="alt key text-center d-inline-block">AltGr</div>+<div class="key text-center align-middle d-inline-block">D</div> to switch focus' %}</td>
+      {% trans 'Note: This field must have focus: <div class="alt key text-center d-inline-block">{% if is_Mac %}⌥{% else %}AltGr{% endif %}</div>+<div class="key text-center align-middle d-inline-block">D</div> to switch focus' %}</td>
     </tr>
   </tbody>
 </table>
@@ -124,7 +124,7 @@
     </tr>
     <tr>
       <td><img src="{% static 'lwt/img/animation_ctrlclick_textread.gif' %}" alt="rightclickanim" /></td>
-      <td>{% trans "Creating/editing an expression (i.e composed of several words)):" %}<br>{% trans "Left click to select the first word, than press Ctrk key and while still pressed, left click to select the other components" %}</td>
+      <td>{% trans "Creating/editing an expression (i.e composed of several words)):" %}<br>{% trans "Left click to select the first word, than press Ctrl key (⌘ on Mac) and while still pressed, left click to select the other components" %}</td>
     </tr>
   </tbody>
 </table>
