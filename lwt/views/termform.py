@@ -142,6 +142,13 @@ def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
         submit_word_button = _('Change')
         submit_singleword_button = _('Change only this word')
    
+    # detect if mac or else
+    system = platform.system().lower()
+    if system == 'windows' or system == 'linux': 
+        is_Mac = False
+    else:
+        is_Mac = True
+
     html_ctx ={
                     'form':f, 'wo': wo,'statuses':statuses, 
                     'customsentence':customsentence, 'op': op,
@@ -151,6 +158,7 @@ def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
                     'dictwebpage_searched_word' : dictwebpage_searched_word,
                     # COMPOUNDWORD:
                     'compoundword_id_list': compoundword_id_list, 'compoundword_list': compoundword_list,
+                    'is_Mac':is_Mac
         }
     dictwebpage_searched_word = dictwebpage_searched_word
     return html_ctx, dictwebpage_searched_word
@@ -342,17 +350,10 @@ def termform(request):
             else:
                 possiblesimilarword = search_possiblesimilarword(request, html_ctx['compoundword_list'][0])
 
-            # detect if mac or else
-            system = platform.system().lower()
-            if system == 'windows' or system == 'linux': 
-                is_Mac = False
-            else:
-                is_Mac = True
-
             return HttpResponse(json.dumps({'html':html, 
                                             'dictwebpage_searched_word': dictwebpage_searched_word,
-                                            'possiblesimilarword':possiblesimilarword,
-                                            'is_Mac':is_Mac}))
+                                            'possiblesimilarword':possiblesimilarword
+                                            }))
 
         # delete the word #####################################################################
         if request.GET['op'] == 'del':
