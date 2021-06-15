@@ -54,7 +54,7 @@
 	<form id="filtertextform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
 	{% for text in texts %}
-		<span language="{{ text.language.id }}" {% if text.language.id not in lang_filter %}class="hidden"{% endif %}>	
+		<span data-langids="{{ text.language.id }}" {% if text.language.id not in lang_filter %}class="hidden"{% endif %}>	
 		<input type="checkbox" 
 		{% if text_filter|length == 0 or text.id in text_filter %}checked{% endif %} 
 		onclick="termlist_filter();" value="{{ text.id }}" class="unstyled">
@@ -73,12 +73,13 @@
 <ul id="ul_status" class="collapse show">
 	<form id="filterstatusform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
-	{% for status, status_dict in statuses.items %}
-		<input type="checkbox" 
-		{% if status_filter|length == 0 or status_dict.nb in status_filter %}checked{% endif %} 
-		onclick="termlist_filter();" value="{{ status_dict.nb }}" class="unstyled">
-		 <span class="row_status_{{ status_dict.nb }}">&nbsp;{{ status_dict.name }}&nbsp;<small>{{ status_dict.small|safe }}</small></span>
-		  </input><br>
+	{% for st_ls in status_langIds_boldlist %}
+		<input data-langids="{{ st_ls.lang }}"  type="checkbox" 
+		{% if status_filter|length == 0 or st_ls.status_dict.nb in status_filter %}checked{% endif %} 
+		onclick="termlist_filter();" value="{{ st_ls.status_dict.nb }}" class="unstyled">
+		<span class="row_status_{{ st_ls.status_dict.nb }} font-weight-{% if st_ls.bold %}bold{% else %}normal{% endif %}">
+		&nbsp;{{ st_ls.status_dict.name }}&nbsp;<small>{{ st_ls.status_dict.small|safe }}</small></span>
+		 <br>
 	{% endfor %}
 	</form>
 </ul>
@@ -91,13 +92,13 @@
 	<form id="filterwordtagform" method="POST" action="{% url 'term_list' %}">
 	{% csrf_token %}
 	{% for wt_ls in wordtags_list %} {# loop on a zipped(tag, languages contained in this tag) #}
-		<span wordtag="{{ wt_ls.tag.id }}" language="{{ wt_ls.lang }}"
+		<input type="checkbox" data-langids="{{ wt_ls.lang }}" 
+			{% if wt_ls.tag.id in wordtag_filter %}checked{% endif %} 
+			onclick="termlist_filter();" value="{{ wt_ls.tag.id }}" class="unstyled">
+		<span wordtag="{{ wt_ls.tag.id }}"
 		class="font-weight-{% if wt_ls.bold %}bold{% else %}normal{% endif %}">	
-		<input type="checkbox" 
-		{% if wt_ls.tag.id in wordtag_filter %}checked{% endif %} 
-		onclick="termlist_filter();" value="{{ wt_ls.tag.id }}" class="unstyled">
 		{{ wt_ls.tag.wotagtext }}
-		<br></span>
+		</span><br/>
 	{% empty %}
 		<i>{% trans 'Nothing to display'%}</i>
 	{% endfor %}
@@ -112,10 +113,11 @@
 	<form id="filtercompoundwordform" method="POST" action="{% url 'term_list' %}">
 	{% csrf_token %}
 	{% for ti_ls in compoundword_langIds_boldlist %}
-		<span><input data-tagids="{{ ti_ls.lang }}" type="checkbox" checked onclick="termlist_filter();" 
-				value="{% if ti_ls.isCompoundword %}True{% else %}False{% endif %}" 
-				class="unstyled"> <span class="font-weight-{% if ti_ls.bold %}bold{% else %}normal{% endif %}">{% if ti_ls.isCompoundword %}{% trans 'display compound words' %}{% else %}
-																{% trans 'display words' %}{% endif %}</span><br></span>
+		<input data-langids="{{ ti_ls.lang }}" type="checkbox" checked onclick="termlist_filter();" 
+						value="{% if ti_ls.isCompoundword %}True{% else %}False{% endif %}" 
+						class="unstyled">
+		<span class="font-weight-{% if ti_ls.bold %}bold{% else %}normal{% endif %}"> {% if ti_ls.isCompoundword %}{% trans 'display compound words' %}{% else %}
+																{% trans 'display words' %}{% endif %}</span><br>
 	{% endfor %}
 	</form>
 </ul>

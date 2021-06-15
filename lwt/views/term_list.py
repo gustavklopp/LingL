@@ -300,6 +300,17 @@ def term_list(request):
         status_filter_json = getter_settings_cookie('status_filter', request)
     status_filter = [] if not status_filter_json else json.loads(status_filter_json)
     status_filter = [int(i) for i in status_filter]
+    status_langIds_boldlist = []
+    for status_nb, status_dict in STATUS_CHOICES.items():
+        status_langIds = list(Words.objects.filter(Q(owner=request.user)&\
+                               Q(status=status_nb)).values_list('language_id', flat=True))
+
+        if set(status_langIds).isdisjoint(set(lang_filter)): # some languages are common
+            status_langIds_boldlist.append({'status_dict':status_dict, 'bold': False,
+                                                   'lang': list(set(list(status_langIds)))})
+        else:
+            status_langIds_boldlist.append({'status_dict':status_dict, 'bold': True,
+                                                   'lang': list(set(list(status_langIds)))})
     ################## WORDTAG FILTERING ######################################################################################
     wordtag_filter_json = getter_settings_cookie('wordtag_filter', request)
     wordtag_filter = [] if not wordtag_filter_json else json.loads(wordtag_filter_json)
@@ -312,9 +323,9 @@ def term_list(request):
         # get the languages which are found associated to this wordtag
         wordtag_lang = Words.objects.filter(wordtags=wordtag).values_list('language_id', flat=True).all()
         if set(wordtag_lang).isdisjoint(set(lang_filter)): # some languages are common
-            wordtags_list.append({'tag':wordtag, 'bold': True, 'lang': set(list(wordtag_lang))})
+            wordtags_list.append({'tag':wordtag, 'bold': True, 'lang': list(set(wordtag_lang))})
         else:
-            wordtags_list.append({'tag':wordtag, 'bold': False, 'lang': set(list(wordtag_lang))})
+            wordtags_list.append({'tag':wordtag, 'bold': False, 'lang': list(set(wordtag_lang))})
             wordtags_list_empty = False
 
     ################## COMPOUNDWORD FILTERING ######################################################################################
@@ -329,16 +340,16 @@ def term_list(request):
     compoundword_langIds_boldlist = []
     if set(isnotCompoundword_langIds).isdisjoint(set(lang_filter)): # some languages are common
         compoundword_langIds_boldlist.append({'isCompoundword':False, 'bold': False,
-                                               'lang': set(list(isCompoundword_langIds))})
+                                               'lang': list(set(isnotCompoundword_langIds))})
     else:
         compoundword_langIds_boldlist.append({'isCompoundword':False, 'bold': True,
-                                               'lang': set(list(isCompoundword_langIds))})
+                                               'lang': list(set(isnotCompoundword_langIds))})
     if set(isCompoundword_langIds).isdisjoint(set(lang_filter)): # some languages are common
         compoundword_langIds_boldlist.append({'isCompoundword':True, 'bold': False,
-                                               'lang': set(list(isCompoundword_langIds))})
+                                               'lang': list(set(isCompoundword_langIds))})
     else:
         compoundword_langIds_boldlist.append({'isCompoundword':True, 'bold': True,
-                                               'lang': set(list(isCompoundword_langIds))})
+                                               'lang': list(set(isCompoundword_langIds))})
 
     ####################################################################################################
     # get the list of languages to display them in the drop-down menu:
@@ -358,12 +369,12 @@ def term_list(request):
     database_size = get_word_database_size(request)
 
     return render(request, 'lwt/term_list.html',
-                   {'languages':languages, 'texts':texts,'statuses':STATUS_CHOICES,
+                   {'languages':languages, 'texts':texts,
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
 
                     'lang_filter': lang_filter, 
                     'text_filter': text_filter, 
-                    'status_filter': status_filter,
+                    'status_filter': status_filter, 'status_langIds_boldlist':status_langIds_boldlist,
                     'wordtag_filter': wordtag_filter, 'wordtags_list':wordtags_list, 'wordtags_list_empty':wordtags_list_empty,
                     'compoundword_filter':compoundword_filter, 
                     'compoundword_langIds_boldlist':compoundword_langIds_boldlist,

@@ -93,7 +93,7 @@ def line_chart(request, language_id=None, is_cumulative=None):
                 if not prev_time: # first date of the Y label, we display YYYY Month.
                     labels.append(last_time.strftime('(%Y) %b %d'))
                 else:
-                    if last_time.month == 1 and last_time.month == 12:
+                    if last_time.month == 1 and prev_time.month == 12:
                         labels.append(last_time.strftime('(%Y) %b %d'))
                     else:
                         if last_time.month != prev_time.month:

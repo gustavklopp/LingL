@@ -17,6 +17,18 @@ var ANN_ARRAY = {};
 /**************************************************************
 LWT jQuery functions
 ***************************************************************/
+/* helper function for textlist_filter and termlist_filter: equivalent to python set.isdisjoint 
+   check whether 2 arrays have elements in common. Return True if nothing in common */
+function isdisjoint(array1, array2){
+	var toReturn = true;
+	$.each(array1, function(idx, el){
+		if ($.inArray(el, array2) !== -1) { 
+			toReturn = false; // because the return false only stop the loop but doesn't return the function! 
+			return false;
+			}
+	});
+	return toReturn;
+}
 
 function setTransRoman(tra, rom) {
 	if($('textarea[name="WoTranslation"]').length == 1)

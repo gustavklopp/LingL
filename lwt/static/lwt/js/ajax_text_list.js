@@ -1,16 +1,3 @@
-/* helper function for textlist_filter: equivalent to python set.isdisjoint 
-   check whether 2 arrays have elements in common. Return True if nothing in common */
-function isdisjoint(array1, array2){
-	var toReturn = true;
-	$.each(array1, function(idx, el){
-		if ($.inArray(el, array2) !== -1) { 
-			toReturn = false; // because the return false only stop the loop but doesn't return the function! 
-			return false;
-			}
-	});
-	return toReturn;
-}
-
 /* dynamic filtering when check/unckeck the ckeckbox */
 function textlist_filter() {
 	// get the form
@@ -28,12 +15,13 @@ function textlist_filter() {
 		var textIds = $(this).data('textids');
 		chosenlang_textIds = chosenlang_textIds.concat(textIds);
 	});
+	/*
 	//if nothing was chosen, display a warning
 	if (chosen_lang.length === 0){
 		$('#no_langfilter').text(gettext('No language chosen: no texts will be displayed'));
 	} else {
 		$('#no_langfilter').text('');
-	}
+	} */
 
 	// get what are the checkbox checked for: tags
 	var chosen_tag = [];
