@@ -3,7 +3,9 @@ import os
 
 
 # delete the previous database:
-os.remove('lwt/LingL_database.sqlite3')
+db_path = 'lwt/LingL_database.sqlite3'
+if os.path.exists(db_path):
+    os.remove(db_path)
 
 # first creating the database and populate it
 os.system('python manage.py migrate')
