@@ -731,7 +731,7 @@ buildOptions = dict(
 #         excludes = ['tkinter',],
         excludes = [],
         include_files = [
-                'appversion.txt',
+#                 'appversion.txt',
                 #('./libcrypt.so.2', 'libcrypt.so.2'),
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined
 #                 os.path.join('templates','allauth'),
@@ -747,7 +747,8 @@ executables = [
 
 # define the appversion and save it:
 today = date.today().strftime("%Y.%m.%d")
-with open('appversion.txt', 'w', encoding="utf8") as appversion_f:
+appversiontxt_path = os.path.join(os.getcwd(), 'lwt','appversion.txt')
+with open(appversiontxt_path, 'w', encoding="utf8") as appversion_f:
     appversion_f.write(today)
 
 

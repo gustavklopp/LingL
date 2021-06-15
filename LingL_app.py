@@ -6,6 +6,7 @@ import webbrowser
 from tkinter import Button, Tk, CENTER, PhotoImage
 import threading
 import os
+import platform
 
 
 page = '127.0.0.1:8000'
@@ -34,7 +35,12 @@ window = Tk()
 window.title("LingLibre")
 window.geometry('250x100')
 cwd = os.getcwd()
-lingl_image_path = os.path.join(cwd,'lib','lwt','static','lwt','img','site_icon_16x16.png')
+system = platform.system()
+is_Mac = True if system != 'Windows' or system != 'Linux' else False
+if is_Mac:
+    lingl_image_path = os.path.join(cwd,'lib','lwt','static','lwt','img','site_icon_16x16.png')
+else:
+    lingl_image_path = os.path.join(cwd,'LingL','lwt','static','lwt','img','site_icon_16x16.png')
 photo = PhotoImage(file = lingl_image_path)
 window.iconphoto(False, photo)
 

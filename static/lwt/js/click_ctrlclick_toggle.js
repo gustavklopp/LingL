@@ -1,6 +1,9 @@
 function clickword(event) { // check whether a word is clicked (and +ctrl-clicked)
+	// case for MacOS:
+	var is_Mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
 	// change the color when clicked depending on a click or Ctrl-click event:
-	if (event.ctrlKey){
+	if ((!is_Mac && event.ctrlKey) || (is_Mac && event.metaKey)){
 		$(this).addClass('ctrlclicked');
 	} else {
 		$('.clicked').removeClass('clicked'); // only one word can be clicked at one time

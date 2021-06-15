@@ -94,26 +94,58 @@ function termlist_filter() {
 	var filterwordtagform = $('#filterwordtagform');
 	var filtercompoundwordform = $('#filtercompoundwordform');
 	var chosen_lang = [];
-	// get the checkbox checked
+
+	// get the checkbox checked and make the input bold if lang_IDs exist
 	$.each($("#filterlangform input:checked"), function(){
-		chosen_lang.push($(this).val());
+		chosen_lang.push(parseInt($(this).val()));
 	});
 	var chosen_text = [];
 	$.each($("#filtertextform").find("span").not(".hidden").find("input:checked"), function(){
 		chosen_text.push($(this).val());
 	});
 	var chosen_status = [];
-	$.each($("#filterstatusform").find("input:checked"), function(){
-		chosen_status.push($(this).val());
+	$.each(filterstatusform.find("input"), function(){
+		if ($(this).is(':checked')){
+			chosen_status.push($(this).val());
+		}
+		var langids = $(this).data('langids');
+		if (isdisjoint(chosen_lang, langids)){
+			$(this).next().addClass('font-weight-normal');
+			$(this).next().removeClass('font-weight-bold');
+		} else {
+			$(this).next().removeClass('font-weight-normal');
+			$(this).next().addClass('font-weight-bold');
+		}
 	});
 	var chosen_wordtag = [];
-	$.each($("#filterwordtagform").find("input:checked"), function(){
-		chosen_wordtag.push($(this).val());
+	$.each(filterwordtagform.find("input"), function(){
+		if ($(this).is(':checked')){
+			chosen_wordtag.push($(this).val());
+		}
+		var langids = $(this).data('langids');
+		if (isdisjoint(chosen_lang, langids)){
+			$(this).next().addClass('font-weight-normal');
+			$(this).next().removeClass('font-weight-bold');
+		} else {
+			$(this).next().removeClass('font-weight-normal');
+			$(this).next().addClass('font-weight-bold');
+		}
 	});
 	var chosen_compoundword = [];
-	$.each($("#filtercompoundwordform").find("input:checked"), function(){
-		chosen_compoundword.push($(this).val());
+	$.each(filtercompoundwordform.find("input"), function(){
+		if ($(this).is(':checked')){
+			chosen_compoundword.push($(this).val());
+		}
+		var langids = $(this).data('langids');
+		if (isdisjoint(chosen_lang, langids)){
+			$(this).next().addClass('font-weight-normal');
+			$(this).next().removeClass('font-weight-bold');
+		} else {
+			$(this).next().removeClass('font-weight-normal');
+			$(this).next().addClass('font-weight-bold');
+		}
 	});
+
 	// stringify them
 	var chosen_lang_json = JSON.stringify(chosen_lang);
 	var chosen_text_json = JSON.stringify(chosen_text);

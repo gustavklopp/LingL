@@ -112,6 +112,8 @@ function _toprightInputBoxes_have_focus(){
 }
 
 $(function() {
+	// case for MacOS:
+	var is_Mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 	/*********************************************************/
 	/*          MOVING                                       */
@@ -201,7 +203,9 @@ $(function() {
 		}
 
 		// 'AltGr+k': mark all the words in the current sentence as known
-		if (keypress == '339' && !_toprightInputBoxes_have_focus()){ 
+		if (
+			((!is_Mac && keypress == '339') || (is_Mac && keypress == '730'))
+					&& !_toprightInputBoxes_have_focus()){ 
 			iknowall(sel_word.attr('woid'));
 			event.preventDefault();
 		}
@@ -219,19 +223,19 @@ $(function() {
 	/*          TOPRIGHT PANEL                               */
 	/*********************************************************/
 		// 'altGr+t': focus on translate input box
-		if (keypress == '254'){ 
+		if ((!is_Mac && keypress == '254') || (is_Mac && keypress == '8224')){ 
 			$('#id_translation').focus();
 			event.preventDefault();
 		}
 
 		// 'altGr+w': focus on search other spelling input box
-		if (keypress == '229'){ 
+		if ((!is_Mac && keypress == '229') || (is_Mac && keypress == '8721')){ 
 			$('#termformSearchbox').focus();
 			event.preventDefault();
 		}
 
 		// 'altGr+d': toggle focus on the bottom right dictionary. Again pressed, toggle to similar words result
-		if (keypress == '273'){ 
+		if ((!is_Mac && keypress == '273') || (is_Mac && keypress == '8706')){ 
 			var current_sim_OR_dict_highlight = $('.sim_OR_dict_highlight');
 			if (current_sim_OR_dict_highlight.attr('id') == 'possible_similarword_result'){
 				$('#bottomright').addClass('sim_OR_dict_highlight');
@@ -279,7 +283,7 @@ $(function() {
 		}
 
 		// 'altGr+a': submit the form to save the word´s definition
-		if (keypress == '225'){ 
+		if ((!is_Mac && keypress == '225') || (is_Mac && keypress == '229')){ 
 			$('#submit_word').trigger('click');
 			event.preventDefault();
 		}
