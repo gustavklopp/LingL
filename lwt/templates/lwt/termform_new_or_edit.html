@@ -99,7 +99,7 @@ $(document).ready(function(){
 	
 	<!--  Custom searchbox of a word (it calls: function submit_termformSearchbox() )-->
     <div class="input-group" id="termformSearchbox_div">
-  <input id="termformSearchbox" title="{% trans "Note: If it's a compound word, separate the element by a space" %}" type="text" class="form-control" placeholder="{% trans "Search another spelling? [AltGr+S]" %}" aria-label="{% trans "Search with another spelling?" %}" aria-describedby="termformSearchbox">
+  <input id="termformSearchbox" title="{% trans "Note: If it's a compound word, separate the element by a space" %}" type="text" class="form-control" placeholder="{% trans 'Search another spelling?' %} {% if is_Mac %}[⌥+S]{% else %}[AltGr+S]{% endif %}" %}" aria-label="{% trans "Search with another spelling?" %}" aria-describedby="termformSearchbox">
   <div class="input-group-append">
     <button class="btn btn-outline-secondary" onclick="submit_termformSearchbox({{ wo.id }}, {{ wo.language.id }})" type="button">go</button>
   </div>
@@ -119,7 +119,7 @@ $(document).ready(function(){
 			/>{{ status_dict.abbr }}&nbsp;</span>
 		{% endif %}
 	{% endfor %}
-	<button title="{% trans 'shortcut=[AltGr+W]' %}" id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>
+	<button title="{% if is_Mac %}{% trans 'shortcut=[AltGr+W]' %}{% else %}{% trans 'shortcut=[⌥+W]' %}{% endif %}" id="submit_word" class="btn btn-primary" name="op">{{ submit_word_button }}</button>
 	{% if op == 'edit' %}
 	<!--  Redefine only this word -->
     <div class="form-group">

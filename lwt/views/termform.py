@@ -17,6 +17,7 @@ from django.utils.lorem_ipsum import sentence
 import json
 import re
 from ast import parse
+import platform
 # local
 from lwt.models import *
 from lwt.forms import *
@@ -341,9 +342,17 @@ def termform(request):
             else:
                 possiblesimilarword = search_possiblesimilarword(request, html_ctx['compoundword_list'][0])
 
+            # detect if mac or else
+            system = platform.system().lower()
+            if system == 'windows' or system == 'linux': 
+                is_Mac = False
+            else:
+                is_Mac = True
+
             return HttpResponse(json.dumps({'html':html, 
                                             'dictwebpage_searched_word': dictwebpage_searched_word,
-                                            'possiblesimilarword':possiblesimilarword}))
+                                            'possiblesimilarword':possiblesimilarword,
+                                            'is_Mac':is_Mac}))
 
         # delete the word #####################################################################
         if request.GET['op'] == 'del':

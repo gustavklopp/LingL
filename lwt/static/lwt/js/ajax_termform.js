@@ -113,6 +113,9 @@ function toggle_makeit_similarword(e, simwo_id, wo_id){
 /* helper func for ajax_clicked_word and ajax_ctrlclicked_compoundword 
     Display the list of possible similar words:    */
 function _display_possiblesimilarword(data, wo_id){
+	// case for MacOS:
+	var is_Mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
 	var possiblesimilarword = data['possiblesimilarword'];
 
 	// display the possible similar words
@@ -132,8 +135,13 @@ function _display_possiblesimilarword(data, wo_id){
 				'<i class="fa fa-plus-circle" aria-hidden="true"></i> '+
 				val.wordtext +'</span>';
 			if (val.translation){ r += ' (= '+val.translation+')'; }
+			if (is_Mac){
+			var r_title = gettext('[]keyboard shortcut] (it should have focus though: ⌥+D to toggle focus with the Dict.)');
+			} else {
+			var r_title =gettext('[]keyboard shortcut] (it should have focus though: AltGr+D to toggle focus with the Dict.)'); 
+			}
 			r += ' ['+gettext('in : ')+'"'+val.customsentence+'"]'+
-				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('[]keyboard shortcut] (it should have focus though: AltGr+D to toggle focus with the Dict.)')+'">['+(key+1)+']</span></li>';
+				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+r_title+'">['+(key+1)+']</span></li>';
 		});
 		r += '</ul>';
 	}

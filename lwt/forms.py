@@ -9,6 +9,7 @@ from django.db import transaction
 import os
 import re
 import json
+import platform
 # third party
 from tags_input import fields as tag_fields, widgets as tag_widgets
 from crispy_forms.helper import FormHelper
@@ -292,8 +293,19 @@ class WordsForm(forms.ModelForm):
 #         self.helper.add_input(Submit('Save', 'save'))
         self.helper.add_input(Submit('save', 'save'))
         # rename the labels for the field:
-        self.fields['translation'].label = _('Translation') + ' <small class="text-muted" title="'+\
-            _('keyboard shortcut')+'">[altgr+T]</small>'
+
+        # detect if mac or else
+        system = platform.system().lower()
+        if system == 'windows' or system == 'linux': 
+            is_Mac = False
+        else:
+            is_Mac = True
+        if is_Mac:
+            self.fields['translation'].label = _('Translation') + ' <small class="text-muted" title="'+\
+                _('keyboard shortcut')+'">[⌥+T]</small>'
+        else:
+            self.fields['translation'].label = _('Translation') + ' <small class="text-muted" title="'+\
+                _('keyboard shortcut')+'">[AltGr+T]</small>'
         self.fields['extra_field'].label = _('Extra field') + \
             ' <a href="' + reverse('language_detail') + '?edit=' + \
             str(kwargs['instance'].language.id) + '#extra_field'\

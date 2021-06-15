@@ -17,6 +17,7 @@ from django.templatetags.static import static # to use the 'static' tag as in th
 import json
 import datetime
 import re
+import platform
 # third party
 # import requests #use to scrap
 from urllib.request import Request, urlopen # use to scrap the dictionary
@@ -345,10 +346,19 @@ def dictwebpage(request):
             return HttpResponse(json.dumps(result_str)) 
 
         if finalurl[0] == '!': # this dictionary uses my custom APIs (for ex. Google translate)
+
+            # detect if mac or else
+            system = platform.system().lower()
+            if system == 'windows' or system == 'linux': 
+                is_Mac = False
+            else:
+                is_Mac = True
+
             if 'https://translate.google.com' in finalurl:
                 translation_result = _google_API(content)
                 context = {'url':finalurl[1:], 'url_name': 'Google Translate', 'trans_item_nb':len(translation_result),
-                           'translation_result':translation_result, 'word_OR_sentence_origin':word} 
+                           'translation_result':translation_result, 'word_OR_sentence_origin':word,
+                           'is_Mac':is_Mac} 
                 return render(request, 'lwt/_google_api.html', context) 
             if 'pons.com/translate' in finalurl:
                 translation_result = _pons_API(content, finalurl)
@@ -362,6 +372,7 @@ def dictwebpage(request):
             if 'wiktionary' in finalurl:
                 translation_result = _wiki_API(content, finalurl)
                 context = {'translation_result':translation_result, 'API_name':'wiki'} 
+            context['is_Mac'] = is_Mac
             return render(request, 'lwt/_translation_api.html', context) 
 
         return HttpResponse(json.dumps(finalurl)) # case where we open into a new window

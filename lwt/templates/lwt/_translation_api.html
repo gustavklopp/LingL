@@ -13,11 +13,19 @@
 {% endif %}
 
 {% static 'lwt/img/icn/tick-button.png' as tick_button %}
-{% blocktrans %}
-<p><small>(Click word(s) beside the <img src="{{ tick_button }}" alt="Copy" /> to copy as a translation or 
-use <span class="text-muted">[keyboard shortcuts nb] (the result in "Possible similar words" should not 
-have focus: AltGr+D to toggle focus)</span>)</small></p>
-{% endblocktrans %}
+{% if is_Mac %}
+	{% blocktrans %}
+	<p><small>(Click word(s) beside the <img src="{{ tick_button }}" alt="Copy" /> to copy as a translation or 
+	use <span class="text-muted">[keyboard shortcuts nb] (the result in "Possible similar words" should not 
+	have focus: ⌥+D to toggle focus)</span>)</small></p>
+	{% endblocktrans %}
+{% else %}
+	{% blocktrans %}
+	<p><small>(Click word(s) beside the <img src="{{ tick_button }}" alt="Copy" /> to copy as a translation or 
+	use <span class="text-muted">[keyboard shortcuts nb] (the result in "Possible similar words" should not 
+	have focus: AltGr+D to toggle focus)</span>)</small></p>
+	{% endblocktrans %}
+{% endif %}
 
 {# some API needs to have specific stylesheet to be added for them #}
 {% if API_name == 'pons' %}
