@@ -6,7 +6,7 @@ labels: ''
 assignees: ''
 
 ---
-# !!! READ THEN DELETE THE TEXT BELOW !!!
+# !!! READ THEN DELETE THE TEXT BELOW and then replace it with your issue!!!
 
 **Check that the issue hasn't been posted before**
 Go to https://github.com/gustavklopp/LingL/issues, delete the placeholder text ("is:issue is:open") and search your issue.
