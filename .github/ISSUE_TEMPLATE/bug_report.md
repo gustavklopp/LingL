@@ -18,4 +18,4 @@ Your bug may have been resolved in the latest release. Check on https://github.c
 Copy-Paste the whole debug page on https://pastebin.com/ and paste the link to this Pastebin in your issue.
 
 **(Optional) Upload the file**
-If your issue concerns restoring from a previous backup file or importing from the backup of other softwares like LWT, upload the file in your issue (You can simply drag and drop the file in the issue's text).
+If your issue concerns restoring from a previous backup file or importing from the backup of other softwares like LWT, you may upload (optional) the file in your issue (You can simply drag and drop the file in the issue's text).
