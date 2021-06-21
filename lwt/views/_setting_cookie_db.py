@@ -72,7 +72,7 @@ def getter_settings_cookie(stkey, request):
     else:
         stvar = None # no cookie set
     # Converter to int if it's possible:
-    if stvar and isinstance(stvar,str): # stvar is not "" or None and is a string
+    if stvar and isinstance(stvar, str): # stvar is not "" or None and is a string
         if stvar.isdigit(): # then, check if it can be convert to digit 
                 stvar = int(stvar)
     return stvar

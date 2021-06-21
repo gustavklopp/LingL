@@ -13,13 +13,51 @@ import os
 import re
 import json 
 import urllib
-from datetime import timedelta
+from datetime import timedelta, datetime
+import requests
 # local
 from lwt.views._setting_cookie_db import *
 from lwt.constants import MAX_WORDS_DANGER, MAX_WORDS_NOTICE, MAX_WORDS_WARNING
 if __name__ != '__main__':
     from lwt.models import *
 
+
+''' Get the current date of the release and fetches the date of the latest release on the Github.
+    It checks it once in 24 hours (else it checks only cookie)'''
+def get_appversion(request):
+
+    # only check once in 24 hours the current version and if there's a new version on the Github release page:
+    date_check = getter_settings_cookie('date_check', request)
+    now = datetime.now().timestamp()
+    if not date_check or date_check - now > 86400: # 24*3600
+        # Time to check...
+
+        # the app version is taken from the file appversion.txt which contains the date of the release
+        # (this release date txt file is updated when building the Linux version)
+        appversiontxt_path = os.path.join(settings.BASE_DIR, 'lwt', 'appversion.txt')
+        with open(appversiontxt_path, 'r', encoding="utf8") as appversion_f:
+            current_date = appversion_f.read()
+
+        # get the date of the latest release on GIthub:
+        resp = requests.get('https://api.github.com/repos/gustavklopp/lingl/releases')
+        if resp.status_code == 200:
+            release_name = resp.json()[0]['name'] # all the 3 first releases are the last one for each platform
+            release_date_str = release_name[-10:-1] # the date is in the end of the string 'linux LingLibre 2016.06.20'
+            release_date_obj = datetime.strptime(release_date_str, '%Y.%m.%d' ) # '2021.06.20'
+            current_date_obj = datetime.strptime(current_date, '%Y.%m.%d')
+            is_outdated = current_date_obj < release_date_obj
+
+            # and update the cookies
+            setter_settings_cookie('date_check', now, request)
+            setter_settings_cookie('current_date', current_date, request)
+        else: # error accessing Github release page
+            return {'current_date':_('<Error accessing Github Server>'), 'is_outdated':True}
+    else:
+        current_date = getter_settings_cookie('current_date', request)
+        is_outdated = False # we assume it's not outdated even if we don't check...
+        
+    return {'current_date':current_date, 'is_outdated':is_outdated}
+   
 '''convert the placeholder for the link to the online dictionaries
    for ex.: https://en.pons.com/translate/english-<NAMELC>/### 
            =>      https://en.pons.com/translate/english-chinese/###'''
@@ -339,8 +377,16 @@ def splitSentence(t, splitSentenceMark):
     return temp_t 
     
 ''' split the text into sentences.
-    and then insert sentences/words in DB '''
-def splitText(text):
+    and then insert sentences/words in DB 
+    @text  a Text model instance
+    @text_txt the text content inside the Text. It's set to something when splitText() on a webpage
+    @webpagesection what will be the first webpagesection for the word to add (For 'webpage_read')
+    @sentenceorder what will be the order of the first sentence to add (For 'webpage_read')
+    @return  the max order of the sentence (used by webpage_read)
+'''
+def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
+    max_sentenceorder = 0
+    
     removeSpaces = text.language.removespaces # Used for Chinese,Jap where the white spaces are not used.
     splitEachChar = text.language.spliteachchar
     splitSentenceMark = text.language.regexpsplitsentences
@@ -349,7 +395,7 @@ def splitText(text):
     replace = text.language.charactersubstitutions.split("|") # some weird apostrophes are listed, triple dots etc.
     rtlScript = text.language.righttoleft
     ######## PRE-PROCESSING ##############################################################################
-    t = text.text
+    t = text_t if text_t else text.text #the text content inside the Text. It's set to something when splitText() on a webpage
     
     # reverse the text if righttoleft language (like Hebrew/arab) TODO!
 #     if rtlScript:
@@ -376,13 +422,15 @@ def splitText(text):
     new_words_created = []
     distinct_wordtext_dict = {} # we´ll count the number of distinct wordtexts (used in text list and in text_read)
     isWord_created_nb = 0 # because bulk_create doesn't return the ID!!!
-    for sentID,sentTxt in enumerate(sentences): # Loop on each sentence
+    for sentTxt in sentences: # Loop on each sentence
         # it will be used to create the 'customsentence': the sentence with the word inside '**...**'
         senttext_before_wo = ''
         senttext_after_wo = ''
 
         newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
-                                               sentencetext=sentTxt, order=sentID+1,text=text) # create each sentence
+                                               sentencetext=sentTxt, order=sentenceorder,text=text) # create each sentence
+        max_sentenceorder = sentenceorder
+        sentenceorder += 1
         # splitting the words inside the sentence:
         word_split_pattern = r'([^'+termchar+']+)' # non character are used as the end of word
 
@@ -419,6 +467,7 @@ def splitText(text):
                                           order=wordidx, textOrder=textOrder,
                                             wordtext=word, customsentence=customsentence, 
 #                                               wordtext=remove_spaces(word,removeSpaces), \
+                                          webpagesection=webpagesection,
                                           isnotword=False)
                 new_words_created.append(wo)
                 word_LC = word.lower()
@@ -427,14 +476,14 @@ def splitText(text):
             else: # Non-words
                 wo = Words(owner=text.owner,language=text.language, sentence=newsentence,
                                      text=text, order=wordidx, textOrder=textOrder,
-                                     wordtext=word, isnotword=True)
+                                     wordtext=word, isnotword=True, webpagesection=webpagesection)
                 new_words_created.append(wo)
             textOrder += 1
         # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
         if lastitem_isnotword:
             wo = Words(owner=text.owner,language=text.language, sentence=newsentence,text=text,
                              order=wordidx+1, textOrder=textOrder, wordtext=lastitem_isnotword, 
-                             isnotword=True)
+                             isnotword=True, webpagesection=webpagesection)
             new_words_created.append(wo)
     # bulk create words (we can't bulk create sentence since they are used as FK)
     Words.objects.bulk_create(new_words_created)
@@ -446,6 +495,7 @@ def splitText(text):
     words_found_similar_to_update = []
     modelwords_to_update = []
     for new_word_created in new_words_created:
+        
         # don't process 2 times the same word already processed
         if new_word_created not in words_found_similar_to_update:
             # the word which have a gosw is the model (else, whatever the word)
@@ -519,9 +569,15 @@ def splitText(text):
                                                    'show_compoundword'])
 
     # update the wordcount and wordcount without the similar wordtext in the text:
-    text.wordcount = isWord_created_nb
-    text.wordcount_distinct = len(distinct_wordtext_dict)
+    if text.is_webpage:
+        text.wordcount += isWord_created_nb
+        text.wordcount_distinct += len(distinct_wordtext_dict)
+    else:
+        text.wordcount = isWord_created_nb
+        text.wordcount_distinct = len(distinct_wordtext_dict)
     text.save()
+    
+    return max_sentenceorder
 
 # IS IT USEFUL???
 # def remove_spaces(s,remove):

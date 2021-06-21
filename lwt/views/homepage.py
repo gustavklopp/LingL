@@ -23,7 +23,7 @@ from lwt.models import *
 
 # helper functions:
 from lwt.views._setting_cookie_db import *
-from lwt.views._utilities_views import get_word_database_size
+from lwt.views._utilities_views import get_word_database_size, get_appversion
 
 
 ''' Home Page '''
@@ -55,9 +55,11 @@ def homepage(request):
     
     # get the current database size:
     database_size = get_word_database_size(request)
+    # get the appversion:
+    appversion = get_appversion(request)
 
     return render(request, 'lwt/homepage.html', {'currentlang_name':currentlang_name,'currentlang_id':currentlang_id,
                                                  'lastopentexts':lastopentexts, 
                                                  'language_selectoption':language_selectoption,
-                                                 'database_size':database_size})
+                                                 'database_size':database_size, 'appversion':appversion})
 

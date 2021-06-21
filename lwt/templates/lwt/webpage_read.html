@@ -1,0 +1,150 @@
+{% extends "lwt/_read.html" %}
+{% load static %}
+{% load i18n %} {# used for internationalization #}
+{% load mathfilters %}
+
+{% block pagetitle %}{% trans "Reading" %} "{{ url }}"{% endblock pagetitle %}
+
+{% block stylesheets %}  
+	<!-- Latest compiled and minified CSS -->
+<!-- 	<link rel="stylesheet" href="{% static 'lwt/css/bootstrap4.0_CUSTOM.css' %}">  -->
+	<link rel="stylesheet" href="{% static 'lwt/css/bootstrap4.0.css' %}">
+{% endblock stylesheets %}
+
+{% comment %}
+{% endcomment %}
+
+
+{% block javascript %}
+<script type="text/javascript">
+{% autoescape off %}
+var STATUSES = {{ statuses }};
+var TAGS = {% if tags %}{{ tags }}{% else %}[]{% endif %};
+var TEXTTAGS = {% if texttags %}{{ texttags }}{% else %}[]{% endif %};
+{% endautoescape %}
+
+var TEXTPOS = -1;
+var WBLINK1 = {% if text.language.dict1uri %}'{% autoescape off %}{{ text.language.dict1uri }}{% endautoescape %}'{% else %}''{% endif %};
+var WBLINK2 = {% if text.language.dict2uri %}'{% autoescape off %}{{ text.language.dict2uri }}{% endautoescape %}'{% else %}''{% endif %}; 
+var WBLINK3 = {% if text.language.googletranslateuri %}'{% autoescape off %}{{ text.language.googletranslateuri }}{% endautoescape %}'{% else %}''{% endif %};
+var RTL = {% if text.language.righttoleft %}true{% else %}false{% endif %};
+var TID = {{ text.id }};
+var TEXTTYPE = '{{ text_type }}'; // define whether it's a text or a webpage. Used to get the keydown event
+var DOCUMENT = null;
+/*
+$(document).ready( function() { 
+	$('span[woid]').each(function() { // display the hovering tooltip 
+		
+		update_title($(this), $(this).attr('iscompoundword'), $(this).attr('wowordtext'), 
+				$(this).attr('wotranslation'), $(this).attr('woromanization'), $(this).attr('wostatus'), 
+				$(this).attr('cowordtext'), $(this).attr('cowotranslation'), $(this).attr('coworomanization'), 
+				$(this).attr('cowostatus'), $(this).attr('show_compoundword'));
+
+		});
+
+	$('span[woid]').bind('click', clickword);
+	
+	update_workcount(); 
+});
+*/
+// store the list of the current click word()
+var compoundword_id_list = [];
+var dictwebpage_searched_word  = [];
+</script>
+<script type="text/javascript" src="{% static 'lwt/js/overlib/overlib_maxi.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/ajax_update.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/hovertooltip.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/click_ctrlclick_toggle.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/keyboardshortcut.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/tooltip_link.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/tooltip_ajax.js' %}" charset="utf-8"></script>
+<script type="text/javascript">window.CSRF_TOKEN = "{{ csrf_token }}"; </script> <!--  for Ajax POST to /webpage_read/ -->
+<script type="text/javascript" src="{% static 'lwt/js/ajax_termform.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/ajax_read.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/ajax_webpage_read.js' %}" charset="utf-8"></script>
+{% endblock javascript %}
+
+{% block content %}
+
+<div class="row text_read textread_row bootstrapiso"> <!-- Start of row main container -->
+
+<div class="text_read col-md-6" id="leftcol"> <!-- Start of 50% col left -->
+
+<div class="text_read textread_row" id="topleft">
+{% include 'lwt/_bannerleft.html' %}&nbsp;&nbsp;&nbsp;{% include 'lwt/_menu.html'%}&nbsp; | &nbsp;
+{% if previoustext %}
+	<a href="{% url 'text_read' previoustext.id %}" target="_top"><img 
+	src="{% static 'lwt/img/icn/navigation-180-button.png' %}" title="{% trans "Previous Text" %} : &quot;{{ previoustext.title }}&quot;"
+	 alt="Previous Text: {{ previoustext.title }}" /></a>
+{% else %}
+	<img src="{% static 'lwt/img/icn/navigation-180-button-light.png' %}" 
+	title="{% trans "No Previous Text" %}" alt="No Previous Text" />
+{% endif %}
+{% if nexttext %}
+	<a href="{% url 'text_read' nexttext.id %}" target="_top"><img 
+	src="{% static 'lwt/img/icn/navigation-000-button.png' %}" 
+	title="{% trans "Next Text" %} : &quot;{{ nexttext.title }}&quot;" alt="Next Text: {{ nexttext.title }}" /></a>
+{% else %}
+	<img src="{% static 'lwt/img/icn/navigation-000-button-light.png' %}" 
+	title="{% trans "No Next Text" %}" alt="No Next Text" />{% endif %}
+&nbsp;<a target="_top" href="{% url 'text_detail' %}?edit= {{ text.id }}"><img src="{% static 'lwt/img/icn/document--pencil.png' %}" title="{% trans "Edit Text" %}" alt="Edit Text" /></a>
+
+<div class="d-flex">
+	<div class="col-md-8">
+	<h4 class="pl-50"><img src="{% static 'lwt/img/icn/webpage_32px.png' %}" alt="reading" /> &nbsp;<a href="{% url 'language_detail' %}?edit={{ text.language.id }}" title="{% trans 'Edit language' %}">{{ text.language }}</a>&nbsp;▶ "{{ text.title }}"{% if text.sourceuri %}<a href="{{ text.sourceURI }}" target="_blank"><img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Text Source" %}" alt="Text Source" /></a>{% endif %}
+	</h4>
+	</div>
+	<div class="col-md-1">
+	<a href="{% url 'helppage' %}#keyboard_shortcut" target="_blank"><img src="{% static 'lwt/img/keyboard_mouse-icon50x25.png' %}" title="{% trans "Controls (and Keyboard shortcuts)" %}" alt="Control (and Keyboard shortcuts)" /></a>
+	</div>
+	<div class="col-md-3">
+	{% trans 'TO DO:' %} <span id="todo_wordcount_AND_pc" title="{% trans 'Nb(%) of unknown words (duplicate excluded)' %}" wostatus="{% if todo_wordcount == 0 %}1{% else %}0{% endif %}"><span id="todo_wordcount">&nbsp;{{ todo_wordcount }}</span>(<span data-texttotalword={{ texttotalword }} id="todo_wordcount_pc">{{ todo_wordcount_pc }}</span>%)&nbsp;</span>
+	&nbsp;&nbsp;&nbsp;<button title="{% trans 'Mark all the remaining unknown words in this sentence as <well-known> (shortcut:[altGr+K])' %}" class="btn btn-primary btn-sm" {% ifequal todo_wordcount 0 %}disabled{% endifequal %} id="iknowall" onclick="iknowall();">{% trans "I KNOW ALL" %}</button>
+	</div>
+</div>
+
+</div>
+
+<div class="text_read textread_row" id="bottomleft">
+
+<div class="words_inthistext">
+{% regroup word_inthistext by webpagesection as wps_grouped %}
+
+{% for gps_group in wps_grouped %}
+
+<div class="words_inthistext_webpagesection_{{ gps_group.grouper }}" hidden>
+<!--    DISPLAYING ALL THE WORDS IN THE TEXT      
+        the 'if wo.order == 0... is to add a space after a delimiter: aering the text! -->
+{% for wo in gps_group.list %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span >{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}
+<span woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
+{% if wo.language.has_romanization %}woromanization="{{ wo.romanization }}"
+{% else %} woromanization="" {% endif %} iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
+{% if wo.isCompoundword %} cowo_id_list="{{ wo.compoundword.wordinside_order }}" cowordtext={{ wo.compoundword.wordtext }} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
+{% else %} cowordtext="" cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
+{% endif %} {% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}>{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
+{# End of DISPLAYING #}
+
+</div>
+{% endfor %}
+</div>
+
+<iframe class="" id="thewebpage" src="about:blank" srcdoc="{{ bottomleft|safe }}"></iframe>
+</div>
+</div> <!--  End of 50% col left -->
+
+<div class="text_read col-md-6" id="rightcol"> <!--  Start of flexboxcontainer_right -->
+
+<div class="text_read textread_row" id="topright">
+</div>
+
+<div class="text_read textread_row" id="bottomright">
+</div>
+
+</div> <!-- End of 50% col  right -->
+
+</div> <!-- End of textread_row main container -->
+
+
+
+
+{% endblock content %}

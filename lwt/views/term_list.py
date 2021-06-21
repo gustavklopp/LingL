@@ -367,6 +367,8 @@ def term_list(request):
     
     # get the current database size:
     database_size = get_word_database_size(request)
+    # get the appversion:
+    appversion = get_appversion(request)
 
     return render(request, 'lwt/term_list.html',
                    {'languages':languages, 'texts':texts,
@@ -382,5 +384,5 @@ def term_list(request):
                     'noback':noback,
                     'words_with_state_True':words_with_state_True,
                     'extra_field': extra_field,
-                     'database_size':database_size})
+                     'database_size':database_size, 'appversion':appversion})
     

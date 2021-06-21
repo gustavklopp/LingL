@@ -64,6 +64,10 @@
 	height: 100%;
 	width: 100%
 }
+#bottomleft.textread_row iframe{
+	height: 100%;
+	width: 100%
+}
 
 /* the statuses */
 todo_wordcount[wostatus="0"] {
@@ -76,7 +80,7 @@ span[wostatus] { /* status default: for learning */
 	cursor: pointer;
 }
 
-.row_status_0,
+.row_status_0,   
 span[wostatus="0"] { /* status default: for unknown */
 	background-color: #ADDFFF;
 }

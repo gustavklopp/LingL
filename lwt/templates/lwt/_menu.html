@@ -1,6 +1,5 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
-{% load appversion %}{# custom tag which allows to display Django and my app version #}
 {% load djangoversion %}
 {% load pythonversion %}
 <select id="quickmenu" onchange="{var qm = document.getElementById('quickmenu'); 
@@ -16,5 +15,6 @@
 <option value="{% url "statistics" %}">{% trans 'Statistics' %}</option>
 <option id="anki" value="{% url "export2anki" %}">{% trans 'Export to Anki' %}</option>
 <option value="{% url "backuprestore" %}">{% trans 'Backup/Restore' %}</option>
+<option value="{% url "profile" %}?id={{ request.user.id }}">{% trans 'Profile' %}</option>
 <option value="{% url "helppage" %}">{% trans 'Help' %}</option>
 </select>

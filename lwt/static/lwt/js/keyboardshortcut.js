@@ -1,3 +1,4 @@
+
 /* helper functions for the arrow key navigating */
 function _is_word(input){
 	var woid_attr = input.attr('woid');
@@ -17,47 +18,47 @@ function _is_in_text(input){
 	}
 }
 
-/* make sure that a word is selected at the start (else the shortcuts can't work) */
-/* (just before the first unknown word, except if it´s the first of the text) */
-$(document).ready(function(e) {
-	//select the word before the first unknown word as the start
-	//it´s an unknown word: (but if compound word and showing it, continue)
-	var sel_word = $('#thetext span[wostatus="0"]:not([show_compoundword="True"][cowostatus!="0"])').first(); 
-
-	var prev_unknown_word = sel_word.prev();
-	while(_is_in_text(prev_unknown_word)){
-		if (_is_word(prev_unknown_word)){
-			sel_word = prev_unknown_word;
-			break;
-		} else {
-			prev_unknown_word = prev_unknown_word.prev()
+function initialize_to_selectedword(sel_word, e){
+	if (sel_word.length != 0){
+		var prev_unknown_word = _prev(sel_word);
+		while(_is_in_text(prev_unknown_word) ){
+			if (_is_word(prev_unknown_word)){
+				sel_word = prev_unknown_word;
+				break;
+			} else {
+				var possible_prev_unknown_word = _prev(prev_unknown_word);
+				if (prev_unknown_word == possible_prev_unknown_word){
+					break;
+				}
+				prev_unknown_word = possible_prev_unknown_word;
+			}
 		}
+		// auto scroll to this word:
+		$('#bottomleft').animate({
+			scrollTop: (sel_word.offset().top - $( window ).height()*1/3)
+		}, 800);
+		
+		
+		// set the focus when clicking back into the text zone
+		/* NOT USED finally
+		$( "#bottomleft" ).bind( "click", function(e) {
+			  $( this ).focus();
+			e.preventDefault();
+		}); */
+		
+		//case where we open a brand new text. The word selected will be a unknown word
+		// therefore, make it like I click on it.
+		if (sel_word.attr('wostatus') == 0){
+			click_ctrlclick_toggle(sel_word, e); // creating: clicktooltip and the right panel (bottom & top)
+			sel_word.addClass('clicked'); 
+		} else {
+			sel_word.addClass('clicked'); 
+			//sel_word.addClass('firstword');  Useful???
+		}
+		// give the focus to the text since it allows to use the keyboard shorcuts
+		$("#bottomleft").focus();
 	}
-	// auto scroll to this word:
-	$('#bottomleft').animate({
-		scrollTop: (sel_word.offset().top - $( window ).height()*1/3)
-	}, 800);
-	
-	
-	// set the focus when clicking back into the text zone
-	/* NOT USED finally
-	$( "#bottomleft" ).bind( "click", function(e) {
-		  $( this ).focus();
-		e.preventDefault();
-	}); */
-	
-	//case where we open a brand new text. The word selected will be a unknown word
-	// therefore, make it like I click on it.
-	if (sel_word.attr('wostatus') == 0){
-		click_ctrlclick_toggle(sel_word, e); // creating: clicktooltip and the right panel (bottom & top)
-		sel_word.addClass('clicked'); 
-	} else {
-		sel_word.addClass('clicked'); 
-		//sel_word.addClass('firstword');  Useful???
-	}
-	// give the focus to the text since it allows to use the keyboard shorcuts
-	$("#bottomleft").focus();
-});
+}
 
 // auto scroll when moving with the keyboard arrow ->, after "I know all" :
 function _autoscroll_to_sel_word(sel_word){
@@ -69,17 +70,83 @@ function _autoscroll_to_sel_word(sel_word){
 	}
 }
 
+/* it's a custom Obj.next() which is able to jump to a next webpage section  */
+function _next(word){
+	var DOCUMENT = window.DOCUMENT;
+	if (TEXTTYPE == 'text'){
+		return word.next();
+	} else if (TEXTTYPE == 'webpage'){
+		if (word.is(':last-child')){
+			var curr_wps_nb = word.parent().data('webpagesection');
+			var all_webpagesection = DOCUMENT.find('.webpage_done');
+			var found_curr_wps = false;
+			var next_webpagesection = null;
+			for (let wps of all_webpagesection){
+				if (found_curr_wps){
+					var next_webpagesection = $(wps);					
+					break
+				}
+				if ($(wps).data('webpagesection') == curr_wps_nb){
+					found_curr_wps = true; // at the next iteration, it will be the wps we want
+				}
+			}
+			// check whether the current wps wasn't the last wps of the webpage in fact
+			if (next_webpagesection != null){
+				var next_word = next_webpagesection.find(":first-child");
+				return next_word;
+			} else {
+				return word;
+			}
+		} else {
+			return word.next();
+		}	
+	}
+}
+
+/* it's a custom Obj.prev() which is able to jump to a previous webpage section  */
+function _prev(word){
+	var DOCUMENT = window.DOCUMENT;
+	if (TEXTTYPE == 'text'){
+		return word.prev();
+	} else if (TEXTTYPE == 'webpage'){
+		/*
+		return word.prev();
+		*/
+		if (word.is(':first-child')){
+			var curr_wps = $(word.parent());
+			var curr_wps_nb = word.parent().data('webpagesection');
+			var all_webpagesection = DOCUMENT.find('.webpage_done');
+			var prev_webpagesection = curr_wps;
+			for (let wps of all_webpagesection){
+				if ($(wps).data('webpagesection') == curr_wps_nb){
+					break;
+				}
+				prev_webpagesection = $(wps);					
+			}
+			// check whether the current wps wasn't the last wps of the webpage in fact
+			if (prev_webpagesection != curr_wps){
+				var prev_word = prev_webpagesection.find(":last-child");
+				return prev_word;
+			} else {
+				return word;
+			}
+		} else {
+			return word.prev();
+		}	
+	}
+}
+
 /* helper function to navigate (it's also used in ajax_termform after a word has been submitted) */
 function _move_next_word(sel_word, e){
 	sel_word.removeClass('clicked'); //unselect the current word
 	//sel_word.removeClass('firstword'); //unselect the current word Useful???
-	var next_word = sel_word.next();
+	var next_word = _next(sel_word);
 	while(_is_in_text(next_word)){
 		if (_is_word(next_word) && next_word.attr('wostatus')==0){
 			sel_word = next_word;
 			break;
 		} else {
-			next_word = next_word.next()
+			next_word = _next(next_word);
 		}
 	}
 
@@ -111,16 +178,17 @@ function _toprightInputBoxes_have_focus(){
 	return has_focus;
 }
 
-$(function() {
-	// case for MacOS:
+function key_binding(DOCUMENT, e){
+	// case for MacOS because keybinding is different for AltGr:
 	var is_Mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 	/*********************************************************/
 	/*          MOVING                                       */
 	/*********************************************************/
-	$(window).keydown(function(e) { // only keydown is able to get the arrow keys... (strange)
+	var DOCUMENT = window.DOCUMENT;
+	DOCUMENT.keydown(function(e) { // only keydown is able to get the arrow keys... (strange)
 		//the current selected word:
-		var sel_word = $('.clicked');
+		var sel_word = DOCUMENT.find('.clicked');
 
 		var ev = e || window.event;
 		var keydown = ev.keyCode || ev.which;
@@ -134,13 +202,13 @@ $(function() {
 		if (keydown == '37' && !_toprightInputBoxes_have_focus()){ 
 			sel_word.removeClass('clicked'); //unselect the current word
 			//sel_word.removeClass('firstword'); //unselect the current word USEFUL???
-			var prev_word = sel_word.prev();
+			var prev_word = _prev(sel_word);
 			while(_is_in_text(prev_word)){
 				if (_is_word(prev_word)){
 					sel_word = prev_word;
 					break;
 				} else {
-					prev_word = prev_word.prev()
+					prev_word = _prev(prev_word);
 				}
 			}
 			sel_word.addClass('clicked'); //select the previous word
@@ -154,9 +222,9 @@ $(function() {
 		}
 	});
 		
-	$(window).keypress(function(e) { //only keypress can get combination like Shift+letter
+	DOCUMENT.keypress(function(e) { //only keypress can get combination like Shift+letter
 		//the current selected word:
-		var sel_word = $('.clicked');
+		var sel_word = DOCUMENT.find('.clicked');
 		var ev = e || window.event;
 		var keypress = ev.keyCode || ev.which;
 		//console.log(keypress);
@@ -281,6 +349,30 @@ $(function() {
 			var wo_id = $('.kb_short_'+'5').data('simwo_id');
 			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
 		}
+		// '6': choose the sixth similar word
+		if (keypress == '54' && !_toprightInputBoxes_have_focus() &&
+								$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
+			var wo_id = $('.kb_short_'+'6').data('simwo_id');
+			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
+		}
+		// '7': choose the seventh similar word
+		if (keypress == '55' && !_toprightInputBoxes_have_focus() &&
+								$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
+			var wo_id = $('.kb_short_'+'7').data('simwo_id');
+			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
+		}
+		// '8': choose the eighth similar word
+		if (keypress == '56' && !_toprightInputBoxes_have_focus() &&
+								$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
+			var wo_id = $('.kb_short_'+'8').data('simwo_id');
+			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
+		}
+		// '9': choose the ninth similar word
+		if (keypress == '57' && !_toprightInputBoxes_have_focus() &&
+								$('#possible_similarword_result').hasClass('sim_OR_dict_highlight')){ 
+			var wo_id = $('.kb_short_'+'9').data('simwo_id');
+			ajax_submit_word(event, 'similar', wo_id, null, sel_word.attr('woid'));
+		}
 
 		// 'altGr+a': submit the form to save the word´s definition
 		if ((!is_Mac && keypress == '225') || (is_Mac && keypress == '229')){ 
@@ -355,7 +447,5 @@ $(function() {
 			$('#id_translation').focus();
 		}
 	});
-});
-
-
+}
 

@@ -22,6 +22,7 @@ import platform
 # import requests #use to scrap
 from urllib.request import Request, urlopen # use to scrap the dictionary
 from urllib import parse # set the encoding for the URL
+from urllib.parse import urljoin, urlparse
 import html # use to scrap the dictionary
 from bs4 import BeautifulSoup #use to scrap
 # local
@@ -34,20 +35,10 @@ from lwt.views._utilities_views import *
 from lwt.views.termform import *
 from lwt.constants import STATUS_CHOICES
 
-''' display the text to be read, with lots of javascript...'''
-@login_required
-@nolang_redirect
-def text_read(request, text_id):
-    text = Texts.objects.get(id=text_id)
-    
-    # case where we're opening an archived text. We need to splitText before:
-    if text.archived:
-        splitText(text)
-
-    # Saving the timestamp for text opening: used in text list
+def _textANDwebpage_common(request, text, text_id):    # Saving the timestamp for text opening: used in text list
     Texts.objects.filter(id=text_id).update(archived=False, lastopentime= timezone.now())
 
-    word_inthistext = Words.objects.filter(text=text).order_by('sentence_id', 'order')
+    word_inthistext = Words.objects.filter(text=text).order_by('webpagesection', 'sentence_id', 'order')
     
     # increasing the Learning status: Each time the file is open/window refreshed, we calculate whether it
     # was modified more than **24 hours ago**. If yes, update +1 for all word/grouperofsameword/similarword
@@ -68,7 +59,10 @@ def text_read(request, text_id):
     textsavedword = Words.objects.filter(text=text,isnotword=False,status__gt=0).exclude(isCompoundword=True).count()
 #     texttotalword = Words.objects.filter(text=text,isnotword=False).exclude(isCompoundword=True).count()
     todo_wordcount = texttotalword - textsavedword 
-    todo_wordcount_pc = int(round( todo_wordcount*100 / texttotalword ))
+    if texttotalword: # avoid division by 0 (case with webpage)
+        todo_wordcount_pc = int(round( todo_wordcount*100 / texttotalword ))
+    else:
+        todo_wordcount_pc = 0 # case of opening a webpage for the first time
     
     # to have the tooltip displayed. Creating the block of text which the Javascript will read:
     statuses = json.dumps(STATUS_CHOICES) 
@@ -80,6 +74,22 @@ def text_read(request, text_id):
                             order_by('modified_date').first()
     previoustext = Texts.objects.filter(owner=request.user, modified_date__lt=text.modified_date).\
                             order_by('-modified_date').first()
+    
+    return previoustext, nexttext, todo_wordcount, todo_wordcount_pc, texttotalword,\
+            word_inthistext, statuses, wordtags, texttags
+
+''' display the text to be read, with lots of javascript...'''
+@login_required
+@nolang_redirect
+def text_read(request, text_id):
+    text = Texts.objects.get(id=text_id)
+    
+    # case where we're opening an archived text. We need to splitText before:
+    if text.archived:
+        splitText(text)
+
+    previoustext, nexttext, todo_wordcount, todo_wordcount_pc, texttotalword,\
+    word_inthistext, statuses, wordtags, texttags = _textANDwebpage_common(request, text, text_id)
 
     return render(request, 'lwt/text_read.html',{ 
                 'text':text,
@@ -90,6 +100,7 @@ def text_read(request, text_id):
                 'word_inthistext':word_inthistext,
                 # for tooltip
                 'statuses':statuses,'wordtags':wordtags,'texttags':texttags,
+                'text_type': 'text'
         })
 
 def _google_API(content):
@@ -237,10 +248,43 @@ def _wiki_API_redirect(error, finalurl, word_escaped):
         finalurl = finalurl.replace(word_escaped, didyoumean_word_escaped)
     return finalurl
 
+
+''' helper function: when saving a webpage, we clean it:'
+    remove all the scripts, convert the relative links to absolute
+    and get only finally the <body>, <link> and <style>
+    @url    the url of the original webpage
+    @soup   the Beautifulsoup
+    @return the html string
+'''
+def _clean_soup_Webpage(soup, url):
+    for scr in soup.select('script'):
+        scr.extract()
+    
+    # We'll keep only <link>, <style> and <body>
+    links = soup.findAll('link')
+    link_str = ''
+    parsed_uri = urlparse(url)
+    url_maindomain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
+    for link in links:
+        absolute_url = urljoin(url_maindomain, link['href'])
+        link['href'] = absolute_url
+        str_link = str(link)
+        link_str += str_link
+    lingl_style = '<link rel="stylesheet" type="text/css" href="'+static('lwt/css/styles.css')+'">'
+    styles = soup.findAll('style')
+    style_str = ''
+    for style in styles:
+        str_style = str(style)
+        style_str += str_style
+    body = soup.find('body')
+    body_str = str(body)
+    html = link_str + style_str + lingl_style + body_str
+    return html
+
 ''' Helper func for dictwebpage (and _pons_API()
     allows to clean the webpage to get only the useful content:
     for ex: remove banner, <script> etc... '''
-def _clean_soup(soup, url):
+def _clean_soup(soup, url=None):
     # Remove all <script></script>
     for scr in soup.select('script'):
         scr.extract()

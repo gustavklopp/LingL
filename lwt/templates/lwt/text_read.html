@@ -18,26 +18,13 @@ var TAGS = {% if tags %}{{ tags }}{% else %}[]{% endif %};
 var TEXTTAGS = {% if texttags %}{{ texttags }}{% else %}[]{% endif %};
 {% endautoescape %}
 
-TEXTPOS = -1;
-WBLINK1 = {% if text.language.dict1uri %}'{% autoescape off %}{{ text.language.dict1uri }}{% endautoescape %}'{% else %}''{% endif %};
-WBLINK2 = {% if text.language.dict2uri %}'{% autoescape off %}{{ text.language.dict2uri }}{% endautoescape %}'{% else %}''{% endif %}; 
-WBLINK3 = {% if text.language.googletranslateuri %}'{% autoescape off %}{{ text.language.googletranslateuri }}{% endautoescape %}'{% else %}''{% endif %};
-RTL = {% if text.language.righttoleft %}true{% else %}false{% endif %};
-TID = {{ text.id }};
-$(document).ready( function() { 
-	$('span[woid]').each(function() { // display the hovering tooltip 
-		
-		update_title($(this), $(this).attr('iscompoundword'), $(this).attr('wowordtext'), 
-				$(this).attr('wotranslation'), $(this).attr('woromanization'), $(this).attr('wostatus'), 
-				$(this).attr('cowordtext'), $(this).attr('cowotranslation'), $(this).attr('coworomanization'), 
-				$(this).attr('cowostatus'), $(this).attr('show_compoundword'));
-
-		});
-
-	$('span[woid]').bind('click', clickword);
-	
-	update_workcount(); 
-});
+var TEXTPOS = -1;
+var WBLINK1 = {% if text.language.dict1uri %}'{% autoescape off %}{{ text.language.dict1uri }}{% endautoescape %}'{% else %}''{% endif %};
+var WBLINK2 = {% if text.language.dict2uri %}'{% autoescape off %}{{ text.language.dict2uri }}{% endautoescape %}'{% else %}''{% endif %}; 
+var WBLINK3 = {% if text.language.googletranslateuri %}'{% autoescape off %}{{ text.language.googletranslateuri }}{% endautoescape %}'{% else %}''{% endif %};
+var RTL = {% if text.language.righttoleft %}true{% else %}false{% endif %};
+var TID = {{ text.id }};
+var TEXTTYPE = '{{ text_type }}'; // define whether it's a text or a webpage. Used to get the keydown event
 // store the list of the current click word()
 var compoundword_id_list = [];
 var dictwebpage_searched_word  = [];
@@ -46,9 +33,12 @@ var dictwebpage_searched_word  = [];
 <script type="text/javascript" src="{% static 'lwt/js/ajax_update.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/hovertooltip.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/click_ctrlclick_toggle.js' %}" charset="utf-8"></script>
-<script type="text/javascript" src="{% static 'lwt/js/helppage.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/keyboardshortcut.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/tooltip_link.js' %}" charset="utf-8"></script>
 <script type="text/javascript" src="{% static 'lwt/js/tooltip_ajax.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/ajax_termform.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/ajax_read.js' %}" charset="utf-8"></script>
+<script type="text/javascript" src="{% static 'lwt/js/ajax_text_read.js' %}" charset="utf-8"></script>
 {% endblock javascript %}
 
 {% block content %}
@@ -57,7 +47,7 @@ var dictwebpage_searched_word  = [];
 
 <div class="text_read col-md-6" id="leftcol"> <!-- Start of 50% col left -->
 
-<div class="text_read textread_row LOCAL_bootstrap4" id="topleft">
+<div class="text_read textread_row" id="topleft">
 {% include 'lwt/_bannerleft.html' %}&nbsp;&nbsp;&nbsp;{% include 'lwt/_menu.html'%}&nbsp; | &nbsp;
 {% if previoustext %}
 	<a href="{% url 'text_read' previoustext.id %}" target="_top"><img 
@@ -95,8 +85,8 @@ var dictwebpage_searched_word  = [];
 <div class="text_read textread_row" id="bottomleft">
 <div id="thetext" {% if text.language.righttoleft %}style="text-align:right;"{% endif %}><p style="{% if text.language.removespaces %}word-break:break-all;{% endif %}font-size:{{ text.language.textsize }}%;line-height: 1.4; margin-bottom: 10px;">
 
-{#   DISPLAYING THE TEXT      #}
-{# the 'if wo.order == 0... is to add a space after a delimiter: aering the text! #}
+<!--    DISPLAYING ALL THE WORDS IN THE TEXT      
+        the 'if wo.order == 0... is to add a space after a delimiter: aering the text! -->
 {% for wo in word_inthistext %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span >{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}
 <span woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
 {% if wo.language.has_romanization %}woromanization="{{ wo.romanization }}"
@@ -104,7 +94,7 @@ var dictwebpage_searched_word  = [];
 {% if wo.isCompoundword %} cowo_id_list="{{ wo.compoundword.wordinside_order }}" cowordtext={{ wo.compoundword.wordtext }} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
 {% else %} cowordtext="" cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
 {% endif %} {% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}>{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
-{# END -- DISPLAYING THE TEXT #}
+{# End of DISPLAYING #}
 
 <span id="totalcharcount" class="hide">{{ currcharcount }}</span></p><p style="font-size:{{ text.textsize }}%;line-height: 1.4; margin-bottom: 300px;">&nbsp;</p></div>
 
@@ -122,8 +112,6 @@ var dictwebpage_searched_word  = [];
 </div> <!-- End of 50% col  right -->
 
 </div> <!-- End of textread_row main container -->
-
-
 
 
 {% endblock content %}

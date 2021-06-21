@@ -41,6 +41,7 @@ function update_data_of_wo_cowo_and_sims(data, op){
 	@wo_id	the id of the word
 	@status the updated status (number in string) of the word (for ex.: '101' for ignored) */
 function ajax_update_status(event, wo_id, status) {
+	var DOCUMENT = window.DOCUMENT;
 	$.ajax({url: '/termform/', 
 			type: 'GET',
 			dataType: 'json',
@@ -50,7 +51,7 @@ function ajax_update_status(event, wo_id, status) {
 				},
 			success: function(data){ 
 				// don't update the topright panel if the clicked word has already move to a next word
-				var sel_word = $('.clicked');
+				var sel_word = DOCUMENT.find('.clicked');
 				if (data['wowordtext'] == sel_word.attr('wowordtext')){
 					$('#topright.text_read').html(data['html']); 
 				}
@@ -73,81 +74,90 @@ function ajax_update_status(event, wo_id, status) {
 (the updating of the workcount is done here also) */
 /* update status of the word in question: */
 function update_status(wo_id, op, wostatus){
-				if (op == 'del'){
-						$('span[woid='+wo_id+']').attr('wostatus','0');}
-				else {
-						$('span[woid='+wo_id+']').attr('wostatus', wostatus);}
+	var DOCUMENT = window.DOCUMENT;
+	if (op == 'del'){
+			DOCUMENT.find('span[woid='+wo_id+']').attr('wostatus','0');}
+	else {
+			DOCUMENT.find('span[woid='+wo_id+']').attr('wostatus', wostatus);}
 
-				var originalcolor =$('span[woid='+wo_id+']').css('background-color'); 
-				$('span[woid='+wo_id+']').animate( // animation background-color thx to Jquery UI
-						{backgroundColor: "#aa0000"}, 150, function(){
-							$('span[woid='+wo_id+']').css('background-color', originalcolor);
-							}
-						);
-				originalcolor = ''; // clean the variable
-				// increment/decrement the number at the counter at the top
-				update_workcount();
+	var originalcolor = DOCUMENT.find('span[woid='+wo_id+']').css('background-color'); 
+	DOCUMENT.find('span[woid='+wo_id+']').animate( // animation background-color thx to Jquery UI
+			{backgroundColor: "#aa0000"}, 150, function(){
+				DOCUMENT.find('span[woid='+wo_id+']').css('background-color', originalcolor);
+				}
+			);
+	originalcolor = ''; // clean the variable
+	// increment/decrement the number at the counter at the top
+	update_workcount();
 }
 
 /* update the translation of the word in question: */
 function update_translation(wo_id, op, wotranslation){
-				$('span[woid='+wo_id+']').attr('wotranslation',wotranslation);
+	var DOCUMENT = window.DOCUMENT;
+	DOCUMENT.find('span[woid='+wo_id+']').attr('wotranslation',wotranslation);
 }
 
 /* update the romanization of the word in question: */
 function update_romanization(wo_id, op, woromanization){
-				$('span[woid='+wo_id+']').attr('woromanization',woromanization);
+	var DOCUMENT = window.DOCUMENT;
+	DOCUMENT.find('span[woid='+wo_id+']').attr('woromanization',woromanization);
 }
 
 // for compoundwords, same functions of updating:
 
 /* update the parameter iscompoundword of the word in question:*/
 function update_iscompoundword(wo_id, op){
-				if (op == 'del'){
-					$('span[woid='+wo_id+']').attr('isCompoundword','False');
-				} else {
-					$('span[woid='+wo_id+']').attr('isCompoundword','True');
-				}
+	var DOCUMENT = window.DOCUMENT;
+	if (op == 'del'){
+		DOCUMENT.find('span[woid='+wo_id+']').attr('isCompoundword','False');
+	} else {
+		DOCUMENT.find('span[woid='+wo_id+']').attr('isCompoundword','True');
+	}
 }
 
 /* update the show_compoundword bool of the word in question:*/
 function update_show_compoundword(wo_id, op){
-				if (op == 'del'){
-					$('span[woid='+wo_id+']').attr('show_compoundword','False');
-				} else {
-				$('span[woid='+wo_id+']').attr('show_compoundword','True');
-				}
+	var DOCUMENT = window.DOCUMENT;
+	if (op == 'del'){
+		DOCUMENT.find('span[woid='+wo_id+']').attr('show_compoundword','False');
+	} else {
+	DOCUMENT.find('span[woid='+wo_id+']').attr('show_compoundword','True');
+	}
 }
 
 /* update cowordtext of the word in question:*/
 function update_cowordtext(wo_id, cowordtext){
-				$('span[woid='+wo_id+']').attr('cowordtext', cowordtext);
+	var DOCUMENT = window.DOCUMENT;
+	DOCUMENT.find('span[woid='+wo_id+']').attr('cowordtext', cowordtext);
 }
 
 /* update status of the word in question:*/
 function update_costatus(wo_id, op, wostatus){
-				if (op == 'edit' || op == 'similar'){
-						$('span[woid='+wo_id+']').attr('cowostatus', wostatus);}
-				else if (op == 'del'){
-						$('span[woid='+wo_id+']').attr('cowostatus','0');}
-				else if (op == 'new'){
-						$('span[woid='+wo_id+']').attr('cowostatus','1');}
-				else if (op == 'wellkwn'){
-						$('span[woid='+wo_id+']').attr('cowostatus','100');}
-				else if (op == 'ignored'){
-						$('span[woid='+wo_id+']').attr('cowostatus','101');}
-				// increment/decrement the number at the counter at the top
-				update_workcount();
+	var DOCUMENT = window.DOCUMENT;
+	if (op == 'edit' || op == 'similar'){
+			DOCUMENT.find('span[woid='+wo_id+']').attr('cowostatus', wostatus);}
+	else if (op == 'del'){
+			DOCUMENT.find('span[woid='+wo_id+']').attr('cowostatus','0');}
+	else if (op == 'new'){
+			DOCUMENT.find('span[woid='+wo_id+']').attr('cowostatus','1');}
+	else if (op == 'wellkwn'){
+			DOCUMENT.find('span[woid='+wo_id+']').attr('cowostatus','100');}
+	else if (op == 'ignored'){
+			DOCUMENT.find('span[woid='+wo_id+']').attr('cowostatus','101');}
+	// increment/decrement the number at the counter at the top
+	update_workcount();
 }
 
 /* update the translation of the word in question:*/
 function update_cotranslation(wo_id, op, wotranslation){
-	$('span[woid='+wo_id+']').attr('cowotranslation',wotranslation);
+	var DOCUMENT = window.DOCUMENT;
+	DOCUMENT.find('span[woid='+wo_id+']').attr('cowotranslation',wotranslation);
 }
 
 /* update the romanization of the word in question:*/
 function update_coromanization(wo_id, op, woromanization){
-	$('span[woid='+wo_id+']').attr('coworomanization',woromanization);
+	var DOCUMENT = window.DOCUMENT;
+	DOCUMENT.find('span[woid='+wo_id+']').attr('coworomanization',woromanization);
 }
 
 /* the Python True is not recognized as 'true' by Javascript */
@@ -162,10 +172,11 @@ function _is_true(variable){
 /* update the title */
 function update_title(this_OR_wo_id, iscompoundword, wowordtext, wotranslation, woromanization, wostatus, 
 						cowordtext, cowotranslation, coworomanization, cowostatus, show_compoundword){
+	var DOCUMENT = window.DOCUMENT;
 	var wo_title = wowordtext;
 	var co_title = cowordtext;
 	if (!(this_OR_wo_id instanceof jQuery)){
-		var $this = $('span[woid='+this_OR_wo_id+']')	
+		var $this = DOCUMENT.find('span[woid='+this_OR_wo_id+']')	
 	} else {
 		var $this = this_OR_wo_id;
 	}
@@ -187,7 +198,8 @@ function update_title(this_OR_wo_id, iscompoundword, wowordtext, wotranslation, 
 function update_workcount(){
 	// Counting the words without duplicate???
 	// get all the wordtext element with status 0
-	var status0_words = $('span[woid][iscompoundword="False"][wostatus=0]');
+	var DOCUMENT = window.DOCUMENT;
+	var status0_words = DOCUMENT.find('span[woid][iscompoundword="False"][wostatus=0]');
 	var wordtext_list = [];
 	status0_words.each(function(idx, val){
 		wordtext_list.push($(val).attr('wowordtext').toLowerCase());
@@ -202,7 +214,11 @@ function update_workcount(){
 
 	// and in percent:
 	var texttotalword = $('#todo_wordcount_pc').data('texttotalword');
-	var todo_wordcount_pc = Math.round( todo_wordcount*100/texttotalword );
+	if (texttotalword != 0){ 
+		var todo_wordcount_pc = Math.round( todo_wordcount*100/texttotalword );
+	} else {
+		var todo_wordcount_pc = 0; // case of opening a webpage for the first time
+	}
 
 	// displaying it
 	$('#todo_wordcount').html('&nbsp;'+todo_wordcount.toString()+'&nbsp;');
@@ -218,8 +234,9 @@ function update_workcount(){
 
 /* update span attribute of word in text_read */
 function HTML_toggle_show_compoundword(compoundword_id_list, show_compoundword){
+	var DOCUMENT = window.DOCUMENT;
 	$.each(compoundword_id_list, function(key, val){
-		$('span[woid='+val+']').attr('show_compoundword', show_compoundword);
+		DOCUMENT.find('span[woid='+val+']').attr('show_compoundword', show_compoundword);
 	});
 }
 

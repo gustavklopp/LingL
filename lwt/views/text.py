@@ -19,6 +19,8 @@ from django.contrib import messages
 # second party
 from datetime import timedelta
 # third party
+from urllib.request import Request, urlopen 
+from bs4 import BeautifulSoup #use to scrap
 # local
 from lwt.models import *
 from lwt.forms import *
@@ -26,7 +28,8 @@ from lwt.forms import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
-from lwt.views._utilities_views import get_word_database_size
+from lwt.views._utilities_views import get_word_database_size, get_appversion
+from lwt.views.text_read import _clean_soup_Webpage
 from lwt.constants import MAX_WORDS_DANGER
 
 
@@ -70,13 +73,25 @@ def load_texttable(request):
         t_dict['id'] = t.id
         ##############################
         if not t.archived: # display a choice popup if trying to read/edit an archived text
-            onclick_r = 'document.location = \''+reverse('text_read',args=[t.id]) +'\';'
-            onclick_e = 'document.location = \''+reverse('text_detail')+'?edit='+str(t.id)+'\';'
+            if t.is_webpage:
+                onclick_r = 'document.location = \''+reverse('webpage_read',args=[t.id]) +'\';'
+                onclick_e = 'document.location = \''+reverse('text_detail')+'?edit_webpage='+str(t.id)+'\';'
+            else:
+                onclick_r = 'document.location = \''+reverse('text_read',args=[t.id]) +'\';'
+                onclick_e = 'document.location = \''+reverse('text_detail')+'?edit='+str(t.id)+'\';'
         else:
-            onclick_r = 'warning_archive(\''+reverse('text_read',args=[t.id]) +'\');'
-            onclick_e = 'warning_archive(\''+reverse('text_detail')+'?edit='+str(t.id)+'\');'
-        t_dict['read'] = '<img class="btn" onclick="'+onclick_r+'" src="' + \
-            static('lwt/img/icn/book-open-bookmark.png') + '" title="'+ _('Read text') + '" alt="'+_('Read')+'" />'
+            if t.is_webpage:
+                onclick_r = 'warning_archive(\''+reverse('webpage_read',args=[t.id]) +'\');'
+                onclick_e = 'warning_archive(\''+reverse('text_detail')+'?edit_webpage='+str(t.id)+'\');'
+            else:
+                onclick_r = 'warning_archive(\''+reverse('text_read',args=[t.id]) +'\');'
+                onclick_e = 'warning_archive(\''+reverse('text_detail')+'?edit='+str(t.id)+'\');'
+        if t.is_webpage:
+            t_dict['read'] = '<img class="btn" onclick="'+onclick_r+'" src="' + \
+                static('lwt/img/icn/webpage_16px.png') + '" title="'+ _('Read webpage') + '" alt="'+_('Read')+'" />'
+        else:
+            t_dict['read'] = '<img class="btn" onclick="'+onclick_r+'" src="' + \
+                static('lwt/img/icn/book-open-bookmark.png') + '" title="'+ _('Read text') + '" alt="'+_('Read')+'" />'
         t_dict['edit'] = '<img class="btn" onclick="'+onclick_e+'" src="' + \
             static('lwt/img/icn/document--pencil.png') + '" title="'+ _('edit text') + '" alt="'+_('edit')+'" />'
         ##############################
@@ -462,18 +477,29 @@ def text_detail(request):
     # POST method: a new text has been created or a old one is edited
     # Triggered by the "Submit" button at the end of the text_detail page
     if request.method == 'POST':
-        f = TextsForm(request.user, request.POST or None)
-        if f.is_valid():
-            if 'new' in request.GET.keys():
+        f_isvalid = True
+        if 'new_webpage' in request.GET.keys():
+            f = WebpagesForm(request.user, request.POST or None)
+            if f.is_valid():
                 # I need to manually add all the fields, I don't know why??? Bug???
                 savedtext = f.save(commit=False)
                 savedtext.language = f.cleaned_data['language']
                 savedtext.owner = request.user
-                savedtext.title = f.cleaned_data['title']
-                savedtext.text = f.cleaned_data['text']
-                savedtext.annotatedtext = f.cleaned_data['annotatedtext']
+                savedtext.is_webpage = True
+                url = f.cleaned_data['title']
+                savedtext.title = url
+
+                # fetching the HTML with the URL given (in 'title')
+                headers = {"User-Agent":"Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30",
+                    "Accept":"text/html,application/xhtml+xml,application/xml; q=0.9,image/webp,*/*;q=0.8"}
+                reqest = Request(url, headers=headers)
+                HTTPResponse_object = urlopen(reqest)
+                raw_data = HTTPResponse_object.read()
+                content = raw_data.decode("utf-8")
+                soup = BeautifulSoup(content, 'html.parser')
+                cleaned_html = _clean_soup_Webpage(soup, url)
+                savedtext.text = cleaned_html
                 savedtext.audiouri = f.cleaned_data['audiouri']
-                savedtext.sourceuri = f.cleaned_data['sourceuri']
                 savedtext.save()
                 txtagtext_list = [] if f.data["texttags"] == '' else f.data['texttags'].split(',')
                 savedtext.texttags.exclude(txtagtext__in=txtagtext_list).delete() #first, remove non existent tags
@@ -481,40 +507,70 @@ def text_detail(request):
                     texttag = Texttags.objects.get_or_create(owner=request.user, txtagtext=txtagtext)[0]
                     savedtext.texttags.add(texttag)
                 savedtext.save()
-                # Process the file :
-                # split the text into sentences and into words and put it in Unknownwords
-                splitText(savedtext) #  in _utilities_views
-
-                ###################### Calculate how many words are for this language: Display a warning if too many words: ####################
-                total_words = Words.objects.filter(owner=request.user).count()
-                if total_words > MAX_WORDS_DANGER:
-                    messages.add_message(request, messages.WARNING, 
-                            _('With this additional text, you\'ve got now ') + str(total_words) +\
-                             _(' words for ') + savedtext.language.name + \
-                            _('. This could slow the program a lot. Please consider archiving or deleting some texts.'))
                 text_id = savedtext.id
+                messages.add_message(request, messages.SUCCESS, _('Webpage successfully loaded. \nHighlight in the webpage the texts that you want to "LingLibrify"'))
             else:
-                savedtext = f.save(commit=False)
-                # the field 'created_date' isn't copied in the model because it's an 'auto_add=True'
-                # ... do it manually:
-                savedtext.created_date = f.data['created_date']
-                text_id = int(request.GET['edit'])
-                savedtext.id = text_id # Without doing this, modelform is creating a new object, strangely...
-                savedtext.save()
+                f_isvalid = False
+                messages.add_message(request, messages.ERROR, _('There was an error in fetching this webpage.'))
 
-            # add the Owner in the texttags model (not done automatically)
-            for ttag in savedtext.texttags.all():
-                ttag.owner = request.user
-                ttag.save()
+        else: # it doesn't concern a Webpage
+            f = TextsForm(request.user, request.POST or None)
+            if f.is_valid():
+                if 'new' in request.GET.keys():
+                    # I need to manually add all the fields, I don't know why??? Bug???
+                    savedtext = f.save(commit=False)
+                    savedtext.language = f.cleaned_data['language']
+                    savedtext.owner = request.user
+                    savedtext.title = f.cleaned_data['title']
+                    savedtext.text = f.cleaned_data['text']
+                    savedtext.annotatedtext = f.cleaned_data['annotatedtext']
+                    savedtext.audiouri = f.cleaned_data['audiouri']
+                    savedtext.sourceuri = f.cleaned_data['sourceuri']
+                    savedtext.save()
+                    txtagtext_list = [] if f.data["texttags"] == '' else f.data['texttags'].split(',')
+                    savedtext.texttags.exclude(txtagtext__in=txtagtext_list).delete() #first, remove non existent tags
+                    for txtagtext in txtagtext_list:
+                        texttag = Texttags.objects.get_or_create(owner=request.user, txtagtext=txtagtext)[0]
+                        savedtext.texttags.add(texttag)
+                    savedtext.save()
+                    # Process the file :
+                    # split the text into sentences and into words and put it in Unknownwords
+                    splitText(savedtext) #  in _utilities_views
 
-            if 'new' in request.GET.keys():
-                messages.add_message(request, messages.SUCCESS, _('Text successfully added'))
-            else:
-                messages.add_message(request, messages.SUCCESS, _('Text successfully modified'))
-            #update the cookie for the database_size
-            set_word_database_size(request)
+                    ###################### Calculate how many words are for this language: Display a warning if too many words: ####################
+                    total_words = Words.objects.filter(owner=request.user).count()
+                    if total_words > MAX_WORDS_DANGER:
+                        messages.add_message(request, messages.WARNING, 
+                                _('With this additional text, you\'ve got now ') + str(total_words) +\
+                                 _(' words for ') + savedtext.language.name + \
+                                _('. This could slow the program a lot. Please consider archiving or deleting some texts.'))
+                    text_id = savedtext.id
+                    messages.add_message(request, messages.SUCCESS, _('Text successfully added'))
+
+
+                else: # editing a text (op == 'edit')
+                    savedtext = f.save(commit=False)
+                    # the field 'created_date' isn't copied in the model because it's an 'auto_add=True'
+                    # ... do it manually:
+                    savedtext.created_date = f.data['created_date']
+                    text_id = int(request.GET['edit'])
+                    savedtext.id = text_id # Without doing this, modelform is creating a new object, strangely...
+                    savedtext.save()
+                    messages.add_message(request, messages.SUCCESS, _('Text successfully modified'))
+
+                # add the Owner in the texttags model (not done automatically)
+                for ttag in savedtext.texttags.all():
+                    ttag.owner = request.user
+                    ttag.save()
+
+        #update the cookie for the database_size
+        set_word_database_size(request)
+
+        if f_isvalid:
             if 'save_read' in f.data.keys(): # clicking on button "save and read"
                 return redirect(reverse('text_read', args=(text_id,)))
+            if 'save_read_webpage' in f.data.keys(): # clicking on button "save and read"
+                return redirect(reverse('webpage_read', args=(text_id,)))
             else:
                 return redirect(reverse('text_list'))
 
@@ -522,11 +578,7 @@ def text_detail(request):
             # get the current database size:
             database_size = get_word_database_size(request)
 
-            f = TextsForm(request.user, request.POST)
-            if 'new' in request.GET.keys():
-                messages.add_message(request, messages.ERROR, _('There was an error in adding this text.'))
-            else:
-                messages.add_message(request, messages.ERROR, _('There was an error in modifying this text.'))
+#             f = TextsForm(request.user, request.POST)
             return render(request, 'lwt/text_list.html', {'database_size':database_size})
 
     # Displaying the form to Create a new text, or Delete/Edit a word or Insert a Word:
@@ -546,6 +598,19 @@ def text_detail(request):
             word_inthistext=None
             # STRING CONSTANTS:
             op = 'new'
+            text_title = '' # used by edit section
+            created_date = None
+            text_id = None
+
+        elif 'new_webpage' in request.GET.keys():
+            # must display the form for the first time:
+
+            currentlang = Languages.objects.get(id=currentlang_id)
+            f = WebpagesForm(request.user, initial = {'owner': request.user, 'language':currentlang}) 
+
+            word_inthistext=None
+            # STRING CONSTANTS:
+            op = 'new_webpage'
             text_title = '' # used by edit section
             created_date = None
             text_id = None
@@ -646,7 +711,7 @@ def text_detail(request):
             Sentences.objects.filter(id=deleted_or_edited_word.sentence.id).update(sentencetext=sentence_sentencetext)
 
         # common for edit/delete a word or display the editable text
-        if 'new' not in request.GET.keys(): 
+        if 'new' not in request.GET.keys() and 'new_webpage' not in request.GET.keys(): 
             f = TextsForm(request.user, instance=text)
             word_inthistext = Words.objects.filter(text=text).order_by('sentence_id', 'order')
             # STRING CONSTANTS:

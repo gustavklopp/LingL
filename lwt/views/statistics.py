@@ -217,11 +217,12 @@ def statistics(request):
         
     # get the current database size:
     database_size = get_word_database_size(request)
-
+    # get the appversion:
+    appversion = get_appversion(request)
     ########### Time filtering ###########################
 
     return render(request, 'lwt/statistics.html',{
         'filterlangs':filterlangs, 'currentlang_id':currentlang_id,
-         'database_size':database_size
+         'database_size':database_size, 'appversion':appversion 
         })
 

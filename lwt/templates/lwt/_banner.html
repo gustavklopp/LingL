@@ -1,6 +1,5 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
-{% load appversion %}{# custom tag which allows to display Django and my app version #}
 
 <div class="d-flex">
 
@@ -18,8 +17,14 @@
 {% else %}<a href="/accounts/login">Login</a>{% endif %}
 </div>
 
-<div class="ml-auto small">{% version_date as version %}
-{% blocktrans %}This is LingL <span class="font-weight-bold">Version {{ version }}</span>&nbsp;&nbsp;{% endblocktrans %}
+<div class="ml-auto small">
+
+{% if appversion.is_outdated %}
+<img src="{% static 'lwt/img/icn/exclamation-red.png'%}" alt="exclamation-red" /> <span title="{% trans "Your LingL version is outdated. Go to 'https://github.com/gustavklopp/LingL/releases' to download the latest version" %}" class="bg-warning">
+{% blocktrans with current_date=appversion.current_date  %}This is LingL <span class="font-weight-bold">Version {{ current_date }}</span>&nbsp;&nbsp;{% endblocktrans %}</span>
+{% else %}
+<span title="{% trans 'You have the latest release.' %}">{% blocktrans with current_date=appversion.current_date %}This is LingL <span class="font-weight-bold">Version {{ current_date }}</span>&nbsp;&nbsp;{% endblocktrans %}</span>
+{% endif %}
 </div>
 
 </div>

@@ -14,11 +14,11 @@ mysqlclient = "*"
 six = "*"
 dj-static = "*"
 django-crispy-forms = "*"
-cx-freeze = "*"
 waitress = "*"
 selenium = "*"
 factory-boy = "*"
 pyinstaller = "*"
+wxpython = "*"
 
 [dev-packages]
 

@@ -236,6 +236,7 @@ MESSAGE_TAGS = {
 # FOR TESTING
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST, EMAIL_PORT, EMAIL_HOST_USER, EMAIL_HOST_PASSWORD = 'localhost', 1025, None, None
+ACCOUNT_EMAIL_VERIFICATION = "none"
 
 #Temporate solution because bug in django-allauth with Django 3.x "HINT: Configure the DEFAULT_AUTO_FIELD setting "
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

@@ -7,6 +7,7 @@ from lwt.views.profile import *
 from lwt.views.language import *
 from lwt.views.text import *
 from lwt.views.text_read import *
+from lwt.views.webpage_read import *
 from lwt.views.term import *
 from lwt.views.term_list import *
 from lwt.views.termform import *

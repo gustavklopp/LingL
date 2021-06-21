@@ -1,0 +1,14 @@
+<div id="thetext" {% if text.language.righttoleft %}style="text-align:right;"{% endif %}><p style="{% if text.language.removespaces %}word-break:break-all;{% endif %}font-size:{{ text.language.textsize }}%;line-height: 1.4; margin-bottom: 10px;">
+
+{#   DISPLAYING THE TEXT      #}
+{# the 'if wo.order == 0... is to add a space after a delimiter: aering the text! #}
+{% for wo in word_inthistext %}{% if wo.isCompoundword and wo.isnotword %}{% else %}{% if wo.isnotword %}<span >{{ wo.wordtext|linebreaksbr }}</span>{% else %}{% if wo.order == 0 and not forloop.first %} {% endif %}
+<span woid="{{ wo.id }}" wostatus={{ wo.status }} wowordtext="{{ wo.wordtext }}" wotranslation="{{ wo.translation }}" 
+{% if wo.language.has_romanization %}woromanization="{{ wo.romanization }}"
+{% else %} woromanization="" {% endif %} iscompoundword="{{ wo.isCompoundword }}" show_compoundword="{{ wo.show_compoundword }}" 
+{% if wo.isCompoundword %} cowo_id_list="{{ wo.compoundword.wordinside_order }}" cowordtext={{ wo.compoundword.wordtext }} cowostatus="{{ wo.compoundword.status }}" cowotranslation="{{ wo.compoundword.translation }}" {% if wo.language.has_romanization %}coworomanization="{{ wo.compoundword.romanization }}"{% endif %}  
+{% else %} cowordtext="" cowostatus="" cowotranslation="" {% if wo.language.has_romanization %}coworomanization=""{% endif %} 
+{% endif %} {% if wordtag|length != 0 %} [{{ wordtag|join:"," }}]{% endif %}>{{ wo.wordtext }}</span>{% endif %}{% endif %}{% endfor %}
+{# END -- DISPLAYING THE TEXT #}
+
+<span id="totalcharcount" class="hide">{{ currcharcount }}</span></p><p style="font-size:{{ text.textsize }}%;line-height: 1.4; margin-bottom: 300px;">&nbsp;</p></div>

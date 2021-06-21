@@ -292,7 +292,9 @@ def backuprestore(request):
             
     # get the current database size:
     database_size = get_word_database_size(request)
+    # get the appversion:
+    appversion = get_appversion(request)
 
     return render(request, 'lwt/backuprestore.html', {'form': form,
-                                                 'database_size':database_size})
+                                                 'database_size':database_size, 'appversion':appversion})
 

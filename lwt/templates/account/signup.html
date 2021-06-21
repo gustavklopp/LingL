@@ -31,7 +31,21 @@
   {% if redirect_field_value %}
   <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
   {% endif %}
+<!-- <script type="text/javascript"> 
+// make the field 'is_subscribed' enabled when there's text inside email 
+$(document).ready(function(e) { 
+	$('input[name="email"]').on('input', function(){ 
+		if($(this).val() != ''){ 
+			$('input[name="is_subscribed"]').prop('disabled', false); 
+			$('input[name="is_subscribed"]').prop('checked', true); 
+		} else { 
+			$('input[name="is_subscribed"]').prop('disabled', true); 
+			$('input[name="is_subscribed"]').prop('checked', false); 
+		} 
+	}); 
 
+}); 
+</script>	--> 
 {% endblock content %}
 
 {% block footlicence %}

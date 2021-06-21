@@ -67,14 +67,15 @@ function ajax_submit_word(event, op, wo_id, language_id, simwo_id=null){
 					$('div#overlibDiv').remove();
 
 					// if compound word, we must move past the last element of the compound word
-					var sel_word = $('.clicked');
-					var ctrl_sel_word = $('.ctrlclicked').last();
+					var DOCUMENT = window.DOCUMENT;
+					var sel_word = DOCUMENT.find('.clicked');
+					var ctrl_sel_word = DOCUMENT.find('.ctrlclicked').last();
 					if (ctrl_sel_word.length != 0){
 						sel_word = ctrl_sel_word
-						$('.clicked').removeClass('clicked');
+						DOCUMENT.find('.clicked').removeClass('clicked');
 					}
 					// and remove the compoundword highlights:
-					$('.ctrlclicked').removeClass('ctrlclicked');
+					DOCUMENT.find('.ctrlclicked').removeClass('ctrlclicked');
 					
 					//and move next word
 					_move_next_word(sel_word, event);
@@ -113,6 +114,9 @@ function toggle_makeit_similarword(e, simwo_id, wo_id){
 /* helper func for ajax_clicked_word and ajax_ctrlclicked_compoundword 
     Display the list of possible similar words:    */
 function _display_possiblesimilarword(data, wo_id){
+	// case for MacOS:
+	var is_Mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+
 	var possiblesimilarword = data['possiblesimilarword'];
 
 	// display the possible similar words
@@ -132,8 +136,13 @@ function _display_possiblesimilarword(data, wo_id){
 				'<i class="fa fa-plus-circle" aria-hidden="true"></i> '+
 				val.wordtext +'</span>';
 			if (val.translation){ r += ' (= '+val.translation+')'; }
+			if (is_Mac){
+			var r_title = gettext('[]keyboard shortcut] (it should have focus though: ⌥+D to toggle focus with the Dict.)');
+			} else {
+			var r_title =gettext('[]keyboard shortcut] (it should have focus though: AltGr+D to toggle focus with the Dict.)'); 
+			}
 			r += ' ['+gettext('in : ')+'"'+val.customsentence+'"]'+
-				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+gettext('[]keyboard shortcut] (it should have focus though: AltGr+D to toggle focus with the Dict.)')+'">['+(key+1)+']</span></li>';
+				' <span class="text-muted kb_short_'+(key+1)+'" data-simwo_id="'+val.id+'" title="'+r_title+'">['+(key+1)+']</span></li>';
 		});
 		r += '</ul>';
 	}

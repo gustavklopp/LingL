@@ -1,6 +1,5 @@
 {% load static %}
 {% load i18n %} {# used for internationalization #}
-{% load appversion %}{# custom tag which allows to display Django and my app version #}
 {% load djangoversion %}
 {% load pythonversion %}
 <!DOCTYPE html>
@@ -17,8 +16,6 @@
         </title>
         	<link rel="icon" href="{% static 'lwt/img/site_icon_16x16.png' %}" type="image/png" />
         	<!--  bootstrap -->
-			<!-- Latest compiled and minified CSS -->
-			<link rel="stylesheet" href="{% static 'lwt/css/bootstrap4.0.min.css' %}">
 
         	<!--  jquery-ui. used by tagsinputs -->
 			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/jquery-ui.1.12.1.min.css' %}">
@@ -28,6 +25,8 @@
 			<!--  local css -->
 			<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/styles.css' %}">
         {% block stylesheets %}  
+			<!-- Latest compiled and minified CSS -->
+			<link rel="stylesheet" href="{% static 'lwt/css/bootstrap4.0.min.css' %}">
         {% endblock stylesheets %}
 
         	<!-- internationalization in javascript -->
@@ -41,8 +40,6 @@
 			<!--  local js -->
 			<script type="text/javascript" src="{% static 'lwt/js/pgm.js' %}" charset="utf-8"></script>
 			<script type="text/javascript" src="{% static 'lwt/js/_utilities.js' %}" charset="utf-8"></script>
-			<script type="text/javascript" src="{% static 'lwt/js/ajax_text_read.js' %}" charset="utf-8"></script>
-			<script type="text/javascript" src="{% static 'lwt/js/ajax_termform.js' %}" charset="utf-8"></script>
         {% block javascript %}
         {% endblock javascript %}
 		{% block extrajavascript %}

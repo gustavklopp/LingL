@@ -27,7 +27,7 @@ from lwt.forms import make_languagesform
 
 # helper functions:
 from lwt.views._setting_cookie_db import *
-from lwt.views._utilities_views import get_word_database_size
+from lwt.views._utilities_views import get_word_database_size, get_appversion
 
 
 # display a table containing all the languages of the User
@@ -81,10 +81,12 @@ def language_list(request):
 
     # get the current database size:
     database_size = get_word_database_size(request)
-
+    # get the appversion:
+    appversion = get_appversion(request)
+    
     return render(request, 'lwt/language_list.html',{'all_languages_dict':all_languages_dict,
                                                      'currentlang_id':currentlang_id,
-                                                 'database_size':database_size})
+                                                 'database_size':database_size, 'appversion':appversion})
 
 # languages detail: edit/create a language
 @login_required
@@ -197,6 +199,8 @@ def language_detail(request):
 
     # get the current database size:
     database_size = get_word_database_size(request)
+    # get the appversion:
+    appversion = get_appversion(request)
 
     return render(request, template_name='lwt/language_detail.html', context={
         'all_languages':all_languages, 'form': f,
@@ -204,7 +208,7 @@ def language_detail(request):
 #         'extra_field_list':extra_field_list, 
 #         'lang_id': lang_id, # used to post extra field with the correct language
         # STRING CONSTANTS:
-        'op':op, 'database_size':database_size}
+        'op':op, 'database_size':database_size, 'appversion':appversion}
 #         , renderer=None,
      
      )

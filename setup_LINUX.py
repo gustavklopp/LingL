@@ -568,7 +568,6 @@ buildOptions = dict(
             'lwt.migrations',
             'lwt.models',
             'lwt.templatetags',
-            'lwt.templatetags.appversion',
             'lwt.templatetags.debug',
             'lwt.templatetags.djangoversion',
             'lwt.templatetags.pythonversion',
@@ -727,10 +726,12 @@ buildOptions = dict(
 #             'lwt.migrations.0023_remove_texts_archived_txt',
 #             'os.path',
 #             'sitecustomize',
+                'wx',
             ], 
 #         excludes = ['tkinter',],
         excludes = [],
         include_files = [
+                'LingL_app.ico',
 #                 'appversion.txt',
                 #('./libcrypt.so.2', 'libcrypt.so.2'),
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined

@@ -21,7 +21,7 @@ from lwt.models import *
 from lwt.forms import ProfileForm
 
 # helper functions:
-from lwt.views._utilities_views import get_word_database_size
+from lwt.views._utilities_views import get_word_database_size, get_appversion
 
 
 
@@ -38,8 +38,10 @@ def profile(request):
 
         # get the current database size:
         database_size = get_word_database_size(request)
+        # get the appversion:
+        appversion = get_appversion(request)
 
-        return render(request, 'lwt/profile.html', {'form': f, 'database_size':database_size })
+        return render(request, 'lwt/profile.html', {'form': f, 'database_size':database_size, 'appversion':appversion })
     
     # processing the form
     elif request.method == 'POST':
@@ -63,7 +65,10 @@ def profile(request):
             f = ProfileForm(instance = user) 
             # get the current database size:
             database_size = get_word_database_size(request)
+            # get the appversion:
+            appversion = get_appversion(request)
+
             messages.add_message(request, messages.ERROR, _('Please correct this'))
-            return render(request, 'lwt/profile.html', {'form': f, 'database_size':database_size })
+            return render(request, 'lwt/profile.html', {'form': f, 'database_size':database_size, 'appversion':appversion })
 
 

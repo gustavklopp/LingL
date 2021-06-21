@@ -270,6 +270,81 @@ class TextsForm(forms.ModelForm):
         }
     
 
+''' saving a webpage in text_detail (new or edited text)'''
+class WebpagesForm(forms.ModelForm):
+#     id = forms.IntegerField()
+    language = forms.ModelChoiceField(queryset=None, required=True)
+    owner = forms.ModelChoiceField(MyUser.objects.all(), required=True)
+    lastopentime = forms.DateTimeField(required=False)
+    title = forms.CharField(max_length=200,required=True)
+    audiouri = forms.URLField(required=False,max_length=1000)
+    texttags = tag_fields.TagsInputField( Texttags.objects.all(),
+                                            create_missing=True,
+                                            required=False 
+                                            ) 
+    
+    def __init__(self, owner, *args, **kwargs):
+        self.owner = owner
+        super(WebpagesForm, self).__init__(*args,**kwargs)
+  
+        # the dropdown menu for Languages only shows the languages owned by User
+        self.fields['language'].queryset = Languages.objects.filter(owner=self.owner)
+#         self.fields['texttags'].queryset = Texttags.objects.filter(owner=owner)
+        self.fields['texttags'].owner = owner
+        
+        self.fields['title'].label = _('URL of the webpage')
+
+        self.helper = FormHelper()
+        self.helper.form_class = 'form-horizontal text_detail'
+        self.helper.label_class = 'col-md-3'
+        self.helper.field_class = 'col-md-9'
+#         self.helper.add_input(Button(_('Cancel'), css_class='btn',
+#                                       onclick="{resetDirty(); location.href='{% url 'text_list' %}?page=1';}"))
+#         self.helper.add_input(Button(_('Save and Open'), css_class='btn'))
+#         self.helper.add_input(Submit('Save', 'save'))
+        self.helper.add_input(Submit('save', _('save')))
+        self.helper.add_input(Submit('save_read_webpage', _('save and read it')))
+        self.helper.layout = Layout(
+            Field('owner', type="hidden"),
+            'language', 'title','audiouri','texttags') # to automatically put request.user in the database
+
+        # for editing the text
+        self.helper_edit1 = FormHelper()
+        self.helper_edit1.label_class = 'col-md-3'
+        self.helper_edit1.field_class = 'col-md-9'
+        self.helper_edit1.form_tag = False
+        self.helper_edit1.layout = Layout(
+            Field('owner', type="hidden"),
+            Field('id', type="hidden"),
+            'language', 'title')
+        self.helper_edit2 = FormHelper()
+        self.helper_edit2.label_class = 'col-md-3'
+        self.helper_edit2.field_class = 'col-md-9'
+        self.helper_edit2.form_tag = False
+        self.helper_edit2.layout = Layout(
+            Field('text', type="hidden"),
+            Field('lastopentime', type="hidden"),
+            'audiouri','texttags')
+        self.helper_edit2.add_input(Submit('save', _('save')))
+        self.helper_edit2.add_input(Submit('save_read_webpage', _('save and read it')))
+ 
+#         if hasattr(self.Meta, 'fields'): delattr(self.Meta, 'fields')
+
+    def clean(self):
+        super(WebpagesForm, self).clean()
+        data = self.cleaned_data
+#         if re.search(r'^[-!$%^&*()_+|~=`{}\[\]:";\'<>?,.\/0-9 ]*$', data['text']):
+#             message = _('Text should contain characters, not only symbols')
+#             self.add_error('text', forms.ValidationError(message))
+        return data
+ 
+    class Meta:
+        model = Texts
+        fields = 'owner', 'language', 'title','audiouri','texttags'
+        widget= {
+            'texttags': tag_widgets.TagsInputWidget, # getting the tags fo the texts (using Django tagsinput app)
+        }
+
 class WordsForm(forms.ModelForm):
     status = forms.IntegerField()  
     translation = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}),required=False)
@@ -413,6 +488,9 @@ class MySignUpForm(SignupForm):
         # LEARNING_LANG_CHOICES has type like: <class 'list'>: 
         #              [('zh-cn+Chinese', localized('Chinese')), ('en+English', localized('English')),....
         AdminUser_learning_lang_id = forms.ChoiceField(choices=LEARNING_LANG_CHOICES, required=True) # the language I want to learn
+#         is_subscribed = forms.BooleanField(initial=False, disabled=True, required=False)
+#         field_order = ('username','email', 'is_subscribed', 'origin_lang_code', 'AdminUser_learning_lang_id', 
+#                   'password1', 'password2')
     except:
         pass
 
@@ -429,6 +507,7 @@ class MySignUpForm(SignupForm):
         self.helper.field_class = 'col-md-3'
         self.fields['origin_lang_code'].label = _('I know')
         self.fields['AdminUser_learning_lang_id'].label = _('I want to learn')
+#         self.fields['is_subscribed'].label = _('(if email) I agree to receive by email notifications of major updates and reports about LingLibre.')
         self.helper.add_input(Submit('signup', _('Sign Up'), css_class='btn btn-primary'))
 
 
@@ -479,10 +558,12 @@ class ProfileForm(forms.ModelForm):
         self.helper.form_class = 'form-horizontal text_detail'
         self.helper.label_class = 'col-md-3' 
         self.helper.error_text_inline = True
+#         self.fields['is_subscribed'].label = _('subscribed to the mailing list')
         self.fields['origin_lang_code'].label = _('I know')
         self.helper.add_input(Submit('signup', _('Save Profile'), css_class='btn btn-primary'))
 
     class Meta:
         model = MyUser
+#         fields = ('username','email', 'is_subscribed', 'date_joined', 'origin_lang_code')
         fields = ('username','email', 'date_joined', 'origin_lang_code')
         

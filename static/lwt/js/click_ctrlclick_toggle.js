@@ -3,12 +3,13 @@ function clickword(event) { // check whether a word is clicked (and +ctrl-clicke
 	var is_Mac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
 
 	// change the color when clicked depending on a click or Ctrl-click event:
+	var DOCUMENT = window.DOCUMENT;
 	if ((!is_Mac && event.ctrlKey) || (is_Mac && event.metaKey)){
 		$(this).addClass('ctrlclicked');
 	} else {
-		$('.clicked').removeClass('clicked'); // only one word can be clicked at one time
-		$('.ctrlclicked').removeClass('ctrlclicked'); 
-		$('.firstword').removeClass('firstword'); 
+		DOCUMENT.find('.clicked').removeClass('clicked'); // only one word can be clicked at one time
+		DOCUMENT.find('.ctrlclicked').removeClass('ctrlclicked'); 
+		DOCUMENT.find('.firstword').removeClass('firstword'); 
 		$(this).addClass('clicked');
 		// reset the global variables needed for storing compound words:
 		compoundword_id_list = []; 

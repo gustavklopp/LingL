@@ -77,7 +77,17 @@ Future versions are regularly provided.
    5. *(optional)* same restore step 5 as the 'standalone version'.
 
 
-## 4. Developers:
+## 4. Missing a feature? Request it!
+
+This is a hobby project made only by volunteers in their free time. All features of this software are implemented because they 
+suit the needs of these volunteers at some point.
+ 
+If you need a special feature and don't want to wait that somebody feels the need to code it, you can still try to fund it! It's easy: 
+
+Create your Feature request on the [Issues page](https://github.com/gustavklopp/LingL/issues). Then go to [Issuehunt](https://issuehunt.io/r/gustavklopp/LingL/issues) and make a pledge for this feature (Consider a reasonable amount).
+
+
+## 5. Developers:
 
 Discovering a new code is always a challenge but I've done my best to welcome newcomers:
 - the code is HIGHLY documented (as much as code as comments in some place)

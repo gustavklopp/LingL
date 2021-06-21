@@ -118,7 +118,8 @@
 		<button id="archive" type="button" class="btn btn-default" title="{% trans 'archive the selected text(s)' %}">
 			<i class="fa fa-archive" aria-hidden="true"></i>
 		</button>
-		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0" title="{% trans "create a new text" %}" ><img src="{% static 'lwt/img/icn/new-text.png' %}" alt="New" /> {% trans "New Text " %}...</a> 
+		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0" title="{% trans "create a new text" %}" ><img src="{% static 'lwt/img/icn/new-text.png' %}" alt="New" /> {% trans "New Text" %}...</a> 
+		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new_webpage=0" title="{% trans "read a new webpage" %}" ><img src="{% static 'lwt/img/icn/webpage_16px.png' %}" alt="New_webpage" /> {% trans "Read a new webpage" %}...</a> 
 	</div>
     {# Note: the body of the text_table is loaded tx to the 'load_texttable' func, found in `text.py` #}	
 	<table id="text_table" data-toggle="table" data-sort-name="title" data-sort-order="asc"
@@ -223,7 +224,7 @@
                     $(this).remove();
                 },
                // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
-            });
+            }); // end of '.dialog({'
 		} // end of 'if (ids_to_delete.length...'
 	}); // end of '$("button#delete").click(function(){...'
 		

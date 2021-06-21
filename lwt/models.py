@@ -51,6 +51,7 @@ class MyUser(AbstractUser):
     # (NB: it's NOT LANGUAGES_CODE['django_code'] since it could be a problem when creating
     # dicturi (for example with Chinese since Django_code is 'zh-hans')
     origin_lang_code = models.CharField(max_length=40)
+    #is_subscribed = models.BooleanField(default=False)
 
     objects = MyUserManager() # use to call the parent foreign key by its name (or title , or etc...)
 
@@ -175,6 +176,7 @@ class Texts(BaseModel):
     archived = models.BooleanField(default=False)
     wordcount = models.IntegerField(default=0, blank=True, null=True)
     wordcount_distinct = models.IntegerField(default=0, blank=True, null=True) # same as 'wordcount' but without written similarly word
+    is_webpage = models.BooleanField(default=False)
 
     objects = TextsManager() # use to call the parent foreign key by its name (or title , or etc...)
     
@@ -336,6 +338,7 @@ class Words(BaseModel):
     show_compoundword = models.BooleanField(default=False) # showing compoundword or single word in text_read
     state = models.BooleanField(default=False) # used to export2anki and selectivebackup checkox
     extra_field = models.TextField(max_length=500, blank=True, null=True) # additional, custom field. stored in json format a dict
+    webpagesection = models.IntegerField(default=0)
 
     objects = WordsManager() # use to call the parent foreign key by its name (or title , or etc...)
 
