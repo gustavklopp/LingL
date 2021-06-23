@@ -609,7 +609,6 @@ buildOptions = dict(
 #             'django.contrib.admin.templatetags.admin_static',
 #             'django.contrib.admin.templatetags.log',
             'lwt.templatetags',
-            'lwt.templatetags.appversion',
             'lwt.templatetags.debug',
             'pdb',
             'cmd',

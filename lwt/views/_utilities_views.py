@@ -36,7 +36,7 @@ def get_appversion(request):
         # (this release date txt file is updated when building the Linux version)
         appversiontxt_path = os.path.join(settings.BASE_DIR, 'lwt', 'appversion.txt')
         with open(appversiontxt_path, 'r', encoding="utf8") as appversion_f:
-            current_date = appversion_f.read()
+            current_date = appversion_f.read().strip()
 
         # get the date of the latest release on GIthub:
         resp = requests.get('https://api.github.com/repos/gustavklopp/lingl/releases')

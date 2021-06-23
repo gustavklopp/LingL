@@ -728,8 +728,7 @@ buildOptions = dict(
 #             'sitecustomize',
                 'wx',
             ], 
-#         excludes = ['tkinter',],
-        excludes = [],
+        excludes = ['tkinter', 'Tkinter'],
         include_files = [
                 'LingL_app.ico',
 #                 'appversion.txt',
@@ -749,7 +748,7 @@ executables = [
 # define the appversion and save it:
 today = date.today().strftime("%Y.%m.%d")
 appversiontxt_path = os.path.join(os.getcwd(), 'lwt','appversion.txt')
-with open(appversiontxt_path, 'r', encoding="utf8") as appversion_f:
+with open(appversiontxt_path, 'w', encoding="utf8") as appversion_f:
     appversion_f.write(today)
 
 
