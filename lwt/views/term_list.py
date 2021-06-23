@@ -292,6 +292,18 @@ def term_list(request):
         text_filter_json = getter_settings_cookie('text_filter', request)
     text_filter = [] if not text_filter_json else json.loads(text_filter_json)
     text_filter = [int(i) for i in text_filter]
+    texts = Texts.objects.filter(owner=request.user).all().order_by('language','title')
+    # creating the texts_list
+    text_langIds_boldlist  = []
+    text_list_empty = True
+    for text in texts:
+        # get the languages which are found associated to this text
+        if text.language.id in lang_filter: # some languages are common
+            text_langIds_boldlist.append({'text':text, 'bold': True, 'lang': text.language.id})
+        else:
+            text_langIds_boldlist.append({'text':text, 'bold': False, 'lang': text.language.id})
+            text_list_empty = False
+
     ################## STATUS FILTERING ######################################################################################
     if 'status' in request.GET.keys():
         status_filter_json = request.GET['status']
@@ -356,8 +368,6 @@ def term_list(request):
     languages = Languages.objects.filter(owner=request.user).all().order_by('name')
     # the checked checkboxes infulence the list of texts and statuses to display.
 
-    texts = Texts.objects.filter(owner=request.user).order_by('language').all()
-
     # Manage extra field:
     extra_field_json = Words.objects.filter(owner=request.user).values_list('extra_field', flat=True).first()
     if extra_field_json:
@@ -371,11 +381,11 @@ def term_list(request):
     appversion = get_appversion(request)
 
     return render(request, 'lwt/term_list.html',
-                   {'languages':languages, 'texts':texts,
+                   {'languages':languages, 
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
 
                     'lang_filter': lang_filter, 
-                    'text_filter': text_filter, 
+                    'text_filter': text_filter, 'text_LangIds_boldlist':text_langIds_boldlist,
                     'status_filter': status_filter, 'status_langIds_boldlist':status_langIds_boldlist,
                     'wordtag_filter': wordtag_filter, 'wordtags_list':wordtags_list, 'wordtags_list_empty':wordtags_list_empty,
                     'compoundword_filter':compoundword_filter, 

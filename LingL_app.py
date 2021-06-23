@@ -42,13 +42,16 @@ frm = wx.Frame(None, title='LingLibre', style=wx.DEFAULT_FRAME_STYLE, size=(250,
 cwd = os.getcwd()
 system = platform.system().lower()
 if system == 'windows' or system == 'linux':
-    lingl_image_path = os.path.join(cwd,'lib','lwt','static','lwt','img','site_icon_16x16.png')
+    loc = wx.IconLocation('LingL_app.ico')
+    loc = wx.IconLocation('LingL_app.ico')
+    frm.SetIcon(wx.Icon(loc))
 
-else: # MacOS
-    lingl_image_path = os.path.join(cwd,'LingL','lwt','static','lwt','img','site_icon_16x16.png')
+else: # MacOS: BUG... not working
+    loc = wx.IconLocation('LingL_app.icns')
+#     loc = wx.IconLocation('LingL_app.ico')
+#     frm.SetIcon(wx.Icon(loc))
 # photo = PhotoImage(file = lingl_image_path)
 # window.iconphoto(False, photo)
-frm.SetIcon(wx.Icon('LingL_app.ico'))
 
 def clicked(event):
     webbrowser.open('http://'+page)

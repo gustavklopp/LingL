@@ -152,8 +152,8 @@ $.ajax({
 });
 });
 
+// if click on 'all languages', it checks all the languages:
 function check_all(){
-	// if click on 'all languages', it checks all the languages:
 	$.each($("#ul_language input:not(:checked)"), function(){
 		$(this).prop('checked', true);	
 	});

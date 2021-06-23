@@ -114,6 +114,7 @@ def import_oldlwt(owner, data_file):
 
         # Inserting into Texts. Texts are archived by default
         insertinto_str = 'INSERT INTO texts VALUES('
+        newtext_to_create = []
         if line.startswith(insertinto_str):
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
@@ -123,19 +124,19 @@ def import_oldlwt(owner, data_file):
                 text = Texts.objects.get(owner=owner, title=el[2])
                 el[2] = text.title + ' (2)'
             except:
-                text = Texts.objects.create(     owner = owner,
-                                                 language  = languages_dict[el[1]],
-                                                 title = el[2],
-                                                 text = el[3],
-                                                 annotatedtext = el[4],
-                                                 audiouri = el[5],
-                                                 sourceuri = el[6],
-                                            #     texttags = models.ManyToManyField(Texttags,related_name='texthavingthistag') 
-                                                 archived = True
-                                         )
-            texts_dict[el[0]] = text
-            # create the sentence, and words based upon this text 
-#             splitText(text)
+                text = Texts(owner = owner,
+                             language  = languages_dict[el[1]],
+                             title = el[2],
+                             text = el[3],
+                             annotatedtext = el[4],
+                             audiouri = el[5],
+                             sourceuri = el[6],
+                        #     texttags = models.ManyToManyField(Texttags,related_name='texthavingthistag') 
+                             archived = True
+                             )
+                newtext_to_create.append(text)
+            texts_dict[el[0]] = text.natural_key()
+        Texts.objects.bulk_create(newtext_to_create)
             
         # adding texttags to the texts:
         insertinto_str = 'INSERT INTO texttags VALUES('
@@ -146,8 +147,11 @@ def import_oldlwt(owner, data_file):
             el = [e.strip('\'') for e in el] # there's "'field'" for each field. remove the extra ''
             txid = el[0]
             txtagid = el[1]
-            texts_dict[txid].texttags.add(texttags_dict[txtagid])
-            texts_dict[txid].save()
+            # we can´t  directly use texts_dict[txid] to get the text because bulk_create doesn't associate it with an id
+            txttag_to_update_text = Texts.objects.get_by_natural_key(*(texts_dict[txid]))
+            txttag_to_update_text.texttags.add(texttags_dict[txtagid])
+            txttag_to_update_text.save()
+#             texts_dict[txid].save()
         
         # Inserting into Wordtags
         insertinto_str = 'INSERT INTO tags VALUES('

@@ -20,7 +20,6 @@ from lwt.views._nolang_redirect_decorator import *
 # helper functions:
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
-from tkinter.constants import ACTIVE
 
 
 '''provide a different colors for each categories'''

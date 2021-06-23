@@ -119,7 +119,7 @@
 			<i class="fa fa-archive" aria-hidden="true"></i>
 		</button>
 		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0" title="{% trans "create a new text" %}" ><img src="{% static 'lwt/img/icn/new-text.png' %}" alt="New" /> {% trans "New Text" %}...</a> 
-		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new_webpage=0" title="{% trans "read a new webpage" %}" ><img src="{% static 'lwt/img/icn/webpage_16px.png' %}" alt="New_webpage" /> {% trans "Read a new webpage" %}...</a> 
+		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new_webpage=0" title="{% trans "read a new webpage" %}" ><img src="{% static 'lwt/img/icn/new-webpage_16px.png' %}" alt="New_webpage" /> {% trans "Read a new webpage" %}...</a> 
 	</div>
     {# Note: the body of the text_table is loaded tx to the 'load_texttable' func, found in `text.py` #}	
 	<table id="text_table" data-toggle="table" data-sort-name="title" data-sort-order="asc"
@@ -137,11 +137,7 @@
 	<th data-field="read">Read</th>
 	<th data-field="edit">Edit</th>
 	{% endblocktrans %}
-	{% if count_of_is_strong != 1 %}
-	{% if lang_filter|length != 1 %}
-	<th data-field="language" data-sortable="true">{% trans 'Lang.' %}</th>
-	{% endif %}
-	{% endif %}
+	<th data-field="language" data-sortable="true" data-visible="{% if lang_filter|length == 1 %}false{% else %}true{% endif %}">{% trans 'Lang.' %}</th>
 	<th data-field="title_tag" data-sortable="true">{% trans 'Title [Tags] / Audio:' %}&nbsp;<img src="{% static 'lwt/img/icn/speaker-volume.png' %}" title="{% trans "With Audio" %}" alt="With Audio" />{% trans ', Src.Link:' %}&nbsp;<img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Source Link available" %}" alt="Source Link available" /></th>
 	<th title="{% trans 'Total number of words (no duplicate words)' %}" data-field="total_words" data-sortable="true" data-sorter="numberSorter">{% trans 'Tot.<br />Wo.' %}</th>
 	<th title="{% trans 'Total number of saved words (no duplicate words) (& of Compound words)' %}" data-field="saved_words" data-sortable="true" data-sorter="numberSorter">{% trans 'Saved<br />Wo (& Expr.)' %}</th>

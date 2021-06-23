@@ -610,7 +610,6 @@ buildOptions = dict(
 #             'django.contrib.admin.templatetags.admin_static',
 #             'django.contrib.admin.templatetags.log',
             'lwt.templatetags',
-            'lwt.templatetags.appversion',
             'lwt.templatetags.debug',
             'pdb',
             'cmd',
@@ -725,9 +724,12 @@ buildOptions = dict(
 #             'dj-static',
             'setuptools',
             'waitress',
+	    'wx',
             ], 
 #         excludes = ['tkinter',],
         include_files = [
+              'LingL_app.ico',
+              'LingL_app.icns',
 #             'appversion.txt',
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined
 #                 os.path.join('templates','allauth'),
@@ -738,7 +740,8 @@ base = 'Win32GUI' if sys.platform=='win32' else None
 
 executables = [
     Executable('LingL_app.py', base=base,
-        icon="LingL_app.ico", 
+        #icon="LingL_app.ico", 
+        icon="LingL_app.icns", 
         target_name='LingLibre')
 ]
 

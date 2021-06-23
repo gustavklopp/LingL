@@ -15,7 +15,7 @@ from django.utils.translation import ngettext
 from django.templatetags.static import static # to use the 'static' tag as in the templates
 # second party:
 import json
-import datetime
+from datetime import timedelta
 import re
 import platform
 # third party
@@ -45,7 +45,7 @@ def _textANDwebpage_common(request, text, text_id):    # Saving the timestamp fo
     # with the basal status of '1' to +1. Max level is '100'.
     if text.lastopentime: # don't run it if the text has never been opened before
         time_from_lastopen = timezone.now() - text.lastopentime
-        if time_from_lastopen > datetime.timedelta(hours=24):
+        if time_from_lastopen > timedelta(hours=24):
             learning_inthistext_groupers = Grouper_of_same_words.objects.filter(
                Q(grouper_of_same_words_for_this_word__text=text )&
                Q(grouper_of_same_words_for_this_word__status__gte=1)).all()

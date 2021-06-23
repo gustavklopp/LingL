@@ -292,7 +292,7 @@ class WebpagesForm(forms.ModelForm):
 #         self.fields['texttags'].queryset = Texttags.objects.filter(owner=owner)
         self.fields['texttags'].owner = owner
         
-        self.fields['title'].label = _('URL of the webpage')
+        self.fields['title'].label = _('URL of the webpage <br><span class="small">(Warning: paywall-blocked websites won\'t work. Go to the website and copy-paste the content in this case)</span>')
 
         self.helper = FormHelper()
         self.helper.form_class = 'form-horizontal text_detail'

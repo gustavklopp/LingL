@@ -51,14 +51,18 @@
 	<div class="col-md">
 <a class="headCaret unstyled" href="#" data-toggle="collapse" data-target="#ul_text">{% trans 'Texts ' %} :</a>
 <ul id="ul_text" class="collapse show">
+	<button onclick="toggle_check_text(this)" type="button" id="toggle_text"  class="btn btn-outline-secondary btn-sm">
+		<span id="all_text" class="font-weight-bold">{% trans 'All' %}</span>/
+		<span id="none_text" class="font-weight-normal">{% trans 'None' %}</span></button>
+	  </br>
 	<form id="filtertextform" method="POST" action="{% url 'text_list' %}">
 	{% csrf_token %}
-	{% for text in texts %}
-		<span data-langids="{{ text.language.id }}" {% if text.language.id not in lang_filter %}class="hidden"{% endif %}>	
-		<input type="checkbox" 
-		{% if text_filter|length == 0 or text.id in text_filter %}checked{% endif %} 
-		onclick="termlist_filter();" value="{{ text.id }}" class="unstyled">
-		 <span class="font-weight-bold">{{ text.title }}</span>
+	{% for tx_ls in text_LangIds_boldlist %}
+		<span>	
+		<input type="checkbox" data-langids="{{ tx_ls.lang }}" 
+		{% if text_filter|length == 0 or tx_ls.text.id in text_filter %}checked{% endif %} 
+		onclick="termlist_filter();" value="{{ tx_ls.text.id }}" class="unstyled">
+		 <span class="font-weight-{% if tx_ls.bold %}bold{% else %}normal{% endif %}">{{ tx_ls.text.title }}</span>
 		<br></span>
 	{% empty %}
 		<i>{% trans 'Nothing to display'%}</i>

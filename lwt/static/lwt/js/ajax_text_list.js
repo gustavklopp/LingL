@@ -10,11 +10,20 @@ function textlist_filter() {
 	// and also get the texts Ids for the chosen langs:
 	var chosen_lang = [];
 	var chosenlang_textIds = []
+	var checkedlang_nb = 0
 	$.each($("#filterlangform input:checked"), function(){
+		checkedlang_nb += 1;
 		chosen_lang.push(parseInt($(this).val()));
 		var textIds = $(this).data('textids');
 		chosenlang_textIds = chosenlang_textIds.concat(textIds);
+		
 	});
+	// show column or hide column language if there's more than one language
+	if (checkedlang_nb == 1){
+		$('#text_table').bootstrapTable('hideColumn', 'language');	
+	} else {
+		$('#text_table').bootstrapTable('showColumn', 'language');	
+	}
 	/*
 	//if nothing was chosen, display a warning
 	if (chosen_lang.length === 0){

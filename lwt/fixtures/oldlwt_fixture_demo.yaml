@@ -507,7 +507,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     title: The Man and the Dog
     text: 一天，一 个 男人 走 在 街上。 突然，他 看见 前面 有 一 只 黑色 的 大 狗，看起来 很 凶。 男人 非常 害怕，不敢 往前 走。 狗
@@ -6226,7 +6226,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6240,7 +6240,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6254,7 +6254,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6268,7 +6268,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6282,7 +6282,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6296,7 +6296,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6310,7 +6310,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6324,7 +6324,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6338,7 +6338,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6352,7 +6352,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6366,7 +6366,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -6380,7 +6380,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -7435,77 +7435,77 @@
     modified_date: 2021-06-08 14:11:46.743205+00:00
     owner:
     - lingl
-    id_string: '["\u72d7", ["Chinese2", "lingl"]]'
+    id_string: '["\u72d7", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:47.317001+00:00
     modified_date: 2021-06-08 14:11:47.317040+00:00
     owner:
     - lingl
-    id_string: '["\u7684", ["Chinese2", "lingl"]]'
+    id_string: '["\u7684", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:47.910784+00:00
     modified_date: 2021-06-08 14:11:47.910824+00:00
     owner:
     - lingl
-    id_string: '["\u5973\u4eba", ["Chinese2", "lingl"]]'
+    id_string: '["\u5973\u4eba", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:47.993612+00:00
     modified_date: 2021-06-08 14:11:47.993641+00:00
     owner:
     - lingl
-    id_string: '["\u4f60", ["Chinese2", "lingl"]]'
+    id_string: '["\u4f60", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:48.086965+00:00
     modified_date: 2021-06-08 14:11:48.087020+00:00
     owner:
     - lingl
-    id_string: '["\u4ed6", ["Chinese2", "lingl"]]'
+    id_string: '["\u4ed6", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:48.164552+00:00
     modified_date: 2021-06-08 14:11:48.164610+00:00
     owner:
     - lingl
-    id_string: '["\u7537\u4eba", ["Chinese2", "lingl"]]'
+    id_string: '["\u7537\u4eba", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:48.258269+00:00
     modified_date: 2021-06-08 14:11:48.258314+00:00
     owner:
     - lingl
-    id_string: '["\u8fd9\u65f6", ["Chinese2", "lingl"]]'
+    id_string: '["\u8fd9\u65f6", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:48.369044+00:00
     modified_date: 2021-06-08 14:11:48.369071+00:00
     owner:
     - lingl
-    id_string: '["\u51f6", ["Chinese2", "lingl"]]'
+    id_string: '["\u51f6", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:48.461269+00:00
     modified_date: 2021-06-08 14:11:48.461312+00:00
     owner:
     - lingl
-    id_string: '["\u770b\u8d77\u6765", ["Chinese2", "lingl"]]'
+    id_string: '["\u770b\u8d77\u6765", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:48.560723+00:00
     modified_date: 2021-06-08 14:11:48.560751+00:00
     owner:
     - lingl
-    id_string: '["\u7a81\u7136", ["Chinese2", "lingl"]]'
+    id_string: '["\u7a81\u7136", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:48.657531+00:00
     modified_date: 2021-06-08 14:11:48.657559+00:00
     owner:
     - lingl
-    id_string: '["\u4e00\u5929", ["Chinese2", "lingl"]]'
+    id_string: '["\u4e00\u5929", ["Chinese", "lingl"]]'
 - model: lwt.grouper_of_same_words
   fields:
     created_date: 2021-06-08 14:11:55.382278+00:00
@@ -8747,13 +8747,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u4e00\u5929", ["Chinese2", "lingl"]]'
+    - '["\u4e00\u5929", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8776,13 +8776,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u7537\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u7537\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8805,13 +8805,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u7a81\u7136", ["Chinese2", "lingl"]]'
+    - '["\u7a81\u7136", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8834,13 +8834,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u4ed6", ["Chinese2", "lingl"]]'
+    - '["\u4ed6", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8863,13 +8863,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u8fd9\u65f6", ["Chinese2", "lingl"]]'
+    - '["\u8fd9\u65f6", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8892,13 +8892,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8921,13 +8921,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u5973\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u5973\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8950,13 +8950,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u770b\u8d77\u6765", ["Chinese2", "lingl"]]'
+    - '["\u770b\u8d77\u6765", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -8979,13 +8979,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u51f6", ["Chinese2", "lingl"]]'
+    - '["\u51f6", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -9131,13 +9131,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u4f60", ["Chinese2", "lingl"]]'
+    - '["\u4f60", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -9160,7 +9160,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
@@ -9188,13 +9188,13 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text: null
     sentence: null
     compoundword: null
     grouper_of_same_words:
-    - '["\u7684", ["Chinese2", "lingl"]]'
+    - '["\u7684", ["Chinese", "lingl"]]'
     status: 1
     order: null
     textOrder: null
@@ -135898,7 +135898,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -135909,7 +135909,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u4e00\u5929", ["Chinese2", "lingl"]]'
+    - '["\u4e00\u5929", ["Chinese", "lingl"]]'
     status: 1
     order: 0
     textOrder: 0
@@ -135932,7 +135932,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -135965,7 +135965,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -135998,7 +135998,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136031,7 +136031,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136064,7 +136064,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136097,7 +136097,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136108,7 +136108,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7537\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u7537\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: 6
     textOrder: 6
@@ -136131,7 +136131,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136164,7 +136164,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136197,7 +136197,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136230,7 +136230,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136263,7 +136263,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136296,7 +136296,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136329,7 +136329,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136362,7 +136362,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136395,7 +136395,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136406,7 +136406,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7a81\u7136", ["Chinese2", "lingl"]]'
+    - '["\u7a81\u7136", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 14
@@ -136429,7 +136429,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136462,7 +136462,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136473,7 +136473,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u4ed6", ["Chinese2", "lingl"]]'
+    - '["\u4ed6", ["Chinese", "lingl"]]'
     status: 1
     order: 3
     textOrder: 16
@@ -136496,7 +136496,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136529,7 +136529,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136562,7 +136562,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136595,7 +136595,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136628,7 +136628,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136661,7 +136661,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136694,7 +136694,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136727,7 +136727,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136760,7 +136760,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136793,7 +136793,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136826,7 +136826,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136859,7 +136859,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136892,7 +136892,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136925,7 +136925,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136936,7 +136936,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7684", ["Chinese2", "lingl"]]'
+    - '["\u7684", ["Chinese", "lingl"]]'
     status: 1
     order: 17
     textOrder: 30
@@ -136959,7 +136959,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -136992,7 +136992,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137025,7 +137025,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137058,7 +137058,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137069,7 +137069,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: 21
     textOrder: 34
@@ -137092,7 +137092,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137125,7 +137125,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137136,7 +137136,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u770b\u8d77\u6765", ["Chinese2", "lingl"]]'
+    - '["\u770b\u8d77\u6765", ["Chinese", "lingl"]]'
     status: 1
     order: 23
     textOrder: 36
@@ -137159,7 +137159,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137192,7 +137192,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137225,7 +137225,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137258,7 +137258,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137269,7 +137269,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u51f6", ["Chinese2", "lingl"]]'
+    - '["\u51f6", ["Chinese", "lingl"]]'
     status: 1
     order: 27
     textOrder: 40
@@ -137292,7 +137292,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137325,7 +137325,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137358,7 +137358,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137369,7 +137369,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7537\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u7537\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 42
@@ -137392,7 +137392,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137425,7 +137425,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137458,7 +137458,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137491,7 +137491,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137524,7 +137524,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137557,7 +137557,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137590,7 +137590,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137623,7 +137623,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137656,7 +137656,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137689,7 +137689,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137722,7 +137722,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137755,7 +137755,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137788,7 +137788,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137799,7 +137799,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 54
@@ -137822,7 +137822,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137855,7 +137855,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137866,7 +137866,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7684", ["Chinese2", "lingl"]]'
+    - '["\u7684", ["Chinese", "lingl"]]'
     status: 1
     order: 3
     textOrder: 56
@@ -137889,7 +137889,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137922,7 +137922,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137955,7 +137955,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -137988,7 +137988,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138021,7 +138021,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138054,7 +138054,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138087,7 +138087,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138120,7 +138120,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138153,7 +138153,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138186,7 +138186,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138197,7 +138197,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u5973\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u5973\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: 13
     textOrder: 66
@@ -138220,7 +138220,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138253,7 +138253,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138264,7 +138264,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7537\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u7537\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: 15
     textOrder: 68
@@ -138287,7 +138287,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138320,7 +138320,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138353,7 +138353,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138386,7 +138386,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138419,7 +138419,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138452,7 +138452,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138485,7 +138485,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138496,7 +138496,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u4f60", ["Chinese2", "lingl"]]'
+    - '["\u4f60", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 74
@@ -138519,7 +138519,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138552,7 +138552,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138563,7 +138563,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7684", ["Chinese2", "lingl"]]'
+    - '["\u7684", ["Chinese", "lingl"]]'
     status: 1
     order: 3
     textOrder: 76
@@ -138586,7 +138586,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138619,7 +138619,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138630,7 +138630,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: 5
     textOrder: 78
@@ -138653,7 +138653,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138686,7 +138686,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138719,7 +138719,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138752,7 +138752,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138785,7 +138785,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138818,7 +138818,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138851,7 +138851,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138884,7 +138884,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138917,7 +138917,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138928,7 +138928,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u5973\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u5973\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 86
@@ -138951,7 +138951,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -138984,7 +138984,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139017,7 +139017,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139050,7 +139050,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139083,7 +139083,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139116,7 +139116,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139149,7 +139149,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139160,7 +139160,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7684", ["Chinese2", "lingl"]]'
+    - '["\u7684", ["Chinese", "lingl"]]'
     status: 1
     order: 3
     textOrder: 92
@@ -139183,7 +139183,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139216,7 +139216,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139227,7 +139227,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: 5
     textOrder: 94
@@ -139250,7 +139250,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139283,7 +139283,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139316,7 +139316,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139349,7 +139349,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139382,7 +139382,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139415,7 +139415,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139448,7 +139448,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139481,7 +139481,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139514,7 +139514,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139525,7 +139525,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u8fd9\u65f6", ["Chinese2", "lingl"]]'
+    - '["\u8fd9\u65f6", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 102
@@ -139548,7 +139548,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139581,7 +139581,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139614,7 +139614,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139647,7 +139647,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139680,7 +139680,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139713,7 +139713,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139724,7 +139724,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: 7
     textOrder: 108
@@ -139747,7 +139747,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139780,7 +139780,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139813,7 +139813,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139846,7 +139846,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139879,7 +139879,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139912,7 +139912,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139923,7 +139923,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7537\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u7537\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: 13
     textOrder: 114
@@ -139946,7 +139946,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -139979,7 +139979,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140012,7 +140012,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140023,7 +140023,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u4ed6", ["Chinese2", "lingl"]]'
+    - '["\u4ed6", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 116
@@ -140046,7 +140046,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140079,7 +140079,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140112,7 +140112,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140145,7 +140145,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140178,7 +140178,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140211,7 +140211,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140244,7 +140244,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140277,7 +140277,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140310,7 +140310,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140343,7 +140343,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140376,7 +140376,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140387,7 +140387,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u4f60", ["Chinese2", "lingl"]]'
+    - '["\u4f60", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 126
@@ -140410,7 +140410,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140443,7 +140443,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140476,7 +140476,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140509,7 +140509,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140520,7 +140520,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u4f60", ["Chinese2", "lingl"]]'
+    - '["\u4f60", ["Chinese", "lingl"]]'
     status: 1
     order: 5
     textOrder: 130
@@ -140543,7 +140543,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140576,7 +140576,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140587,7 +140587,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7684", ["Chinese2", "lingl"]]'
+    - '["\u7684", ["Chinese", "lingl"]]'
     status: 1
     order: 7
     textOrder: 132
@@ -140610,7 +140610,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140643,7 +140643,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140654,7 +140654,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: 9
     textOrder: 134
@@ -140677,7 +140677,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140710,7 +140710,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140743,7 +140743,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140776,7 +140776,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140809,7 +140809,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140842,7 +140842,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140875,7 +140875,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140908,7 +140908,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140941,7 +140941,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -140952,7 +140952,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u5973\u4eba", ["Chinese2", "lingl"]]'
+    - '["\u5973\u4eba", ["Chinese", "lingl"]]'
     status: 1
     order: 1
     textOrder: 142
@@ -140975,7 +140975,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141008,7 +141008,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141041,7 +141041,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141074,7 +141074,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141107,7 +141107,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141140,7 +141140,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141173,7 +141173,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141206,7 +141206,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141239,7 +141239,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141272,7 +141272,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141305,7 +141305,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141316,7 +141316,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u7684", ["Chinese2", "lingl"]]'
+    - '["\u7684", ["Chinese", "lingl"]]'
     status: 1
     order: 7
     textOrder: 152
@@ -141339,7 +141339,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141372,7 +141372,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog
@@ -141383,7 +141383,7 @@
     - lingl
     compoundword: null
     grouper_of_same_words:
-    - '["\u72d7", ["Chinese2", "lingl"]]'
+    - '["\u72d7", ["Chinese", "lingl"]]'
     status: 1
     order: 9
     textOrder: 154
@@ -141406,7 +141406,7 @@
     owner:
     - lingl
     language:
-    - Chinese2
+    - Chinese
     - lingl
     text:
     - The Man and the Dog

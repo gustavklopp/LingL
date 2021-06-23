@@ -19,7 +19,7 @@ from django.contrib import messages
 # second party
 from datetime import timedelta
 # third party
-from urllib.request import Request, urlopen 
+from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup #use to scrap
 # local
 from lwt.models import *
@@ -491,7 +491,11 @@ def text_detail(request):
 
                 # fetching the HTML with the URL given (in 'title')
                 headers = {"User-Agent":"Mozilla/5.0 (Linux; U; Android 4.0.3; ko-kr; LG-L160L Build/IML74K) AppleWebkit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30",
-                    "Accept":"text/html,application/xhtml+xml,application/xml; q=0.9,image/webp,*/*;q=0.8"}
+                    "Accept":"text/html,application/xhtml+xml,application/xml; q=0.9,image/webp,*/*;q=0.8",
+                    "Referer":"https://www.derstandard.at"}
+#                 headers = {"User-Agent":"Mozilla/5.0 (X11; Linux ppc64le; rv:75.0) Gecko/20100101 Firefox/75.0",
+#                     "Accept":"text/html,application/xhtml+xml,application/xml; q=0.9,image/webp,*/*;q=0.8",
+#                     "referer":"https://google.com"}
                 reqest = Request(url, headers=headers)
                 HTTPResponse_object = urlopen(reqest)
                 raw_data = HTTPResponse_object.read()

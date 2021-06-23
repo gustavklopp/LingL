@@ -57,7 +57,7 @@
 <ul>
 <li><a href="{% url 'text_list' %}?page=1"><img src="{% static "lwt/img/icn/texts.png" %}" alt="texts" />&nbsp;{% trans "My Texts/Webpages" %}</a> (-> 
 		&nbsp;<a href="{% url 'text_detail' %}?new=0"><img src="{% static "lwt/img/icn/new-text.png" %}" alt="new-text" />&nbsp;{% trans "New Text" %}</a>
-		{% trans ' or ' %}<a href="{% url 'text_detail' %}?new_webpage=0"><img src="{% static "lwt/img/icn/webpage_16px.png" %}" alt="new-webpage" />&nbsp;{% trans "Read a webpage" %}</a>)</li> 
+		{% trans ' or ' %}<a href="{% url 'text_detail' %}?new_webpage=0"><img src="{% static "lwt/img/icn/new-webpage_16px.png" %}" alt="new-webpage" />&nbsp;{% trans "Read a webpage" %}</a>)</li> 
 	<br><br></li>
 	{% if currentlang_name == "" %}
 <li><a href="{% url 'language_detail' %}?new=0">{% trans "Create New Language" %}</a>

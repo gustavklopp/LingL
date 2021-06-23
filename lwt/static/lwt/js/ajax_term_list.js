@@ -100,8 +100,18 @@ function termlist_filter() {
 		chosen_lang.push(parseInt($(this).val()));
 	});
 	var chosen_text = [];
-	$.each($("#filtertextform").find("span").not(".hidden").find("input:checked"), function(){
+	$.each($("#filtertextform").find("span").find("input"), function(){
+		if ($(this).is(':checked')){
 		chosen_text.push($(this).val());
+		}
+		var langid = $(this).data('langids');
+		if ($.inArray(langid, chosen_lang) == -1){
+			$(this).next().addClass('font-weight-normal');
+			$(this).next().removeClass('font-weight-bold');
+		} else {
+			$(this).next().removeClass('font-weight-normal');
+			$(this).next().addClass('font-weight-bold');
+		}
 	});
 	var chosen_status = [];
 	$.each(filterstatusform.find("input"), function(){
@@ -188,5 +198,24 @@ function termlist_filter() {
 		}
 });	
 	
-	
+} // end of function termlist_filter
+
+// if click on 'toggle', it checks all the languages:
+function toggle_check_text(){
+	// first time: it corresponds to 'check to All'
+	if($('#all_text').hasClass('font-weight-bold') && $('#none_text').hasClass('font-weight-normal')){
+		$.each($("#filtertextform input:not(:checked)"), function(){
+			$(this).prop('checked', true);	
+		});
+		$('#all_text').removeClass('font-weight-bold').addClass('font-weight-normal');
+		$('#none_text').removeClass('font-weight-normal').addClass('font-weight-bold');
+	} else if($('#all_text').hasClass('font-weight-normal') && $('#none_text').hasClass('font-weight-bold')) {
+		$.each($("#filtertextform input:checked"), function(){
+			$(this).prop('checked', false);	
+		});
+		$('#none_text').removeClass('font-weight-bold').addClass('font-weight-normal');
+		$('#all_text').removeClass('font-weight-normal').addClass('font-weight-bold');
+		
+	}
+	termlist_filter();
 }
