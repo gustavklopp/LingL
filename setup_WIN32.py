@@ -742,8 +742,13 @@ executables = [
         target_name='LingLibre')
 ]
 
+appversion = ''
+appversiontxt_path = os.path.join(os.path.dirname(sys.executable), 'lwt','appversion.txt')
+with open(appversiontxt_path, 'w', encoding="utf8") as appversion_f:
+    appversion = appversion_f.read()
+
 setup(name='LingL',
-      version = '0.1',
+      version = appversion,
       description = 'learn languages by reading what you want!',
       options = dict(build_exe = buildOptions),
       executables = executables)
