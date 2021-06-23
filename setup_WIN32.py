@@ -724,6 +724,7 @@ buildOptions = dict(
 #             'dj-static',
             'setuptools',
             'waitress',
+            'wx',
             ], 
 #         excludes = ['tkinter',],
         include_files = [
@@ -743,8 +744,8 @@ executables = [
 ]
 
 appversion = ''
-appversiontxt_path = os.path.join(os.path.dirname(sys.executable), 'lwt','appversion.txt')
-with open(appversiontxt_path, 'w', encoding="utf8") as appversion_f:
+appversiontxt_path = os.path.join(os.getcwd(), 'lwt','appversion.txt')
+with open(appversiontxt_path, 'r', encoding="utf8") as appversion_f:
     appversion = appversion_f.read()
 
 setup(name='LingL',
