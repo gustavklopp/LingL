@@ -29,7 +29,7 @@ from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._utilities_views import get_word_database_size, get_appversion
-from lwt.views.text_read import _clean_soup_Webpage
+from lwt.views._dictionaries_API import _clean_soup_Webpage
 from lwt.constants import MAX_WORDS_DANGER
 
 

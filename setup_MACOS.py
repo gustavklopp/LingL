@@ -726,7 +726,7 @@ buildOptions = dict(
             'waitress',
 	    'wx',
             ], 
-#         excludes = ['tkinter',],
+        excludes = ['tkinter', 'Tkinter'],
         include_files = [
               'LingL_app.ico',
               'LingL_app.icns',

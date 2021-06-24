@@ -730,7 +730,8 @@ buildOptions = dict(
             ], 
         excludes = ['tkinter', 'Tkinter'],
         include_files = [
-                'LingL_app.ico',
+              'LingL_app.ico',
+              'LingL_app.icns',
 #                 'appversion.txt',
                 #('./libcrypt.so.2', 'libcrypt.so.2'),
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined

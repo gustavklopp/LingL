@@ -32,6 +32,8 @@ from lwt.views._nolang_redirect_decorator import *
 # helper functions:
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
+from lwt.views._dictionaries_API import _google_API, _pons_API, _wiki_API, _wiki_API_redirect, _dictcc_API, _youdao_API,\
+            _wordref_API, _clean_soup
 from lwt.views.termform import *
 from lwt.constants import STATUS_CHOICES
 
@@ -103,232 +105,6 @@ def text_read(request, text_id):
                 'text_type': 'text'
         })
 
-def _google_API(content):
-    raw_data = content.read()
-    data = raw_data.decode("utf-8")
-    expr = r'(?s)class="(?:t0|result-container)">(.*?)<'
-    re_result = re.findall(expr, data)
-    if (len(re_result) == 0):
-        result = None
-    else:
-        result = html.unescape(re_result[0])
-    return [result]
-    
-
-def _pons_API(content, url):
-    from django.utils.translation import get_language_info
-
-    soup = BeautifulSoup(content, 'html.parser')
-    # Sometimes Pons displays the targeted language in the second block, sometimes in the second...
-    pattern = r'(?<=en\.pons\.com/translate/)\w+(?=-)'
-    origin_lang = re.search(pattern, url).group().lower()
-
-    divs_lang = soup.find_all('div', {'class':'lang'})
-    div_targets = []
-    for div_lang in divs_lang:
-        # we must determine what is the origin language for each block
-        div_lang_origin = div_lang['id']
-        is_origin_lang_first = origin_lang == get_language_info(div_lang_origin)['name'].lower()
-        if is_origin_lang_first:
-            div_targets.extend(div_lang.find_all('div', {'class': 'target'}))
-        else:
-            div_targets.extend(div_lang.find_all('div', {'class': 'source'}))
-            
-    for idx, div_target in enumerate(div_targets):
-        trans_item = div_target.get_text().strip()
-        new_tag = '<span  title="{0}" class="hover_pointer" onclick="addTranslation(\'{1}\');">'
-        new_tag += '<img src="{2}" alt="Copy" />&nbsp;<span id="trans_item_{3}">{1}</span>&nbsp;'
-        new_tag += '<span class="text-muted" title="{4}">[{3}]</span> </span>'
-        new_tag = new_tag.format(_('Copy this translation'), trans_item, static('lwt/img/icn/tick-button.png'), 
-                                idx+1, _('keyboard shortcut'))
-        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('span')
-        div_target.replace_with(tag_soup)
-    html = _clean_soup(soup, url)
-    return html
-
-def _dictcc_API(content, url):
-    soup = BeautifulSoup(content, 'html.parser')
-    table = soup.find_all('table')[1]
-    rows = table.find_all('tr')
-    idx_item = 0
-    for row in rows:
-        if not row.has_attr('id'):
-            continue
-        idx_item += 1
-        td = row.find_all('td')[1]
-        trans_item = td.get_text().strip()
-        new_tag = '''
-            <td><span  title="Copy" class="hover_pointer" onclick="addTranslation('{0}');">
-                <img src="{1}" alt="Copy" />&nbsp;<span id="trans_item_{2}">{0}</span>&nbsp;<span class="text-muted" 
-                title="{3}">[{2}]</span>
-            </span></td>'''.format(trans_item, static('lwt/img/icn/tick-button.png'), idx_item, _('keyboard shortcut'))
-        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('td')
-        td.replace_with(tag_soup)
-    html = _clean_soup(soup, url)
-    return html
-
-def _wordref_API(content, url):
-    soup = BeautifulSoup(content, 'html.parser')
-    td_towrds = soup.find_all('td',{'class':'ToWrd'})
-    idx_item = 0
-    for td_towrd in td_towrds:
-        if td_towrd.get_text() == 'Englisch':
-            continue
-        idx_item += 1
-        spans = td_towrd.find_all('span')
-        for span in spans:
-            if span.has_attr('title'):
-                continue
-            span.extract()
-        trans_item = td_towrd.get_text().strip()
-        new_tag = '''
-            <td class="ToWrd"><span  title="{0}" class="hover_pointer" onclick="addTranslation('{1}');">
-                <img src="{2}" alt="Copy" />&nbsp;<span id="trans_item_{3}">{1}</span>&nbsp;<span class="text-muted" 
-                title="{4}">[{3}]</span>
-            </span></td>'''.format(_('Copy this translation'), trans_item, 
-                                   static('lwt/img/icn/tick-button.png'), idx_item, _('keyboard shortcut'))
-        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('td')
-        td_towrd.replace_with(tag_soup)
-    span_romans = soup.find_all('span',{'class':'roman'})
-    for span_roman in span_romans:
-        idx_item += 1
-        spans = span_roman.find_all('span')
-        for span in spans:
-            if span.has_attr('title'):
-                continue
-            span.extract()
-        trans_item = span_roman.get_text().strip()
-        new_tag = '''
-            <span  title="{0}" class="roman hover_pointer" onclick="addTranslation('{1}');">
-                <img src="{2}" alt="Copy" />&nbsp;<span id="trans_item_{3}">{1}</span>&nbsp;<span class="text-muted" 
-                title="{4}">[{3}]</span>
-            </span>'''.format(_('Copy this translation'), trans_item, 
-                              static('lwt/img/icn/tick-button.png'), idx_item, _('keyboard shortcut'))
-        tag_soup = BeautifulSoup(new_tag, 'html.parser').find('span')
-        span_roman.replace_with(tag_soup)
-    html = _clean_soup(soup, url)
-    return html
-
-def _wiki_API(content, url):
-    soup = BeautifulSoup(content, 'html.parser')
-    ols = soup.find_all('ol')
-    idx_item = 0
-    for ol in ols:
-        for li in ol.find_all('li'):
-            idx_item += 1
-            to_be_added_str = ''
-            span_hqtoggle = li.find('span', {'class':'HQToggle'})
-            if span_hqtoggle:
-                to_be_added_str += str(span_hqtoggle)
-                span_hqtoggle.extract()
-            dl = li.find('dl')
-            if dl:
-                to_be_added_str += str(dl)
-                dl.extract()
-            trans_item = li.get_text().strip()
-            new_tag = '''
-                <li><span  title="{0}" class="roman hover_pointer" onclick="addTranslation('{1}');">
-                    <img src="{2}" alt="Copy" />&nbsp;<span id="trans_item_{3}">{1}</span>&nbsp;<span class="text-muted" 
-                    title="{4}">[{3}]</span>
-                </span>{5}</li>'''.format(_('Copy this translation'), trans_item, 
-                                            static('lwt/img/icn/tick-button.png'), idx_item,
-                                           _('keyboard shortcut'), to_be_added_str)
-            tag_soup = BeautifulSoup(new_tag, 'html.parser').find('li')
-            li.replace_with(tag_soup)
-    html = _clean_soup(soup, url)
-    return html
-
-def _wiki_API_redirect(error, finalurl, word_escaped):
-    soup = BeautifulSoup(error, 'html.parser')
-    didyoumean = soup.find('span', {'id':'did-you-mean'})
-    if didyoumean:
-        didyoumean_a = didyoumean.find('a') # --> '/wiki/thisotherspelledword'
-        didyoumean_word = didyoumean_a['href'].split('/')[-1]
-        didyoumean_word_escaped = parse.quote(didyoumean_word)
-        finalurl = finalurl.replace(word_escaped, didyoumean_word_escaped)
-    return finalurl
-
-
-''' helper function: when saving a webpage, we clean it:'
-    remove all the scripts, convert the relative links to absolute
-    and get only finally the <body>, <link> and <style>
-    @url    the url of the original webpage
-    @soup   the Beautifulsoup
-    @return the html string
-'''
-def _clean_soup_Webpage(soup, url):
-    for scr in soup.select('script'):
-        scr.extract()
-    
-    # We'll keep only <link>, <style> and <body>
-    links = soup.findAll('link')
-    link_str = ''
-    parsed_uri = urlparse(url)
-    url_maindomain = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_uri)
-    for link in links:
-        absolute_url = urljoin(url_maindomain, link['href'])
-        link['href'] = absolute_url
-        str_link = str(link)
-        link_str += str_link
-    lingl_style = '<link rel="stylesheet" type="text/css" href="'+static('lwt/css/styles.css')+'">'
-    styles = soup.findAll('style')
-    style_str = ''
-    for style in styles:
-        str_style = str(style)
-        style_str += str_style
-    body = soup.find('body')
-    body_str = str(body)
-    html = link_str + style_str + lingl_style + body_str
-    return html
-
-''' Helper func for dictwebpage (and _pons_API()
-    allows to clean the webpage to get only the useful content:
-    for ex: remove banner, <script> etc... '''
-def _clean_soup(soup, url=None):
-    # Remove all <script></script>
-    for scr in soup.select('script'):
-        scr.extract()
-    # We'll keep only <link> and <body>
-    links = soup.findAll('link')
-    link_str = ''
-    for link in links:
-        # further editing of <link> or some API (css file messsing up with my own style)
-        str_link = str(link)
-        # bootstrap style loaded by pons.com are messing up with my own style
-        if 'pons' in url  and 'bootstrap_dict_catalogue' in str_link:
-            continue
-        if 'dict.cc' in url and 'dict.cc/inc/dict.css' in str_link:
-            continue
-        # for Wordreference.com, the style is inline in fact, in a <style> tag
-        if 'wiktionary' in url and 'rel="stylesheet"' in str_link:
-            continue
-        link_str += str_link
-    body = soup.find('body')
-    # further editing of the <body> for some API
-    if 'pons' in url: # Case of a PONS.com website, some div can be removed
-        body_pageheader = body.select_one('#page-header')
-        if body_pageheader:
-            body_pageheader.extract()
-        body_containercontent = body.select_one('#container-content')
-        if body_containercontent:
-            body.select_one('.searchbar-tabs').extract()
-        if result_section_nav := body.select_one('#result-section__nav'):
-            result_section_nav.extract()
-        if result_section_header := body.find_all('h3', {'class':'result-section__header'}):
-            [r.extract() for r in result_section_header]
-    if 'dict.cc' in url:
-        pass
-    if 'wordref' in url:
-        if full_header := body.find('header', {'class':'full-header'}):
-            full_header.extract()
-            body.find('div', {'id':'ad1'}).extract()
-            body.find('div', {'id':'search'}).extract()
-    if 'wiktionary' in url:
-        div_mwbody = body.find('div', {'class':'mw-body'})
-        body = div_mwbody
-    body_str = str(body)
-    html = link_str + body_str 
-    return html
 
 ''' create dictionary webpage in the bottom right on text_read.html.
 Adapted from: makeOpenDictStrJS(createTheDictLink($wb1,$word)) '''
@@ -391,6 +167,7 @@ def dictwebpage(request):
 
         if finalurl[0] == '!': # this dictionary uses my custom APIs (for ex. Google translate)
 
+            context = {}
             # detect if mac or else
             system = platform.system().lower()
             if system == 'windows' or system == 'linux': 
@@ -416,6 +193,12 @@ def dictwebpage(request):
             if 'wiktionary' in finalurl:
                 translation_result = _wiki_API(content, finalurl)
                 context = {'translation_result':translation_result, 'API_name':'wiki'} 
+            if 'youdao' in finalurl:
+                translation_result = _youdao_API(content, finalurl)
+                context = {'translation_result':translation_result, 'API_name':'youdao'} 
+            if 'baidu' in finalurl:
+                translation_result = _baidu_API(content, finalurl)
+                context = {'translation_result':translation_result, 'API_name':'baidu'} 
             context['is_Mac'] = is_Mac
             return render(request, 'lwt/_translation_api.html', context) 
 
@@ -423,60 +206,60 @@ def dictwebpage(request):
 
 ''' NOT USED FINALLY '''
 ''' called by AJAX by the form in text_read: shows a list of sentences where the term appears '''
-def NOTUSEDFUNCTIONshow_sentence(request):
-    wo_ids = request.GET['wo_ids']
-    wo_ids = json.loads(wo_ids)
-    wo_wordtexts = []
-    # if compoundword, they must be present in the same sentence, but order is not important here.
-    sentences_with_the_same_wordtext = Sentences.objects.all().order_by('sentencetext')
-    for idx, wo_id in enumerate(wo_ids):
-        word = Words.objects.get(id=wo_id)
-        wordtext = word.wordtext
-        wo_wordtexts.append(wordtext)
-        sentences_with_the_same_wordtext = sentences_with_the_same_wordtext.\
-                    filter(language=word.language).\
-                    filter(sentence_having_this_word__wordtext=wordtext)
-    display_sentences_with_the_same_wordtext = []
-    # display the little '**' '**' around the words
-    for sentence_with_the_same_wordtext in sentences_with_the_same_wordtext: # loop over the sentences
-        # get all the words inside this sentence:
-        words_in_this_sentence = Words.objects.filter(sentence=sentence_with_the_same_wordtext).all().order_by('order')
-        sentenceList = []
-        for wo in words_in_this_sentence: #  loop inside the sentence: replace the 'word' by '**word**' (that's cooler!)
-            if wo.wordtext in wo_wordtexts:
-                sentenceList.append('**'+wo.wordtext+'**')
-            else:
-                sentenceList.append(wo.wordtext)
-        display_sentences_with_the_same_wordtext.append(''.join(sentenceList))
-    sentences_for_json = list(zip(sentences_with_the_same_wordtext.\
-                                        values_list('text__id','text__title'),\
-                                 display_sentences_with_the_same_wordtext))
-    sentences_json = json.dumps(sentences_for_json)
-    return JsonResponse(sentences_json, safe=False)
-
-''' search_possiblesimilarword NOT USED FINALLY (it was called by AJAX)'''
-def NOTUSEDFUNCTIONsearch_possiblesimilarword(request): 
-    ''' called by AJAX by the form in text_read: shows a list of words, similar to the given word ''' 
-    wo_id = request.GET['wo_id']
-    word = Words.objects.get(id=wo_id)
-    searchboxtext = request.GET['searchboxtext']
-    # search with the 3 first letters of the given word. research is made more accurate with the search 
-    # box by the user.
-    # we exclude: the same word (of course) and the already similar word
-    possible_similarword = Words.objects.values('id','text__title','wordtext','status').\
-                        filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=word.wordtext[:3])&\
-                               Q(wordtext__istartswith=searchboxtext)).\
-                               exclude(grouper_of_same_words=word.grouper_of_same_words).\
-                               exclude(wordtext=word.wordtext).\
-                               order_by('wordtext')
-    # search for the already added similar words by the user
-    alreadyadded_similarword =  Words.objects.values('id','text__title','wordtext').\
-                               filter(grouper_of_same_words=word.grouper_of_same_words).\
-                               exclude(wordtext=word.wordtext).\
-                               order_by('wordtext')
-    search_similarword_json = json.dumps({'possible_similarword':list( possible_similarword),
-                                          'alreadyadded_similarword': list(alreadyadded_similarword)})
-    return JsonResponse(search_similarword_json, safe=False)
+# def NOTUSEDFUNCTIONshow_sentence(request):
+#     wo_ids = request.GET['wo_ids']
+#     wo_ids = json.loads(wo_ids)
+#     wo_wordtexts = []
+#     # if compoundword, they must be present in the same sentence, but order is not important here.
+#     sentences_with_the_same_wordtext = Sentences.objects.all().order_by('sentencetext')
+#     for idx, wo_id in enumerate(wo_ids):
+#         word = Words.objects.get(id=wo_id)
+#         wordtext = word.wordtext
+#         wo_wordtexts.append(wordtext)
+#         sentences_with_the_same_wordtext = sentences_with_the_same_wordtext.\
+#                     filter(language=word.language).\
+#                     filter(sentence_having_this_word__wordtext=wordtext)
+#     display_sentences_with_the_same_wordtext = []
+#     # display the little '**' '**' around the words
+#     for sentence_with_the_same_wordtext in sentences_with_the_same_wordtext: # loop over the sentences
+#         # get all the words inside this sentence:
+#         words_in_this_sentence = Words.objects.filter(sentence=sentence_with_the_same_wordtext).all().order_by('order')
+#         sentenceList = []
+#         for wo in words_in_this_sentence: #  loop inside the sentence: replace the 'word' by '**word**' (that's cooler!)
+#             if wo.wordtext in wo_wordtexts:
+#                 sentenceList.append('**'+wo.wordtext+'**')
+#             else:
+#                 sentenceList.append(wo.wordtext)
+#         display_sentences_with_the_same_wordtext.append(''.join(sentenceList))
+#     sentences_for_json = list(zip(sentences_with_the_same_wordtext.\
+#                                         values_list('text__id','text__title'),\
+#                                  display_sentences_with_the_same_wordtext))
+#     sentences_json = json.dumps(sentences_for_json)
+#     return JsonResponse(sentences_json, safe=False)
+# 
+# ''' search_possiblesimilarword NOT USED FINALLY (it was called by AJAX)'''
+# def NOTUSEDFUNCTIONsearch_possiblesimilarword(request): 
+#     ''' called by AJAX by the form in text_read: shows a list of words, similar to the given word ''' 
+#     wo_id = request.GET['wo_id']
+#     word = Words.objects.get(id=wo_id)
+#     searchboxtext = request.GET['searchboxtext']
+#     # search with the 3 first letters of the given word. research is made more accurate with the search 
+#     # box by the user.
+#     # we exclude: the same word (of course) and the already similar word
+#     possible_similarword = Words.objects.values('id','text__title','wordtext','status').\
+#                         filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=word.wordtext[:3])&\
+#                                Q(wordtext__istartswith=searchboxtext)).\
+#                                exclude(grouper_of_same_words=word.grouper_of_same_words).\
+#                                exclude(wordtext=word.wordtext).\
+#                                order_by('wordtext')
+#     # search for the already added similar words by the user
+#     alreadyadded_similarword =  Words.objects.values('id','text__title','wordtext').\
+#                                filter(grouper_of_same_words=word.grouper_of_same_words).\
+#                                exclude(wordtext=word.wordtext).\
+#                                order_by('wordtext')
+#     search_similarword_json = json.dumps({'possible_similarword':list( possible_similarword),
+#                                           'alreadyadded_similarword': list(alreadyadded_similarword)})
+#     return JsonResponse(search_similarword_json, safe=False)
 
 ''' called by AJAX by the form in termform: 
 - a word is considered as similar: copy the data from the word to the similar one (and use a Grouper.

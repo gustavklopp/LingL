@@ -725,8 +725,10 @@ buildOptions = dict(
             'waitress',
             'wx',
             ], 
-#         excludes = ['tkinter',],
+        excludes = ['tkinter', 'Tkinter'],
         include_files = [
+              'LingL_app.ico',
+              'LingL_app.icns',
 #             'appversion.txt',
 #                 os.path.join('lwt', 'LingL_database.sqlite3'), #no need, it's automatically joined
 #                 os.path.join('templates','allauth'),
@@ -746,6 +748,9 @@ appversion = ''
 appversiontxt_path = os.path.join(os.getcwd(), 'lwt','appversion.txt')
 with open(appversiontxt_path, 'r', encoding="utf8") as appversion_f:
     appversion = appversion_f.read()
+
+#NB: There's a bug with Python 3.8 on Windows: I've manually edited the locale.py file in Python itself
+# because getlocale is getting 'en-US' instead of 'en_US'! (simple ....replace('-','_')
 
 setup(name='LingL',
       version = appversion,

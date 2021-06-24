@@ -6,7 +6,7 @@
     owner:
     - lingl
     name: "English"
-    dicturi: "!https://en.pons.com/translate/english-<LCNAME>/<WORD>, !https://en.wiktionary.org/wiki/<WORD>#English, https://glosbe.com/gapi/translate?from=eng&&dest=<2TCODE>&format=json, !http://www.wordreference.com/en<1CODE>/<WORD>"
+    dicturi: "!https://en.pons.com/translate/english-<LCNAME>/<WORD>, !https://en.wiktionary.org/wiki/<WORD>#English, !http://www.wordreference.com/en<1CODE>/<WORD>, !http://www.youdao.com/w/<WORD>/#keyfrom=dict2.top, *https://fanyi.baidu.com/?aldtype=85#en/zh/<WORD>"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=en&tl=<1CODE>&q=<WORD>"
