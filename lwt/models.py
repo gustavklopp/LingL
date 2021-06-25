@@ -176,7 +176,12 @@ class Texts(BaseModel):
     archived = models.BooleanField(default=False)
     wordcount = models.IntegerField(default=0, blank=True, null=True)
     wordcount_distinct = models.IntegerField(default=0, blank=True, null=True) # same as 'wordcount' but without written similarly word
-    is_webpage = models.BooleanField(default=False)
+    CONTENTTYPE_CHOICES = [
+        ('text', 'text'),
+        ('pdf', 'pdf'),
+        ('html', 'html')
+    ]
+    contenttype = models.CharField(max_length=4, choices=CONTENTTYPE_CHOICES, default='text')
 
     objects = TextsManager() # use to call the parent foreign key by its name (or title , or etc...)
     
@@ -684,4 +689,5 @@ class Restore(models.Model):
 
 ''' to upload a text file. in text_detail.html '''
 class Uploaded_text(models.Model):
+    owner = models.ForeignKey(MyUser, null=True, on_delete=models.CASCADE) # each user has his own set of the database
     uploaded_text = models.FileField(blank=True)

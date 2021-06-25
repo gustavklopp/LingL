@@ -345,6 +345,11 @@ class WebpagesForm(forms.ModelForm):
             'texttags': tag_widgets.TagsInputWidget, # getting the tags fo the texts (using Django tagsinput app)
         }
 
+
+''' saving a pdf in text_detail (new or edited text)'''
+class PdfsForm(WebpagesForm):
+    pass
+
 class WordsForm(forms.ModelForm):
     status = forms.IntegerField()  
     translation = forms.CharField(widget=forms.Textarea(attrs={'rows': 3}),required=False)
@@ -424,6 +429,9 @@ class Uploaded_textForm(forms.ModelForm):
         self.helper.form_id = 'uploaded_textform'
         self.helper.form_class = 'form-horizontal text_detail'
         self.helper.label_class = 'col-md-3'
+        self.helper.layout = Layout(
+            Field('owner', type="hidden"),
+            'uploaded_text')
 #         self.helper.field_class = 'col-md-6'
 #         self.helper.layout = Layout(
 #             FieldWithButtons(
@@ -470,6 +478,22 @@ class Uploaded_textForm(forms.ModelForm):
         model = Uploaded_text
         fields = ['uploaded_text']
         
+'''Uploading a pdf (on text_detail page)'''
+class Uploaded_pdfForm(Uploaded_textForm):
+    
+    def __init__(self, *args, **kwargs):
+        super(Uploaded_pdfForm, self).__init__(*args,**kwargs)
+        self.helper.form_id = 'uploaded_pdfform'
+        self.fields['uploaded_text'].label = _('Choose the PDF you want to read')
+
+    class Meta:
+        model = Uploaded_text
+        fields = ['uploaded_text']
+        widgets = {
+            'uploaded_text': forms.FileInput(attrs={'accept': '.pdf'})
+            }
+
+
 
 ''' Used by Django-allauth: custom forms '''
 class MySignUpForm(SignupForm):

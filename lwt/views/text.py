@@ -21,6 +21,7 @@ from datetime import timedelta
 # third party
 from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup #use to scrap
+import fitz #convert pdf to html
 # local
 from lwt.models import *
 from lwt.forms import *
@@ -73,20 +74,20 @@ def load_texttable(request):
         t_dict['id'] = t.id
         ##############################
         if not t.archived: # display a choice popup if trying to read/edit an archived text
-            if t.is_webpage:
+            if t.contenttype == 'html' or t.contenttype == 'pdf':
                 onclick_r = 'document.location = \''+reverse('webpage_read',args=[t.id]) +'\';'
                 onclick_e = 'document.location = \''+reverse('text_detail')+'?edit_webpage='+str(t.id)+'\';'
             else:
                 onclick_r = 'document.location = \''+reverse('text_read',args=[t.id]) +'\';'
                 onclick_e = 'document.location = \''+reverse('text_detail')+'?edit='+str(t.id)+'\';'
         else:
-            if t.is_webpage:
+            if t.contenttype == 'html' or t.contenttype == 'pdf':
                 onclick_r = 'warning_archive(\''+reverse('webpage_read',args=[t.id]) +'\');'
                 onclick_e = 'warning_archive(\''+reverse('text_detail')+'?edit_webpage='+str(t.id)+'\');'
             else:
                 onclick_r = 'warning_archive(\''+reverse('text_read',args=[t.id]) +'\');'
                 onclick_e = 'warning_archive(\''+reverse('text_detail')+'?edit='+str(t.id)+'\');'
-        if t.is_webpage:
+        if t.contenttype == 'html' or t.contenttype == 'pdf':
             t_dict['read'] = '<img class="btn" onclick="'+onclick_r+'" src="' + \
                 static('lwt/img/icn/webpage_16px.png') + '" title="'+ _('Read webpage') + '" alt="'+_('Read')+'" />'
         else:
@@ -469,7 +470,8 @@ def text_list(request):
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
                     'database_size':database_size})
 
-''' Editing a single text, or Creating a new text'''
+''' Editing a single text, or Creating a new text
+    'text' means actually a simple text, or a webpage '''
 @login_required
 @nolang_redirect
 def text_detail(request):
@@ -485,7 +487,7 @@ def text_detail(request):
                 savedtext = f.save(commit=False)
                 savedtext.language = f.cleaned_data['language']
                 savedtext.owner = request.user
-                savedtext.is_webpage = True
+                savedtext.contenttype = 'html'
                 url = f.cleaned_data['title']
                 savedtext.title = url
 
@@ -517,7 +519,37 @@ def text_detail(request):
                 f_isvalid = False
                 messages.add_message(request, messages.ERROR, _('There was an error in fetching this webpage.'))
 
-        else: # it doesn't concern a Webpage
+        elif 'new_pdf' in request.GET.keys():
+            f = PdfsForm(request.user, request.POST or None)
+            if f.is_valid():
+                # I need to manually add all the fields, I don't know why??? Bug???
+                savedtext = f.save(commit=False)
+                savedtext.language = f.cleaned_data['language']
+                savedtext.owner = request.user
+                savedtext.contenttype = 'pdf'
+                title = f.cleaned_data['title']
+                savedtext.title = title
+
+                # Converting the pdf to html
+
+                
+                
+                
+                savedtext.text = cleaned_html
+                savedtext.audiouri = f.cleaned_data['audiouri']
+                savedtext.save()
+                txtagtext_list = [] if f.data["texttags"] == '' else f.data['texttags'].split(',')
+                savedtext.texttags.exclude(txtagtext__in=txtagtext_list).delete() #first, remove non existent tags
+                for txtagtext in txtagtext_list:
+                    texttag = Texttags.objects.get_or_create(owner=request.user, txtagtext=txtagtext)[0]
+                    savedtext.texttags.add(texttag)
+                savedtext.save()
+                text_id = savedtext.id
+                messages.add_message(request, messages.SUCCESS, _('PDF successfully loaded. \nHighlight in the PDF the texts that you want to "LingLibrify"'))
+            else:
+                f_isvalid = False
+                messages.add_message(request, messages.ERROR, _('There was an error in loading this PDF.'))
+        else: # it doesn't concern a Webpage or a PDF
             f = TextsForm(request.user, request.POST or None)
             if f.is_valid():
                 if 'new' in request.GET.keys():
@@ -595,6 +627,7 @@ def text_detail(request):
 
         if 'new' in request.GET.keys():
             # must display the form for the first time:
+            f_uploaded_text = Uploaded_textForm()
 
             currentlang = Languages.objects.get(id=currentlang_id)
             f = TextsForm(request.user, initial = {'owner': request.user, 'language':currentlang}) 
@@ -615,6 +648,20 @@ def text_detail(request):
             word_inthistext=None
             # STRING CONSTANTS:
             op = 'new_webpage'
+            text_title = '' # used by edit section
+            created_date = None
+            text_id = None
+
+        elif 'new_pdf' in request.GET.keys():
+            # must display the form for the first time:
+            f_uploaded_text = Uploaded_pdfForm()
+
+            currentlang = Languages.objects.get(id=currentlang_id)
+            f = PdfsForm(request.user, initial = {'owner': request.user, 'language':currentlang}) 
+
+            word_inthistext=None
+            # STRING CONSTANTS:
+            op = 'new_pdf'
             text_title = '' # used by edit section
             created_date = None
             text_id = None
@@ -715,7 +762,8 @@ def text_detail(request):
             Sentences.objects.filter(id=deleted_or_edited_word.sentence.id).update(sentencetext=sentence_sentencetext)
 
         # common for edit/delete a word or display the editable text
-        if 'new' not in request.GET.keys() and 'new_webpage' not in request.GET.keys(): 
+        if 'new' not in request.GET.keys() and 'new_webpage' not in request.GET.keys() and \
+                                                'new_pdf' not in request.GET.keys(): 
             f = TextsForm(request.user, instance=text)
             word_inthistext = Words.objects.filter(text=text).order_by('sentence_id', 'order')
             # STRING CONSTANTS:
@@ -725,7 +773,6 @@ def text_detail(request):
             text_id = text.id
 
 
-        f_uploaded_text = Uploaded_textForm()
 
         # get the current database size:
         database_size = get_word_database_size(request)
@@ -746,22 +793,34 @@ def text_detail(request):
                                                      })
         
 ''' called by ajax in text_detail.html to uploade a text file, process it 
-to extract the text and title'''
+to extract the text (and if it's a text: title)'''
 def uploaded_text(request):
     if request.method == 'POST':
-        form = Uploaded_textForm(data=request.POST, files=request.FILES)
+        op = request.POST['op']
+        if op == 'uploaded_text':
+            form = Uploaded_textForm(data=request.POST, files=request.FILES)
+        elif op == 'uploaded_pdf':
+            form = Uploaded_pdfForm(data=request.POST, files=request.FILES)
+            
         if form.is_valid():
-            files = form.save()
+            files = form.save(commit=False)
+            files.owner = request.user
+            files.save()
             title = files.uploaded_text.name
             title = title.split('.')[0] # myfile.txt => title = 'myfile'
-            try:
-                with open(files.uploaded_text.path, 'r', encoding="utf8") as f:
-                    text = f.read() 
-                delete_uploadedfiles(files.uploaded_text.path, request.user)
-                return HttpResponse(json.dumps({'title':title, 'text':text}))
-            except UnicodeDecodeError as e: # the file contains not unicode characters
-                delete_uploadedfiles(files.uploaded_text.path, request.user)
-                return HttpResponse(json.dumps({'error':'{} ("{}")'.format(_('Check coding of this text!'), e)}))
+            # get the content:
+            if op == 'uploaded_text':
+                try:
+                    with open(files.uploaded_text.path, 'r', encoding="utf8") as f:
+                        text = f.read() 
+                    delete_uploadedfiles(files.uploaded_text.path, request.user)
+                    return HttpResponse(json.dumps({'title':title, 'text':text}))
+                except UnicodeDecodeError as e: # the file contains not unicode characters
+                    delete_uploadedfiles(files.uploaded_text.path, request.user)
+                    return HttpResponse(json.dumps({'error':'{} ("{}")'.format(_('Check coding of this text!'), e)}))
+            elif op == 'uploaded_pdf':
+                return HttpResponse(json.dumps({'title':title}))
+
         else:
             delete_uploadedfiles(files.uploaded_text.path, request.user)
             return HttpResponse(json.dumps({'error':form.errors}))

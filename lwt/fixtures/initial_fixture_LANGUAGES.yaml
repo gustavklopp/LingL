@@ -306,8 +306,8 @@
     spliteachchar: false
     righttoleft: false
     has_romanization: false
-    code_639_1: sw
+    code_639_1: sv
     code_639_2t: swe
     code_639_2b: swe
-    django_code: sw
+    django_code: sv
     extra_field_key: []

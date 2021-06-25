@@ -19,6 +19,7 @@ selenium = "*"
 factory-boy = "*"
 pyinstaller = "*"
 wxpython = "*"
+pymupdf = "*"
 
 [dev-packages]
 

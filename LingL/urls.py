@@ -70,6 +70,8 @@ urlpatterns = [
     url(r'^text_read/(?P<text_id>\w+)/$', views.text_read, name='text_read'),
     url(r'^webpage_read/(?P<text_id>\w+)/$', views.webpage_read, name='webpage_read'),
     url(r'^webpage_read/$', views.webpage_read, name='webpage_read'),
+    url(r'^pdf_read/(?P<text_id>\w+)/$', views.webpage_read, name='pdf_read'),
+    url(r'^pdf_read/$', views.webpage_read, name='pdf_read'),
     url(r'^dictwebpage/$',views.dictwebpage,name='dictwebpage'), # when it's the callback of AJAX (when clicking on word in text_read, it's at the oring ot the domain strangely...
     url(r'dictwebpage/$',views.dictwebpage,name='dictwebpage'), # no '^' because text_read calls it to display the webpage
     url(r'^toggle_show_compoundword/$',views.toggle_show_compoundword,name='toggle_show_compoundword'),
@@ -77,7 +79,8 @@ urlpatterns = [
     # AJAX text_read iknowall
     url(r'^iknowall/$', views.iknowall, name='iknowall'),
     
-    # List of the words:
+    ##################################
+    # List of the words: term_list, export2anki and selectivebackup refer to the SAME views function in fact
     url(r'^term_list/$',views.term_list,name='term_list'),
     url(r'^load_wordtable/$',views.load_wordtable,name='load_wordtable'),
     url(r'^termlist_filter/$',views.termlist_filter,name='termlist_filter'),
@@ -91,6 +94,7 @@ urlpatterns = [
     url(r'^selectivebackup/$',views.term_list,name='selectivebackup'),
     url(r'^selectivebackup_exporter/$',views.selectivebackup_exporter,name='selectivebackup_exporter'),
 
+    ###################################
     url(r'^statistics/$',views.statistics,name='statistics'),
     url(r'^statistics/pie_chart/(?P<language_id>\w+)/$', views.pie_chart, name='pie_chart'),
     url(r'^statistics/pie_chart/$', views.pie_chart, name='pie_chart'),

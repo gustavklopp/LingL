@@ -43,7 +43,7 @@
 			{% trans "Last open Texts" %}:
 					<ul>
 					{% for lastopentext in lastopentexts %}
-					<li><a title="{% trans 'Read it' %}" href="{% if lastopentext.is_webpage %}{% url 'webpage_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/webpage_16px.png" %}"
+					<li><a title="{% trans 'Read it' %}" href="{% if lastopentext.contenttype == 'html' %}{% url 'webpage_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/webpage_16px.png" %}"
 																	 alt="Read" />{% else %}{% url 'text_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" alt="Read" />{% endif %}&nbsp;&#9658;
 						&nbsp;<i>{{ lastopentext|truncatechars:100 }}</i></a>
 					</li>

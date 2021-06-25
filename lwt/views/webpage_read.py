@@ -39,6 +39,7 @@ from lwt.constants import STATUS_CHOICES
 @login_required
 @nolang_redirect
 def webpage_read(request, text_id=None):
+    # User has selected text inside the webpage:
     if request.method == 'POST':
         iframe_html = request.POST['iframe_html']
         text_id = request.POST['text_id']
@@ -68,6 +69,7 @@ def webpage_read(request, text_id=None):
         #update the cookie for the database_size
         set_word_database_size(request)
 
+    # Display the already processed text (which is stored in text.text in fact)
     elif request.method == 'GET':
         webpage = Texts.objects.get(id=text_id)
 

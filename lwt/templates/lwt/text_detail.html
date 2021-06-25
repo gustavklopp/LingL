@@ -12,7 +12,9 @@
 	<script type="text/javascript" src="{% static 'lwt/js/ajax_text_detail.js' %}" charset="utf-8"> </script>
  {% endblock javascript %}
 
-{% block pagetitle %}{% if op == 'new' %}{% trans "Creating a new text" %}{% elif op == 'new_webpage' %}{% trans "Reading a new webpage" %}{% else %}{% trans "Editing Text : " %}{{ text_title }}"{% endif %} | {{ block.super }}
+{% block pagetitle %}{% if op == 'new' %}{% trans "Creating a new text" %}{% elif op == 'new_webpage' %}{% trans "Reading a new webpage" %}
+						{% elif op == 'new_pdf' %}{% trans "Reading a new PDF" %}
+						{% else %}{% trans "Editing Text : " %}{{ text_title }}"{% endif %} | {{ block.super }}
 {% endblock pagetitle %}
 
 {% block banner %}
@@ -23,6 +25,16 @@
 {% if op == 'new_webpage' %}
 	<h4><img src="{% static 'lwt/img/icn/new-webpage_32px.png' %}" alt="webpage" />  {% trans "Read a Webpage" %} </h4></li>
 		
+	{% crispy form %}
+
+{% elif op == 'new_pdf' %}
+	<h4><img src="{% static 'lwt/img/icn/new-webpage_32px.png' %}" alt="webpage" />  {% trans "Read a PDF" %} </h4></li>
+		
+	<form id="uploaded_pdfform">
+	{% csrf_token %}
+	{{ form_uploaded_text.uploaded_text|as_crispy_field }}
+	</form>
+
 	{% crispy form %}
 
 {% elif op == 'new' %}
