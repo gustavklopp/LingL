@@ -45,7 +45,8 @@ def _clean_soup_Webpage(soup, url):
 
 ''' Helper func for dictwebpage (and _pons_API()
     allows to clean the webpage to get only the useful content:
-    for ex: remove banner, <script> etc... '''
+    for ex: remove banner, <script> etc... 
+    It's also where we get only the interested content inside the body'''
 def _clean_soup(soup, url=None):
     # Remove all <script></script>
     link_scr = ''
@@ -71,6 +72,8 @@ def _clean_soup(soup, url=None):
             continue
         # for Wordreference.com, the style is inline in fact, in a <style> tag
         if 'wiktionary' in url and 'rel="stylesheet"' in str_link:
+            continue
+        if 'naver' in url and 'rel="stylesheet"' in str_link:
             continue
         link_str += str_link
     body = soup.find('body')
@@ -99,8 +102,13 @@ def _clean_soup(soup, url=None):
     if 'youdao' in url:
         div_results = body.find('div', {'id':'results'})
         body = div_results
+    if 'naver' in url:
+        div_container = body.find('div', {'id':'container'})
+        body = div_container
     body_str = str(body)
     html = link_scr + link_str + body_str 
+    with open('test2.html', 'w') as test2:
+        test2.write(html)
     return html
 
 '''Helper for all the APIs. Allow to make a word clickable (or using shortcut):
@@ -279,5 +287,24 @@ def _youdao_API(content, url):
         span = title.find('span')
         if not span: continue
         __convert_clickable_word(span, idx_item)
+    html = _clean_soup(soup, url)
+    return html
+
+def _naver_API(content, url):
+    soup = BeautifulSoup(content, 'html.parser')
+    with open('test.html','w') as test:
+        test.write(str(soup))
+    div_searchPage_entry = soup.find('div', {'id':'searchPage_entry'})
+    ps = div_searchPage_entry.find_all('p', {'class':'mean'})
+    idx_item = 0
+    for p in ps:
+        idx_item += 1
+        __convert_clickable_word(p, idx_item)
+    div_searchPage_mean = soup.find('div', {'id':'searchPage_mean'})
+    div_origins = div_searchPage_mean.find_all('div', {'class':'origin'})
+    for div_origin in div_origins:
+        a_link = div_origin.find('a', {'class':'link'})
+        idx_item += 1
+        __convert_clickable_word(a_link, idx_item)
     html = _clean_soup(soup, url)
     return html

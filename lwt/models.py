@@ -178,7 +178,7 @@ class Texts(BaseModel):
     wordcount_distinct = models.IntegerField(default=0, blank=True, null=True) # same as 'wordcount' but without written similarly word
     CONTENTTYPE_CHOICES = [
         ('text', 'text'),
-        ('pdf', 'pdf'),
+        ('doc', 'doc'),
         ('html', 'html')
     ]
     contenttype = models.CharField(max_length=4, choices=CONTENTTYPE_CHOICES, default='text')

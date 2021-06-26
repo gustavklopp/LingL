@@ -120,7 +120,7 @@
 		</button>
 		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new=0" title="{% trans "create a new text" %}" ><img src="{% static 'lwt/img/icn/new-text.png' %}" alt="New" /> {% trans "New Text" %}...</a> 
 		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new_webpage=0" title="{% trans "read a new webpage" %}" ><img src="{% static 'lwt/img/icn/new-webpage_16px.png' %}" alt="New_webpage" /> {% trans "Read a new webpage" %}...</a> 
-		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new_pdf=0" title="{% trans "read a new pdf" %}" ><img src="{% static 'lwt/img/icn/new-webpage_16px.png' %}" alt="New_pdf" /> {% trans "Read a new pdf" %}...</a> 
+		<a class="btn btn-default" role="button" href="{% url 'text_detail' %}?new_doc=0" title="{% trans "read a new doc" %}" ><img src="{% static 'lwt/img/icn/new-doc_16px.png' %}" alt="New_doc" /> {% trans "Read a new doc" %}...</a> 
 	</div>
     {# Note: the body of the text_table is loaded tx to the 'load_texttable' func, found in `text.py` #}	
 	<table id="text_table" data-toggle="table" data-sort-name="title" data-sort-order="asc"

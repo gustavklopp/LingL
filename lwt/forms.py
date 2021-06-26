@@ -346,9 +346,19 @@ class WebpagesForm(forms.ModelForm):
         }
 
 
-''' saving a pdf in text_detail (new or edited text)'''
+''' saving a doc in text_detail (new or edited text)'''
 class PdfsForm(WebpagesForm):
-    pass
+#     language = forms.ModelChoiceField(queryset=None, required=True, disabled=True)
+#     title = forms.CharField(max_length=200,required=True, disabled=True)
+#     audiouri = forms.URLField(required=False,max_length=1000, disabled=True)
+#     texttags = tag_fields.TagsInputField( Texttags.objects.all(),
+#                                             create_missing=True,
+#                                             required=False, disabled=True 
+#                                             ) 
+
+    def __init__(self, owner, *args, **kwargs):
+        super(PdfsForm, self).__init__(owner, *args,**kwargs)
+        self.fields['title'].label = _('Document title')
 
 class WordsForm(forms.ModelForm):
     status = forms.IntegerField()  
@@ -478,19 +488,19 @@ class Uploaded_textForm(forms.ModelForm):
         model = Uploaded_text
         fields = ['uploaded_text']
         
-'''Uploading a pdf (on text_detail page)'''
-class Uploaded_pdfForm(Uploaded_textForm):
+'''Uploading a doc (on text_detail page)'''
+class Uploaded_docForm(Uploaded_textForm):
     
     def __init__(self, *args, **kwargs):
-        super(Uploaded_pdfForm, self).__init__(*args,**kwargs)
-        self.helper.form_id = 'uploaded_pdfform'
-        self.fields['uploaded_text'].label = _('Choose the PDF you want to read')
+        super(Uploaded_docForm, self).__init__(*args,**kwargs)
+        self.helper.form_id = 'uploaded_docform'
+        self.fields['uploaded_text'].label = _('Choose the doc you want to read (PDF, CBR, CBZ or EPUB format)')
 
     class Meta:
         model = Uploaded_text
         fields = ['uploaded_text']
         widgets = {
-            'uploaded_text': forms.FileInput(attrs={'accept': '.pdf'})
+            'uploaded_text': forms.FileInput(attrs={'accept': '.pdf,.cbr,.cbz,.epub'})
             }
 
 

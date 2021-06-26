@@ -13,7 +13,7 @@
  {% endblock javascript %}
 
 {% block pagetitle %}{% if op == 'new' %}{% trans "Creating a new text" %}{% elif op == 'new_webpage' %}{% trans "Reading a new webpage" %}
-						{% elif op == 'new_pdf' %}{% trans "Reading a new PDF" %}
+						{% elif op == 'new_doc' %}{% trans "Reading a new doc" %}
 						{% else %}{% trans "Editing Text : " %}{{ text_title }}"{% endif %} | {{ block.super }}
 {% endblock pagetitle %}
 
@@ -27,18 +27,21 @@
 		
 	{% crispy form %}
 
-{% elif op == 'new_pdf' %}
-	<h4><img src="{% static 'lwt/img/icn/new-webpage_32px.png' %}" alt="webpage" />  {% trans "Read a PDF" %} </h4></li>
+{% elif op == 'new_doc' %}
+	<h4><img src="{% static 'lwt/img/icn/new-doc_32px.png' %}" alt="webpage" />  {% trans "Read a doc" %} </h4></li>
 		
-	<form id="uploaded_pdfform">
+	<form id="uploaded_docform">
 	{% csrf_token %}
 	{{ form_uploaded_text.uploaded_text|as_crispy_field }}
 	</form>
 
+		<fieldset class="disabled_form">
 	{% crispy form %}
+		</fieldset>
 
 {% elif op == 'new' %}
 	<h4><img src="{% static 'lwt/img/icn/new-text_32px.png' %}" alt="New" />  {% trans "New Text : Upload your text file -or- Fill the form " %} </h4></li>
+
 
 	<form id="uploaded_textform">
 	{% csrf_token %}

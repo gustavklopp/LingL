@@ -137,7 +137,7 @@ function ajax_dictwebpage(WBLINK, phrase, issentence) {
 					});
 			}
 		// Case where the dictionary uses an API (for ex. with Google translate)
-		 else if (WBLINK.charAt(0) == '!'){
+		 else if (WBLINK.charAt(0) == '!' || WBLINK.charAt(0) == '#'){
 			$.ajax({url: '/dictwebpage/', type: 'GET',
 					data: {'word': phrase, 'wbl': WBLINK, 'issentence': issentence},
 					// and the view sends backs a JSON containing the string URL. <iframe> displays it then.

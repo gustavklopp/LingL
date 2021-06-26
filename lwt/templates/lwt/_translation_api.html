@@ -10,6 +10,8 @@
 <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_wordref.css' %}">
 {% elif API_name == 'wiki' %} 
 <link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_wiki.css' %}">
+{% elif API_name == 'naver' %} 
+<link rel="stylesheet" type="text/css" href="{% static 'lwt/css/API_naver.css' %}">
 {% endif %}
 
 {% static 'lwt/img/icn/tick-button.png' as tick_button %}
@@ -42,6 +44,10 @@
 	</div>
 {% elif API_name == 'wiki' %}
 	<div id="wiki">
+	{{ translation_result|safe }}
+	</div>
+{% elif API_name == 'naver' %}
+	<div id="naver">
 	{{ translation_result|safe }}
 	</div>
 

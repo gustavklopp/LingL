@@ -69,6 +69,7 @@ function highlight(selObj, className) {
 	{ return false;}
 }
 
+/* Putting the split words inside the frame */
 $(document).ready(function(e) {
 
 	var iframe= document.getElementById('thewebpage');
@@ -76,10 +77,11 @@ $(document).ready(function(e) {
 	// Wait that the iframe has loaded completely the srcdoc inside
 	iframe.addEventListener('load', function (e) { 
 	
+		// find the location where we'll put the split words
 		var idoc= iframe.contentDocument || iframe.contentWindow.document;	
 		var iframe_spans = $(idoc).find('.webpage_done');
 		
-		
+		// moving each split words inside the correct location in the frame
 		var words_inthistext = $('.words_inthistext');
 		$.each(iframe_spans, function(indx, iframe_span){
 			iframe_span = $(iframe_span);

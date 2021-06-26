@@ -25,14 +25,16 @@ function ajax_fill_language_detail(code_lang){
 				$('div#list__dict2uri ').next().addClass('hidden'); 
 				var dicturi_list = data['dicturi'].split(',');
 				$.each(dicturi_list, function(index, value){
+					value = value.trim();
+					var value_escaped = value.replace('>', '&gt;').replace('<','&lt;');
 					if (index == 0){ //default inside the input
-						$('input#id_dict1uri').val(value.trim()); 
+						$('input#id_dict1uri').val(value); 
 					}
 					if (index == 1){ //default inside the input
-						$('input#id_dict2uri').val(value.trim()); 
+						$('input#id_dict2uri').val(value); 
 					}
-					$('div#list__dict1uri').append('<a class="dropdown-item" href="#" data-value="'+value+'">'+value+'</a>'); 
-					$('div#list__dict2uri').append('<a class="dropdown-item"  href="#" data-value="'+value+'">'+value+'</a>'); 
+					$('div#list__dict1uri').append('<a class="dropdown-item" href="#" data-value="'+value+'">'+value_escaped+'</a>'); 
+					$('div#list__dict2uri').append('<a class="dropdown-item"  href="#" data-value="'+value+'">'+value_escaped+'</a>'); 
 				});
 				if (dicturi_list.length > 1){ // show the button if there's enough dicturi to show
 					$('#input-group-append_list__dict1uri ').removeClass('hidden'); 

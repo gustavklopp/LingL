@@ -140,8 +140,8 @@
 <h3 id="dicturi">{% trans "Creating your own dictionary link:" %}</h3>
 {% blocktrans %}
 <p><em>LingL</em> provides a few choice of dictionary links which could work for your language (like Wiktionary, Google etc...)</p>
-<p>Those dictionary links are of the form: <span class="font-weight-bold">'!https://....'</span>. The 
-	<span class="font-weight-bold">'!'</span> at the start means that LingL has an already defined
+<p>Those dictionary links are of the form: <span class="font-weight-bold">'!https://....'</span> or <span class="font-weight-bold">#https://....'</span>. The 
+	<span class="font-weight-bold">'!'</span> or the <span class="font-weight-bold">'#'</span> at the start means that LingL has an already defined
    way to fetch this dictionary website (i.e an "API") and a way to click on the translation 
    (or use shortcut) to automatically set as a translation.</p>
 <p>But you are not restricted to those dictionaries and you can provide your own link to your prefered dictionary.</p>
@@ -156,13 +156,17 @@
 	<p><em>LingL</em> has 2 ways to counteract this:</p>
 		<ul><li>3.1 Make the website opening in a new window: To have it, prepend the link with the 
 		<span class="font-weight-bold">'*'</span> character.
-		 For ex.: write <span class="font-weight-bold">*https://en.pons.com/translate/french-english/###</span></li>
+		 For ex.: write <span class="font-weight-bold">*https://en.pons.com/translate/french-english/&lt;WORD&gt;</span></li>
 			<li><p>3.2 Make <em>LingL</em> scrape the website from its content: 
 			To have it prepend the link with the <span class="font-weight-bold">'^'</span> character. 
-		For ex.: write <span class="font-weight-bold">^https://translate.google.com/?sl=fr&tl=en&text=test&op=translate</span></p>
+		For ex.: write <span class="font-weight-bold">^https://translate.google.com/?sl=fr&tl=en&text=&lt;WORD&gt;&op=translate</span></p>
 		<p>The first solution may make the website faster than the second one but with the disadvantage of a new window. 
 		The scraped website may also lead to wrong layout of the original dictionary website.</p></li>
-		<li>P.S: You can also ask on <a href="https://github.com/gustavklopp/LingL">LingLibre</a> if anybody would like to create an API for your particular dictionary.</li>
+		<br>
+		<li>P.S: You can also ask on <a href="https://github.com/gustavklopp/LingL">LingLibre</a> if anybody would like to create an API (= a bit of code which scrapes the website and convert it for <em>LingL</em>) for your particular dictionary.
+		<p>API links are prepended by <span class="font-weight-bold">'!'</span> or <span class="font-weight-bold">'#'</span></p>
+		<p>Creating an API demand a bit more work than prepending with a sign, a complete bit of code need to be programmed.</p>
+			<p>(the difference between '!' and '#' APIs is that the latter simulates a whole browser and is slower)</p></li> 
 		</ul>
 	</li>
 

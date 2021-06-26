@@ -33,7 +33,7 @@ from lwt.views._nolang_redirect_decorator import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._dictionaries_API import _google_API, _pons_API, _wiki_API, _wiki_API_redirect, _dictcc_API, _youdao_API,\
-            _wordref_API, _clean_soup
+            _wordref_API, _naver_API, _clean_soup
 from lwt.views.termform import *
 from lwt.constants import STATUS_CHOICES
 
@@ -145,7 +145,7 @@ def dictwebpage(request):
             # catch the redirect from Wiktionary
             except urllib.error.HTTPError as httpError:
                 error = httpError.read().decode()
-                # wiktionary has a way to redirect to similar word if nothing found
+                # wiktionary has a special way to redirect to similar word if nothing found
                 if 'wiktionary' in finalurl:
                     redirect_url = _wiki_API_redirect(error, finalurl[1:], word_escaped)
                     reqest = Request(redirect_url, headers=headers)
@@ -165,7 +165,36 @@ def dictwebpage(request):
             result_str = escape(html)
             return HttpResponse(json.dumps(result_str)) 
 
-        if finalurl[0] == '!': # this dictionary uses my custom APIs (for ex. Google translate)
+        if finalurl[0] == '#': # case where we use Selenium (Tricky website where scrapping is bloked)
+            # detect if mac or else
+            system = platform.system().lower()
+            if system == 'windows' or system == 'linux': 
+                is_Mac = False
+            else:
+                is_Mac = True
+
+            from selenium.webdriver.firefox.webdriver import WebDriver
+            from functional_tests.selenium_base import Base
+            from selenium.webdriver.common.by import By
+            from selenium.webdriver.firefox.options import Options as FirefoxOptions
+            options = FirefoxOptions()
+            options.add_argument("--headless")
+            selenium = WebDriver(options=options)
+            selenium.get('{}'.format(finalurl[1:]))
+            base = Base()
+            base.selenium = selenium
+            if 'naver' in finalurl:
+                base.wait_until_appear(By.ID, 'searchPage_entry')
+            content = selenium.execute_script("return document.documentElement.outerHTML;")
+
+            if 'naver' in finalurl:
+                translation_result = _naver_API(content, finalurl)
+                context = {'translation_result':translation_result, 'API_name':'naver'} 
+            context['is_Mac'] = is_Mac
+
+            return render(request, 'lwt/_translation_api.html', context) 
+            
+        if finalurl[0] == '!' or finalurl[0] == '#': # this dictionary uses my custom APIs (for ex. Google translate)
 
             context = {}
             # detect if mac or else
@@ -196,9 +225,6 @@ def dictwebpage(request):
             if 'youdao' in finalurl:
                 translation_result = _youdao_API(content, finalurl)
                 context = {'translation_result':translation_result, 'API_name':'youdao'} 
-            if 'baidu' in finalurl:
-                translation_result = _baidu_API(content, finalurl)
-                context = {'translation_result':translation_result, 'API_name':'baidu'} 
             context['is_Mac'] = is_Mac
             return render(request, 'lwt/_translation_api.html', context) 
 

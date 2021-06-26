@@ -366,6 +366,16 @@ span[show_compoundword="true"][cowostatus="101"]
 	width: auto !important;
 	height: auto !important;
 }
+/***********Inside the iframe *****************************/
+/* inside the iframe (used for doc file) 
+ we use a condensed, narrow font since the font found by PyMUpdf is too big by default (especially on Firefox)
+ + the default is span (white-space: pre} which makes line return after each split words */
+span { 
+	font-family: "Times New Roman" !important;
+} 
+span.webpage_done { 
+	white-space: normal !important;
+}
 /*********** in termform.html ************/ 
 /* don't display if the status of the word is not unknown */
 .hidden { 
@@ -480,6 +490,11 @@ a.headCaret:before {
 .noword_tooltip:hover, .word_tooltip:hover{
 	border: solid red;
 	border-width: medium;	
+}
+
+.disabled_form{
+	opacity: 0.6;
+	pointer-events: none;
 }
 /******************************************************************************
      IN LANGUAGE_DETAIL

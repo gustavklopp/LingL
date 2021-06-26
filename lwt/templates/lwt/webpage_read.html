@@ -29,7 +29,7 @@ var WBLINK2 = {% if text.language.dict2uri %}'{% autoescape off %}{{ text.langua
 var WBLINK3 = {% if text.language.googletranslateuri %}'{% autoescape off %}{{ text.language.googletranslateuri }}{% endautoescape %}'{% else %}''{% endif %};
 var RTL = {% if text.language.righttoleft %}true{% else %}false{% endif %};
 var TID = {{ text.id }};
-var TEXTTYPE = '{{ text_type }}'; // define whether it's a text or a webpage. Used to get the keydown event
+var TEXTTYPE = '{{ text.contenttype }}'; // define whether it's a text or a webpage. Used to get the keydown event
 var DOCUMENT = null;
 /*
 $(document).ready( function() { 
@@ -91,7 +91,8 @@ var dictwebpage_searched_word  = [];
 
 <div class="d-flex">
 	<div class="col-md-8">
-	<h4 class="pl-50"><img src="{% static 'lwt/img/icn/webpage_32px.png' %}" alt="reading" /> &nbsp;<a href="{% url 'language_detail' %}?edit={{ text.language.id }}" title="{% trans 'Edit language' %}">{{ text.language }}</a>&nbsp;▶ "{{ text.title }}"{% if text.sourceuri %}<a href="{{ text.sourceURI }}" target="_blank"><img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Text Source" %}" alt="Text Source" /></a>{% endif %}
+	<h4 class="pl-50"><img src="{% if text.contenttype == 'html' %}{% static 'lwt/img/icn/webpage_32px.png' %}
+		{% elif text.contenttype == 'doc' %}{% static 'lwt/img/icn/doc_32px.png' %}{% endif %}" alt="reading" /> &nbsp;<a target="_blank" href="{% url 'language_detail' %}?edit={{ text.language.id }}" title="{% trans 'Edit language (A new tab will open, allowing you to continue reading. Refresh this page after saving edited language)' %}">{{ text.language }}</a>&nbsp;▶ "{{ text.title }}"{% if text.sourceuri %}<a href="{{ text.sourceURI }}" target="_blank"><img src="{% static 'lwt/img/icn/chain.png' %}" title="{% trans "Text Source" %}" alt="Text Source" /></a>{% endif %}
 	</h4>
 	</div>
 	<div class="col-md-1">

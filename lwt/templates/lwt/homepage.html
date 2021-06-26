@@ -40,11 +40,15 @@
 	{% if lastopentexts %} {# the last opened texts #}
 		<div class="card bg-light mb-2" style="max-width: 36rem;">
 		  <div class="card-body">
-			{% trans "Last open Texts" %}:
+			{% trans "Last open" %}:
 					<ul>
 					{% for lastopentext in lastopentexts %}
-					<li><a title="{% trans 'Read it' %}" href="{% if lastopentext.contenttype == 'html' %}{% url 'webpage_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/webpage_16px.png" %}"
-																	 alt="Read" />{% else %}{% url 'text_read' lastopentext.id %}"><img src="{% static "lwt/img/icn/book-open-bookmark.png" %}" alt="Read" />{% endif %}&nbsp;&#9658;
+					<li><a title="{% trans 'Read it' %}" href="
+						{% if lastopentext.contenttype == 'html' or lastopentext.contenttype == 'doc' %}
+						{% url 'webpage_read' lastopentext.id %}{% else %}{% url 'text_read' lastopentext.id %}{% endif %}"><img 
+				    	src="{% if lastopentext.contenttype == 'html' %}{% static "lwt/img/icn/webpage_16px.png" %}
+							{% elif lastopentext.contenttype == 'doc'%}{% static "lwt/img/icn/doc_16px.png" %}
+							{% else %}{% static "lwt/img/icn/book-open-bookmark.png" %}{% endif %}" alt="Read" />&nbsp;&#9658;
 						&nbsp;<i>{{ lastopentext|truncatechars:100 }}</i></a>
 					</li>
 					{% endfor %}
@@ -55,9 +59,10 @@
 {% endif %}
 
 <ul>
-<li><a href="{% url 'text_list' %}?page=1"><img src="{% static "lwt/img/icn/texts.png" %}" alt="texts" />&nbsp;{% trans "My Texts/Webpages" %}</a> (-> 
+<li><a href="{% url 'text_list' %}?page=1"><img src="{% static "lwt/img/icn/texts.png" %}" alt="texts" />&nbsp;{% trans "My Texts/Webpages/Docs" %}</a> (-> 
 		&nbsp;<a href="{% url 'text_detail' %}?new=0"><img src="{% static "lwt/img/icn/new-text.png" %}" alt="new-text" />&nbsp;{% trans "New Text" %}</a>
-		{% trans ' or ' %}<a href="{% url 'text_detail' %}?new_webpage=0"><img src="{% static "lwt/img/icn/new-webpage_16px.png" %}" alt="new-webpage" />&nbsp;{% trans "Read a webpage" %}</a>)</li> 
+		{% trans ' or ' %}<a href="{% url 'text_detail' %}?new_webpage=0"><img src="{% static "lwt/img/icn/new-webpage_16px.png" %}" alt="new-webpage" />&nbsp;{% trans "Read a webpage" %}</a>
+		{% trans ' or ' %}<a href="{% url 'text_detail' %}?new_doc=0"><img src="{% static "lwt/img/icn/new-doc_16px.png" %}" alt="new-doc" />&nbsp;{% trans "Read a doc" %}</a>)</li> 
 	<br><br></li>
 	{% if currentlang_name == "" %}
 <li><a href="{% url 'language_detail' %}?new=0">{% trans "Create New Language" %}</a>

@@ -54,7 +54,7 @@ Future versions are regularly provided.
 
 ### 3.1 for the standalone version:
 
-   1. *(optional)* First, backup (if you want to keep your previous data that you've created): in the menu, choose 'Backup/Restore/Delete your account' then click on 'Backup' (you can choose to backup everything or choose which words to backup).
+   1. *(optional)* First, backup (if you want to keep your previous data that you've created): in the menu, choose 'Backup/Restore/Delete your account' then click on 'Backup' (you can choose to backup everything or choose which words to backup). 
 
    2. *(optional)* Delete the old version folder. `LingLibre` doesn't install anything on your system in fact.
 

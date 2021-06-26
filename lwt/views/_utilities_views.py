@@ -569,7 +569,7 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
                                                    'show_compoundword'])
 
     # update the wordcount and wordcount without the similar wordtext in the text:
-    if text.contenttype == 'html' or text.contenttype == 'pdf':
+    if text.contenttype == 'html' or text.contenttype == 'doc':
         text.wordcount += isWord_created_nb
         text.wordcount_distinct += len(distinct_wordtext_dict)
     else:

@@ -75,7 +75,7 @@ function _next(word){
 	var DOCUMENT = window.DOCUMENT;
 	if (TEXTTYPE == 'text'){
 		return word.next();
-	} else if (TEXTTYPE == 'webpage'){
+	} else if (TEXTTYPE == 'html' || TEXTTYPE == 'doc'){
 		if (word.is(':last-child')){
 			var curr_wps_nb = word.parent().data('webpagesection');
 			var all_webpagesection = DOCUMENT.find('.webpage_done');
@@ -108,7 +108,7 @@ function _prev(word){
 	var DOCUMENT = window.DOCUMENT;
 	if (TEXTTYPE == 'text'){
 		return word.prev();
-	} else if (TEXTTYPE == 'webpage'){
+	} else if (TEXTTYPE == 'html' || TEXTTYPE == 'doc'){
 		/*
 		return word.prev();
 		*/
@@ -196,6 +196,7 @@ function key_binding(DOCUMENT, e){
 		// → arrow right
 		if (keydown == '39' && !_toprightInputBoxes_have_focus()){ 
 			_move_next_word(sel_word, e);
+			ev.preventDefault();
 		}
 
 		// ← arrow left
@@ -219,6 +220,8 @@ function key_binding(DOCUMENT, e){
 				var op = 'edit';
 			}
 			ajax_clicked_word(sel_word.attr('woid'), sel_word.attr('show_compoundword'), op, null);
+
+			ev.preventDefault();
 		}
 	});
 		
