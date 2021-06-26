@@ -727,6 +727,7 @@ buildOptions = dict(
 #             'os.path',
 #             'sitecustomize',
                 'wx',
+                'fitz',
             ], 
         excludes = ['tkinter', 'Tkinter'],
         include_files = [

@@ -725,6 +725,7 @@ buildOptions = dict(
             'setuptools',
             'waitress',
 	    'wx',
+        'fitz',
             ], 
         excludes = ['tkinter', 'Tkinter'],
         include_files = [
