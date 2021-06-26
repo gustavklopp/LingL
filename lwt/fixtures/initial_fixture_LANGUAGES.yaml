@@ -188,7 +188,7 @@
     owner:
     - lingl
     name: Korean
-    dicturi: "http://dictionary.sensagent.com/<WORD>/ko-<1CODE>, !http://en.wiktionary.org/wiki/<WORD>#Korean, !http://www.wordreference.com/ko<1CODE>/<WORD>, https://dict.naver.com/<1CODE>kodict/#/search?query=<WORD>"
+    dicturi: "http://dictionary.sensagent.com/<WORD>/ko-<1CODE>, !http://en.wiktionary.org/wiki/<WORD>#Korean, !http://www.wordreference.com/ko<1CODE>/<WORD>, !https://dict.naver.com/ko<1CODE>dict/#/search?query=<WORD>"
     dict1uri: null
     dict2uri: null
     googletranslateuri: "!https://translate.google.com/m?ie=UTF-8&sl=ko&tl=<1CODE>&q=<WORD>"
