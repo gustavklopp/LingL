@@ -41,11 +41,14 @@ def get_appversion(request):
         # get the date of the latest release on GIthub:
         resp = requests.get('https://api.github.com/repos/gustavklopp/lingl/releases')
         if resp.status_code == 200:
-            release_name = resp.json()[0]['name'] # all the 3 first releases are the last one for each platform
-            release_date_str = release_name[-10:-1] # the date is in the end of the string 'linux LingLibre 2016.06.20'
-            release_date_obj = datetime.strptime(release_date_str, '%Y.%m.%d' ) # '2021.06.20'
-            current_date_obj = datetime.strptime(current_date, '%Y.%m.%d')
-            is_outdated = current_date_obj < release_date_obj
+            releases = resp.json()[:3]
+            for release in releases:
+                if release['name'].startswith('windows'):
+                    release_date_str = release['name'][-10:] # the date is in the end of the string 'linux LingLibre 2016.06.20'
+                    release_date_obj = datetime.strptime(release_date_str, '%Y.%m.%d' ) # '2021.06.20'
+                    current_date_obj = datetime.strptime(current_date, '%Y.%m.%d')
+                    is_outdated = current_date_obj < release_date_obj
+                    break
 
             # and update the cookies
             setter_settings_cookie('date_check', now, request)
