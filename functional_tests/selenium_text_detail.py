@@ -77,7 +77,7 @@ class Text_detail(Base):
         texts = self.finds(By.CSS_SELECTOR, '#text_table tbody tr')
         text_row = texts[0]
         text_tds = text_row.find_elements_by_css_selector('td')
-        text_title = text_tds[4].text
+        text_title = text_tds[5].text
         self.assertEqual(text_title, title_str)
 
         # creating a second text with tags:
@@ -109,7 +109,7 @@ class Text_detail(Base):
         self.assertEqual(len(texts), 2)
         text_row = texts[1]
         text_tds = text_row.find_elements_by_css_selector('td')
-        text_title = text_tds[5].text
+        text_title = text_tds[4].text
         self.assertEqual(text_title, title2_str+' [testing,demo]')
         
         

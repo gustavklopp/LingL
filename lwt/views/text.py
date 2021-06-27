@@ -646,6 +646,8 @@ def text_detail(request):
         # ... and get the name: used for the page title:
         currentlang_name = getter_settings_cookie_else_db('currentlang_name',request)
 
+        f_uploaded_text = None
+
         if 'new' in request.GET.keys():
             # must display the form for the first time:
             f_uploaded_text = Uploaded_textForm()

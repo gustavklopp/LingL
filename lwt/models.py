@@ -181,7 +181,7 @@ class Texts(BaseModel):
         ('doc', 'doc'),
         ('html', 'html')
     ]
-    contenttype = models.CharField(max_length=4, choices=CONTENTTYPE_CHOICES, default='text')
+    contenttype = models.CharField(max_length=4, choices=CONTENTTYPE_CHOICES, default='text', blank=True, null=True)
 
     objects = TextsManager() # use to call the parent foreign key by its name (or title , or etc...)
     
