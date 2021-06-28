@@ -20,6 +20,7 @@ factory-boy = "*"
 pyinstaller = "*"
 wxpython = "*"
 pymupdf = "*"
+line-profiler = "*"
 
 [dev-packages]
 

@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # needed by django-allauth
     'django.contrib.sites',
+    'django.contrib.humanize',
     # local
     'lwt',
 #     'jchart', # graphical tool to display statistics. Local, because Jchart is outdated(it lacks: the simple "import six")
@@ -240,4 +241,3 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 
 #Temporate solution because bug in django-allauth with Django 3.x "HINT: Configure the DEFAULT_AUTO_FIELD setting "
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-

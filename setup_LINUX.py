@@ -220,6 +220,7 @@ buildOptions = dict(
             'django.contrib.contenttypes.migrations.0002_remove_content_type_name',
             'django.contrib.contenttypes.models',
             'django.contrib.contenttypes.views',
+            'django.contrib.humanize',
             'django.contrib.messages',
             'django.contrib.messages.api',
             'django.contrib.messages.apps',
@@ -729,7 +730,7 @@ buildOptions = dict(
                 'wx',
                 'fitz',
             ], 
-        excludes = ['tkinter', 'Tkinter'],
+        excludes = ['tkinter', 'Tkinter','yappi'],
         include_files = [
               'LingL_app.ico',
               'LingL_app.icns',

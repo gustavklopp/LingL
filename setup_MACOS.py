@@ -437,6 +437,7 @@ buildOptions = dict(
             'django.contrib.contenttypes.apps',
             'django.contrib.contenttypes.checks',
             'django.contrib.contenttypes.management',
+            'django.contrib.humanize',
             'django.contrib.sessions',
             'django.contrib.sessions.apps',
             'django.contrib.messages.apps',
@@ -727,7 +728,7 @@ buildOptions = dict(
 	    'wx',
         'fitz',
             ], 
-        excludes = ['tkinter', 'Tkinter'],
+        excludes = ['tkinter', 'Tkinter','yappi'],
         include_files = [
               'LingL_app.ico',
               'LingL_app.icns',

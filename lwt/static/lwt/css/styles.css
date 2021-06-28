@@ -15,6 +15,13 @@
 .hover_pointer{ /* make the element as a link: the cursor becomes a pointer */
 	cursor: pointer;
 }
+
+/******************************************************************************
+     IN _FOOTLICENCE
+******************************************************************************/
+#footlicence .bg-danger{
+	background-color: #ff8490 !important;
+}
 /******************************************************************************
      IN _MENU
 ******************************************************************************/
@@ -370,7 +377,7 @@ span[show_compoundword="true"][cowostatus="101"]
 /* inside the iframe (used for doc file) 
  we use a condensed, narrow font since the font found by PyMUpdf is too big by default (especially on Firefox)
  + the default is span (white-space: pre} which makes line return after each split words */
-span { 
+#page0 span { 
 	font-family: "Times New Roman" !important;
 } 
 span.webpage_done { 

@@ -6,7 +6,6 @@ from django.template import context
 from django.template.loader import get_template
 from django.db import transaction
 from django.db.models import Q, Value, Count
-from django.db.models.functions import Lower 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.fields import CharField,IntegerField
 from django.templatetags.i18n import language

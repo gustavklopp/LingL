@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from django.template import context
 from django.template.loader import get_template
 from django.db.models import Q, Value, Count
-from django.db.models.functions import Lower 
+# from django.db.models.functions import Lower  Lower doesn´t work on non-ascii SQLite3!    
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.fields import CharField,IntegerField
 from django.templatetags.i18n import language
@@ -31,6 +31,7 @@ from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
 from lwt.views._utilities_views import get_word_database_size, get_appversion
 from lwt.views._dictionaries_API import _clean_soup_Webpage
+from lwt.constants import MAX_WORDS_DANGER, MAX_WORDS_DANGER_MESSAGE
 
 
 ''' called by ajax (built-in function) inside bootstrap-table #text_table to fill the table'''
@@ -125,23 +126,21 @@ def load_texttable(request):
             #        display some statistics about the Texts:                             #
             ##########################################################################
             # Total words in this text: don't count duplicate (words written similarly)
-#             texttotalword_list = Words.objects.filter(text=t).\
-#                     exclude(isnotword=True).annotate(wordtext_lc=Lower('wordtext')).order_by('wordtext_lc')
-#             texttotalword_list = (distinct_on(texttotalword_list, 'wordtext', case_unsensitive=True))
-#             texttotalword = len(texttotalword_list)
             texttotalword = t.wordcount_distinct
                     
             # Already saved words in this text: don't count duplicate (words written similarly) 
-            textsavedword_list = Words.objects.filter(Q(text=t)&Q(isnotword=False)&Q(status__gt=0)).\
-                               annotate(wordtext_lc=Lower('wordtext')).\
-                                                    order_by('wordtext_lc')
-            textsavedword_list = (distinct_on(textsavedword_list, 'wordtext', case_unsensitive=True))
+            # !!! Lower() doesn't work on non-ASCII characters with SQLlite3
+            textsavedword_list = list(Words.objects.filter(Q(text=t)&Q(isnotword=False)&Q(status__gt=0)).\
+                                    values_list('wordtext', flat=True))
+            # lower it and don´t keep duplicates:
+            textsavedword_list = [el.lower() for el in textsavedword_list]
+            textsavedword_list = set(textsavedword_list)
             textsavedword = len(textsavedword_list)
                             
 #             textsavedword = len([wo for wo in texttotalword_list if wo.status != 0])
 
             textsavedexpr = Words.objects.filter(Q(text=t)&Q(isCompoundword=True)&\
-                                                 Q(isnotword=True)&Q(status__gt=0)).count()
+                                                 Q(isnotword=False)&Q(status__gt=0)).count()
             textunknownword = texttotalword - textsavedword
             if texttotalword != 0:
                 textunknownwordpercent = 100 * textunknownword//texttotalword
@@ -467,6 +466,8 @@ def text_list(request):
     
     # get the current database size:
     database_size = get_word_database_size(request)
+    # get the appversion:
+    appversion = get_appversion(request)
 
     return render (request, 'lwt/text_list.html',
                    {'lang_filter':lang_Ids_list,'lang_textIds_list':lang_textIds_list, 
@@ -476,7 +477,7 @@ def text_list(request):
                     
                     'languages':languages, 'timezone_now': now,
                     'currentlang_id':currentlang_id,'currentlang_name':currentlang_name,
-                    'database_size':database_size})
+                    'database_size':database_size, 'appversion':appversion})
 
 ''' Editing a single text, or Creating a new text
     'text' means actually a simple text, or a webpage '''
@@ -600,7 +601,7 @@ def text_detail(request):
                         messages.add_message(request, messages.WARNING, 
                                 _('With this additional text, you\'ve got now ') + str(total_words) +\
                                  _(' words for ') + savedtext.language.name + \
-                                _('. This could slow the program a lot. Please consider archiving or deleting some texts.'))
+                                _('.') + MAX_WORDS_DANGER_MESSAGE)
                     text_id = savedtext.id
                     messages.add_message(request, messages.SUCCESS, _('Text successfully added'))
 

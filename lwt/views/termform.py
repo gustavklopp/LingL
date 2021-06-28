@@ -498,6 +498,7 @@ def termform(request):
                 gosw = Grouper_of_same_words.objects.create(id_string=id_string,
                                                                        owner=request.user)
                 alreadysavedword.grouper_of_same_words = gosw
+                alreadysavedword.save()
 
             sameword_id_list = [simwo_id] # we update the word (the correct color)
 

@@ -12,6 +12,7 @@ STATUS_CHOICES = { 0: {'nb':0, 'name': _('Unknown'), 'abbr':_('Unk.'), 'small': 
 MAX_WORDS_NOTICE = 2000
 MAX_WORDS_WARNING = 3000
 MAX_WORDS_DANGER = 4000
+MAX_WORDS_DANGER_MESSAGE = _('Your database is quite big. This could slow the program a lot. Please consider archiving or deleting some texts.')
 
 '''
 (with the addition of Obtained from github user 

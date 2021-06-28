@@ -17,7 +17,7 @@ from datetime import timedelta, datetime
 import requests
 # local
 from lwt.views._setting_cookie_db import *
-from lwt.constants import MAX_WORDS_DANGER, MAX_WORDS_NOTICE, MAX_WORDS_WARNING
+from lwt.constants import MAX_WORDS_DANGER, MAX_WORDS_NOTICE, MAX_WORDS_WARNING, MAX_WORDS_DANGER_MESSAGE
 if __name__ != '__main__':
     from lwt.models import *
 
@@ -99,13 +99,16 @@ def get_word_database_size(request):
         database_size = Words.objects.filter(owner=request.user).count()
         setter_settings_cookie('database_size', database_size, request)
     database_health = 'HEALTHY' # display a message in the footer of each page
+    database_message = ''
     if database_size > MAX_WORDS_NOTICE:
         database_health = 'NOTICE'
     if database_size > MAX_WORDS_WARNING:
         database_health = 'WARNING'
     if database_size > MAX_WORDS_DANGER:
         database_health = 'DANGER'
-    return {'database_size':database_size, 'database_health':database_health}
+        database_message = MAX_WORDS_DANGER_MESSAGE
+    return {'database_size':database_size, 'database_health':database_health,
+            'database_message':database_message}
 
 ''' the Words model has changed, update the count of database_size'''
 def set_word_database_size(request):
@@ -379,6 +382,9 @@ def splitSentence(t, splitSentenceMark):
                     temp_t[index-1] += s
     return temp_t 
     
+import line_profiler
+profile = line_profiler.LineProfiler()
+ 
 ''' split the text into sentences.
     and then insert sentences/words in DB 
     @text  a Text model instance
@@ -387,7 +393,10 @@ def splitSentence(t, splitSentenceMark):
     @sentenceorder what will be the order of the first sentence to add (For 'webpage_read')
     @return  the max order of the sentence (used by webpage_read)
 '''
+@profile
 def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
+    
+
     max_sentenceorder = 0
     
     removeSpaces = text.language.removespaces # Used for Chinese,Jap where the white spaces are not used.
@@ -418,37 +427,50 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
 #         noSentenceEnd = noSentenceEnd.replace('.', '\.') #because the string '\.' were escaped to '.' we need to rescaped them...       t = re.sub(noSentenceEnd , r'‧', t)
         t = re.sub(noSentenceEnd , r'‧', t)
 
-    sentences = splitSentence(t, splitSentenceMark)
+    sentencetexts_ls = splitSentence(t, splitSentenceMark)
 
     ######################## Splitting and insert sentences/Words in the database ######################
     textOrder = 0
     new_words_created = []
     distinct_wordtext_dict = {} # we´ll count the number of distinct wordtexts (used in text list and in text_read)
     isWord_created_nb = 0 # because bulk_create doesn't return the ID!!!
-    for sentTxt in sentences: # Loop on each sentence
+    sentences_NK_ls = [] # used to get the sentence from the bulk_create 
+    sentences_Obj_ls = []
+    for sentTxt in sentencetexts_ls: # Loop on each sentence
         # it will be used to create the 'customsentence': the sentence with the word inside '**...**'
         senttext_before_wo = ''
         senttext_after_wo = ''
 
-        newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
+#         newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
+#                                                sentencetext=sentTxt, order=sentenceorder,text=text) # create each sentence
+        # Preparing for the bulk create of sentences
+        created_sentence = Sentences(owner=text.owner,language=text.language,
                                                sentencetext=sentTxt, order=sentenceorder,text=text) # create each sentence
+        sentences_Obj_ls.append(created_sentence)
+        sentences_NK_ls.append(created_sentence.natural_key())
+
         max_sentenceorder = sentenceorder
         sentenceorder += 1
+    # bulk create:
+    Sentences.objects.bulk_create(sentences_Obj_ls)
+    
+    for idx, newsentence in enumerate(sentences_Obj_ls):
+        sentence_obj_from_NK = Sentences.objects.get_by_natural_key(*sentences_NK_ls[idx]) 
         # splitting the words inside the sentence:
         word_split_pattern = r'([^'+termchar+']+)' # non character are used as the end of word
 
-        sentList = re.split(word_split_pattern, sentTxt) # ['This',' ','is',' ','good','.',' ']
-        sentList = [i for i in sentList if i] # remove the empty item created by re.split
+        elements_in_sentence_ls = re.split(word_split_pattern, newsentence.sentencetext) # ['This',' ','is',' ','good','.',' ']
+        elements_in_sentence_ls = [i for i in elements_in_sentence_ls if i] # remove the empty item created by re.split
         # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
-        if len(sentList) > 1 and not re.match(r'[^\W\d_]', sentList[-1]):
-            lastitem_isnotword = sentList.pop() 
+        if len(elements_in_sentence_ls) > 1 and not re.match(r'[^\W\d_]', elements_in_sentence_ls[-1]):
+            lastitem_isnotword = elements_in_sentence_ls.pop() 
         else:
             lastitem_isnotword = False
             
         # split each character of each 'word' if it's Japanese/Chinese..
         if splitEachChar: # ..where each character is a word 
             temp_sentList = []
-            for wordidx,word in enumerate(sentList): 
+            for wordidx,word in enumerate(elements_in_sentence_ls): 
                 if re.search(r'[' + termchar +  ']', word): # match only word
                     # this regex pattern matches only Japanese/Chinese word.
                     splitEachChar_List = re.split(r'(['+termchar+'])', word)
@@ -456,17 +478,17 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
                     temp_sentList.extend(splitEachChar_List)
                 else: # the element doesn't contain any Jap/Chinese character. not to split in character
                     temp_sentList.append(word)
-            sentList = temp_sentList
+            elements_in_sentence_ls = temp_sentList
 
-        for wordidx, word in enumerate(sentList): 
+        for wordidx, word in enumerate(elements_in_sentence_ls): 
             if re.search(r'[' + termchar +  ']', word): 
                 # creating the custom sentence 
-                senttext_before_wo = ''.join(sentList[:wordidx])
-                senttext_after_wo = ''.join(sentList[wordidx+1:])
+                senttext_before_wo = ''.join(elements_in_sentence_ls[:wordidx])
+                senttext_after_wo = ''.join(elements_in_sentence_ls[wordidx+1:])
                 customsentence = senttext_before_wo + '**'+word+'**' + senttext_after_wo
 
                 wo = Words(owner=text.owner,language=text.language, 
-                                          sentence=newsentence,text=text,
+                                          sentence=sentence_obj_from_NK, text=text,
                                           order=wordidx, textOrder=textOrder,
                                             wordtext=word, customsentence=customsentence, 
 #                                               wordtext=remove_spaces(word,removeSpaces), \
@@ -477,14 +499,14 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
                 distinct_wordtext_dict[word_LC] = distinct_wordtext_dict.setdefault(word_LC, 0)+1
                 isWord_created_nb += 1
             else: # Non-words
-                wo = Words(owner=text.owner,language=text.language, sentence=newsentence,
+                wo = Words(owner=text.owner,language=text.language, sentence=sentence_obj_from_NK,
                                      text=text, order=wordidx, textOrder=textOrder,
                                      wordtext=word, isnotword=True, webpagesection=webpagesection)
                 new_words_created.append(wo)
             textOrder += 1
         # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
         if lastitem_isnotword:
-            wo = Words(owner=text.owner,language=text.language, sentence=newsentence,text=text,
+            wo = Words(owner=text.owner,language=text.language, sentence=sentence_obj_from_NK, text=text,
                              order=wordidx+1, textOrder=textOrder, wordtext=lastitem_isnotword, 
                              isnotword=True, webpagesection=webpagesection)
             new_words_created.append(wo)
@@ -501,7 +523,7 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
         
         # don't process 2 times the same word already processed
         if new_word_created not in words_found_similar_to_update:
-            # the word which have a gosw is the model (else, whatever the word)
+            # We search a word written similarly, already saved in the database
             samewordtext_query = Words.objects.filter(language=text.language).\
                     filter(wordtext__iexact=new_word_created.wordtext).\
                     order_by('-status')
@@ -579,6 +601,10 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
         text.wordcount = isWord_created_nb
         text.wordcount_distinct = len(distinct_wordtext_dict)
     text.save()
+
+    with open('output.txt', 'w') as stream:
+        profile.print_stats(stream=stream)
+
     
     return max_sentenceorder
 

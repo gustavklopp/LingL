@@ -3,7 +3,7 @@
 {% load djangoversion %}
 {% load pythonversion %}		
 <p class="smallgray graydotted">&nbsp;</p>
-<table><tr>
+<table id="footlicence"><tr>
 <td class="width50px"><a target="_blank" href="https://www.gnu.org/licenses/gpl-3.0.en.html"><img alt="Public Domain" title="Public Domain" src="{% static 'lwt/img/gplv3.png' %}" /></a></td>
 <td><p class="small"><a href="https://github.com/gustavklopp/LingL" target="_blank">LingLibre ("LingL")</a> is free and opensource software released<br />
 under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank">GNU General Public Licence </a>.<br />
@@ -13,14 +13,15 @@ under the <a href="https://www.gnu.org/licenses/gpl-3.0.en.html" target="_blank"
 				{% if database_size.database_health == 'NOTICE' %}bg-success{% endif %}
 				{% if database_size.database_health == 'WARNING' %}bg-warning{% endif %}
 				{% if database_size.database_health == 'DANGER' %}bg-danger{% endif %}
-				">&nbsp;{% load l10n %}
+				" title="{{ database_size.database_message }}">&nbsp;{% load l10n %}
 		{% if database_size.database_size == 0 %}
 			{% trans 'Empty' %}
 		{% else %}
-			{% blocktranslate count counter=database_size.database_size %}
+			{% load humanize %}
+			{% blocktranslate with counter_loc=database_size.database_size|intcomma count counter=database_size.database_size %}
 			1 word
 			{% plural %}
-			{{ counter }} words
+			{{ counter_loc }} words
 			{% endblocktranslate %}
 		{% endif %}&nbsp;</span>
 <br />{% endif %}
