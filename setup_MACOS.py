@@ -728,7 +728,7 @@ buildOptions = dict(
 	    'wx',
         'fitz',
             ], 
-        excludes = ['tkinter', 'Tkinter','yappi'],
+        excludes = ['tkinter', 'Tkinter','yappi', 'line-converter'],
         include_files = [
               'LingL_app.ico',
               'LingL_app.icns',

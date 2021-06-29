@@ -381,10 +381,54 @@ def splitSentence(t, splitSentenceMark):
                 elif idx %2 != 0:
                     temp_t[index-1] += s
     return temp_t 
-    
+
 ############ LINE_PROFILER ###############
 import line_profiler
 profile = line_profiler.LineProfiler()
+
+'''Using multiprocess to speed up (a little) the search of similar words with
+   the newly created list of words 
+   @new_word_created the word from the new_words_created list 
+   '''
+# @profile
+def multiprocess_newwordcreated(new_word_created,
+                                words_found_similar_to_update, 
+                                words_found_similar_to_update_ids, 
+                                new_words_created_ids,
+                                words_AND_goswNK_dic,
+                                gosw_to_create_ls,
+                                text):
+    # don't process 2 times the same word already processed
+    if new_word_created.id not in words_found_similar_to_update_ids:
+        # We search a word written similarly, already saved in the database
+        samewordtext_query = Words.objects.filter(language=text.language).\
+                filter(wordtext__iexact=new_word_created.wordtext).\
+                order_by('-status')
+        for idx, sameword in enumerate(samewordtext_query):
+            # the words found similar must have at least one of them which is a known word
+            if idx == 0:
+                if sameword.status == 0:
+                    continue
+                else:
+                    model_word = sameword # it's used as a model    
+                    gosw_to_update = model_word.grouper_of_same_words
+                    # creating a GOSW if needed (will be done by bulk_create)
+                    if not gosw_to_update:
+                        id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
+                        gosw_created = Grouper_of_same_words(id_string=id_string, owner=text.owner)
+                        gosw_to_create_ls.append(gosw_created)
+                        words_AND_goswNK_dic[model_word] = gosw_created.natural_key()
+                        gosw_to_update = gosw_created
+            else:
+                # and update all those words (except the FK for gosw which will be done in another bulk_update):
+                if sameword.id in new_words_created_ids:
+                    sameword.status = model_word.status
+                    words_AND_goswNK_dic[sameword] = gosw_to_update.natural_key()
+                    sameword.translation = model_word.translation
+                    sameword.romanization = model_word.romanization
+                    sameword.customsentence = model_word.customsentence
+                    words_found_similar_to_update.append(sameword)
+                    words_found_similar_to_update_ids.append(sameword.id)  
  
 ''' split the text into sentences.
     and then insert sentences/words in DB 
@@ -397,7 +441,6 @@ profile = line_profiler.LineProfiler()
 @profile
 def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
     
-
     max_sentenceorder = 0
     
     removeSpaces = text.language.removespaces # Used for Chinese,Jap where the white spaces are not used.
@@ -436,15 +479,12 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
     distinct_wordtext_dict = {} # we´ll count the number of distinct wordtexts (used in text list and in text_read)
     isWord_created_nb = 0 # because bulk_create doesn't return the ID!!!
     sentences_NK_filter = Q() # used to get the sentence from the bulk_create 
-    sentences_Obj_ls = []
     sentences_to_create = []
     for sentTxt in sentencetexts_ls: # Loop on each sentence
         # it will be used to create the 'customsentence': the sentence with the word inside '**...**'
         senttext_before_wo = ''
         senttext_after_wo = ''
 
-#         newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
-#                                                sentencetext=sentTxt, order=sentenceorder,text=text) # create each sentence
         # Preparing for the bulk create of sentences
         sentence_to_create = Sentences(owner=text.owner, language=text.language,
                                      sentencetext=sentTxt, order=sentenceorder,
@@ -527,43 +567,42 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
     
     # TO use bulk_create with words and gosw. We can't bulk_create gosw and bulk_update words at the same time
     # since gosw is a FK to words
-    gosw_to_create_ls = []
-    words_AND_goswNK_dic = {}
-#     modelwords_to_update = []
-    words_found_similar_to_update = []
-    words_found_similar_to_update_ids = []
 
-    for new_word_created in new_words_created:
-        
-        # don't process 2 times the same word already processed
-        if new_word_created.id not in words_found_similar_to_update_ids:
-            # We search a word written similarly, already saved in the database
-            samewordtext_query = Words.objects.filter(language=text.language).\
-                    filter(wordtext__iexact=new_word_created.wordtext).\
-                    order_by('-status')
-            for idx, sameword in enumerate(samewordtext_query):
-            # the words found similar must have at least one of them which is a known word
-                if idx == 0 and sameword.status > 0:
-                    model_word = sameword # it's used as a model    
-                    gosw_to_update = model_word.grouper_of_same_words
-                    # creating a GOSW if needed (will be done by bulk_create)
-                    if not gosw_to_update:
-                        id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
-                        gosw_created = Grouper_of_same_words(id_string=id_string, owner=text.owner)
-                        gosw_to_create_ls.append(gosw_created)
-                        words_AND_goswNK_dic[model_word] = gosw_created.natural_key()
-                        gosw_to_update = gosw_created
+    ######## Start multi process
 
-                else:
-                    # and update all those words (except the FK for gosw which will be done in another bulk_update):
-                    if sameword.id in new_words_created_ids:
-                        sameword.status = model_word.status
-                        words_AND_goswNK_dic[sameword] = gosw_to_update.natural_key()
-                        sameword.translation = model_word.translation
-                        sameword.romanization = model_word.romanization
-                        sameword.customsentence = model_word.customsentence
-                        words_found_similar_to_update.append(sameword)
-                        words_found_similar_to_update_ids.append(sameword.id)
+    import multiprocessing as mp
+    from multiprocessing import Queue
+    from itertools import repeat
+    
+    with mp.Manager() as manager:
+        # this list and dict will be shared betwen the processes. They need to be converted
+        # in a format called 'proxyList' and 'proxyDict' (we'll convert back to normal list and dict later)
+        gosw_to_create_ls = Queue()
+        words_found_similar_to_update = Queue()
+        words_found_similar_to_update_ids = Queue()
+
+        words_AND_goswNK_dic = manager.dict()
+        new_words_created_ids = manager.list(new_words_created_ids)
+
+        # this is the way we can pass arguments. They need to be zipped.
+        # the mulitprocess will create process for each element of the list new_words_created.
+        # the arguments taken needs to be repeated for each element of the list.
+        zipped_args = zip( new_words_created, 
+                          repeat(words_found_similar_to_update), repeat(words_found_similar_to_update_ids),
+                          repeat(new_words_created_ids), repeat(words_AND_goswNK_dic),
+                         repeat(gosw_to_create_ls), 
+                          repeat(text))
+
+        with manager.Pool() as pool:
+            pool.starmap(multiprocess_newwordcreated, zipped_args)
+            
+        # and get back again the lists that we'll need later
+        gosw_to_create_ls = list(gosw_to_create_ls)
+        words_AND_goswNK_dic = dict(words_AND_goswNK_dic)
+        words_found_similar_to_update = list(words_found_similar_to_update)
+            
+    ######## End multi process
+
     # Bulk create of GOSW:
     Grouper_of_same_words.objects.bulk_create(gosw_to_create_ls)
 
