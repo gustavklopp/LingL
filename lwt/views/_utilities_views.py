@@ -515,43 +515,70 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
         
     new_words_created = Words.objects.filter(Q(isnotword=False)&Q(owner=text.owner)).\
                                 order_by('-created_date')[:isWord_created_nb]
+    new_words_created_ids = list(new_words_created.values_list('id', flat=True))
 
-    ################## SEARCHING THE TEXT FOR SIMILAR WORD: ######################################################
+    ################## SEARCHING THE TEXT FOR SIMILAR WORD (= written similarly): #######################
+    
+    # TO use bulk_create with words and gosw. We can't bulk_create gosw and bulk_update words at the same time
+    # since gosw is a FK to words
+    gosw_to_create_ls = []
+    words_AND_goswNK_dic = {}
+#     modelwords_to_update = []
     words_found_similar_to_update = []
-    modelwords_to_update = []
+    words_found_similar_to_update_ids = []
+
     for new_word_created in new_words_created:
         
         # don't process 2 times the same word already processed
-        if new_word_created not in words_found_similar_to_update:
+        if new_word_created.id not in words_found_similar_to_update_ids:
             # We search a word written similarly, already saved in the database
             samewordtext_query = Words.objects.filter(language=text.language).\
                     filter(wordtext__iexact=new_word_created.wordtext).\
                     order_by('-status')
             # the words found similar must have at least one of them which is a known word
-            if samewordtext_query and samewordtext_query.first().status > 0:
+            if samewordtext_query.exists():
                 model_word = samewordtext_query.first() #it's used as a model    
+                if model_word.status == 0:
+                    continue
                 gosw_to_update = model_word.grouper_of_same_words
-                # creating a GOSW if needed
+                # creating a GOSW if needed (will be done by bulk_create)
                 if not gosw_to_update:
                     id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
-                    gosw_to_update = Grouper_of_same_words.objects.create(id_string=id_string,
-                                                                           owner=text.owner)
-                    model_word.grouper_of_same_words = gosw_to_update
-                    modelwords_to_update.append(model_word)
-                # and update all those words:
+                    gosw_created = Grouper_of_same_words(id_string=id_string, owner=text.owner)
+                    gosw_to_create_ls.append(gosw_created)
+                    words_AND_goswNK_dic[model_word] = gosw_created.natural_key()
+                    gosw_to_update = gosw_created
+#                     model_word.grouper_of_same_words = gosw_to_update
+#                     modelwords_to_update.append(model_word)
+
+                # and update all those words (except the FK for gosw which will be done in another bulk_update):
                 for sameword in samewordtext_query:
-                    if sameword in new_words_created:
+                    if sameword.id in new_words_created_ids:
                         sameword.status = model_word.status
-                        sameword.grouper_of_same_words = gosw_to_update
+#                         sameword.grouper_of_same_words = gosw_to_update
+                        words_AND_goswNK_dic[sameword] = gosw_to_update.natural_key()
                         sameword.translation = model_word.translation
                         sameword.romanization = model_word.romanization
                         sameword.customsentence = model_word.customsentence
                         words_found_similar_to_update.append(sameword)
+                        words_found_similar_to_update_ids.append(sameword.id)
+    # Bulk create of GOSW:
+    Grouper_of_same_words.objects.bulk_create(gosw_to_create_ls)
+
     # Bulk update:
-    Words.objects.bulk_update(words_found_similar_to_update, ['grouper_of_same_words','status',
+    
+    # first, we need to get the Object gosw from their NK
+    words_with_gosw_to_update = []
+    for wo, goswNK in words_AND_goswNK_dic.items():
+        goswObj = Grouper_of_same_words.objects.get_by_natural_key(*goswNK)
+        wo.grouper_of_same_words = goswObj
+        words_with_gosw_to_update.append(wo)
+    Words.objects.bulk_update(words_with_gosw_to_update, ['grouper_of_same_words'])
+
+    # and the other update
+    Words.objects.bulk_update(words_found_similar_to_update, ['status',
                                                               'translation','romanization',
                                                               'customsentence'])
-    Words.objects.bulk_update(modelwords_to_update, ['grouper_of_same_words'])
     ################## SEARCHING COMPOUND WORDS: ######################################################
     # loop through all the already known compound words:
     sim_cowo_to_update = []
