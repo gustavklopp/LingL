@@ -21,6 +21,7 @@ pyinstaller = "*"
 wxpython = "*"
 pymupdf = "*"
 line-profiler = "*"
+python-rapidjson = "*"
 
 [dev-packages]
 

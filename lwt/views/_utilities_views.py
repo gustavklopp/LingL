@@ -517,6 +517,8 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
     # bulk create words (we can't bulk create sentence since they are used as FK)
     Words.objects.bulk_create(new_words_created)
         
+    # it's an alternative to searching by natural_key the bulk_created words:
+    # We get the last created word (for this owner)
     new_words_created = Words.objects.filter(Q(isnotword=False)&Q(owner=text.owner)).\
                                 order_by('-created_date')[:isWord_created_nb]
     new_words_created_ids = list(new_words_created.values_list('id', flat=True))
