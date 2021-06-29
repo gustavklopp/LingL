@@ -11,7 +11,7 @@ from django.utils import timezone
 # second party
 import os
 import re
-import json 
+import json  # NB: I've tried python-rapidjson and orjson but they aren't faster
 import urllib
 from datetime import timedelta, datetime
 import requests
@@ -382,6 +382,7 @@ def splitSentence(t, splitSentenceMark):
                     temp_t[index-1] += s
     return temp_t 
     
+############ LINE_PROFILER ###############
 import line_profiler
 profile = line_profiler.LineProfiler()
  
@@ -434,8 +435,9 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
     new_words_created = []
     distinct_wordtext_dict = {} # we´ll count the number of distinct wordtexts (used in text list and in text_read)
     isWord_created_nb = 0 # because bulk_create doesn't return the ID!!!
-    sentences_NK_ls = [] # used to get the sentence from the bulk_create 
+    sentences_NK_filter = Q() # used to get the sentence from the bulk_create 
     sentences_Obj_ls = []
+    sentences_to_create = []
     for sentTxt in sentencetexts_ls: # Loop on each sentence
         # it will be used to create the 'customsentence': the sentence with the word inside '**...**'
         senttext_before_wo = ''
@@ -444,18 +446,20 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
 #         newsentence = Sentences.objects.create(owner=text.owner,language=text.language,
 #                                                sentencetext=sentTxt, order=sentenceorder,text=text) # create each sentence
         # Preparing for the bulk create of sentences
-        created_sentence = Sentences(owner=text.owner,language=text.language,
-                                               sentencetext=sentTxt, order=sentenceorder,text=text) # create each sentence
-        sentences_Obj_ls.append(created_sentence)
-        sentences_NK_ls.append(created_sentence.natural_key())
+        sentence_to_create = Sentences(owner=text.owner, language=text.language,
+                                     sentencetext=sentTxt, order=sentenceorder,
+                                     text=text) # create each sentence
+        sentences_to_create.append(sentence_to_create)
+        sentences_NK_filter |= Q(Q(text=text)&Q(order=sentenceorder)&Q(owner=text.owner))
 
         max_sentenceorder = sentenceorder
         sentenceorder += 1
     # bulk create:
-    Sentences.objects.bulk_create(sentences_Obj_ls)
+    Sentences.objects.bulk_create(sentences_to_create)
+    # and get the objects created:
+    sentences_Obj_ls = Sentences.objects.filter(sentences_NK_filter)
     
-    for idx, newsentence in enumerate(sentences_Obj_ls):
-        sentence_obj_from_NK = Sentences.objects.get_by_natural_key(*sentences_NK_ls[idx]) 
+    for newsentence in sentences_Obj_ls:
         # splitting the words inside the sentence:
         word_split_pattern = r'([^'+termchar+']+)' # non character are used as the end of word
 
@@ -488,7 +492,7 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
                 customsentence = senttext_before_wo + '**'+word+'**' + senttext_after_wo
 
                 wo = Words(owner=text.owner,language=text.language, 
-                                          sentence=sentence_obj_from_NK, text=text,
+                                          sentence=newsentence, text=text,
                                           order=wordidx, textOrder=textOrder,
                                             wordtext=word, customsentence=customsentence, 
 #                                               wordtext=remove_spaces(word,removeSpaces), \
@@ -499,14 +503,14 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
                 distinct_wordtext_dict[word_LC] = distinct_wordtext_dict.setdefault(word_LC, 0)+1
                 isWord_created_nb += 1
             else: # Non-words
-                wo = Words(owner=text.owner,language=text.language, sentence=sentence_obj_from_NK,
+                wo = Words(owner=text.owner,language=text.language, sentence=newsentence,
                                      text=text, order=wordidx, textOrder=textOrder,
                                      wordtext=word, isnotword=True, webpagesection=webpagesection)
                 new_words_created.append(wo)
             textOrder += 1
         # Special case: it's the delimiter: the '.' at the end of the sentence for ex.
         if lastitem_isnotword:
-            wo = Words(owner=text.owner,language=text.language, sentence=sentence_obj_from_NK, text=text,
+            wo = Words(owner=text.owner,language=text.language, sentence=newsentence, text=text,
                              order=wordidx+1, textOrder=textOrder, wordtext=lastitem_isnotword, 
                              isnotword=True, webpagesection=webpagesection)
             new_words_created.append(wo)
@@ -535,27 +539,23 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
             samewordtext_query = Words.objects.filter(language=text.language).\
                     filter(wordtext__iexact=new_word_created.wordtext).\
                     order_by('-status')
+            for idx, sameword in enumerate(samewordtext_query):
             # the words found similar must have at least one of them which is a known word
-            if samewordtext_query.exists():
-                model_word = samewordtext_query.first() #it's used as a model    
-                if model_word.status == 0:
-                    continue
-                gosw_to_update = model_word.grouper_of_same_words
-                # creating a GOSW if needed (will be done by bulk_create)
-                if not gosw_to_update:
-                    id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
-                    gosw_created = Grouper_of_same_words(id_string=id_string, owner=text.owner)
-                    gosw_to_create_ls.append(gosw_created)
-                    words_AND_goswNK_dic[model_word] = gosw_created.natural_key()
-                    gosw_to_update = gosw_created
-#                     model_word.grouper_of_same_words = gosw_to_update
-#                     modelwords_to_update.append(model_word)
+                if idx == 0 and sameword.status > 0:
+                    model_word = sameword # it's used as a model    
+                    gosw_to_update = model_word.grouper_of_same_words
+                    # creating a GOSW if needed (will be done by bulk_create)
+                    if not gosw_to_update:
+                        id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
+                        gosw_created = Grouper_of_same_words(id_string=id_string, owner=text.owner)
+                        gosw_to_create_ls.append(gosw_created)
+                        words_AND_goswNK_dic[model_word] = gosw_created.natural_key()
+                        gosw_to_update = gosw_created
 
-                # and update all those words (except the FK for gosw which will be done in another bulk_update):
-                for sameword in samewordtext_query:
+                else:
+                    # and update all those words (except the FK for gosw which will be done in another bulk_update):
                     if sameword.id in new_words_created_ids:
                         sameword.status = model_word.status
-#                         sameword.grouper_of_same_words = gosw_to_update
                         words_AND_goswNK_dic[sameword] = gosw_to_update.natural_key()
                         sameword.translation = model_word.translation
                         sameword.romanization = model_word.romanization
@@ -629,9 +629,9 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
         text.wordcount_distinct = len(distinct_wordtext_dict)
     text.save()
 
+# OUTPUT THE LINE_PROFILER
     with open('output.txt', 'w') as stream:
         profile.print_stats(stream=stream)
-
     
     return max_sentenceorder
 
