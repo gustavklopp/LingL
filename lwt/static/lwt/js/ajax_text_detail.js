@@ -39,6 +39,34 @@ function ajax_uploaded_text(op){
 	return false;
 }
 
+function display_loading_popup(){
+	// all the background is disabled:
+	$('<div></div>').appendTo('body').css({
+		  'position': 'fixed',
+		  'padding': '0',
+		  'margin': '0',
+		  'top': '0',
+		  'left': '0',
+		  'width': '100%',
+		  'height': '100%',
+		  'opacity': '0.5',
+		  'background-color': 'black',
+		  'z-index': '100',
+	});
+	// display the popup
+	$('#loadingpopup').prop('hidden', false)
+	.dialog({
+		modal: true,
+		zIndex: '101 !important', autoOpen: true,
+		width: 'auto', resizable: false,
+	   // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
+        open: function(event, ui) { 
+            //hide titlebar.
+            $(this).parent().children('.ui-dialog-titlebar').remove();
+        },
+	}).css('background-color', 'white'); // end of '.dialog({'
+
+}
 $(document).ready(function(e) {
 	/* clicking on the radio button in termform to choose link */
 	$('#uploaded_textform input#id_uploaded_text').change(function() {
@@ -47,6 +75,10 @@ $(document).ready(function(e) {
 	$('#uploaded_docform input#id_uploaded_text').change(function() {
 			$("#uploaded_docform").submit(ajax_uploaded_text('uploaded_doc'));
 					});
+
+	// display a loading popup after saving
+	$('#submit-id-save').bind('click', display_loading_popup);
+	$('#submit-id-save_read').bind('click', display_loading_popup);
 });
 					
 					

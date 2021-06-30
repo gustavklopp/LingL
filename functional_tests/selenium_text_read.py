@@ -254,7 +254,7 @@ class Text_read(Base):
         similarwords[0].click()
         totalsavedwords = self.finds(By.XPATH, '//*[@id="thetext"]/p[1]/span[@wostatus="1"]')
         self.assertEqual(len(totalsavedwords), 4)
-        newsavedwords = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')
+        newsavedwords = self.finds(By.XPATH, '//*[@id="thetext"]/p[1]/span[@wostatus="1" and contains(text(), "aimerais")]')
         self.assertEqual(len(newsavedwords), 2)
          
         # create a new text with the same text
@@ -279,7 +279,7 @@ class Text_read(Base):
         # clicking on word 'aimeront' should make only one similar word to appear:
         words = self.finds(By.XPATH, "//span[contains(text(),'aimeront')]")
         words[0].click()
-        similarwords = self.finds(By.XPATH, '//span[@class="possible_similarword"]')
+        similarwords = self.finds(By.CSS_SELECTOR, '#possible_similarword_result span.possible_similarword')
         self.assertEqual(len(similarwords), 1)
          
         #editing a word make all similar words updated:

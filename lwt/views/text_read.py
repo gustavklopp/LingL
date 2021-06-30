@@ -21,7 +21,7 @@ import platform
 # third party
 # import requests #use to scrap
 from urllib.request import Request, urlopen # use to scrap the dictionary
-from urllib import parse # set the encoding for the URL
+from urllib.parse import quote as urllibparsequote # set the encoding for the URL
 from urllib.parse import urljoin, urlparse
 import html # use to scrap the dictionary
 from bs4 import BeautifulSoup #use to scrap
@@ -121,14 +121,14 @@ def dictwebpage(request):
     # and the view sends backs a JSON containing the string URL. <iframe> displays it then.  
     else:
         word = request.GET['word']
-        word_escaped = parse.quote(word)
+        word_escaped = urllibparsequote(word)
         wbl = request.GET['wbl']
 
         # case where it's a lookup sentence:
         if 'issentence' in request.GET.keys() and request.GET['issentence'] != '': # no key "issentence" is sent if the value of 'issentence' is empty in AJAX
             wo_id = int(request.GET['issentence'])
             word = Sentences.objects.values_list('sentencetext',flat=True).get(sentence_having_this_word=wo_id)
-            word_escaped = parse.quote(word)
+            word_escaped = urllibparsequote(word)
         finalurl = wbl.replace('<WORD>', word_escaped)
 #         finalurl = createTheDictLink(wbl, word) # create the url of the dictionary, integrating the searched word
 

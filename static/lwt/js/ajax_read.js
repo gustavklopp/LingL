@@ -202,7 +202,13 @@ function iknowall(event, wo_id){
 					sel_word.removeClass('clicked');
 					var sel_word = DOCUMENT.find('span[woid="'+data['firstWord_of_nextSentence']+'"]');
 					sel_word.addClass('clicked');	
-					click_ctrlclick_toggle(sel_word, event); // creating: clicktooltip and the right panel (bottom & top)
+					if (sel_word.attr('wostatus') == "0"){
+						var op = 'new';
+					} else {
+						var op = 'edit';
+					}
+					ajax_clicked_word(sel_word.attr('woid'), sel_word.attr('show_compoundword'), op, null);
+//					click_ctrlclick_toggle(sel_word, event); // creating: clicktooltip and the right panel (bottom & top)
 					// and autoscroll to it
 					_autoscroll_to_sel_word(sel_word);
 				}
