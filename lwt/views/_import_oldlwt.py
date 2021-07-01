@@ -41,9 +41,14 @@ def converter_bad_url(url, name, origin_lang_code):
     else:
         return url
 
+############ LINE_PROFILER ###############
+# import line_profiler
+# profile = line_profiler.LineProfiler()
+
 ''' @data_file: sql file, uncompressed
 @owner: request.user
 @return: None => from the sql file, create all the tables '''
+# @profile
 def import_oldlwt(owner, data_file):
     # dicts where "'old_lwt_id'" :  <Word object in new lwt>
     languages_dict = {}
@@ -52,9 +57,15 @@ def import_oldlwt(owner, data_file):
     texts_dict = {}
     wordtagID_wordtagObj_dict = {}
     oldlwtID_wordNK_dict = {} # in this dict, there can be several <Words> for each key
+    texttags_to_create = []
+    texttags_to_create_idx = 0
     words_to_create = []
     words_to_update = []
     wordsWordtags_to_update = {}
+    current_operation = '' # are we in the block of inserting text, word, language etc...
+    newtext_to_create = []
+    newtext_to_create_idx = 0
+    text_texttag_dict = {}
     for line in data_file.readlines():
         line = line.decode()
         # cleaning:
@@ -64,6 +75,7 @@ def import_oldlwt(owner, data_file):
         # Inserting in Languages:
         insertinto_str = 'INSERT INTO languages VALUES('
         if line.startswith(insertinto_str):
+            current_operation = 'inserting_language'
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
@@ -94,9 +106,11 @@ def import_oldlwt(owner, data_file):
                 createdLanguage_nb += 1
             languages_dict[el[0]] = language
 
-        # Inserting into Texttags
+        # First we create the texttags. 
+        # (The relation between text and texttag will be set later)
         insertinto_str = 'INSERT INTO tags2 VALUES('
         if line.startswith(insertinto_str):
+            current_operation = 'creating_texttag'
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
@@ -104,18 +118,28 @@ def import_oldlwt(owner, data_file):
             # check whether this texttag already exists in database
             try:
                 texttag = Texttags.objects.get(Q(owner=owner)&Q(txtagtext=el[1]))
+                texttags_dict[el[0]] = texttag
             except Texttags.DoesNotExist:
-                texttag = Texttags.objects.create(
-                                                owner = owner,
-                                                 txtagtext = el[1],
-                                                 txtagcomment = el[2],
-                                         )
-            texttags_dict[el[0]] = texttag
+                texttag = Texttags( owner = owner,
+                                    txtagtext = el[1],
+                                    txtagcomment = el[2])
+                texttags_to_create.append(texttag)
+                texttags_dict[el[0]] = texttags_to_create_idx
+                texttags_to_create_idx += 1
 
         # Inserting into Texts. Texts are archived by default
         insertinto_str = 'INSERT INTO texts VALUES('
-        newtext_to_create = []
         if line.startswith(insertinto_str):
+
+            # time to bulk create the texttags:
+            if texttags_to_create and current_operation == 'creating_texttag':
+                Texttags.objects.bulk_create(texttags_to_create)
+                # and get the result:
+                texttag_created_Objs = Texttags.objects.filter(owner=owner).\
+                                        order_by('created_date')
+                texttag_created_Objs = texttag_created_Objs[texttag_created_Objs.count() - len(texttags_to_create):]
+                
+            current_operation = 'inserting_text'
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
@@ -123,6 +147,7 @@ def import_oldlwt(owner, data_file):
             try: # change name if the text already exists with this title
                 text = Texts.objects.get(owner=owner, title=el[2])
                 el[2] = text.title + ' (2)'
+                texts_dict[el[0]] = text
             except:
                 text = Texts(owner = owner,
                              language  = languages_dict[el[1]],
@@ -135,27 +160,49 @@ def import_oldlwt(owner, data_file):
                              archived = True
                              )
                 newtext_to_create.append(text)
-            texts_dict[el[0]] = text.natural_key()
-        Texts.objects.bulk_create(newtext_to_create)
+                texts_dict[el[0]] = newtext_to_create_idx
+                newtext_to_create_idx += 1
             
-        # adding texttags to the texts:
+        # adding texttags to the texts (the texttags have been bulk_created previously):
         insertinto_str = 'INSERT INTO texttags VALUES('
         if line.startswith(insertinto_str):
+
+            # Time to bulk create the texts from the previous reading
+            # (but we'll in any case bulk_create the texts with another inserting block if there's no texttag)
+            if current_operation == 'inserting_text':
+                Texts.objects.bulk_create(newtext_to_create)
+                current_operation = 'inserting texttag'
+                # and get back the texts object which was created:
+                text_created_Objs = Texts.objects.filter(owner=owner).\
+                                        order_by('created_date')
+                text_created_Objs = text_created_Objs[text_created_Objs.count() - len(newtext_to_create):]
+                newtext_to_create = [] # we´ll be used later to avoid bulk_creating text again
+
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
             el = [e.strip('\'') for e in el] # there's "'field'" for each field. remove the extra ''
             txid = el[0]
             txtagid = el[1]
+            # relation between the index (in LWT) of the text and the texttag:
+            text_texttag_dict[txid] = txtagid
             # we can´t  directly use texts_dict[txid] to get the text because bulk_create doesn't associate it with an id
-            txttag_to_update_text = Texts.objects.get_by_natural_key(*(texts_dict[txid]))
-            txttag_to_update_text.texttags.add(texttags_dict[txtagid])
-            txttag_to_update_text.save()
+#             textObjORidx = texts_dict[txid]
+#             if isinstance(textObjORidx, int):
+#                 txttag_to_update_text = text_created_Objs[textObjORidx]
+#                 texts_dict[txid] = txttag_to_update_text
+#             else:
+#                 txttag_to_update_text = textObjORidx
+#             txttag_to_update_text = Texts.objects.get_by_natural_key(*(texts_dict[txid]))
+#             txttag_to_update_text.texttags.add(texttags_dict[txtagid])
+#             txttag_to_update_text.save()
 #             texts_dict[txid].save()
         
         # Inserting into Wordtags
         insertinto_str = 'INSERT INTO tags VALUES('
         if line.startswith(insertinto_str):
+            current_operation = 'inserting_tag'
+            line = line.lstrip(insertinto_str)
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
@@ -173,6 +220,30 @@ def import_oldlwt(owner, data_file):
         # Updating the Words with the old_lwt Words table:
         insertinto_str = 'INSERT INTO words VALUES('
         if line.startswith(insertinto_str):
+
+            # we bulk_create the texts with another inserting block 
+            # if it wasn't done before already (if there's not texttag for ex.)
+            if newtext_to_create:
+                Texts.objects.bulk_create(newtext_to_create)
+                
+            if text_texttag_dict:
+                # and we bulk_insert (called 'bulk_create' with ThroughModel in fact) at this moment for texttag:
+                ThroughModel = Texts.texttags.through
+                args = []
+                for lwt_textId, lwt_texttagId in text_texttag_dict.items():
+                    # look for text obj
+                    text_obj = texts_dict[lwt_textId]
+                    if isinstance(text_obj, int):
+                        text_obj = text_created_Objs[text_obj]
+                    # look for texttag obj
+                    texttag_obj = texttags_dict[lwt_texttagId]
+                    if isinstance(texttag_obj, int):
+                        texttag_obj = texttag_created_Objs[texttag_obj]
+                    args.append(ThroughModel(texttags=texttag_obj, texts=text_obj))
+                ThroughModel.objects.bulk_create(args)
+                text_texttag_dict = {} # prevent trying to bulk_update several times
+
+            current_operation = 'inserting_word'
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
@@ -277,6 +348,7 @@ def import_oldlwt(owner, data_file):
         # adding wordtags to the words:
         insertinto_str = 'INSERT INTO wordtags VALUES('
         if line.startswith(insertinto_str):
+            current_operation = 'inserting_wordtag'
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
@@ -293,6 +365,10 @@ def import_oldlwt(owner, data_file):
         for wordtag in wordsWordtags_to_update[wordNK]:
             wo.wordtags.add(wordtag)
         wo.save()
+
+    # OUTPUT THE LINE_PROFILER
+#     with open('output.txt', 'w') as stream:
+#         profile.print_stats(stream=stream)
 
     return {'createdLanguage_nb':createdLanguage_nb, 'createdText_nb':len(texts_dict), 
             'createdWord_nb':len(words_to_create)}

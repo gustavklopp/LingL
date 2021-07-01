@@ -160,11 +160,6 @@ function deleteCookie( name, path, domain ) {
 		";expires=Thu, 01-Jan-1970 00:00:01 GMT";
 }
  
-function iknowall(t) {
-	var answer = confirm ('Are you sure?'); 
-	if (answer) 
-		top.frames['ro'].location.href='all_words_wellknown.php?text=' + t;
-}
 
 function check_table_prefix(p) {
 	var r = false;

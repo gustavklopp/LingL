@@ -22,7 +22,7 @@
 	<!--<p>Important: If the backup file is too large, the restore may not be possible (see limits below).</p>-->
 	</div>
 	<div class="col-md-2">
-	 <button class="btn btn-primary" type="submit" name="backingup" value="backingup">{% trans 'Download Backup' %}</button>
+	 <button id="backingup" class="btn btn-primary" type="submit" name="backingup" value="backingup">{% trans 'Download Backup' %}</button>
 	 </div>
 	<div class="col-md-2">
 	 <button class="btn btn-secondary" onclick="location.href='{% url 'selectivebackup' %}';" type="button" name="selectivebackup" value="selectivebackup">{% trans '(optional) Select words to backup' %}</button>
@@ -59,7 +59,7 @@
 {{ form.import_oldlwt }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
 	</div>
 	<div class="col-md-3">
-<button class="btn btn-primary" type="submit" name="import_oldlwt" value="import_oldlwt">Import data from LWT</button>
+<button class="restore_othersoft btn btn-primary" type="submit" name="import_oldlwt" value="import_oldlwt">Import data from LWT</button>
 	</div>
 </div>
 </td>
@@ -74,7 +74,7 @@
 {% trans 'The data from the LWT Demo will be added to your account (Your own data are kept)' %}</p>
 	</div>
 	<div class="col-md-3">
-<button class="btn btn-primary" type="submit" name="install_demo" value="install_demo">{% trans 'Install LingL Demo' %}</button>
+<button id="install_demo" class="btn btn-primary" type="submit" name="install_demo" value="install_demo">{% trans 'Install LingL Demo' %}</button>
 	</div>
 </div>
 </td>
@@ -97,6 +97,22 @@
 </tr>
 </table>
 </form>
+
+<!--  Loadingpopup when clicking on submit button -->
+<div id="restore_othersoft_loadingpopup" hidden>
+{% trans 'Converting file from other Softwares to LingL. Please wait' %}<br>
+<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
+</div>
+<!--  same but for installing demo -->
+<div id="install_demo_loadingpopup" hidden>
+{% trans 'Installing demo. Please wait' %}<br>
+<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
+</div>
+<!--  same but for backing up -->
+<div id="backingup_loadingpopup" hidden>
+{% trans 'Preparing backup file. Please wait' %}<br>
+<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
+</div>
 {% endblock content %}
 
 {% block footlicence %}
@@ -120,27 +136,40 @@ $(document).ready( function() {
 	_check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
 
 	// and trigger the event when choosing a file
-    $('#id_restore_file').change(function(e){
+	$('#id_restore_file').change(function(e){
 		_check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
-    });
-    $('#id_import_oldlwt').change(function(e){
+	});
+	$('#id_import_oldlwt').change(function(e){
 		_check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
-    });
-	
+	});
 
-/* when clicking on restore, display a dialogue window to choose whether or not to
- * restore the Texts also */
- $("#restore_button").click(function (e){
+	// display a loading popup after submiting the file to restore from other softwares
+	// (for the moment only one button, when in the future, maybe more, so I use a 'class')
+	$('button.restore_othersoft').bind('click', function(){
+			display_loading_popup($('#restore_othersoft_loadingpopup'));
+			});
+	// ... or when installing demo
+	$('button#install_demo').bind('click', function(){
+			display_loading_popup($('#install_demo_loadingpopup'));
+			});
+	// ... or when installing demo
+	$('button#backingup').bind('click', function(){
+			display_loading_popup($('#backingup_loadingpopup'));
+			});
+
+	/* when clicking on restore, display a dialogue window to choose whether or not to
+	 * restore the Texts also */
+	$("#restore_button").click(function (e){
 		e.preventDefault();
 		$('<div></div>').appendTo('body')
-        .html(gettext('Do you want to restore <b>also the text(s)</b> inside the backup, or <b>only the words</b>?<br/>(Restoring the text alongside the words takes more size in the database<br/>and isn\'t useful if you don\'t need to read the same text again)'))
-        .dialog({
-            modal: true,
-            title: 'Restoring from Backup', zIndex: 10000, autoOpen: true,
-            width: 'auto', resizable: false,
-            buttons: [{text: gettext("Restore only the Words"),
+		.html(gettext('Do you want to restore <b>also the text(s)</b> inside the backup, or <b>only the words</b>?<br/>(Restoring the text alongside the words takes more size in the database<br/>and isn\'t useful if you don\'t need to read the same text again)'))
+		.dialog({
+			modal: true,
+			title: 'Restoring from Backup', zIndex: 10000, autoOpen: true,
+			width: 'auto', resizable: false,
+			buttons: [{text: gettext("Restore only the Words"),
 					   click: function() {
-						    $('#restore_data').val('word');
+							$('#restore_data').val('word');
 							$('#backuprestore_form').submit();
 							}
 						},
@@ -155,12 +184,15 @@ $(document).ready( function() {
 							  $( this ).dialog( "close" );}
 						}
 			],
-            close: function (event, ui) {
-                $(this).remove();
-            },
-           // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
-        });
+			close: function (event, ui) {
+				$(this).remove();
+			},
+		   // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
+		});
+
+		// and display the loading popup
+		display_loading_popup($('#file_loadingpopup'));
 	});
-});
+}); //end of $(document).ready...
 </script>
 {% endblock footjavascript %}
