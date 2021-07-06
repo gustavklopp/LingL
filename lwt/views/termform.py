@@ -200,16 +200,19 @@ def search_possiblesimilarword(request, word=None):
     possiblesimilarword_distinctFK = [] 
     prev_FK_GOSW_id = -1 # previous foreign key of grouper_of_same_words
     for idx, simword in enumerate(possiblesimilarword):
-        if simword['grouper_of_same_words_id'] != prev_FK_GOSW_id:
+        # the simword can have no GOSW or if it has one, it should be different from the
+        # previous one.
+        if not simword['grouper_of_same_words_id'] or \
+                simword['grouper_of_same_words_id'] != prev_FK_GOSW_id:
             possiblesimilarword_distinctFK.append(simword)
             prev_FK_GOSW_id = simword['grouper_of_same_words_id']
         # create the sentence in curly braces:
         if not simword['customsentence']:
             simword['customsentence'] = _create_curlybrace_sentence(possiblesimilarword_obj[idx])
     if word:
-        return possiblesimilarword_distinctFK
+        return possiblesimilarword_distinctFK[:10]
     else:
-        return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarword_distinctFK}))
+        return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarword_distinctFK[:10]}))
 
     
 ''' same as above but for compound words

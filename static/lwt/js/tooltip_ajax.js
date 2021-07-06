@@ -2,16 +2,19 @@
 
 // CREATING A NEW WORD:  sends by AJAX data to refresh the top right of text_read with the form termform
 // or EDITING A WORD:
+/* called by: text_read_clickevent, if status == 0: op: 'new'
+		and: create_link_newword: op: 'new'
+		and: create_link_editword: op: 'edit' */
 function tooltip_ajax_termform(wo_id, op, show_compoundword, compoundword_id_list, rtl) {
-	/* called by: text_read_clickevent, if status == 0: op: 'new'
-	        and: create_link_newword: op: 'new'
-	        and: create_link_editword: op: 'edit' */
 	if (show_compoundword){
 		$.ajax({url: '/termform/', type: 'GET',
 				data: {'op':op, 'compoundword_id_list': compoundword_id_list},
 				success: function(data){
 					var data = JSON.parse(data);
 					$('#topright.text_read').html(data['html']);
+					// and display the possible similar words:
+					var r = _display_possiblesimilarword(data, wo_id);
+					$('#result_possiblesimilarword').html(r);
 				},
 				 error : function(data , status , xhr){
 						console.log(data); console.log(status); console.log(xhr);}
@@ -22,6 +25,9 @@ function tooltip_ajax_termform(wo_id, op, show_compoundword, compoundword_id_lis
 				success: function(data){
 					var data = JSON.parse(data);
 					$('#topright.text_read').html(data['html']);
+					// and display the possible similar words:
+					var r = _display_possiblesimilarword(data, wo_id);
+					$('#result_possiblesimilarword').html(r);
 				},
 				 error : function(data , status , xhr){
 						console.log(data); console.log(status); console.log(xhr);}

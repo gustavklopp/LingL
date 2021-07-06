@@ -398,8 +398,10 @@ def mp_search_simword(new_word_created,
                                 simword_to_update_allField,
 #                                 simword_to_update_statusOnly,
                                 gosw_to_create_ls,
-                                text):
-    gosw_to_create_idx_OR_obj = 0 # the index inside the list of the GOSW that we'll be created
+                                gosw_to_create_idString_ls,
+                                text,
+                                gosw_to_create_idx
+                                ):
     # don't process 2 times the same word already processed
     if new_word_created.id not in simword_to_update_ids:
         # We search a word written similarly, already saved in the database
@@ -416,10 +418,16 @@ def mp_search_simword(new_word_created,
                     # creating a GOSW if needed (will be done by bulk_create)
                     if not model_word.grouper_of_same_words:
                         id_string = json.dumps( [model_word.wordtext, model_word.language.natural_key()])
-                        gosw_created = Grouper_of_same_words(id_string=id_string, owner=text.owner)
-                        gosw_to_create_ls.append(gosw_created)
-                        words_AND_goswIdxORobj_dic[model_word] = gosw_to_create_idx_OR_obj
-                        gosw_to_create_idx_OR_obj += 1
+                        # strange problem when using multiprocessing: Sometimes, words are processed twice...
+                        if id_string in gosw_to_create_idString_ls:
+                            break
+                        else:
+                            gosw_to_create_idString_ls.append(id_string)
+                            gosw_created = Grouper_of_same_words(id_string=id_string, owner=text.owner)
+                            gosw_to_create_ls.append(gosw_created)
+                            words_AND_goswIdxORobj_dic[model_word] = gosw_to_create_idx.value
+                            gosw_to_create_idx_OR_obj = gosw_to_create_idx.value
+                            gosw_to_create_idx.value += 1
                     else:
                         gosw_to_create_idx_OR_obj = model_word.grouper_of_same_words
             else:
@@ -596,11 +604,13 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
         # this list and dict will be shared betwen the processes. They need to be converted
         # in a format called 'proxyList' and 'proxyDict' (we'll convert back to normal list and dict later)
         gosw_to_create_ls = manager.list()
+        gosw_to_create_idString_ls = manager.list()
         words_AND_goswIdxORobj_dic = manager.dict()
         simword_to_update_allField = manager.list()
 #         simword_to_update_statusOnly = manager.list()
         simword_to_update_ids = manager.list()
         new_words_created_ids = manager.list(new_words_created_ids)
+        gosw_to_create_idx = manager.Value(int, 0) # the index inside the list of the GOSW that we'll be created
  
         # this is the way we can pass arguments. They need to be zipped.
         # the mulitprocess will create process for each element of the list new_words_created.
@@ -610,17 +620,26 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
                           repeat(words_AND_goswIdxORobj_dic),
                           repeat(simword_to_update_allField),
 #                           repeat(simword_to_update_statusOnly),
-                         repeat(gosw_to_create_ls), repeat(text))
- 
+                         repeat(gosw_to_create_ls), repeat(gosw_to_create_idString_ls), 
+                         repeat(text),
+                         repeat(gosw_to_create_idx)
+                         )
         with manager.Pool() as pool:
             pool.starmap(mp_search_simword, zipped_args)
+#         # Non-multiprocessing equivalent:
+#         for word in new_words_created:
+#             mp_search_simword(word, simword_to_update_ids, new_words_created_ids, words_AND_goswIdxORobj_dic, 
+#                               simword_to_update_allField, gosw_to_create_ls, text, gosw_to_create_idx)
              
         # and get back again the lists that we'll need later
         gosw_to_create_ls = list(gosw_to_create_ls)
         words_AND_goswIdxORobj_dic = dict(words_AND_goswIdxORobj_dic)
+        words_AND_goswIdxORobj_dic_items = words_AND_goswIdxORobj_dic.items()
 #         simword_to_update_statusOnly = list(simword_to_update_statusOnly)
         simword_to_update_allField = list(simword_to_update_allField)
              
+
+    
     ######## End multi process
 
     # One Bulk create of GOSW:
@@ -638,17 +657,17 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
     ######## Start multi process
     with mp.Manager() as manager:
         words_with_updated_gosw = manager.list()
-        zipped_args = zip( words_AND_goswIdxORobj_dic.items(), repeat(gosw_created_Objs),
+        zipped_args = zip( words_AND_goswIdxORobj_dic_items, repeat(gosw_created_Objs),
                            repeat(words_with_updated_gosw))
-  
+#         # Non-multiprocessing equivalent:
+#         for wo_AND_goswIdxORobj in words_AND_goswIdxORobj_dic.items():
+#             mp_update_gosw_in_word(wo_AND_goswIdxORobj, gosw_created_Objs, words_with_updated_gosw)
         with manager.Pool() as pool:
             pool.starmap(mp_update_gosw_in_word, zipped_args)
         
         words_with_updated_gosw = list(words_with_updated_gosw)
     
     ######## End multi process
-#     for wo_AND_goswIdxORobj in words_AND_goswIdxORobj_dic.items():
-#         mp_update_gosw_in_word(wo_AND_goswIdxORobj, gosw_created_Objs)
     # And several Bulk updates:
     
     # the list of words whose gosw only needs to be update is included in the list of

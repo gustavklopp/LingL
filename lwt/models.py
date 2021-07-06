@@ -280,9 +280,14 @@ class Grouper_of_same_words(BaseModel):
     
     # same than field 'id' but here we keep the 'natural_key' of the word. Used when creating...
     # ... backup and importing backup
-    id_string = models.CharField( max_length=500,  unique=True)  
+    id_string = models.CharField( max_length=500,  
+#                                   unique=True
+                                  )  
 
     objects = Grouper_of_sameWordsManager() # use to call the parent foreign key by its name (or title , or etc...)
+
+    def __str__(self):
+        return self.id_string
 
     class Meta:
         db_table = 'Grouper_of_same_words'
