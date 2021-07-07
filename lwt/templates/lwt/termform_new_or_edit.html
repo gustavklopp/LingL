@@ -45,6 +45,13 @@ $(document).ready(function(){
 </div>
 <div class="form-group row" >
 <div class="col-md-6">
+
+{% if wo.isCompoundword %}
+<input type="checkbox" id="showcompoundword" name="show_compoundword_checkbox" 
+	onchange="termform_toggle_show_compoundword(this);"
+	{% if wo.show_compoundword %}checked{% endif %}>&nbsp;{% trans 'Show compoundword?' %}
+{% endif %}
+
     {{ form.translation|as_crispy_field }}
     {{ form.wordtags|as_crispy_field }}
     {% if wo.language.has_romanization %}{{ form.romanization|as_crispy_field }}{% endif %}

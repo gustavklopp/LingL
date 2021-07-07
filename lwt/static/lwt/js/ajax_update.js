@@ -231,27 +231,3 @@ function update_workcount(){
 	} else {
 		$('#todo_wordcount_AND_pc').attr('wostatus','0'); }
 }
-
-/* update span attribute of word in text_read */
-function HTML_toggle_show_compoundword(compoundword_id_list, show_compoundword){
-	var DOCUMENT = window.DOCUMENT;
-	$.each(compoundword_id_list, function(key, val){
-		DOCUMENT.find('span[woid='+val+']').attr('show_compoundword', show_compoundword);
-	});
-}
-
-
-function ajax_toggle_show_compoundword(wo_id, show_compoundword){
-	$.ajax({url: '/toggle_show_compoundword/', 
-			type: 'GET',
-			dataType: 'json',
-			data: {
-					'wo_id' : wo_id, 
-					'show_compoundword' : show_compoundword,
-					},
-			success: function(data){ 
-				HTML_toggle_show_compoundword(data['compoundword_id_list'], show_compoundword);
-			},
-			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
-			});
-}

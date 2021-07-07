@@ -15,6 +15,14 @@
 .hover_pointer{ /* make the element as a link: the cursor becomes a pointer */
 	cursor: pointer;
 }
+/* don´t display titlebar on ui-dialog popup */
+/* .ui-dialog-titlebar { */
+/*   display: none; */
+/* } */
+/* height of the popup should be at the minimum */
+.ui-dialog-content {
+  min-height: 0 !important;
+}
 
 /******************************************************************************
      IN _FOOTLICENCE
@@ -320,29 +328,29 @@ span[wostatus="101"] { /* status for ignored */
 	border-bottom: dashed 1px #000000;
 }
 /* if it's a compoundword, it supersedes the word status itself */
-span[show_compoundword="True"]::before,
+span[show_compoundword="True"]::before, /* 'True' and 'true' in html... */
 span[show_compoundword="true"]::before { /* add a little dot before the compoundword */
 	content: '\2022';
 }
-span[show_compoundword="True"], 
-span[show_compoundword="true"] 
-{ /* compoundword status default: for learning */
-	background-color: #F5B8A9;
-}
+/* span[show_compoundword="True"],  */
+/* span[show_compoundword="true"]  */
+/* { compoundword status default: for learning */
+/* 	background-color: #F5B8A9; */
+/* } */
 
-span[show_compoundword="True"][cowostatus="100"],
-span[show_compoundword="true"][cowostatus="100"] 
-{ /* compoundword status for well-known */
-	background-color: #F2F2F2;
-	/* border-bottom: dashed 1px #CCFFCC;*/
-}
+/* span[show_compoundword="True"][cowostatus="100"], */
+/* span[show_compoundword="true"][cowostatus="100"]  */
+/* { compoundword status for well-known */
+/* 	background-color: #F2F2F2; */
+/* 	/* border-bottom: dashed 1px #CCFFCC;*/ */
+/* } */
 
-span[show_compoundword="True"][cowostatus="101"], 
-span[show_compoundword="true"][cowostatus="101"] 
-{ /* compoundword status for ignored */
-	background-color: #F8F8F8;
-	border-bottom: dashed 1px #000000;
-}
+/* span[show_compoundword="True"][cowostatus="101"],  */
+/* span[show_compoundword="true"][cowostatus="101"]  */
+/* { compoundword status for ignored */
+/* 	background-color: #F8F8F8; */
+/* 	border-bottom: dashed 1px #000000; */
+/* } */
 
 
 /* Used inside the termform.html: make the possible similar word as 'green'when they have been chosen */

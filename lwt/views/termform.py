@@ -185,7 +185,7 @@ def search_possiblesimilarword(request, word=None):
                 filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=searched_wordtext)).\
                        exclude(wordtext__iexact=word.wordtext).\
                        exclude(status=0).\
-                       order_by('grouper_of_same_words_id')
+                       order_by('status','grouper_of_same_words_id')
     else: # doing a search in the termform searchbox sent by AJAX
         searchboxtext = request.GET['searchboxtext']
         language_id = request.GET['language_id']
@@ -210,7 +210,7 @@ def search_possiblesimilarword(request, word=None):
         if not simword['customsentence']:
             simword['customsentence'] = _create_curlybrace_sentence(possiblesimilarword_obj[idx])
     if word:
-        return possiblesimilarword_distinctFK[:10]
+        return possiblesimilarword_distinctFK[:9]
     else:
         return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarword_distinctFK[:10]}))
 
@@ -714,6 +714,24 @@ def termform(request):
             'cowo_id_to_update_in_ajax': samecompoundword_id_list,
             'show_compoundword': show_compoundword
                                         }))
+
+''' When the checkbox for 'show_compoundword' is switched '''
+def toggle_show_compoundword(request):
+    wo_id = request.GET['wo_id']
+    show_compoundword = str_to_bool(request.GET['show_compoundword'])
+
+    this_wordinside = Words.objects.get(id=wo_id)
+    compoundword = this_wordinside.compoundword
+    compoundword_id_list = []
+    # update the database: the words inside the compound word need to be switched for their field 'show_compoundword'
+    all_wordinside = Words.objects.filter(Q(compoundword=compoundword)&\
+                                          Q(sentence=this_wordinside.sentence)) 
+    for wordinside in all_wordinside:
+        wordinside.show_compoundword = show_compoundword
+        wordinside.save()
+        compoundword_id_list.append(wordinside.id)
+
+    return HttpResponse(json.dumps({'compoundword_id_list':compoundword_id_list}))
 
 '''called by lwt/ajax_termform.js/ajax_submit_termformSearchbox
     search other similar word with the input given

@@ -49,14 +49,15 @@ function display_loading_popup(popup_to_show){
 	// the text inside the pop is found directly in the html inside the popup_to_show div
 	popup_to_show.prop('hidden', false)
 	.dialog({
+        create: function() { 
+			$(this).closest(".ui-dialog").find(".ui-dialog-titlebar:first").remove(); 
+			// line below doesn't work. I've used styles.css finally
+//			$(this).closest(".ui-dialog").find(".ui-dialog-content").css('min-height', '0 !important'); 
+		},
 		modal: true,
 		zIndex: '101 !important', autoOpen: true,
 		width: 'auto', resizable: false,
 	   // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
-        open: function(event, ui) { 
-            //hide titlebar.
-            $(this).parent().children('.ui-dialog-titlebar').remove();
-        },
 	}).css('background-color', 'white'); // end of '.dialog'
 
 }

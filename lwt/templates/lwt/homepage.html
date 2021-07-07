@@ -20,11 +20,6 @@
 		{% csrf_token %}
 		<button id="install_demo" class="btn btn-danger" type="submit" name="install_demo" value="install_demo">Install Demo Database</button>
 		</form>
-		<!--  popup for installing demo -->
-		<div id="install_demo_loadingpopup" hidden>
-		{% trans 'Installing demo. Please wait' %}<br>
-		<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
-		</div>
 		{% trans "or" %}<br>
 	{% endifequal %}
 		<a href="{% url 'text_detail' %}?new=0">{% trans "create your first text." %}</a>
@@ -84,6 +79,12 @@
 <li><a href="{% url 'backuprestore' %}"><img src="{% static 'lwt/img/icn/arrow-repeat.png'%}" alt="backup" />&nbsp;{% trans "Backup/Restore/Delete your account" %}</a>
 	<br><br></li>
 </ul>
+
+<!--  popup for installing demo -->
+<div id="install_demo_loadingpopup" hidden>
+{% trans 'Installing demo. Please wait' %}<br>
+<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
+</div>
 {% endblock content %}
 
 {% block footjavascript %}

@@ -18,7 +18,6 @@ import requests
 # local
 from lwt.views._setting_cookie_db import *
 from lwt.constants import MAX_WORDS_DANGER, MAX_WORDS_NOTICE, MAX_WORDS_WARNING, MAX_WORDS_DANGER_MESSAGE
-from lwt.views.termform import get_similar_words_AND_gosw
 if __name__ != '__main__':
     from lwt.models import *
 

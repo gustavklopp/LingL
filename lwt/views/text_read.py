@@ -31,10 +31,11 @@ from lwt.models import *
 from lwt.views._nolang_redirect_decorator import *
 # helper functions:
 from lwt.views._setting_cookie_db import *
-from lwt.views._utilities_views import *
+from lwt.views._utilities_views import str_to_bool
 from lwt.views._dictionaries_API import _google_API, _pons_API, _wiki_API, _wiki_API_redirect, _dictcc_API, _youdao_API,\
             _wordref_API, _naver_API, _clean_soup
 from lwt.views.termform import *
+from django.template.loader import render_to_string
 from lwt.constants import STATUS_CHOICES
 
 def _textANDwebpage_common(request, text, text_id):    # Saving the timestamp for text opening: used in text list
@@ -333,23 +334,6 @@ def create_or_del_similarword(request):
                 similarword.wordtags.remove(wordtag)
             sw.save()
         return HttpResponse(json.dumps({'simwo_id':similarword.id}))
-    
-''' When the checkbox for 'show_compoundword' is switched '''
-def toggle_show_compoundword(request):
-    wo_id = request.GET['wo_id']
-    show_compoundword = str_to_bool(request.GET['show_compoundword'])
-
-    this_wordinside = Words.objects.get(id=wo_id)
-    compoundword = this_wordinside.compoundword
-    compoundword_id_list = []
-    # update the database: the words inside the compound word need to be switched for their field 'show_compoundword'
-    all_wordinside = Words.objects.filter(compoundword=compoundword) 
-    for wordinside in all_wordinside:
-        wordinside.show_compoundword = show_compoundword
-        wordinside.save()
-        compoundword_id_list.append(wordinside.id)
-
-    return HttpResponse(json.dumps({'compoundword_id_list':compoundword_id_list}))
 
 ''' mark all the remaining words in the sentence as known'''
 def iknowall(request):
