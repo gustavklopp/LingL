@@ -278,7 +278,7 @@ function key_binding(DOCUMENT, e){
 			((!is_Mac && keypress == '339') || (is_Mac && keypress == '730'))
 					&& !_toprightInputBoxes_have_focus()){ 
 			iknowall(sel_word.attr('woid'));
-			event.preventDefault();
+			e.preventDefault();
 		}
 		
 	/*********************************************************/

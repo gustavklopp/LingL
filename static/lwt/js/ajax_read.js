@@ -57,7 +57,10 @@ function ajax_clicked_word(wo_id, show_compoundword, op, rtl) {
 /* same as ´func ajax_clicked_word but for compound word:
    Ctrl+click on a word in a text (i.e: wanting to create a compound word)
    --> creating form for the compoundword in the topright panel: */
-function ajax_ctrlclicked_compoundword(wo_id, op, rtl) {
+function ajax_ctrlclicked_compoundword(wo_id, op, rtl, toggle_showcompoundword_param=null) {
+	if (compoundword_id_list.length == 1){
+		compoundword_id_list = toggle_showcompoundword_param;	
+	}
 	/* called by: text_read_clickevent + Ctrl */
 	$.ajax({url: '/termform/', type: 'GET',
 			data: {
@@ -216,4 +219,18 @@ function iknowall(event, wo_id){
 			error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);
 			}
 	});	
+}
+
+/* clicking on the checkbox 'Show compoundword' in the topright panel */
+function termform_toggle_show_compoundword(obj){
+	var sel_word = DOCUMENT.find('.clicked');
+	// toggle the status of the word 'show_compoundword'
+	ajax_toggle_show_compoundword(sel_word.attr('woid'), obj.checked);
+	// and display a new right panel
+	if (obj.checked){ // for a compoundword
+		var toggle_showcompoundword_param = JSON.parse(sel_word.attr('cowo_id_list'));
+		ajax_ctrlclicked_compoundword(sel_word.attr('woid'), 'edit', null, toggle_showcompoundword_param);	
+	} else { // for a word
+		ajax_clicked_word(sel_word.attr('woid'), obj.checked, 'edit', null);	
+	}
 }

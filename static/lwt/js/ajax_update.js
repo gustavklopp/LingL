@@ -18,7 +18,10 @@ function update_data_of_wo_cowo_and_sims(data, op){
 			update_iscompoundword(val, op);
 			update_show_compoundword(val, op);
 			update_cowordtext(val, data['cowordtext']);
-			update_costatus(val, op, data['cowostatus']);
+			// NOT USED finally... I've decided that 'costatus' is the same as ''status'.
+//			update_costatus(val, op, data['cowostatus']);
+			update_status(val, op, data['cowostatus']);
+
 			update_cotranslation(val, op, data['cowotranslation']);
 			update_coromanization(val, op, data['coworomanization']);
 			if (op == 'del'){ // the cowo in the cowo_id list, if with the op 'del' are evidently to be delete.
@@ -131,6 +134,7 @@ function update_cowordtext(wo_id, cowordtext){
 	DOCUMENT.find('span[woid='+wo_id+']').attr('cowordtext', cowordtext);
 }
 
+// NOT USED finally... I've decided that 'costatus' is the same as ''status'.
 /* update status of the word in question:*/
 function update_costatus(wo_id, op, wostatus){
 	var DOCUMENT = window.DOCUMENT;
@@ -230,28 +234,4 @@ function update_workcount(){
 		$('button#iknowall').attr('disabled','');
 	} else {
 		$('#todo_wordcount_AND_pc').attr('wostatus','0'); }
-}
-
-/* update span attribute of word in text_read */
-function HTML_toggle_show_compoundword(compoundword_id_list, show_compoundword){
-	var DOCUMENT = window.DOCUMENT;
-	$.each(compoundword_id_list, function(key, val){
-		DOCUMENT.find('span[woid='+val+']').attr('show_compoundword', show_compoundword);
-	});
-}
-
-
-function ajax_toggle_show_compoundword(wo_id, show_compoundword){
-	$.ajax({url: '/toggle_show_compoundword/', 
-			type: 'GET',
-			dataType: 'json',
-			data: {
-					'wo_id' : wo_id, 
-					'show_compoundword' : show_compoundword,
-					},
-			success: function(data){ 
-				HTML_toggle_show_compoundword(data['compoundword_id_list'], show_compoundword);
-			},
-			 error : function(data , status , xhr){ console.log(data); console.log(status); console.log(xhr);}
-			});
 }
