@@ -34,9 +34,9 @@
 <tr>
 <th>{% trans 'Restore' %}</th>
 <td>
+<p>{% trans 'All data from the specified backup file will be added to your account (gzipped file, created above) (Your already present data are kept).' %}</p>
 <div class="d-flex">
 	<div class="col-md-9">
-<p>{% trans 'All data from the specified backup file will be added to your account (gzipped file, created above) (Your already present data are kept).' %}</p>
 <!--    <br /><span class="smallgray">Important: If the backup file is too large, the restore may not be possible.<br />Upload limits (in bytes): <b>post_max_size = <?php echo ini_get('post_max_size'); ?> / upload_max_filesize = <?php echo ini_get('upload_max_filesize'); ?></b><br />-->
 <!--If needed, increase in "<?php echo tohtml(php_ini_loaded_file()); ?>" and restart server.<br />&nbsp;</span></p>-->
 {{ form.restore_file }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
@@ -53,14 +53,43 @@
 <tr>
 <th>{% trans 'Import Personal Save<br />from Other softwares' %}</th>
 <td>
-<div class="d-flex">
-	<div class="col-md-9">
 <p>{% trans 'The data from other softwares (for ex. from "LWT") will be added to your account (Your own data are kept).' %}</p>
-{{ form.import_oldlwt }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
-	</div>
-	<div class="col-md-3">
+<div class="container">
+<table class="table">
+	<tr class="row m-0">
+		<td class="col-md-1">
+			<img src="{% static 'lwt/img/lwt_icon.png' %}" alt="lwt_icon" />
+		</td>
+		<td class="col-md-7">
+{{ form.import_oldlwt }}<!-- <input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/>  -->
+		</td>
+		<td class="col-md-3">
 <button class="restore_othersoft btn btn-primary" type="submit" name="import_oldlwt" value="import_oldlwt">Import data from LWT</button>
-	</div>
+		</td>
+	</tr>
+	<tr class="row m-0">
+		<td class="col-md-1">
+			<img src="{% static 'lwt/img/lingq_icon.png' %}" alt="lingq_icon" />
+		</td>
+		<td class="col-md-7">
+{{ form.import_lingq }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
+		</td>
+		<td class="col-md-3">
+<button id="import_lingq_btn"  class="btn btn-primary" type="submit" name="import_lingq" value="import_lingq">Import data from LingQ</button>
+		</td>
+	</tr>
+	<tr class="row m-0">
+		<td class="col-md-1">
+			<img src="{% static 'lwt/img/readlang_icon.png' %}" alt="readlang_icon" />
+		</td>
+		<td class="col-md-7">
+{{ form.import_readlang }}<input type="hidden" name="owner" id="id_owner" value="{{ request.user.id }}"/> 
+		</td>
+		<td class="col-md-3">
+<button class="restore_othersoft btn btn-primary" type="submit" name="import_readlang" value="import_readlang">Import data from Readlang</button>
+		</td>
+	</tr>
+</table>
 </div>
 </td>
 </tr>
@@ -71,7 +100,7 @@
 <td >
 <div class="d-flex">
 	<div class="col-md-9">
-{% trans 'The data from the LWT Demo will be added to your account (Your own data are kept)' %}</p>
+{% trans 'The data from the LWT Demo will be added to your account (Your own data are kept)' %}
 	</div>
 	<div class="col-md-3">
 <button id="install_demo" class="btn btn-primary" type="submit" name="install_demo" value="install_demo">{% trans 'Install LingL Demo' %}</button>
@@ -99,6 +128,10 @@
 </form>
 
 <!--  Loadingpopup when clicking on submit button -->
+<div id="file_loadingpopup" hidden>
+{% trans 'Restoring from your LingL save. Please wait' %}<br>
+<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
+</div>
 <div id="restore_othersoft_loadingpopup" hidden>
 {% trans 'Converting file from another software to LingL. Please wait' %}<br>
 <div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
@@ -134,6 +167,8 @@ $(document).ready( function() {
 	// check when loading the page
 	_check_empty_file($('#id_restore_file'), $('button[name="restore"]'))
 	_check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
+	_check_empty_file($('#id_import_lingq'), $('button[name="import_lingq"]'))
+	_check_empty_file($('#id_import_readlang'), $('button[name="import_readlang"]'))
 
 	// and trigger the event when choosing a file
 	$('#id_restore_file').change(function(e){
@@ -142,20 +177,55 @@ $(document).ready( function() {
 	$('#id_import_oldlwt').change(function(e){
 		_check_empty_file($('#id_import_oldlwt'), $('button[name="import_oldlwt"]'))
 	});
+	$('#id_import_lingq').change(function(e){
+		_check_empty_file($('#id_import_lingq'), $('button[name="import_lingq"]'))
+	});
+	$('#id_import_readlang').change(function(e){
+		_check_empty_file($('#id_import_readlang'), $('button[name="import_readlang"]'))
+	});
 
-	// display a loading popup after submiting the file to restore from other softwares
-	// (for the moment only one button, when in the future, maybe more, so I use a 'class')
-	$('button.restore_othersoft').bind('click', function(){
-			display_loading_popup($('#restore_othersoft_loadingpopup'));
-			});
-	// ... or when installing demo
+	// display a loading popup when installing demo
 	$('button#install_demo').bind('click', function(){
-			display_loading_popup($('#install_demo_loadingpopup'));
-			});
+		display_loading_popup($('#install_demo_loadingpopup'));
+	});
 	// ... or when installing demo
 	$('button#backingup').bind('click', function(){
-			display_loading_popup($('#backingup_loadingpopup'));
-			});
+		display_loading_popup($('#backingup_loadingpopup'));
+	});
+	// display a loading popup when restoring from other Softwares:
+	$('button.restore_othersoft').bind('click', function(){
+		display_loading_popup($('#restore_othersoft_loadingpopup'));
+	});
+
+	// ...for Lingq, display a warning (LingQ save will be load in the current language)
+	$('button#import_lingq_btn').bind('click', function(e){
+		e.preventDefault();
+		$('<div></div>').appendTo('body')
+		.html(gettext('Warning! the LingQ save will be imported in your current language.'))
+		.dialog({
+			modal: true,
+			title: 'Importing from LingQ', zIndex: 10000, autoOpen: true,
+			width: 'auto', resizable: false,
+			buttons: [ 
+						{text: gettext("Start the import"),
+						 click: function() {
+								$('#backuprestore_form').submit();
+								// and display the loading popup
+								  $( this ).dialog( "close" );
+								display_loading_popup($('#restore_othersoft_loadingpopup'));
+								}
+							},
+						{text: gettext("Cancel"),
+						 click: function() {
+							  $( this ).dialog( "close" );}
+						}
+			],
+			close: function (event, ui) {
+				$(this).remove();
+			},
+		   // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
+		});
+	});
 
 	/* when clicking on restore, display a dialogue window to choose whether or not to
 	 * restore the Texts also */
@@ -171,12 +241,18 @@ $(document).ready( function() {
 					   click: function() {
 							$('#restore_data').val('word');
 							$('#backuprestore_form').submit();
+							// and display the loading popup
+								  $( this ).dialog( "close" );
+							display_loading_popup($('#file_loadingpopup'));
 							}
 						},
 						{text: gettext("Restore the Words AND the texts"),
 						 click: function() {
 							   $('#restore_data').val('word+text');
-								$('#backuprestore_form').submit();
+							   $('#backuprestore_form').submit();
+								// and display the loading popup
+								  $( this ).dialog( "close" );
+								display_loading_popup($('#file_loadingpopup'));
 								}
 							},
 						{text: gettext("Cancel"),
@@ -189,9 +265,6 @@ $(document).ready( function() {
 			},
 		   // position: {my: "center",  at: "center", of: $("body"),within: $("body") }
 		});
-
-		// and display the loading popup
-		display_loading_popup($('#file_loadingpopup'));
 	});
 }); //end of $(document).ready...
 </script>

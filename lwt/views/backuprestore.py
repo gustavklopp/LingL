@@ -23,6 +23,7 @@ import os
 import sys
 import gzip #it's standard in python
 import io #it's standard in python
+from io import StringIO
 import tempfile #it's standard in python
 # third party
 from yaml import load, Loader, FullLoader
@@ -33,7 +34,7 @@ from lwt.forms import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
-from lwt.views._import_oldlwt import *
+from lwt.views._import_other_softwares import *
 from lwt.constants import VIDEO_LANG_TUTORIAL
 #from MySQLdb._mysql import result
 
@@ -105,8 +106,8 @@ def backuprestore(request):
             messages.add_message(request, messages.SUCCESS, _('Account successfully deleted.'))
             return redirect(reverse('homepage'))
 
-        m_alert = _('Suggestion: Upgrade your own Language dictionary links with the latest from LingL: Look at this <a target="_blank" href="{}">video</a> to know how to do it.').format(VIDEO_LANG_TUTORIAL)
-        if 'restore_data' in request.POST.keys() and request.POST['restore_data'] != '':
+        m_languageSuggestion = _('Suggestion: Upgrade your own Language dictionary links with the latest from LingL: Look at this <a target="_blank" href="{}">video</a> to know how to do it.').format(VIDEO_LANG_TUTORIAL)
+        if 'restore_file' in request.FILES:
             need_text = True if request.POST['restore_data'] == 'word+text' else False
             form = RestoreForm(request.POST, request.FILES)
             if form.is_valid():
@@ -179,35 +180,68 @@ def backuprestore(request):
 
                 messages.add_message(request, messages.SUCCESS, _('Import of backup file successful.'))
 
-                messages.add_message(request, messages.WARNING, m_alert)
+                messages.add_message(request, messages.WARNING, m_languageSuggestion)
 
             # set arbitrary the currentlang
             lang = Languages.objects.filter(owner=request.user).first()
             setter_settings_cookie('currentlang_id', lang.id, request)
             setter_settings_cookie('currentlang_name', lang.name, request)
 
-        if 'import_oldlwt' in request.POST.values() and request.POST['import_oldlwt'] != '':
+        if 'import_oldlwt' in request.FILES or 'import_lingq' in request.FILES or 'import_readlang' in request.FILES:
             form = RestoreForm(request.POST, request.FILES)
             if form.is_valid():
                 files = form.save()
                 # process the uploaded file if it exists:
 #                 wipeout_database(request, keep_myuser=True)
-                fp = gunzipper(files.import_oldlwt)
-                result_nb = import_oldlwt(request.user, fp)
+                
+                # Importing from LWT:
+                if 'import_oldlwt' in request.FILES:
+                    file_path = files.import_oldlwt.path
+                    fp = gunzipper(files.import_oldlwt)
+                    result_nb = import_oldlwt(request.user, fp)
+                    m = _('Successful import of old lwt : ')
+                    m += ngettext('%(count)d language, ', '%(count)d languages, ',
+                                    result_nb['createdLanguage_nb']) % {'count': result_nb['createdLanguage_nb']}                    
+                    m += ngettext('%(count)d text, ', '%(count)d texts, ',
+                                    result_nb['createdText_nb']) % {'count': result_nb['createdText_nb']}                    
+                    m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
+                                    result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
+
+                # Importing from LingQ:
+                if 'import_lingq' in request.FILES:
+                    file_path = files.import_lingq.path
+                    currentlang_id = getter_settings_cookie_else_db('currentlang_id', request)
+                    currentlang = Languages.objects.get(id=currentlang_id)
+                    fp = files.import_lingq
+                    # because the request.FILES is a binary file in fact. CSV can't read it.
+                    textmode_fp = StringIO(fp.read().decode())
+                    result_nb = import_lingq(request.user, textmode_fp, currentlang)
+                    m = _('Successful import of LingQ : ')
+                    m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
+                                    result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
+
+                # Importing from Readlang:
+                if 'import_readlang' in request.FILES:
+                    file_path = files.import_readlang.path
+                    fp = files.import_readlang
+                    # because the request.FILES is a binary file in fact. CSV can't read it.
+                    textmode_fp = StringIO(fp.read().decode())
+                    result_nb = import_readlang(request.user, textmode_fp)
+                    m = _('Successful import of Readlang : ')
+                    m += ngettext('%(count)d language, ', '%(count)d languages, ',
+                                    result_nb['createdLanguage_nb']) % {'count': result_nb['createdLanguage_nb']}                    
+                    m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
+                                    result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
+
                 fp.close()
                 # clean it
-                delete_uploadedfiles(files.import_oldlwt.path, request.user) # clean it
+                delete_uploadedfiles(file_path, request.user) # clean it
 
-                m = _('Successful import of old lwt : ')
-                m += ngettext('%(count)d language, ', '%(count)d languages, ',
-                                result_nb['createdLanguage_nb']) % {'count': result_nb['createdLanguage_nb']}                    
-                m += ngettext('%(count)d text, ', '%(count)d texts, ',
-                                result_nb['createdText_nb']) % {'count': result_nb['createdText_nb']}                    
-                m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
-                                result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
                 messages.add_message(request, messages.SUCCESS, m)
 
-                messages.add_message(request, messages.WARNING, m_alert)
+                if 'createdLanguage_nb' in result_nb.keys() and result_nb['createdLanguage_nb'] > 0:
+                    messages.add_message(request, messages.WARNING, m_languageSuggestion)
+
         
         if 'install_demo' in request.POST.values():
             # First, install the languages (must change the owner):

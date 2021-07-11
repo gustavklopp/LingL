@@ -6,6 +6,7 @@ from django.db.models import Q
 # second party
 import re
 import json
+import csv
 # local import
 from lwt.models import *
 from lwt.constants import  LANGUAGES_CODE
@@ -45,9 +46,10 @@ def converter_bad_url(url, name, origin_lang_code):
 # import line_profiler
 # profile = line_profiler.LineProfiler()
 
-''' @data_file: sql file, uncompressed
+''' 
+@data_file: sql file, uncompressed
 @owner: request.user
-@return: None => from the sql file, create all the tables '''
+@return: a dictionary summarizing the number of elements created '''
 # @profile
 def import_oldlwt(owner, data_file):
     # dicts where "'old_lwt_id'" :  <Word object in new lwt>
@@ -372,4 +374,198 @@ def import_oldlwt(owner, data_file):
 
     return {'createdLanguage_nb':createdLanguage_nb, 'createdText_nb':len(texts_dict), 
             'createdWord_nb':len(words_to_create)}
+    
+''' 
+LingQ saves are a CSV file of the form:
+    term,sentence,tag1,tag2,tag3.....,hintlanguage,translation
+@data_file: csv file
+@owner: request.user
+@return: a dictionary summarizing the number of elements created '''
+def import_lingq(owner, data_file, language):
+    wordtags_to_create = []
+    words_to_create = []
+    wotagtexts_ls = []
+    wotagtexts_obj_OR_idx_ls = []
+    wordtag_word_dic = {}
+    wordtags_to_create_idx = 0
+    words_to_create_idx = 0
+    words_to_update = []
+    csv_reader = csv.reader(data_file, delimiter=',')
+    line_count = 0
+    for row in csv_reader:
+        if line_count == 0:
+            line_count += 1
+            continue
+        else:
+            wordtext = row.pop(0).strip()
+            customsentence = row.pop(0).strip()
+            translation = row.pop().strip()
+            # Check whether it already exist in the database:
+            word_in_db = Words.objects.filter(Q(owner=owner)&Q(wordtext=wordtext)&Q(language=language)).first()
+            if word_in_db:
+                word_in_db.customsentence = customsentence
+                word_in_db.translation = translation
+                words_to_update.append(word_in_db)
+                # and also update the words having the same GOSW:
+                if gosw := word_in_db.grouper_of_same_words:
+                    for simwo in gosw.grouper_of_same_words_for_this_word:
+                        simwo.customsentence = customsentence
+                        simwo.translation = translation
+                        words_to_update.append(simwo)
+                wordIdx_OR_obj = word_in_db
+            else:
+                word = Words(owner=owner,
+                             language=language,
+                             wordtext=wordtext,
+                             customsentence=customsentence,
+                             translation=translation,
+                             status=1)
+                words_to_create.append(word)
+                wordIdx_OR_obj = words_to_create_idx
+                words_to_create_idx += 1
+            
+            
+            row.pop() # we don´t use 'hintlanguage'
+            # then all the others elements are wordtags in fact
+            for wotagtext in row:
+                if wotagtext == '':
+                    continue
+                wotagtext = wotagtext.strip()
+                # wordtag not yet processed
+                if wotagtext not in wotagtexts_ls:
+                    wordtag_in_db = Wordtags.objects.filter(Q(owner=owner)&Q(wotagtext=wotagtext)).first()
+                    # Check if it already exists in database
+                    if wordtag_in_db: 
+                        wordtagIdx_OR_obj = wordtag_in_db
+                    else:
+                        wordtag = Wordtags(owner=owner, wotagtext = wotagtext)
+                        wordtags_to_create.append(wordtag)
+                        wordtagIdx_OR_obj = wordtags_to_create_idx
+                        wordtags_to_create_idx += 1
+                    wotagtexts_ls.append(wotagtext)
+                    wotagtexts_obj_OR_idx_ls.append(wordtagIdx_OR_obj)
+                else: # wordtag already processed
+                    wordtagIdx_OR_obj = wotagtexts_obj_OR_idx_ls[wotagtexts_ls.index(wotagtext)]
+                wordtag_word_dic.setdefault(wordtagIdx_OR_obj, []).\
+                                            extend([wordIdx_OR_obj])
+
+            
+    # bulk update:
+    Words.objects.bulk_update(words_to_update, ['translation','customsentence'])
+    # bulk creation:
+    Wordtags.objects.bulk_create(wordtags_to_create)
+    Words.objects.bulk_create((words_to_create))
+    # and we get the words created:
+    words_created = Words.objects.filter(Q(owner=owner)&Q()).\
+                                        order_by('created_date')
+    words_created = words_created[words_created.count() - len(words_to_create):]
+    # and the wordtags created:
+    wordtags_created = Wordtags.objects.filter(Q(owner=owner)&Q()).\
+                                        order_by('created_date')
+    wordtags_created = wordtags_created[wordtags_created.count() - len(wordtags_to_create):]
+
+    # update the words with the correct wordtags:
+    # it is done via the ThroughModel in fact:
+    ThroughModel = Words.wordtags.through
+    args = []
+    for wordtagIdx_OR_obj, wordIdx_OR_obj_ls in wordtag_word_dic.items():
+        # look for wordtag obj
+        if isinstance(wordtagIdx_OR_obj, int):
+            wordtag_obj = wordtags_created[wordtagIdx_OR_obj]
+        else:
+            wordtag_obj = wordtagIdx_OR_obj
+        for wordIdx_OR_obj in wordIdx_OR_obj_ls:
+            # look for wordtag obj
+            if isinstance(wordIdx_OR_obj, int):
+                word_obj = words_created[wordIdx_OR_obj]
+            else:
+                word_obj = wordIdx_OR_obj
+            # only update if the wordtag doesn't exist in this word:
+            if wordtag_obj not in word_obj.wordtags.all():
+                args.append(ThroughModel(wordtags=wordtag_obj, words=word_obj))
+    ThroughModel.objects.bulk_create(args)
+    
+    return {'createdWord_nb':len(words_to_create)}
+        
+''' 
+Readlang saves are a CSV file of the form:
+
+@data_file: csv file
+@owner: request.user
+@return: a dictionary summarizing the number of elements created '''
+def import_readlang(owner, data_file):
+    words_to_create = []
+    words_to_update = []
+    csv_reader = csv.reader(data_file, delimiter=',')
+    line_count = 0
+    prev_language_code = ''
+    createdLanguage_nb = 0
+    for row in csv_reader:
+        if line_count == 0:
+            if row and 'Your words (csv format)' in row[0]:
+                line_count += 1
+            continue
+        elif line_count < 4:
+            line_count += 1
+            continue
+        else:
+            wordtext = row.pop(0).strip()
+            language_code = row.pop(0).strip()
+            translation = row.pop(0).strip()
+            customsentence = row.pop(0).strip()
+            # Get the language corresponding to the language code:
+            if language_code != prev_language_code:
+                language = Languages.objects.filter(Q(owner=owner)&Q(code_639_1=language_code)).first()
+                # the language with this code doesn't exist for this use, we check in admin:
+                if not language:
+                    language = Languages.objects.filter(Q(owner_id=1)&Q(code_639_1=language_code)).first()
+                    # make a copy of this language for the User:
+                    language.id = None
+                    language.owner = owner
+                    language.save()
+                    createdLanguage_nb += 1
+                # still no language. we must create it:
+                if not language:
+                    language_definition = ''
+                    for lang in LANGUAGES_CODE:
+                        if lang['1'] == language_code:
+                            language_definition = lang
+                            break
+                    language = Languages.objects.create(owner=owner,
+                                         name=language_definition['name'],
+                                         code_639_1=language_definition['1'],
+                                         code_639_2t=language_definition['2T'],
+                                         code_639_2b=language_definition['2B'],
+                                         django_code=language_definition['django_code']
+                                         )
+                    createdLanguage_nb += 1
+                prev_language_code = language_code
+            
+            # Check whether it already exist in the database:
+            word_in_db = Words.objects.filter(Q(owner=owner)&Q(wordtext=wordtext)&Q(language=language)).first()
+            if word_in_db:
+                word_in_db.customsentence = customsentence
+                word_in_db.translation = translation
+                words_to_update.append(word_in_db)
+                # and also update the words having the same GOSW:
+                if gosw := word_in_db.grouper_of_same_words:
+                    for simwo in gosw.grouper_of_same_words_for_this_word:
+                        simwo.customsentence = customsentence
+                        simwo.translation = translation
+                        words_to_update.append(simwo)
+            else:
+                word = Words(owner=owner,
+                             language=language,
+                             wordtext=wordtext,
+                             customsentence=customsentence,
+                             translation=translation,
+                             status=1)
+                words_to_create.append(word)
+            
+    # bulk update:
+    Words.objects.bulk_update(words_to_update, ['translation','customsentence'])
+    # bulk creation:
+    Words.objects.bulk_create((words_to_create))
+    
+    return {'createdWord_nb':len(words_to_create), 'createdLanguage_nb':createdLanguage_nb}
         

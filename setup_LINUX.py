@@ -574,7 +574,7 @@ buildOptions = dict(
             'lwt.templatetags.pythonversion',
             'lwt.templatetags.range',
             'lwt.views',
-            'lwt.views._import_oldlwt',
+#             'lwt.views._import_oldlwt',
             'lwt.views._nolang_redirect_decorator',
             'lwt.views._setting_cookie_db',
             'lwt.views._utilities_views',

@@ -583,7 +583,7 @@ buildOptions = dict(
             'lwt.views.term',
             'lwt.views.term_list',
             'lwt.views.backuprestore',
-            'lwt.views._import_oldlwt',
+#             'lwt.views._import_oldlwt',
             'lwt.views.statistics',
             'lwt.views.export2anki_exporter',
             'django.contrib.contenttypes.views',

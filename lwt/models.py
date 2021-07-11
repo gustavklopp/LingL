@@ -281,7 +281,7 @@ class Grouper_of_same_words(BaseModel):
     # same than field 'id' but here we keep the 'natural_key' of the word. Used when creating...
     # ... backup and importing backup
     id_string = models.CharField( max_length=500,  
-#                                   unique=True
+                                unique=True
                                   )  
 
     objects = Grouper_of_sameWordsManager() # use to call the parent foreign key by its name (or title , or etc...)
@@ -689,6 +689,8 @@ class Restore(models.Model):
     restore_file_name = models.CharField(max_length=255, blank=True) # IS it useful?
     restore_file = models.FileField(blank=True)
     import_oldlwt = models.FileField(blank=True)
+    import_lingq = models.FileField(blank=True)
+    import_readlang = models.FileField(blank=True)
 #     restore_oldlwt_file = models.FileField()
 
 

@@ -30,7 +30,7 @@ from lwt.forms import *
 from lwt.views._setting_cookie_db import *
 from lwt.views._utilities_views import *
 from lwt.views._nolang_redirect_decorator import *
-from lwt.views._import_oldlwt import *
+from lwt.views._import_other_softwares import *
 
 ''' because the \t character in the database is recovered as a '\\t' '''
 def _unescape_special_char(text):

@@ -14,6 +14,7 @@ import re
 import json  # NB: I've tried python-rapidjson and orjson but they aren't faster
 import urllib
 from datetime import timedelta, datetime
+import locale # because windows use some unknown locale, we set standard locale. Else, datetime is not working
 import requests
 # local
 from lwt.views._setting_cookie_db import *
@@ -28,6 +29,12 @@ def get_appversion(request):
 
     # only check once in 24 hours the current version and if there's a new version on the Github release page:
     date_check = getter_settings_cookie('date_check', request)
+
+    # because windows use some unknown locale, we set standard locale. Else, datetime is not working
+    locale.setlocale(locale.LC_ALL, '')
+    saved = locale._setlocale(locale.LC_TIME)
+    locale.setlocale(locale.LC_TIME, 'C')
+
     now = datetime.now().timestamp()
     if not date_check or date_check - now > 86400: # 24*3600
         # Time to check...
@@ -58,6 +65,9 @@ def get_appversion(request):
     else:
         current_date = getter_settings_cookie('current_date', request)
         is_outdated = False # we assume it's not outdated even if we don't check...
+
+    # set back the normal locale
+    locale.setlocale(locale.LC_TIME, saved)
         
     return {'current_date':current_date, 'is_outdated':is_outdated}
    
@@ -520,7 +530,8 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
     # and get the objects created:
     nb_created_sentences = len(sentences_to_create)
     sentences_Obj_ls = Sentences.objects.filter(owner=text.owner).\
-                                                order_by('-created_date')[:nb_created_sentences]
+                                                order_by('created_date')
+    sentences_Obj_ls = sentences_Obj_ls[sentences_Obj_ls.count() - nb_created_sentences:]
     
     for newsentence in sentences_Obj_ls:
         # splitting the words inside the sentence:

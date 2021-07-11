@@ -23,8 +23,8 @@ In addition, I've modified Chinese since Django_code is different from the LANGU
 (because of the distinction between 'zh-hans' and 'zh-hant')
 '''
 LANGUAGES_CODE = [
- {'django_code':'zh-hans', '1':'zh',  '2':'zho',  '2T':'zho', '2B':'chi', '3':'zho', 'local':'中文', 'name':'Chinese'},
- {'django_code':'zh-hant', '1':'zh',  '2':'zho',  '2T':'zho', '2B':'chi', '3':'zho', 'local':'中文', 'name':'Chinese'},
+ {'django_code':'zh-hans', '1':'zh',  '2':'zho',  '2T':'zho', '2B':'chi', '3':'zho', 'local':'中文', 'name':'Chinese (simplified)'},
+ {'django_code':'zh-hant', '1':'zh',  '2':'zho',  '2T':'zho', '2B':'chi', '3':'zho', 'local':'中文', 'name':'Chinese (traditional)'},
  {'django_code':'af', '1':'af', '2':'afr', '2B':'afr', '2T':'afr', '3':'afr', 'local':'Afrikaans', 'name':'Afrikaans'},
  {'django_code':'sq', '1':'sq', '2':'sqi', '2B':'alb', '2T':'sqi', '3':'sqi', 'local':'Shqip', 'name':'Albanian'},
  {'django_code':'ar', '1':'ar', '2':'ara', '2B':'ara', '2T':'ara', '3':'ara', 'local':'العربية', 'name':'Arabic'},

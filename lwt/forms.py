@@ -421,10 +421,12 @@ class RestoreForm(forms.ModelForm):
     class Meta:
         model = Restore
         # is the field 'restore_file_name' useful??
-        fields = ['owner', 'restore_file_name', 'restore_file', 'import_oldlwt']
+        fields = ['owner', 'restore_file_name', 'restore_file', 'import_oldlwt', 'import_lingq', 'import_readlang']
         widgets = {
             'restore_file': forms.FileInput(attrs={'accept': '.yaml.gz'}),
-            'import_oldlwt': forms.FileInput(attrs={'accept': '.sql.gz'})
+            'import_oldlwt': forms.FileInput(attrs={'accept': '.sql.gz'}),
+            'import_lingq': forms.FileInput(attrs={'accept': '.csv'}),
+            'import_readlang': forms.FileInput(attrs={'accept': '.txt'})
             }
         
 '''choose a text in text_detail'''
@@ -517,6 +519,7 @@ class MySignUpForm(SignupForm):
 
         # displaying the language I want to learn:
         # we'll put in database the id and the name (and also in cookie): see in Models.UserAccountAdapter
+        # the list of possible languages to learn if from the Admin user in fact:
         languages_list = list(Languages.objects.filter(owner_id=1).values_list('id', 'name').order_by('name'))
         LEARNING_LANG_CHOICES = [(id, _(name)) for id, name in languages_list]
         # LEARNING_LANG_CHOICES has type like: <class 'list'>: 
