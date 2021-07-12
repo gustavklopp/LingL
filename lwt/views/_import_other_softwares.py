@@ -24,15 +24,16 @@ when it should be: "https://glosbe.com/gapi/translate?from=eng&&dest=fra&&format
 def converter_bad_url(url, name, origin_lang_code):
     url = url.replace('###', '<WORD>') # I'm using different placeholder
     if 'glosbe' in url:
-        from_639_1 = re.search(r'(?<=from=).{2}', url).group()
-        dest_639_1 = re.search(r'(?<=dest=).{2}', url).group()
-        # the code lang was '639_1' (2 letters) form => it's now '639_2t' (3 letters)
-        for lang in LANGUAGES_CODE: 
-            if lang['1'] == from_639_1:
-                from_639_2t = lang['2T']
-            if lang['1'] == dest_639_1:
-                dest_639_2t = lang['2T']
-        return "https://glosbe.com/gapi/translate?from="+from_639_2t+"&&dest="+dest_639_2t+"&&format=json"
+        pass
+#         from_639_1 = re.search(r'(?<=from=).{2}', url).group()
+#         dest_639_1 = re.search(r'(?<=dest=).{2}', url).group()
+#         # the code lang was '639_1' (2 letters) form => it's now '639_2t' (3 letters)
+#         for lang in LANGUAGES_CODE: 
+#             if lang['1'] == from_639_1:
+#                 from_639_2t = lang['2T']
+#             if lang['1'] == dest_639_1:
+#                 dest_639_2t = lang['2T']
+#         return "https://glosbe.com/gapi/translate?from="+from_639_2t+"&&dest="+dest_639_2t+"&&format=json"
     elif 'www.dict.cc' in url: # dict.cc is bad formed
         lang_code1 = 'XX'
         for lang in LANGUAGES_CODE:

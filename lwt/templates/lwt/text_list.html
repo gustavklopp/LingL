@@ -153,6 +153,11 @@
 </div>
 </div>
 
+<!--  Loadingpopup when clicking on submit button -->
+<div id="unarchiving_loadingpopup" hidden>
+{% trans 'Unarchiving in progress. Please wait' %}<br>
+<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
+</div>
 {% endblock content %}
 
 
@@ -268,7 +273,10 @@ function warning_archive(redirect_url){
         width: 'auto', resizable: false,
         buttons: [ {text: gettext("Yes"),
 					click: function() {
-			document.location = redirect_url;
+						document.location = redirect_url;
+						// display a loading popup:
+					    $( this ).dialog( "close" );
+						display_loading_popup($('#unarchiving_loadingpopup'));
 						}
 					},
 					{text: gettext("Cancel"),

@@ -74,6 +74,7 @@ def load_texttable(request):
         t_dict['id'] = t.id
         ##############################
         if not t.archived: # display a choice popup if trying to read/edit an archived text
+            # onclick_r : to display when you rEAD it / onclick_e : to display when you eDIT it
             if t.contenttype == 'html':
                 onclick_r = 'document.location = \''+reverse('webpage_read',args=[t.id]) +'\';'
                 onclick_e = 'document.location = \''+reverse('text_detail')+'?edit_webpage='+str(t.id)+'\';'
