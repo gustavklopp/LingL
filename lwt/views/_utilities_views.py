@@ -46,21 +46,24 @@ def get_appversion(request):
             current_date = appversion_f.read().strip()
 
         # get the date of the latest release on GIthub:
-        resp = requests.get('https://api.github.com/repos/gustavklopp/lingl/releases')
-        if resp.status_code == 200:
-            releases = resp.json()[:3]
-            for release in releases:
-                if release['name'].startswith('windows'):
-                    release_date_str = release['name'][-10:] # the date is in the end of the string 'linux LingLibre 2016.06.20'
-                    release_date_obj = datetime.strptime(release_date_str, '%Y.%m.%d' ) # '2021.06.20'
-                    current_date_obj = datetime.strptime(current_date, '%Y.%m.%d')
-                    is_outdated = current_date_obj < release_date_obj
-                    break
+        try: 
+            resp = requests.get('https://api.github.com/repos/gustavklopp/lingl/releases')
+            if resp.status_code == 200:
+                releases = resp.json()[:3]
+                for release in releases:
+                    if release['name'].startswith('linux'):
+                        release_date_str = release['name'][-10:] # the date is in the end of the string 'linux LingLibre 2016.06.20'
+                        release_date_obj = datetime.strptime(release_date_str, '%Y.%m.%d' ) # '2021.06.20'
+                        current_date_obj = datetime.strptime(current_date, '%Y.%m.%d')
+                        is_outdated = current_date_obj < release_date_obj
+                        break
 
-            # and update the cookies
-            setter_settings_cookie('date_check', now, request)
-            setter_settings_cookie('current_date', current_date, request)
-        else: # error accessing Github release page
+                # and update the cookies
+                setter_settings_cookie('date_check', now, request)
+                setter_settings_cookie('current_date', current_date, request)
+            else: # error accessing Github release page
+                return {'current_date':_('<Error accessing Github Server>'), 'is_outdated':True}
+        except: # error accessing Github release page
             return {'current_date':_('<Error accessing Github Server>'), 'is_outdated':True}
     else:
         current_date = getter_settings_cookie('current_date', request)
