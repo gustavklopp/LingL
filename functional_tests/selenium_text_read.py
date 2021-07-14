@@ -144,7 +144,7 @@ class Text_read(Base):
 #         self.assertEqual(len(self.selenium.find_elements(*tooltip_righthandle_selector)), 0, 
 #                          msg="Tooltip doesn't disappear when mouse over the right handle")
 # 
-        elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="1"')
+        elements = self.finds(By.CSS_SELECTOR, 'span[wostatus="2"')
         self.assertEqual(len(elements), 3, msg="New text don't get the already saved words")
         self.assertEqual(elements[0].text, 'mmm')
          
@@ -271,9 +271,9 @@ class Text_read(Base):
 #         self.assertEqual(len(self.selenium.find_elements(*tooltip_righthandle_selector)), 0, 
 #                          msg="Tooltip doesn't disappear when mouse over the right handle")
  
-        totalsavedwords = self.finds(By.XPATH, '//span[@wostatus="1"]')
+        totalsavedwords = self.finds(By.XPATH, '//span[@wostatus="2"]')
         self.assertEqual(len(totalsavedwords), 4)
-        newsavedwords = self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')
+        newsavedwords = self.finds(By.XPATH, '//span[@wostatus="2" and contains(text(), "aimerais")]')
         self.assertEqual(len(newsavedwords), 2, )
  
         # clicking on word 'aimeront' should make only one similar word to appear:
@@ -288,7 +288,7 @@ class Text_read(Base):
         ActionChains(self.selenium).move_to_element(tooltip_righthandle).click().perform()
         self.wait_until_disappear(*tooltip_righthandle_selector)
  
-        self.finds(By.XPATH, '//span[@wostatus="1" and contains(text(), "aimerais")]')[1].click()
+        self.finds(By.XPATH, '//span[@wostatus="2" and contains(text(), "aimerais")]')[1].click()
         self.wait_until_appear(By.CLASS_NAME, 'tooltiptext')
         self.find(By.XPATH, "//a[contains(text(),'Edit term')]").click()
         submit = self.find(By.XPATH, "//button[@id='submit_word' and contains(text(),'Change')]")

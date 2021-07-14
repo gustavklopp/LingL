@@ -337,6 +337,7 @@ class Words(BaseModel):
     order = models.IntegerField(blank=True, null=True)  # where is the word in the sentence
     textOrder = models.IntegerField(blank=True, null=True)  # where is the word in the text
     wordtext = models.CharField( max_length=250,blank=True, null=True)  
+    wordtextLC = models.CharField( max_length=250,blank=True, null=True)  # same but lowercase (because sqlite3 doesn't know how to convert to lowercase, we do that in Python.
     isnotword = models.BooleanField(default=False)  
     translation = models.CharField( max_length=500, blank=True, null=True)  
     romanization = models.CharField( max_length=100, blank=True, null=True)  
@@ -354,7 +355,11 @@ class Words(BaseModel):
 
     def __str__(self):
         return self.wordtext
-    
+
+    def save(self, *args, **kwargs):
+        self.wordtextLC = self.wordtext.lower()
+        super(Words, self).save(*args, **kwargs)
+
     class Meta:
         db_table = 'words'        
 #         unique_together = [['textOrder', 'text', 'owner']] <-- Pb when deleting a word when doing bulk_update

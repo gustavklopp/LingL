@@ -758,7 +758,7 @@ def text_detail(request):
         # when deleting and inserting a word, update the wordcount and wordcound_distinct of the text
         elif 'word_delete' in request.GET.keys() or 'word_insert' in request.GET.keys():
             similarwordtext_count = Words.objects.filter(Q(text=text)&\
-                                            Q(wordtext__iexact=wo_wordtext)).count()
+                                            Q(wordtextLC=wo_wordtext.lower())).count()
             if 'word_insert' in request.GET.keys():
                 text.wordcount += 1
                 if similarwordtext_count > 1: # >1 because we have already inserted the word

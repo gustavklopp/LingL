@@ -291,7 +291,7 @@ def import_oldlwt(owner, data_file):
             # if it exists, we don't create a new word but we choose to OVERWRITE 
             # the data currently present with the ones from oldlwt
             duplicate_word = Words.objects.filter(Q(owner=owner)&Q(language=language)&\
-                                               Q(status__gt=0)&Q(wordtext__iexact=wordtext)).\
+                                               Q(status__gt=0)&Q(wordtextLC=wordtext)).\
                                                order_by('-grouper_of_same_words').first()
             if duplicate_word:
                 # we need also to update all the similar words for this word:

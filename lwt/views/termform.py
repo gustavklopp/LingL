@@ -181,18 +181,20 @@ def search_possiblesimilarword(request, word=None):
         searched_wordtext = word.wordtext[:3]
         if len(word.wordtext) >= 8: 
             searched_wordtext = word.wordtext[:int(round((len(word.wordtext)*2)/3))] # we use 75% of the word similarity in length 
+        searched_wordtextLC = searched_wordtext.lower()
         possiblesimilarword_obj =  Words.objects.\
-                filter(Q(language__id=word.language.id)&Q(wordtext__istartswith=searched_wordtext)).\
-                       exclude(wordtext__iexact=word.wordtext).\
-                       exclude(status=0).\
+                filter(Q(language__id=word.language.id)&Q(wordtextLC__startswith=searched_wordtextLC)&\
+                       Q(status__gt=0)&Q(status__lt=100)).\
+                       exclude(wordtext=word.wordtext).\
                        order_by('status','grouper_of_same_words_id')
     else: # doing a search in the termform searchbox sent by AJAX
         searchboxtext = request.GET['searchboxtext']
         language_id = request.GET['language_id']
         possiblesimilarword_obj =  Words.objects.\
-                filter(Q(language__id=language_id)&Q(wordtext__istartswith=searchboxtext[:3])).\
-                       exclude(status=0).\
+                filter(Q(language__id=language_id)&Q(wordtext__startswith=searchboxtext[:3].lower())&\
+                       Q(status__gt=0)&Q(status__lt=100)).\
                        order_by('grouper_of_same_words_id')
+                        # we allow to get the same wordtext here
 
     possiblesimilarword = possiblesimilarword_obj.values('id','status','sentence','customsentence',
                             'translation','text__title', 'wordtext','grouper_of_same_words_id')
@@ -298,11 +300,11 @@ def get_similar_words_AND_gosw(request, word):
     grouper_of_same_words = word.grouper_of_same_words
     if grouper_of_same_words:
         samewordtext_query = Words.objects.filter(language=word.language).\
-                             filter(Q(wordtext__iexact=word.wordtext)|\
+                             filter(Q(wordtextLC=word.wordtext.lower())|\
                                     Q(grouper_of_same_words=grouper_of_same_words))
     else:
         samewordtext_query = Words.objects.filter(language=word.language).\
-                                 filter(wordtext__iexact=word.wordtext)
+                                 filter(wordtextLC=word.wordtext.lower())
 
     word_with_gosw_to_update = samewordtext_query.exclude(grouper_of_same_words=None).first()
     if word_with_gosw_to_update:
@@ -507,7 +509,7 @@ def termform(request):
 
             # and update also all the words written similarly than this similar word (you follow? :) 
             samewordtext_query = Words.objects.filter(language=alreadysavedword.language).\
-                                 filter(wordtext__iexact=simwordtext)
+                                 filter(wordtextLC=simwordtext.lower())
             for sw in samewordtext_query:
                 can_bulkupdate = _copy_word(alreadysavedword, sw, save=False)
                 sw.grouper_of_same_words = gosw
@@ -597,11 +599,11 @@ def termform(request):
                         # ...appear simultaneously
                         # I do that to avoid a search in all the sentences: too costy!
                         filter_Q_sentencetext = Q(sentencetext__icontains=compoundword_wordtext_list[0])
-                        filter_Q_wordtext = Q(wordtext__iexact=compoundword_wordtext_list[0])
+                        filter_Q_wordtext = Q(wordtextLC=compoundword_wordtext_list[0].lower())
                         for compoundword_wordtext in compoundword_wordtext_list[1:]:
                             args = {'sentencetext__icontains':compoundword_wordtext}
                             filter_Q_sentencetext &= Q(**args)
-                            args = {'wordtext__iexact':compoundword_wordtext}
+                            args = {'wordtextLC':compoundword_wordtext.lower()}
                             filter_Q_wordtext |= Q(**args)
                         sentencesWithSimilarCompoundword = Sentences.objects.\
                                         filter(Q(language=firstword.language)&\

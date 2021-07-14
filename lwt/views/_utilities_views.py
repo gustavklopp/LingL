@@ -418,7 +418,7 @@ def mp_search_simword(new_word_created,
     if new_word_created.id not in simword_to_update_ids:
         # We search a word written similarly, already saved in the database
         samewordtext_query = Words.objects.filter(language=text.language).\
-                filter(wordtext__iexact=new_word_created.wordtext).\
+                filter(wordtextLC=new_word_created.wordtext.lower()).\
                 order_by('-status')
         for idx, sameword in enumerate(samewordtext_query):
             # the words found similar must have at least one of them which is a known word
@@ -571,7 +571,8 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
                 wo = Words(owner=text.owner,language=text.language, 
                                           sentence=newsentence, text=text,
                                           order=wordidx, textOrder=textOrder,
-                                            wordtext=word, customsentence=customsentence, 
+                                            wordtext=word, wordtextLC=word.lower(),
+                                            customsentence=customsentence, 
 #                                               wordtext=remove_spaces(word,removeSpaces), \
                                           webpagesection=webpagesection,
                                           isnotword=False)
@@ -642,7 +643,8 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
 #         # Non-multiprocessing equivalent:
 #         for word in new_words_created:
 #             mp_search_simword(word, simword_to_update_ids, new_words_created_ids, words_AND_goswIdxORobj_dic, 
-#                               simword_to_update_allField, gosw_to_create_ls, text, gosw_to_create_idx)
+#                               simword_to_update_allField, gosw_to_create_ls, 
+#                               gosw_to_create_idString_ls, text, gosw_to_create_idx)
              
         # and get back again the lists that we'll need later
         gosw_to_create_ls = list(gosw_to_create_ls)
@@ -651,8 +653,6 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
 #         simword_to_update_statusOnly = list(simword_to_update_statusOnly)
         simword_to_update_allField = list(simword_to_update_allField)
              
-
-    
     ######## End multi process
 
     # One Bulk create of GOSW:
