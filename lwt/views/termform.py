@@ -176,45 +176,94 @@ def search_possiblesimilarword(request, word=None):
     # box by the user (use in AJAX).
     # we exclude: the same word (of course) (whatever the upper/lowercase) and the already similar word
     
+    possiblesimilarword_obj = []
+    possiblesimilarword_str = []
+    possiblesimilarword_gosw = []
     if word: # clicking on new word in text_read section
-        # for longer words, the text we search should be longer. 
-        searched_wordtext = word.wordtext[:3]
-        if len(word.wordtext) >= 8: 
-            searched_wordtext = word.wordtext[:int(round((len(word.wordtext)*2)/3))] # we use 75% of the word similarity in length 
-        searched_wordtextLC = searched_wordtext.lower()
-        possiblesimilarword_obj =  Words.objects.\
-                filter(Q(language__id=word.language.id)&Q(wordtextLC__startswith=searched_wordtextLC)&\
-                       Q(status__gt=0)&Q(status__lt=100)).\
-                       exclude(wordtext=word.wordtext).\
-                       order_by('status','grouper_of_same_words_id')
+        searched_wordtext = word.wordtext
+        searched_wordtextLC = word.wordtextLC
     else: # doing a search in the termform searchbox sent by AJAX
-        searchboxtext = request.GET['searchboxtext']
+        searched_wordtext = request.GET['searchboxtext']
         language_id = request.GET['language_id']
-        possiblesimilarword_obj =  Words.objects.\
-                filter(Q(language__id=language_id)&Q(wordtext__startswith=searchboxtext[:3].lower())&\
-                       Q(status__gt=0)&Q(status__lt=100)).\
-                       order_by('grouper_of_same_words_id')
-                        # we allow to get the same wordtext here
+        searched_wordtextLC = searched_wordtext.lower()
 
-    possiblesimilarword = possiblesimilarword_obj.values('id','status','sentence','customsentence',
-                            'translation','text__title', 'wordtext','grouper_of_same_words_id')
-    # If other words have the same FK Grouper_of_same_words, remove them from the list
-    possiblesimilarword_distinctFK = [] 
-    prev_FK_GOSW_id = -1 # previous foreign key of grouper_of_same_words
-    for idx, simword in enumerate(possiblesimilarword):
-        # the simword can have no GOSW or if it has one, it should be different from the
-        # previous one.
-        if not simword['grouper_of_same_words_id'] or \
-                simword['grouper_of_same_words_id'] != prev_FK_GOSW_id:
-            possiblesimilarword_distinctFK.append(simword)
-            prev_FK_GOSW_id = simword['grouper_of_same_words_id']
-        # create the sentence in curly braces:
-        if not simword['customsentence']:
-            simword['customsentence'] = _create_curlybrace_sentence(possiblesimilarword_obj[idx])
+    while searched_wordtext and len(possiblesimilarword_obj)<9:
+        if word:
+            intermediate_possiblesimilarword_obj =  Words.objects.\
+                    filter(Q(language__id=word.language.id)&Q(wordtextLC__startswith=searched_wordtextLC)&\
+                           Q(status__gt=0)&Q(status__lt=100)).\
+                           exclude(wordtext=word.wordtext).\
+                           order_by('status','grouper_of_same_words_id').\
+                           values('id','status','sentence','customsentence',
+                            'translation','text__title', 'wordtext','wordtextLC','grouper_of_same_words_id') 
+        else:
+            intermediate_possiblesimilarword_obj =  Words.objects.\
+                    filter(Q(language__id=language_id)&Q(wordtextLC__startswith=searched_wordtextLC)&\
+                           Q(status__gt=0)&Q(status__lt=100)).\
+                           order_by('status','grouper_of_same_words_id').\
+                           values('id','status','sentence','customsentence',
+                            'translation','text__title', 'wordtext','wordtextLC','grouper_of_same_words_id') 
+
+        for wo in intermediate_possiblesimilarword_obj:
+            if wo['wordtextLC'] in possiblesimilarword_str:
+                continue
+            if 'grouper_of_same_words_id' in wo.keys():
+                if wo['grouper_of_same_words_id'] in possiblesimilarword_gosw:
+                    continue 
+                if word and word.grouper_of_same_words:
+                    if wo['grouper_of_same_words_id'] == word.grouper_of_same_words:
+                        continue
+            if len(possiblesimilarword_obj) < 9:
+                possiblesimilarword_obj.append(wo)
+                possiblesimilarword_str.append(wo['wordtextLC'])
+                if 'grouper_of_same_words_id' in wo.keys():
+                    possiblesimilarword_gosw.append(wo['grouper_of_same_words_id'])
+
+        searched_wordtext = searched_wordtext[:-1]
+        searched_wordtextLC = searched_wordtextLC[:-1]
+        
+#         # for longer words, the text we search should be longer. 
+#         searched_wordtext = word.wordtext[:3]
+#         if len(word.wordtext) >= 8: 
+#             searched_wordtext = word.wordtext[:int(round((len(word.wordtext)*2)/3))] # we use 75% of the word similarity in length 
+#         searched_wordtextLC = searched_wordtext.lower()
+#         possiblesimilarword_obj =  Words.objects.\
+#                 filter(Q(language__id=word.language.id)&Q(wordtextLC__startswith=searched_wordtextLC)&\
+#                        Q(status__gt=0)&Q(status__lt=100)).\
+#                        exclude(wordtext=word.wordtext).\
+#                        order_by('status','grouper_of_same_words_id')
+#     else: # doing a search in the termform searchbox sent by AJAX
+#         searchboxtext = request.GET['searchboxtext']
+#         language_id = request.GET['language_id']
+#         possiblesimilarword_obj =  Words.objects.\
+#                 filter(Q(language__id=language_id)&Q(wordtext__startswith=searchboxtext[:3].lower())&\
+#                        Q(status__gt=0)&Q(status__lt=100)).\
+#                        order_by('grouper_of_same_words_id')
+#                         # we allow to get the same wordtext here
+
+#     possiblesimilarword = possiblesimilarword_obj.values('id','status','sentence','customsentence',
+#                             'translation','text__title', 'wordtext','grouper_of_same_words_id')
+#     # If other words have the same FK Grouper_of_same_words, remove them from the list
+#     possiblesimilarword_distinctFK = [] 
+#     prev_FK_GOSW_id = -1 # previous foreign key of grouper_of_same_words
+#     for idx, simword in enumerate(possiblesimilarword):
+#         # the simword can have no GOSW or if it has one, it should be different from the
+#         # previous one.
+#         if not simword['grouper_of_same_words_id'] or \
+#                 simword['grouper_of_same_words_id'] != prev_FK_GOSW_id:
+#             possiblesimilarword_distinctFK.append(simword)
+#             prev_FK_GOSW_id = simword['grouper_of_same_words_id']
+#         # create the sentence in curly braces:
+#         if not simword['customsentence']:
+#             simword['customsentence'] = _create_curlybrace_sentence(possiblesimilarword_obj[idx])
+#     if word:
+#         return possiblesimilarword_distinctFK[:9]
+#     else:
+#         return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarword_distinctFK[:10]}))
     if word:
-        return possiblesimilarword_distinctFK[:9]
+        return possiblesimilarword_obj
     else:
-        return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarword_distinctFK[:10]}))
+        return HttpResponse(json.dumps({'possiblesimilarword':possiblesimilarword_obj}))
 
     
 ''' same as above but for compound words
@@ -647,6 +696,7 @@ def termform(request):
                     word.translation = f.cleaned_data['translation']
                     word.romanization = f.cleaned_data['romanization']
                     word.status = f.cleaned_data['status']
+                    word.customsentence = f.cleaned_data['customsentence']
                     word.save()
                     wotagtext_list = [] if f.data["wordtags"] == '' else f.data['wordtags'].split(',')
                     word.wordtags.exclude(wotagtext__in=wotagtext_list).delete() #first, remove non existent tags

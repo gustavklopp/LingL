@@ -26,6 +26,7 @@ function ajax_submit_word(event, op, wo_id, language_id, simwo_id=null){
 		data_to_go['status'] = $("input[name=status]:checked").val();
 		data_to_go['romanization'] = $("input[name=romanization]").val();
 		data_to_go['wordtags'] = $("input[name=wordtags]").val();
+		data_to_go['customsentence'] = $("textarea[name=customsentence]").val();
 		//NOTE: compoundword_id_list cariable is directly embedded in 'termform_new_or_edit.html'
 		// extra_field:
 		var extra_field = '[';
