@@ -106,13 +106,13 @@ def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
                 # getting the compoundowrd if already defined:
                 compoundword = Words.objects.get(wordinside_order=json.dumps(compoundword_id_list, separators=(',',':')))
                 f = WordsForm(owner, instance=compoundword)
-                customsentence = compoundword.customsentence
+#                 customsentence = compoundword.customsentence
             elif op == 'new':
                 # the ´instance´ is only used to get the language.id (used inside
                 # "manage extra field" link
                 f = WordsForm(owner, initial = {'wordinside_order': compoundword_id_list},
                                          instance =  compoundword_list[0])
-                customsentence = _create_curlybrace_sentence(compoundword, compoundword_list, compoundword_id_list)
+#                 customsentence = _create_curlybrace_sentence(compoundword, compoundword_list, compoundword_id_list)
                 wo = compoundword_list[0] # used after in the html to search dict at the end of the page
 
     ########################## Displaying the form for WORD #########################################
@@ -126,9 +126,10 @@ def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
         f = WordsForm(owner, instance=wo) # put the pre-filled text of the textitem in the field for uwtext
 
         # displaying the word inside its sentence, with '{' '}' around it:
-        customsentence = wo.customsentence
+#         customsentence = wo.customsentence
         if op == 'new': 
-            customsentence = _create_curlybrace_sentence(wo)
+            pass
+#             customsentence = _create_curlybrace_sentence(wo)
 
     statuses = STATUS_CHOICES # display radio buttons to choose among available status for a term
 #     statuses.pop(0, None) # we dont'need this key (in the form, it always atleast a Learning word)
@@ -151,7 +152,8 @@ def new_or_edit_word(owner, op, compoundword_id_list=None, wo_id=None):
 
     html_ctx ={
                     'form':f, 'wo': wo,'statuses':statuses, 
-                    'customsentence':customsentence, 'op': op,
+#                     'customsentence':customsentence, 
+                    'op': op,
                     # STRING VARIABLES:
                      'Op_Thing': Op_Thing, 'submit_word_button': submit_word_button,
                     'submit_singleword_button': submit_singleword_button,

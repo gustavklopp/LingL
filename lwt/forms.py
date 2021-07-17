@@ -369,6 +369,8 @@ class WordsForm(forms.ModelForm):
                                     required=False)
     # TO CHANGE
     extra_field = json_fields.SplitJSONField(required=False)
+    
+    customsentence = forms.CharField(widget=forms.Textarea(attrs={'rows': 3,'cols':40}),required=False)
 
     def __init__(self, owner, *args, **kwargs):
         self.owner = owner
@@ -401,11 +403,12 @@ class WordsForm(forms.ModelForm):
             str(kwargs['instance'].language.id) + '#extra_field'\
             '">' + _('(manage extra fields)') + '</a>'
         self.fields['wordtags'].owner = owner
+        self.fields['customsentence'].label = _('Sentence (Term in **...**)')
 
 
     class Meta:
         model = Words
-        fields = ('translation','romanization','status','wordtags', 'extra_field')
+        fields = ('translation','romanization','status','wordtags', 'extra_field','customsentence')
         widget= {
             'wordtags': tag_widgets.TagsInputWidget, # getting the tags fo the texts (using Django tagsinput app)
             # TO CHANGE

@@ -60,11 +60,13 @@ $(document).ready(function(){
 <div class="col-md-6">
 
 	<!--  Possible sentences -->
-	<label for="id_sentence" class="control-label ">{% trans "Sentence (Term in **...**)" %}:</label>
-	<div class="controls ">
-	<textarea name="customsentence" cols="40" rows="3" class="textarea form-control"
-		 id="id_sentence" {% if wo.language.righttoleft %}dir="rtl"{% endif %}>{{ customsentence }}</textarea>
-	</div>
+	{{ form.customsentence|as_crispy_field }}
+<!-- 	<label for="id_sentence" class="control-label ">{% trans "Sentence (Term in **...**)" %}:</label> -->
+<!-- 	<div class="controls "> -->
+<!-- 	<textarea name="customsentence" cols="40" rows="3" class="textarea form-control" -->
+<!-- 		 id="id_sentence" {% if wo.language.righttoleft %}dir="rtl"{% endif %}>{{ customsentence }}</textarea> -->
+<!-- 	</div> -->
+
 	<!-- 
 	<textarea id="id_sentence" {% if wo.language.righttoleft %}dir="rtl"{% endif %} name="customsentence" 
 	>{{ customsentence }}</textarea><br>
