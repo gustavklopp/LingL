@@ -241,3 +241,6 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 
 #Temporate solution because bug in django-allauth with Django 3.x "HINT: Configure the DEFAULT_AUTO_FIELD setting "
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# No limit when uploading a file (default is to 2.5 Mb)
+DATA_UPLOAD_MAX_MEMORY_SIZE = None
