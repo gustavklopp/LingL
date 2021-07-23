@@ -15,13 +15,21 @@ This was inspired by other site/projects like the opensource Lwt, the closed sou
 
 ### 2.1. Use the built-in server inside Django:
 
-It will need `python ==3.9.0` and `Django == 3.2`
+It will need `python==3.9.0`.
 
 (Use a virtual env preferably: on Windows, use `chocolatey` to install `pyenv` for example, and on macOS, use `homebrew` to install `pyenv`.)
 
 Set a virtualenv with python 3.9.0, then inside the virtual env:
 
-`pip install -r requirements.txt`
+`pip install -r requirements.txt` (it will install all the modules required, along `Django==3.2.4`)
+
+(You need `pip` of course, which is a Python modules manager:
+https://pip.pypa.io/en/stable/installing/#installing-with-get-pip-py
+```
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+python get-pip.py
+```
+)
 
 Running the Django project:
 
