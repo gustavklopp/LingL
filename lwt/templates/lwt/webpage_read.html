@@ -146,6 +146,9 @@ var dictwebpage_searched_word  = [];
 </div> <!-- End of textread_row main container -->
 
 
-
-
+<!--  Loadingpopup when clicking on 'LingLibrify a text' -->
+<div id="processingtext_loadingpopup" hidden>
+{% trans 'The text is currently processed. Please wait' %}<br>
+<div class="text-center"><img src="{% static 'lwt/img/working.gif' %}" alt="working" /></div>
+</div>
 {% endblock content %}

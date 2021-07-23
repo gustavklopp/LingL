@@ -35,35 +35,87 @@ from lwt.views._utilities_views import *
 from lwt.views.text_read import _textANDwebpage_common
 from lwt.constants import STATUS_CHOICES
 
+############ LINE_PROFILER ###############
+# import line_profiler
+# profile = line_profiler.LineProfiler()
+
+def seltext_to_splittext(webpage, seltext, webpagesection, max_sentenceorder, iframe_html): 
+    sentenceorder = max_sentenceorder +1
+#     import pydevd; pydevd.settrace()
+    seltext = html.unescape(seltext) # because it can have '&nbsp' inside.
+    max_sentenceorder = splitText(webpage, seltext, webpagesection, sentenceorder)
+    seltext_tag = '<span class="webpage_done" data-webpagesection="{}"></span>'.\
+                    format(webpagesection)
+    webpagesection += 1
+    # and replace in the original iframe_html:
+    iframe_html = re.sub(r'<span class="webpage_seltext">.*?</span>', seltext_tag, 
+                        iframe_html, count=1) 
+    return max_sentenceorder, iframe_html, webpagesection
+
 ''' display the webpage to be read'''
 @login_required
 @nolang_redirect
+# @profile
 def webpage_read(request, text_id=None):
     # User has selected text inside the webpage:
     if request.method == 'POST':
-        iframe_html = request.POST['iframe_html']
+        iframe_html = request.POST['iframe_html'] # the entire HTML webpage is transmitted
         text_id = request.POST['text_id']
         webpage = Texts.objects.get(id=text_id)
 
-        # get what is the max webpagesection for this webpage if it exists:
+        # In database, get what is the max webpagesection for this webpage if it exists:
         wos =  Words.objects.filter(text=webpage)
         max_webpagesection = wos.aggregate(Max('webpagesection'))['webpagesection__max'] if wos else -1
-        # get what is the max sentence Order for this webpage if it exists:
+        # In database, get what is the max sentence Order for this webpage if it exists:
         sents =  Sentences.objects.filter(text=webpage)
+        # we use the max_sentenceorder because each time the 'LingLibrify' is called, we need
+        # to increase the index: 
         max_sentenceorder = sents.aggregate(Max('order'))['order__max'] if sents else -1
 
-        soup = BeautifulSoup(iframe_html, 'html.parser')
-        webpage_seltexts = soup.findAll('span', {'class':'webpage_seltext'})
         webpagesection = max_webpagesection + 1
-        for seltext_obj in webpage_seltexts:
-            sel_text = seltext_obj.text
-            sentenceorder = max_sentenceorder +1
-            max_sentenceorder = splitText(webpage, sel_text, webpagesection, sentenceorder)
-            seltext_obj.string = ''
-            seltext_obj['class'] = 'webpage_done'
-            seltext_obj['data-webpagesection'] = webpagesection # Next time this part won't be processed
-            webpagesection += 1
-        webpage.text = str(soup)
+#         # BeautifulSoup version: Too slow!
+#         soup = BeautifulSoup(iframe_html, 'lxml')
+#         webpage_seltexts = soup.findAll('span', {'class':'webpage_seltext'})
+#         for seltext_obj in webpage_seltexts:
+#             sel_text = seltext_obj.text
+#             sentenceorder = max_sentenceorder +1
+#             max_sentenceorder = splitText(webpage, sel_text, webpagesection, sentenceorder)
+#             seltext_obj.string = ''
+#             seltext_obj['class'] = 'webpage_done'
+#             seltext_obj['data-webpagesection'] = webpagesection # Next time this part won't be processed
+#             webpagesection += 1
+#         webpage.text = str(soup)
+        # REGEX version:
+        webpage_seltexts = re.findall(r'<span class="webpage_seltext">(.*?)</span>', iframe_html)
+
+#         import multiprocessing as mp
+#         from concurrent.futures import ProcessPoolExecutor 
+#         from itertools import repeat
+#         from ctypes import c_char_p
+        
+        # multiprocessing version:
+#         with mp.Manager() as manager:
+#             webpagesection = manager.Value(int, webpagesection)
+#             max_sentenceorder = manager.Value(int, max_sentenceorder)
+#             iframe_html = manager.Value(c_char_p, iframe_html)
+#             zipped_args = zip( repeat(webpage),
+#                             webpage_seltexts,
+#                            repeat(webpagesection),
+#                            repeat(max_sentenceorder),
+#                            repeat(iframe_html)
+#                            )
+#             with manager.Pool() as pool:
+             # standard manager.Pool is NOT ALLOWED: 'Daemonic processes are not allowed to have children'
+#             with ProcessPoolExecutor() as pool: # NOT WORKING... when calling splittext, the process seems to stop
+#                 pool.map(mp_seltext_to_splittext, *zip(*zipped_args))
+
+#             webpage.text = iframe_html.value
+
+        # non-multiprocessing version:
+        for seltext in webpage_seltexts:
+            max_sentenceorder, iframe_html, webpagesection = seltext_to_splittext(webpage, seltext, webpagesection, max_sentenceorder, iframe_html)
+        webpage.text = iframe_html
+
         webpage.save()
 
         #update the cookie for the database_size
@@ -73,13 +125,17 @@ def webpage_read(request, text_id=None):
     elif request.method == 'GET':
         webpage = Texts.objects.get(id=text_id)
 
-    html = webpage.text
+    webpage_html = webpage.text
     url = webpage.title
-    bottomleft = escape(html)
+    bottomleft = escape(webpage_html)
         
     previoustext, nexttext, todo_wordcount, todo_wordcount_pc, texttotalword,\
     word_inthistext, statuses, wordtags, texttags = _textANDwebpage_common(request, webpage, text_id)
 
+#     # OUTPUT THE LINE_PROFILER
+#     with open('output.txt', 'w') as stream:
+#         profile.print_stats(stream=stream)
+    
     return render(request, 'lwt/webpage_read.html', { 
                 'text':webpage,
                 'previoustext':previoustext,'nexttext':nexttext,

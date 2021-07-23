@@ -135,9 +135,14 @@ $(document).ready(function(e) {
 											'text_id':TID},
 									  success: function(){
 											document.location='/webpage_read/'+TID;	
-										}
-									});
+											}
+									  });
+								// and display the loading popup
+     							$( this ).dialog( "close" );
+								display_loading_popup($('#processingtext_loadingpopup'));
 								}
+
+
 							},
 							{text: gettext("Cancel"),
 							click: function() {

@@ -672,11 +672,11 @@ def splitText(text, text_t=None, webpagesection=0, sentenceorder=0):
         words_with_updated_gosw = manager.list()
         zipped_args = zip( words_AND_goswIdxORobj_dic_items, repeat(gosw_created_Objs),
                            repeat(words_with_updated_gosw))
+        with manager.Pool() as pool:
+            pool.starmap(mp_update_gosw_in_word, zipped_args)
 #         # Non-multiprocessing equivalent:
 #         for wo_AND_goswIdxORobj in words_AND_goswIdxORobj_dic.items():
 #             mp_update_gosw_in_word(wo_AND_goswIdxORobj, gosw_created_Objs, words_with_updated_gosw)
-        with manager.Pool() as pool:
-            pool.starmap(mp_update_gosw_in_word, zipped_args)
         
         words_with_updated_gosw = list(words_with_updated_gosw)
     

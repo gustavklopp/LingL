@@ -22,6 +22,7 @@ wxpython = "*"
 pymupdf = "*"
 line-profiler = "*"
 python-rapidjson = "*"
+lxml = "*"
 
 [dev-packages]
 

@@ -107,8 +107,6 @@ def _clean_soup(soup, url=None):
         body = div_container
     body_str = str(body)
     html = link_scr + link_str + body_str 
-    with open('test2.html', 'w') as test2:
-        test2.write(html)
     return html
 
 '''Helper for all the APIs. Allow to make a word clickable (or using shortcut):

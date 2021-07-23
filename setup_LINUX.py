@@ -19,6 +19,7 @@ lingl_image_path = os.path.join(cwd,'lwt','static','lwt','img','site_icon_16x16.
 # fine tuning.
 buildOptions = dict(
         packages = [
+            'lxml',
             'LingL',
             'LingL.settings',
             'LingL.urls',
