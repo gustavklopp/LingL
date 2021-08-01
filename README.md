@@ -6,7 +6,7 @@ This was inspired by other site/projects like the opensource Lwt, the closed sou
 ![Screencast_small_clip](https://user-images.githubusercontent.com/6438275/121800774-05a50a80-cc34-11eb-825a-37145f2e4461.gif)
 ![lingl_homepage_600px](https://user-images.githubusercontent.com/6438275/116420494-4d1b3700-a83e-11eb-9570-ef473cba9777.png)
 
-**If you find this project interesting, please take a time to `Star` it (top-right star on Github)**
+**:star: If you find this project interesting, please take a time to `Star` it (top-right star on Github). :star:**
 
 ## 1. How to use it:
 
@@ -24,7 +24,7 @@ After launching the `Docker` daemon, run:
 
 then visit `http://127.0.0.1:8000` on your browser.
 
-**If you find this project interesting, please take a time to `Star` it on the [Docker repo](https://hub.docker.com/r/gustavklopp/lingl)**
+**:star: If you find this project interesting, please take a time to `Star` it on the [Docker repo](https://hub.docker.com/r/gustavklopp/lingl). :star:**
 
 ### 2.2. Use the built-in server inside Django:
 
