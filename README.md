@@ -61,7 +61,7 @@ There's also a `superuser` account for Django admin use: it's : username: `lingl
 
 ### 2.3 Use the executable (Standalone application):
 
-The standalone is only provided for Linux. For other platforms, you can build it yourself.
+The standalone is only provided for Linux. For other platforms, you can build it yourself (see section `5.1 Building` in the [Developer section](https://github.com/gustavklopp/LingL#5-developers)).
 
 the executable is `Linglibre`.
 
