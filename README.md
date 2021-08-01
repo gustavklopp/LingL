@@ -6,6 +6,7 @@ This was inspired by other site/projects like the opensource Lwt, the closed sou
 ![Screencast_small_clip](https://user-images.githubusercontent.com/6438275/121800774-05a50a80-cc34-11eb-825a-37145f2e4461.gif)
 ![lingl_homepage_600px](https://user-images.githubusercontent.com/6438275/116420494-4d1b3700-a83e-11eb-9570-ef473cba9777.png)
 
+**If you find this project interesting, please take a time to `Star` it (top-right star on Github)**
 
 ## 1. How to use it:
 
@@ -13,7 +14,19 @@ This was inspired by other site/projects like the opensource Lwt, the closed sou
 
 ## 2. How to install it:
 
-### 2.1. Use the built-in server inside Django:
+### 2.1. Use the Docker file:
+
+You need [Docker](https://www.docker.com/) installed.
+
+After launching the `Docker` daemon, run:
+
+`docker run -it -p 8000:8000 gustavklopp/lingl`
+
+then visit `http://127.0.0.1:8000` on your browser.
+
+**If you find this project interesting, please take a time to `Star` it on the [Docker repo](https://hub.docker.com/r/gustavklopp/lingl)**
+
+### 2.2. Use the built-in server inside Django:
 
 It will need `python==3.9.0`.
 
@@ -46,7 +59,7 @@ then open your browser to <http://127.0.0.1:8000>
 After launching the app, you will need to create an account (this way, the app allows multi-accounts).
 There's also a `superuser` account for Django admin use: it's : username: `lingl` / password: `lingl`.
 
-### 2.2 Use the executable (Standalone application):
+### 2.3 Use the executable (Standalone application):
 
 The standalone is only provided for Linux. For other platforms, you can build it yourself.
 
@@ -56,7 +69,7 @@ the executable is `Linglibre`.
 
 After launching the app, you will need to create an account (this way, the app allows multi-accounts).
 
-### 2.3. (future) Use the online website:
+### 2.4. (future) Use the online website:
 Maybe later if people interested.
 
 ## 3. Upgrading:

@@ -23,6 +23,7 @@ pymupdf = "*"
 line-profiler = "*"
 python-rapidjson = "*"
 lxml = "*"
+gunicorn = "*"
 
 [dev-packages]
 
