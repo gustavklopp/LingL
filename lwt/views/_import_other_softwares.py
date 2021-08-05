@@ -3,6 +3,9 @@ Moulinette: converting the mysql query to ORM command
 '''
 from django.templatetags.static import static # to use the 'static' tag as in the templates
 from django.db.models import Q
+from django.db.utils import IntegrityError
+from django.contrib import messages
+from django.utils.translation import ugettext as _
 # second party
 import re
 import json
@@ -52,23 +55,28 @@ def converter_bad_url(url, name, origin_lang_code):
 @owner: request.user
 @return: a dictionary summarizing the number of elements created '''
 # @profile
-def import_oldlwt(owner, data_file):
+def import_oldlwt(owner, data_file, request):
     # dicts where "'old_lwt_id'" :  <Word object in new lwt>
     languages_dict = {}
     createdLanguage_nb = 0
     texttags_dict = {}
+    wordtags_dict = {}
     texts_dict = {}
     wordtagID_wordtagObj_dict = {}
     oldlwtID_wordNK_dict = {} # in this dict, there can be several <Words> for each key
     texttags_to_create = []
     texttags_to_create_idx = 0
+    wordtags_to_create = []
+    wordtags_to_create_idx = 0
     words_to_create = []
+    words_to_create_idx = 0
     words_to_update = []
     wordsWordtags_to_update = {}
     current_operation = '' # are we in the block of inserting text, word, language etc...
     newtext_to_create = []
     newtext_to_create_idx = 0
     text_texttag_dict = {}
+    words_dict = {}
     for line in data_file.readlines():
         line = line.decode()
         # cleaning:
@@ -169,11 +177,15 @@ def import_oldlwt(owner, data_file):
         # adding texttags to the texts (the texttags have been bulk_created previously):
         insertinto_str = 'INSERT INTO texttags VALUES('
         if line.startswith(insertinto_str):
-
             # Time to bulk create the texts from the previous reading
             # (but we'll in any case bulk_create the texts with another inserting block if there's no texttag)
             if current_operation == 'inserting_text':
-                Texts.objects.bulk_create(newtext_to_create)
+                try:
+                    Texts.objects.bulk_create(newtext_to_create)
+                except IntegrityError:
+                    messages.add_message(request, messages.ERROR, _('Import of Texts failed: Duplicate(s) detected (texts with the same title)! You should remove (or rename) duplicate(s) in LWT and backup again.'))
+                    return {'createdLanguage_nb':createdLanguage_nb, 'createdText_nb':'DUP', 'createdWord_nb':'DUP'}
+                    
                 current_operation = 'inserting texttag'
                 # and get back the texts object which was created:
                 text_created_Objs = Texts.objects.filter(owner=owner).\
@@ -204,25 +216,37 @@ def import_oldlwt(owner, data_file):
         # Inserting into Wordtags
         insertinto_str = 'INSERT INTO tags VALUES('
         if line.startswith(insertinto_str):
-            current_operation = 'inserting_tag'
+            current_operation = 'inserting_wordtag'
             line = line.lstrip(insertinto_str)
             line = line.lstrip(insertinto_str)
             line = line.rstrip(');')
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
             el = [e.strip('\'') for e in el] # there's "'field'" for each field. remove the extra ''
-            try: # check duplicate
-                wordtag = Wordtags.objects.get(owner=owner, wotagtext__iexact=el[1])
+#             wordtagID_wordtagObj_dict[el[0]] = wordtag
+            # check whether this wordtag already exists in database
+            try:
+                wordtag = Wordtags.objects.get(Q(owner=owner)&Q(wotagtext=el[1]))
+                wordtags_dict[el[0]] = wordtag
             except Wordtags.DoesNotExist:
-                wordtag = Wordtags.objects.create(
-                                                owner = owner,
-                                                 wotagtext = el[1],
-                                                 wotagcomment = el[2],
-                                         )
-            wordtagID_wordtagObj_dict[el[0]] = wordtag
+                wordtag = Wordtags( owner = owner,
+                                    wotagtext = el[1],
+                                    wotagcomment = el[2])
+                wordtags_to_create.append(wordtag)
+                wordtags_dict[el[0]] = wordtags_to_create_idx
+                wordtags_to_create_idx += 1
             
         # Updating the Words with the old_lwt Words table:
         insertinto_str = 'INSERT INTO words VALUES('
         if line.startswith(insertinto_str):
+
+            # time to bulk create the wordtags:
+            if wordtags_to_create:
+                Wordtags.objects.bulk_create(wordtags_to_create)
+                # and get the result:
+                wordtag_created_Objs = Wordtags.objects.filter(owner=owner).\
+                                        order_by('created_date')
+                wordtag_created_Objs = wordtag_created_Objs[wordtag_created_Objs.count() - len(wordtags_to_create):]
+                wordtags_to_create = [] # we´ll be used later to avoid bulk_creating wordtag again
 
             # we bulk_create the texts with another inserting block 
             # if it wasn't done before already (if there's not texttag for ex.)
@@ -303,6 +327,7 @@ def import_oldlwt(owner, data_file):
                         simwo.customsentence = customsentence
                         words_to_update.append(simwo)
                         _add_to_wordtag_dict(simwo)
+                        words_dict[el[0]] = simwo
                 else: # this word has no similar words defined
                     duplicate_word.status = status
                     duplicate_word.translation = translation
@@ -310,6 +335,7 @@ def import_oldlwt(owner, data_file):
                     duplicate_word.customsentence = customsentence
                     words_to_update.append(duplicate_word)
                     _add_to_wordtag_dict(duplicate_word)
+                    words_dict[el[0]] = duplicate_word
 
             else:
                 # it IS a compound word
@@ -345,6 +371,9 @@ def import_oldlwt(owner, data_file):
                                 )
                 words_to_create.append(wo)
                 _add_to_wordtag_dict(wo)
+                words_dict[el[0]] = words_to_create_idx
+                words_to_create_idx += 1
+                print(wordtext)
 
 #             oldlwtID_wordNK_dict[el[0]] = (wordtext, language.name, owner.username)
             
@@ -357,17 +386,46 @@ def import_oldlwt(owner, data_file):
             el = re.split(r'(?:(?<=\')|(?<=NULL)),(?:(?=\')|(?=NULL))', line)
             el = [e.strip('\'') for e in el] # there's "'field'" for each field. remove the extra ''
 
-            wordsWordtags_to_update.setdefault(oldlwtID_wordNK_dict[el[0]], []).\
-                                                extend( [wordtagID_wordtagObj_dict[el[1]] ] )
+#             wordsWordtags_to_update.setdefault(oldlwtID_wordNK_dict[el[0]], []).\
+#                                                 extend( [wordtagID_wordtagObj_dict[el[1]] ] )
+            wordsWordtags_to_update[el[0]] = el[1]
             
+    print('creating words')
     Words.objects.bulk_create(words_to_create)
+    # and get back the texts object which was created:
+    word_created_Objs = Words.objects.filter(owner=owner).\
+                            order_by('created_date')
+    word_created_Objs = word_created_Objs[word_created_Objs.count() - len(words_to_create):]
+    print('updating words')
     Words.objects.bulk_update(words_to_update, ['status','translation','romanization','customsentence'])
     # update wordtag:
-    for wordNK in wordsWordtags_to_update:
-        wo = Words.objects.get_by_natural_key(*wordNK)
-        for wordtag in wordsWordtags_to_update[wordNK]:
-            wo.wordtags.add(wordtag)
-        wo.save()
+    print('start of updating wordtags')
+#     for wordNK in wordsWordtags_to_update:
+#         wo = Words.objects.get_by_natural_key(*wordNK)
+#         for wordtag in wordsWordtags_to_update[wordNK]:
+#             wo.wordtags.add(wordtag)
+#         wo.save()
+
+    # wordsWordtags_to_update is a dict: {'oldlwtID':['wordtagID','wordtagID',...], 'oldlwtID':[....],...}
+    # wordsWordtags_to_update is a dict: {'wordNK':['wordtag','wordtag',...], 'wordNK':[....],...}
+    if wordsWordtags_to_update:
+        print(len(wordsWordtags_to_update))
+        # and we bulk_insert (called 'bulk_create' with ThroughModel in fact) at this moment for wordtag:
+        ThroughModel = Words.wordtags.through
+        args = []
+        for lwt_wordId, lwt_wordtagId in wordsWordtags_to_update.items():
+            print('{}/{}'.format(len(args), len(wordsWordtags_to_update)))
+            # look for word obj
+            word_obj = words_dict[lwt_wordId]
+            if isinstance(word_obj, int):
+                word_obj = word_created_Objs[word_obj]
+            # look for wordtag obj
+            wordtag_obj = wordtags_dict[lwt_wordtagId]
+            if isinstance(wordtag_obj, int):
+                wordtag_obj = wordtag_created_Objs[wordtag_obj]
+            args.append(ThroughModel(wordtags=wordtag_obj, words=word_obj))
+        print('Bulk update of wordtags\n')
+        ThroughModel.objects.bulk_create(args)
 
     # OUTPUT THE LINE_PROFILER
 #     with open('output.txt', 'w') as stream:

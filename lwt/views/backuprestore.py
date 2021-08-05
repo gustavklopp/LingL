@@ -107,6 +107,7 @@ def backuprestore(request):
             return redirect(reverse('homepage'))
 
         m_languageSuggestion = _('Suggestion: Upgrade your own Language dictionary links with the latest from LingL: Look at this <a target="_blank" href="{}">video</a> to know how to do it.').format(VIDEO_LANG_TUTORIAL)
+        m_languageSuggestion += _('\nNotice: All words are imported but the imported texts are "archived" by default (to save CPU power): You must un-archive the one you want to read.')
         if 'restore_file' in request.FILES:
             need_text = True if request.POST['restore_data'] == 'word+text' else False
             form = RestoreForm(request.POST, request.FILES)
@@ -198,14 +199,17 @@ def backuprestore(request):
                 if 'import_oldlwt' in request.FILES:
                     file_path = files.import_oldlwt.path
                     fp = gunzipper(files.import_oldlwt)
-                    result_nb = import_oldlwt(request.user, fp)
-                    m = _('Successful import of old lwt : ')
-                    m += ngettext('%(count)d language, ', '%(count)d languages, ',
-                                    result_nb['createdLanguage_nb']) % {'count': result_nb['createdLanguage_nb']}                    
-                    m += ngettext('%(count)d text, ', '%(count)d texts, ',
-                                    result_nb['createdText_nb']) % {'count': result_nb['createdText_nb']}                    
-                    m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
-                                    result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
+                    result_nb = import_oldlwt(request.user, fp, request)
+                    if not result_nb['createdText_nb'] == 'DUP': # duplicated texts detected
+                        m = _('Successful import of old lwt : ')
+                        m += ngettext('%(count)d language, ', '%(count)d languages, ',
+                                        result_nb['createdLanguage_nb']) % {'count': result_nb['createdLanguage_nb']}                    
+                        m += ngettext('%(count)d text, ', '%(count)d texts, ',
+                                        result_nb['createdText_nb']) % {'count': result_nb['createdText_nb']}                    
+                        m += ngettext('%(count)d word was imported.', '%(count)d words were imported.',
+                                        result_nb['createdWord_nb']) % {'count': result_nb['createdWord_nb']}                    
+                    else:
+                        m = ''
 
                 # Importing from LingQ:
                 if 'import_lingq' in request.FILES:
@@ -237,7 +241,8 @@ def backuprestore(request):
                 # clean it
                 delete_uploadedfiles(file_path, request.user) # clean it
 
-                messages.add_message(request, messages.SUCCESS, m)
+                if m != '': # else it's an error message for the Duplicated texts detected.
+                    messages.add_message(request, messages.SUCCESS, m)
 
                 if 'createdLanguage_nb' in result_nb.keys() and result_nb['createdLanguage_nb'] > 0:
                     messages.add_message(request, messages.WARNING, m_languageSuggestion)
