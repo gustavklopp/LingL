@@ -229,6 +229,8 @@ class Wordtags(BaseModel):
     wotagtext = models.CharField(max_length=20)  
     wotagcomment = models.CharField( max_length=200)  
 
+    oldlwtid = models.IntegerField(blank=True, null=True)
+
     objects = WordtagsManager() # use to call the parent foreign key by its name (or title , or etc...)
 
     def __str__(self):
@@ -350,6 +352,8 @@ class Words(BaseModel):
     state = models.BooleanField(default=False) # used to export2anki and selectivebackup checkox
     extra_field = models.TextField(max_length=500, blank=True, null=True) # additional, custom field. stored in json format a dict
     webpagesection = models.IntegerField(default=0)
+
+    oldlwtid = models.IntegerField(blank=True, null=True)
 
     objects = WordsManager() # use to call the parent foreign key by its name (or title , or etc...)
 
@@ -703,3 +707,4 @@ class Restore(models.Model):
 class Uploaded_text(models.Model):
     owner = models.ForeignKey(MyUser, null=True, on_delete=models.CASCADE) # each user has his own set of the database
     uploaded_text = models.FileField(blank=True)
+

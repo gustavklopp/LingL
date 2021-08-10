@@ -18,6 +18,7 @@ from django.conf import settings
 from django.apps import apps
 from django.templatetags.static import static # to use the 'static' tag as in the templates
 from django.contrib import messages
+from django.utils.safestring import mark_safe
 # second party
 import os
 import sys
@@ -107,7 +108,7 @@ def backuprestore(request):
             return redirect(reverse('homepage'))
 
         m_languageSuggestion = _('Suggestion: Upgrade your own Language dictionary links with the latest from LingL: Look at this <a target="_blank" href="{}">video</a> to know how to do it.').format(VIDEO_LANG_TUTORIAL)
-        m_languageSuggestion += _('\nNotice: All words are imported but the imported texts are "archived" by default (to save CPU power): You must un-archive the one you want to read.')
+        m_languageSuggestion += _('<br/>Notice: All words are imported but the imported texts are "archived" by default (to save CPU power): You must un-archive the one you want to read.')
         if 'restore_file' in request.FILES:
             need_text = True if request.POST['restore_data'] == 'word+text' else False
             form = RestoreForm(request.POST, request.FILES)
@@ -181,7 +182,7 @@ def backuprestore(request):
 
                 messages.add_message(request, messages.SUCCESS, _('Import of backup file successful.'))
 
-                messages.add_message(request, messages.WARNING, m_languageSuggestion)
+                messages.add_message(request, messages.WARNING, mark_safe(m_languageSuggestion))
 
             # set arbitrary the currentlang
             lang = Languages.objects.filter(owner=request.user).first()
