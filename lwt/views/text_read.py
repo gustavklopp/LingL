@@ -132,6 +132,10 @@ def dictwebpage(request):
         finalurl = wbl.replace('<WORD>', word_escaped)
 #         finalurl = createTheDictLink(wbl, word) # create the url of the dictionary, integrating the searched word
 
+        if finalurl[0] == '*':   # open in a new webpage
+            finalurl = finalurl[1:]
+            return HttpResponse(json.dumps(finalurl))
+
         # case where we can't put the url in an iframe src. we must request the entire html webpage
         # and will display it in the iframe srcdoc 
 
